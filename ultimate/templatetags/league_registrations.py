@@ -1,6 +1,6 @@
 from django import template
 
-from a2ultimate.leagues.models import REGISTRATION_STATUS_CHOICES
+from ultimate.leagues.models import REGISTRATION_STATUS_CHOICES
 
 register = template.Library()
 

@@ -1,6 +1,6 @@
 # index/signals.py
 
-from a2ultimate.leagues.models import Registrations
+from ultimate.leagues.models import Registrations
 
 from paypal.standard.ipn.signals import payment_was_successful
 

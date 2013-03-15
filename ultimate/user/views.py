@@ -12,9 +12,9 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
-from a2ultimate.leagues.models import *
-from a2ultimate.user.models import *
-from a2ultimate.forms import *
+from ultimate.leagues.models import *
+from ultimate.user.models import *
+from ultimate.forms import *
 
 @login_required
 def index(request):
