@@ -1,0 +1,25 @@
+{% extends "layout/layout_user.html" %}
+
+{% block content %}
+
+<h2>
+	{{ league.season|capfirst }} League {{ league.year }} - {{ league.night|title }} Registration
+</h2>
+
+<h3>Player Code of Conduct</h3>
+<p>As a player I agree:
+	<ul class="text_information">
+		<li>To uphold the spirit of the game and to treat other players with respect.</li>
+		<li>To never engage in physical violence against another player in any form for any reason (including in retaliation for the same).</li>
+		<li>To never enact verbal abuse against another player, in any form, for any reason.</li>
+	</ul>
+</p>
+
+<p>I acknowledge that any violation of this agreement will result in my suspension from the league, possibly permanently, per the jurisdiction of the spirit committee.</p>
+
+<form method="post">{% csrf_token %}
+	<input class="button button_success"type="submit" value="Accept" name="conduct_accept">
+	<input class="button button_error" type="submit" value="Decline" name="conduct_decline">
+</form>
+
+{% endblock %}

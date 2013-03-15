@@ -1,0 +1,142 @@
+import os
+import sys
+
+PROJECT_ROOT = os.path.dirname(__file__)
+sys.path.insert(0, os.path.join(PROJECT_ROOT, '../apps'))
+
+# Django settings for a2ultimate project.
+
+DEBUG = True
+TEMPLATE_DEBUG = DEBUG
+
+ADMINS = (
+	('Ann Arbor Ultimate', 'webmaster@a2ultimate.org'),
+)
+
+MANAGERS = ADMINS
+
+DATABASES = {
+	'default': {
+		'ENGINE': 'django.db.backends.mysql',
+		'NAME': '',
+		'USER': '',
+		'PASSWORD': '',
+		'HOST': '', # empty = localhost
+		'PORT': '', # empty = default
+	}
+}
+
+TIME_ZONE = 'America/Detroit'
+LANGUAGE_CODE = 'en-us'
+SITE_ID = 1
+
+USE_I18N = True
+
+# Absolute path to the directory that holds media.
+# Example: "/home/media/media.lawrence.com/"
+# this is really only used for file uploads
+MEDIA_ROOT = '/path/to/project/a2ultimate/media'
+
+# URL that handles the media served from MEDIA_ROOT. Make sure to use a
+# trailing slash if there is a path component (optional in other cases).
+# Examples: "http://media.lawrence.com", "http://example.com/media/"
+MEDIA_URL = '/a2ultimate/media/'
+
+# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
+# trailing slash.
+# Examples: "http://foo.com/media/", "/media/".
+ADMIN_MEDIA_PREFIX = '/a2ultimate/admin_media/'
+
+# Make this unique, and don't share it with anybody.
+SECRET_KEY = '6049&3+&tx+%%*#4$6@#!wch=+xeibo+mz4_*ru7u3!wh-p2_g'
+
+# List of callables that know how to import templates from various sources.
+TEMPLATE_LOADERS = (
+	'django.template.loaders.filesystem.load_template_source',
+	'django.template.loaders.app_directories.load_template_source',
+)
+
+MIDDLEWARE_CLASSES = (
+	'django.contrib.sessions.middleware.SessionMiddleware',
+	'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'django.contrib.messages.middleware.MessageMiddleware',
+	'django.middleware.common.CommonMiddleware',
+	'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'django.middleware.csrf.CsrfViewMiddleware',
+	'django.middleware.transaction.TransactionMiddleware',
+
+	'a2ultimate.middleware.http.Http403Middleware',
+)
+
+ROOT_URLCONF = 'a2ultimate.urls'
+
+TEMPLATE_DIRS = (
+	# Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+	# Always use forward slashes, even on Windows.
+	# Don't forget to use absolute paths, not relative paths.
+	'/path/to/project/a2ultimate/a2ultimate/templates',
+	'/path/to/project/a2ultimate/apps/pybb/templates',
+)
+
+INSTALLED_APPS = (
+	'django.contrib.admin',
+	'django.contrib.auth',
+	'django.contrib.contenttypes',
+	'django.contrib.humanize',
+	'django.contrib.messages',
+	'django.contrib.sessions',
+	'django.contrib.sites',
+	'django.contrib.webdesign',
+	'paypal.standard.ipn',
+	'syncr.flickr',
+	'syncr.twitter',
+	'tagging',
+	'a2ultimate',
+	'a2ultimate.captain',
+	'a2ultimate.index',
+	'a2ultimate.junta',
+	'a2ultimate.leagues',
+	'a2ultimate.user',
+	'pybb',
+	'pytils',
+)
+
+AUTHENTICATION_BACKENDS = (
+	'django.contrib.auth.backends.ModelBackend',
+)
+
+AUTH_PROFILE_MODULE = 'leagues.player'
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+	'a2ultimate.context_processors.menu_leagues',
+	'django.contrib.auth.context_processors.auth',
+	'django.contrib.messages.context_processors.messages',
+	'django.core.context_processors.debug',
+	'django.core.context_processors.i18n',
+	'django.core.context_processors.media',
+	'django.core.context_processors.request',
+	'django.core.context_processors.static',
+	'pybb.context_processors.processor',
+)
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+
+# where project lives off web root, e.g. localhost/a2ultimate
+FORCE_SCRIPT_NAME = '/a2ultimate'
+
+# where project lives off web root, e.g. localhost/a2ultimate/user/login
+LOGIN_URL = '/a2ultimate/user/login/'
+LOGIN_REDIRECT_URL = '/a2ultimate/user/'
+LOGOUT_URL = '/a2ultimate/user/logout/'
+LOGOUT_REDIRECT_URL = '/a2ultimate/'
+REGISTER_URL = '/a2ultimate/accounts/register/'
+
+# Paypal Info
+PAYPAL_RECEIVER_EMAIL = ''
+PAYPAL_TEST = True			# Testing mode on
+
+# PYBB - http://www.pybbm.org/
+PYBB_STATIC_URL = '/a2ultimate/pybb/'
+PYBB_DEFAULT_TITLE = 'A2Ultimate Forums'
+PYBB_ENABLE_SELF_CSS = 1
+PYBB_TEMPLATE = 'bootstrap_base.css'

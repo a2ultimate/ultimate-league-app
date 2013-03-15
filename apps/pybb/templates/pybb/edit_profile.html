@@ -1,0 +1,17 @@
+{% extends 'pybb/base.html' %}
+{% load i18n pybb_tags %}
+
+{% block title %}{% trans "Profile editing" %}{% endblock title %}
+
+{% block content %}
+    <h1>{% trans "Profile editing" %}</h1>
+    <p><a href="{% url auth_password_change %}">{% trans "Change the password" %}</a></p>
+    <form method="post" enctype="multipart/form-data" class="profile-edit">
+        {% csrf_token %}
+        <fieldset>
+            <legend>{% trans "Profile editing" %}</legend>
+            {% include "pybb/form.html" %}
+            <p>{% include "pybb/_button_save.html" %}</p>
+        </fieldset>
+    </form>
+{% endblock content %}

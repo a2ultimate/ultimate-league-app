@@ -1,0 +1,41 @@
+{% extends "layout/layout_user.html" %}
+
+{% block content %}
+
+<h2>
+	{{ league.season|capfirst }} League {{ league.year }} - {{ league.night|title }} Registration
+</h2>
+
+<h3>Attendance and Captaining</h3>
+
+<form method="post">{% csrf_token %}
+	{{ attendance_form.id }}
+
+	<div id="attendance" class="slide_selector" data-slider-max="{{ league.get_num_game_events }}">
+		<label for="id_attendance">There are {{ league.get_num_game_events }} games. How many games will you miss?</label>
+		{{ attendance_form.attendance }}
+		<div class="slider_errors">{{ attendance_form.attendance.errors }}</div>
+		<div class="slider"></div>
+		<div class="slider_description">
+			<div class="left">I will not miss any games.</div>
+			<div class="right">I will miss all the games (?!).</div>
+		</div>
+	</div>
+
+	<div id="captain" class="slide_selector" data-slider-min="1">
+		<label for="id_captain">Would you like to captain a team?</label>
+		{{ attendance_form.captain }}
+		<div class="slider_errors">{{ attendance_form.captain.errors }}</div>
+		<div class="slider"></div>
+		<div class="slider_description">
+			<div class="left">I do not wish to captain a team.</div>
+			<div class="right">I definitely want to captain a team.</div>
+		</div>
+	</div>
+
+	<p>
+		<input class="button button_success" type="submit" value="Submit" name="submit">
+	</p>
+</form>
+
+{% endblock %}

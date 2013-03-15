@@ -1,0 +1,31 @@
+{% extends "layout/layout_user.html" %}
+{% load teams %}
+
+{% block content %}
+	<h1>
+	    Edit Group for {{ league.night|capfirst }} {{ league.season|capfirst }} {{ league.year }}
+	</h1>
+
+	<p>This league allows groups of up to {{ league.baggage }} (including you).</p>
+
+	<h3>Your current group is{% if not registration.baggage.get_registrations %} empty.{% endif %}</h3>
+	{% for baggage_reg in registration.baggage.get_registrations %}
+		<div>{{ baggage_reg.user.get_full_name }}</div>
+	{% endfor %}
+
+	{% if league.baggage > 1 and league.freeze_group_date|timesince != '0 minutes' %}
+		<form>{% csrf_token %}
+			<input class="button button_error" type="submit" name="leave_group" value="Leave Group" />
+		</form>
+
+		{% if league|num_spots_left:registration.baggage.get_registrations > 0 %}
+			<h3>Add Another Player To Your Group</h3>
+			<p>You have room for {{ league|num_spots_left:registration.baggage.get_registrations }} more players in your group.  Enter the email of the player you would like to add below:</p>
+			<input type="text" /><br /><br />
+			<input class="button button_success" type="submit" name="add_player" value="Add Player" />
+		{% else %}
+			<h4>Your group is full for this league.</h4>
+		{% endif %}
+	{% endif %}
+
+{% endblock %}

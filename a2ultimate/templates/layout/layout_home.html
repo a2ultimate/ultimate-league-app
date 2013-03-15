@@ -1,0 +1,118 @@
+{% include "layout/header.html" %}
+<div id="content_container">
+	<div id="sidebar">
+		<div id="logo">
+			<img src="{{ MEDIA_URL }}images/logo_small.png" width="200" height="166" />
+		</div>
+		<div class="image_wrapper">
+			<a href="http://twitter.com/aaultimate" target="_blank"><img src="{{ MEDIA_URL }}images/tw.png" title="Twitter" /></a>
+			<a href="http://www.facebook.com/group.php?gid=14353251178" target="_blank"><img src="{{ MEDIA_URL }}images/fb.png" title="Facebook" /></a>
+			<a href="http://www.flickr.com/search/?w=all&q=frisbee" target="_blank"><img src="{{ MEDIA_URL }}images/fl.png" title="Flickr" /></a>
+		</div>
+		<ul>
+			<li>
+				Who Are We?
+				<ul>
+					<li><a href="{% url welcome %}">Welcome to Ann Arbor Ultimate</a></li>
+					<li><a href="{% url about_us %}">About Us</a></li>
+					<li><a href="{% url contact %}">Contact Information</a></li>
+					<li><a href="{% url pybb:index %}" target="blank">Forum</a></li>
+					<li><a href="http://sites.google.com/site/juntaannarborultimate/" target="_blank">Junta</a></li>
+					<li><a href="{% url update_feed %}">Update Social Feed &raquo;</a>
+				</ul>
+			</li>
+		</ul>
+		<ul>
+			{% if menu_leagues %}
+				<li>
+					Active Leagues
+					<ul class="league_list">
+						{% regroup menu_leagues by year as league_years %}
+
+						{% for league_list in league_years %}
+							{% regroup league_list.list by season as league_seasons %}
+
+							{% for league in league_seasons %}
+								<li>
+									<a class="league_name" href="{% url league_index year=league_list.grouper season=league.grouper %}">{{ league.grouper|capfirst }} {{ league_list.grouper }}</a>
+									<ul>
+										{% for night in league.list %}
+											<li>
+												<a href="{% url league_summary year=league_list.grouper season=league.grouper division=night.night %}">{{ night.night|capfirst }}</a>
+											</li>
+										{% endfor %}
+									</ul>
+								</li>
+							{% endfor %}
+						{% endfor %}
+					</ul>
+				</li>
+			{% endif %}
+			<li>
+				Ultimate Resources
+				<ul>
+					<li><a href="http://www.ultimatehandbook.com/Webpages/Beginner/basics.html" target="_blank">The Basics</a></li>
+					<li><a href="http://www.usaultimate.org/resources/officiating/rules/default.aspx" target="_blank">Official Rules</a></li>
+					<li><a href="http://www.ultimatehandbook.com/blog" target="_blank">The Ultimate Handbook</a></li>
+					<li><a href="http://pickupultimate.com/map/city/detroit" target="_blank">PickupUltimate.com</a></li>
+					<li><a href="{% url rules %}">Our Rule Mods</a></li>
+					<li><a href="{% url weather %}">Our Weather Policy</a></li>
+					<li><a href="{% url pickup %}">Pickup Games</a></li>
+					<li><a href="{{ MEDIA_URL }}docs/2011.a.Handbook.pdf" target="_blank">Captain's Handbook</a></li>
+					<li><a href="{{ MEDIA_URL }}docs/11thVisualRules.pdf" target="_blank">Visual rules</a></li>
+				</ul>
+			</li>
+			<li>
+				Local Teams
+				<ul>
+					<li><a href="http://www.flywheelultimate.synthasite.com/" target="_blank">Flywheel</a></li>
+					<li><a href="http://magnumultimate.com/" target="_blank">Magnum</a></li>
+					<li><a href="http://emuhellfish.blogspot.com/" target="_blank">EMU Hellfish</a></li>
+					<li><a href="http://yum.dcds.edu/" target="_blank">Youth Ultimate in Michigan</a></li>
+				</ul>
+			</li>
+			<li>
+				Ultimate Gear
+				<ul>
+					<li><a href="http://fiveultimate.com" target="_blank">Five Ultimate</a></li>
+					<li><a href="http://www.vcultimate.com" target="_blank">VC Ultimate</a></li>
+				</ul>
+			</li>
+			<li>
+				Links
+				<ul>
+					<li><a href="http://www.usaultimate.org" target="_blank">USA Ultimate</a></li>
+					<li><a href="http://dearbornultimate.com" target="_blank">Dearborn Ultimate</a></li>
+				</ul>
+			</li>
+			<li>
+				A<sup>2</sup> Recreation
+				<ul>
+					<li><a href="http://reced.aaps.k12.mi.us" target="_blank">Rec and Ed</a></li>
+					<li><a href="http://www.aasaweb.org" target="_blank">Soccer Association</a></li>
+					<li><a href="http://www.arborweb.com/cg/t0402.html" target="_blank">Team Sports</a></li>
+					<li><a href="http://www.ci.ann-arbor.mi.us/Parks" target="_blank">City Parks</a></li>
+					<li><a href="http://www.johnwcooper.com/annarbor-michigan.htm" target="_blank">Ann Arbor Guide</a></li>
+					<li><a href="http://www.a3disc.org/" target="_blank">Ann Arbor Disc Golf</a></li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+
+	<div id="content">
+		<div id="messages">
+			{% regroup messages|dictsortreversed:"level" by tags as message_groups %}
+			{% for message_group in message_groups %}
+				{% for message in message_group.list %}
+					<p class="{{ message_group.grouper }}">
+						{{ message }}
+					</p>
+				{% endfor %}
+			{% endfor %}
+		</div>
+
+		{% block content %}
+		{% endblock %}
+	</div>
+
+{% include "layout/footer.html" %}

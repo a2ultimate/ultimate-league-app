@@ -1,0 +1,62 @@
+{% include "layout/header.html" %}
+<div id="content_container">
+	<div id="sidebar">
+		<div id="logo">
+			<img src="{{ MEDIA_URL }}images/logo_small.png" width="200" height="166" />
+		</div>
+		<div class="image_wrapper">
+			<a href="http://twitter.com/aaultimate" target="_blank"><img src="{{ MEDIA_URL }}images/tw.png" title="Twitter" /></a>
+			<a href="http://www.facebook.com/group.php?gid=14353251178" target="_blank"><img src="{{ MEDIA_URL }}images/fb.png" title="Facebook" /></a>
+			<a href="http://www.flickr.com/search/?w=all&q=frisbee" target="_blank"><img src="{{ MEDIA_URL }}images/fl.png" title="Flickr" /></a>
+		</div>
+
+		{% if menu_leagues %}
+			<ul>
+				{% regroup menu_leagues by year as league_years %}
+
+				{% for league_list in league_years %}
+					{% regroup league_list.list by season as league_seasons %}
+
+					{% for league in league_seasons %}
+						<li>
+							{{ league.grouper|capfirst }} {{ league_list.grouper }}
+							<ul class="league_list">
+								{% for night in league.list %}
+									<li>
+										<span class="league_name">{{ night.night|capfirst }}</span>
+										<ul>
+											<li><a href="{% url league_registration year=league_list.grouper season=league.grouper division=night.night %}">Registration</a></li>
+											<li><a href="{% url league_summary year=league_list.grouper season=league.grouper division=night.night %}">Summary</a></li>
+											<li><a href="{% url league_details year=league_list.grouper season=league.grouper division=night.night %}">Detailed Info</a></li>
+											<li><a href="{% url league_players year=league_list.grouper season=league.grouper division=night.night %}">Players</a></li>
+											<li><a href="{% url league_teams year=league_list.grouper season=league.grouper division=night.night %}">Teams & Schedules</a></li>
+										</ul>
+									</li>
+								{% endfor %}
+							</ul>
+						</li>
+					{% endfor %}
+				{% endfor %}
+			</ul>
+		{% else %}
+			<p>No leagues are available.</p>
+		{% endif %}
+	</div>
+
+	<div id="content">
+		<div id="messages">
+			{% regroup messages|dictsortreversed:"level" by tags as message_groups %}
+			{% for message_group in message_groups %}
+				{% for message in message_group.list %}
+					<p class="{{ message_group.grouper }}">
+						{{ message }}
+					</p>
+				{% endfor %}
+			{% endfor %}
+		</div>
+
+		{% block content %}
+		{% endblock %}
+	</div>
+
+{% include "layout/footer.html" %}

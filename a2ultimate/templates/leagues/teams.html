@@ -1,0 +1,86 @@
+{% extends "layout/layout_user.html" %}
+{% load teams %}
+
+{% block content %}
+	<h2>
+	    Teams &amp; Schedules for {{ league.night|capfirst }} {{ league.season|capfirst }} {{ league.year }}
+	</h2>
+
+	{% if schedule %}
+		{% regroup schedule.get_games|dictsort:"date" by date as games %}
+		{% regroup schedule.get_games by field_name as field_names %}
+		{% regroup field_names by grouper.field as fields %}
+		<table id="schedule">
+			<tr>
+				<td></td>
+				{% for field in fields %}
+					<td class="schedule_field" colspan="{{ field.list|length }}">
+						<div>{{ field.grouper.name }}</div>
+						<div><a href="{{ MEDIA_URL }}{{ field.grouper.layout_link }}">Field Layout</a></div>
+					</td>
+				{% endfor %}
+			</tr>
+
+			<tr>
+				<td></td>
+				{% for field_name in field_names %}
+					<td class="schedule_header">{{ field_name.grouper.name }}</td>
+				{% endfor %}
+			</tr>
+
+			{% for game_date in games %}
+				<tr class="{% cycle 'even' 'odd' %}">
+					<td class="schedule_header schedule_date">
+						{{ game_date.grouper|date:"m/d" }}
+					</td>
+
+					{% for field_name in field_names %}
+						<td class="schedule_game{% if forloop.last %} right{% endif %}">
+							{% for team in game_date.list|get_field_game_teams:field_name.grouper %}
+								<div class="schedule_team">{{ team.team.id }}</div>
+							{% empty %}
+								-
+							{% endfor %}
+						</td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
+		</table>
+	{% endif %}
+
+	{% if teams %}
+		<table id="teams">
+			{% for team in teams %}
+				{% if forloop.counter0|divisibleby:"2" %}
+					<tr>
+				{% endif %}
+				<td class="team">
+					<div>
+						<div class="team_name" style="font-size: {{ team.name|get_team_name_font_size }}px;">
+							{{ team.name }}
+						</div>
+						<div class="team_info">
+							<span class="team_info_left">{{ team.color }}</span>
+							<span class="team_info_right">Team #{{ team.id }}</span>
+						</div>
+						<div class="team_members">
+							{% for team_member in team.get_members %}
+								<div class="team_member">
+									{% if team_member.captain %}<span class="strong">{% endif %}
+										{{ team_member.user.get_full_name }}
+									{% if team_member.captain %}</span>{% endif %}
+									<em>{{ team_member.user.get_profile.nickname }}</em>
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+				</td>
+				{% if not forloop.counter0|divisibleby:"2" %}
+					</tr>
+				{% endif %}
+			{% endfor %}
+		</table>
+	{% else %}
+		No teams have been formed for this league yet.
+	{% endif %}
+{% endblock %}

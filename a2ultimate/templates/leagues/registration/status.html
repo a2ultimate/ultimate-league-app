@@ -1,0 +1,81 @@
+{% extends "layout/layout_user.html" %}
+
+{% block content %}
+
+<h2>
+	{{ league.season|capfirst }} League {{ league.year }} - {{ league.night|title }} Registration
+</h2>
+
+<h3>Registration Status</h3>
+
+{% if registration.is_complete %}
+	<p>
+		Your registration is complete. You may <a href="{% url league_group year=league.year season=league.season division=league.night %}">form a baggage group here</a>.
+	</p>
+{% else %}
+	<p>
+		Your registration is <strong>not</strong> complete.
+	</p>
+{% endif %}
+
+<hr />
+
+<p>
+	Your attendance indicates you will miss <strong>{{ registration.attendance }}</strong> out of <strong>{{ league.get_num_game_events }}</strong> games.
+</p>
+
+<p>
+	Your captaining rating is <strong>{{ registration.captain }}</strong> out of <strong>10</strong>.
+</p>
+
+<p>
+	If you would like to change your attendance or captaining rating, <a href="{% url league_registration_section year=league.year season=league.season division=league.night section='attendance' %}">click here</a>.
+</p>
+
+<hr />
+
+{% if not registration.is_complete %}
+	{% if registration.pay_type = 'check' %}
+		<p>
+			You're currently set to pay by check. You may send a check for <strong>${{ league.check_cost }}</strong> to:
+		</p>
+
+		{{ league.mail_check_address|safe }}
+
+		<form method="post">{% csrf_token %}
+			<input class="hidden" type="hidden" name="pay_type" value="paypal" />
+			<input class="button button_success" type="submit" value="Switch Payment Type to PayPal" />
+		</form>
+	{% endif %}
+	{% if registration.pay_type = 'paypal' %}
+		{% if not registration.paypal_complete %}
+			<p>
+				Click the 'Buy Now' button to pay <strong>${{ league.paypal_cost }}</strong>.
+			</p>
+
+			<p>
+				You will be redirected to PayPal's website to pay and redirected back to the A2Ultimate site afterward.
+			</p>
+
+			<p>
+				{{ paypal_form.sandbox }}
+			</p>
+		{% endif %}
+
+		<p>
+			If you've already submitted a payment via PayPal, please be patient.<br />
+			It could take up to 24 hours to show as completed.
+		</p>
+
+		<p>
+			If has already been 24 hours, please email <a href="mailto:registration@a2ultimate.org">registration@a2ultimate.org</a>
+		</p>
+
+		<form method="post">{% csrf_token %}
+			<input class="hidden" type="hidden" name="pay_type" value="check" />
+			<input class="button button_success" type="submit" value="Switch Payment Type to Check" />
+		</form>
+	{% endif %}
+{% endif %}
+
+{% endblock %}

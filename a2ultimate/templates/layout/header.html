@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<title>A2Ultimate</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<link rel="stylesheet" href="{{ MEDIA_URL }}css/jquery-ui/jquery-ui-1.10.0.custom.min.css" />
+	<link rel="stylesheet" href="{{ MEDIA_URL }}css/site.css" type="text/css" />
+
+	<script src="{{ MEDIA_URL }}js/modernizr-2.6.2.min.js"></script>
+</head>
+
+<body>
+	<div id="header_container">
+		<div id="header">
+			<div id="banner">
+				<a href="{% url home %}">
+					<img src="{{ MEDIA_URL }}images/banner.png" alt="Ann Arbor Ultimate" width="435" height="41" />
+				</a>
+			</div>
+
+			<ul id="user_info">
+				{% if user.is_authenticated %}
+					<li><a href="{% url user %}">{{ user.username }}</a></li>
+					<li>&middot;</li>
+					<li><a href="{% url auth_logout %}">Logout?</a></li>
+				{% else %}
+					<li><a href="{% url auth_login %}">Login</a></li>
+					<li>&middot;</li>
+					<li><a href="{% url registration_register %}">Signup</a></li>
+				{% endif %}
+			</ul>
+		</div>
+	</div>
+	<div id="menu_container">
+		<ul id="menu">
+			<li><a href="{% url home %}">Home</a></li>
+			<li><a href="{% url user %}">My Account</a></li>
+			<li><a href="{% url pybb:index %}" target="_blank">Forum</a></li>
+			<li><a href="{% url pybb:forum 8 %}">Lost & Found</a></li>
+			<li><a href="{% url contact %}">Contacts</a></li>
+			{% if user.is_superuser %}<li><a href="{% url home %}admin">Admin</a></li>{% endif %}
+			{% if menu_leagues %}
+				<li><span>Active Leagues:</span></li>
+				{% regroup menu_leagues by year as league_years %}
+
+				{% for league_list in league_years %}
+					{% regroup league_list.list by season as league_seasons %}
+
+					{% for league in league_seasons %}
+						<li>
+							<a href="{% url league_index year=league_list.grouper season=league.grouper %}">
+								{{ league.grouper|capfirst }} {{ league_list.grouper }}
+							</a>
+						</li>
+					{% endfor %}
+				{% endfor %}
+			{% else %}
+				<p>No leagues are available.</p>
+			{% endif %}
+		</ul>
+	</div>

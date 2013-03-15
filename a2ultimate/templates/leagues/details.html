@@ -1,0 +1,11 @@
+{% extends "layout/layout_user.html" %}
+
+{% block content %}
+	<h2>
+	    {{ league.season|capfirst }} League {{ league.year }} Details
+	</h2>
+
+	<div id="league_details">
+		{{ league.details|safe }}
+	</div>
+{% endblock %}

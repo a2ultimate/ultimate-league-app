@@ -1,0 +1,27 @@
+{% extends "layout/layout_user.html" %}
+
+{% block content %}
+
+<h2>
+	{{ league.season|capfirst }} League {{ league.year }} - {{ league.night|title }} Registration
+</h2>
+
+<h3>How would you like to pay?</h3>
+
+<p>
+	The cost of this league varies depending on payment type. PayPal is preferred, but check is also acceptable.
+</p>
+
+<p>
+	<ul>
+		<li>${{ league.paypal_cost }} via PayPal</li>
+		<li>${{ league.check_cost }} via Check</li>
+	</ul>
+</p>
+
+<form method="post">{% csrf_token %}
+	<input class="button button_success" type="submit" value="Paypal" name="pay_type" />
+	<input class="button button_success" type="submit" value="Check" name="pay_type" />
+</form>
+
+{% endblock %}

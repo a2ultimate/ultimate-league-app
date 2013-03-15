@@ -1,0 +1,54 @@
+{% extends "layout/layout_user.html" %}
+
+{% block content %}
+	<h2>
+	    {{ league.season|capfirst }} League {{ league.year }} Players
+	</h2>
+
+	<p>To add someone to your group, you need to know their email address.</p>
+	<p>If you know your friend's email address and would like to be in a group with them, <a href="{% url league_group year=league.year season=league.season division=league.night %}">click here</a> to add them.</p>
+
+	<h4>Name not on the list?</h4>
+	<ol>
+		<li>Did you pay by check? If so, maybe we don't have your check yet.</li>
+		{% ifequal league.gender '50/50' %}
+		    <li>You're probably waiting for gender balance or for Dave to get around to adding people today.</li>
+		{% endifequal %}
+		<li>Anything else? Email <span class="email">registration.at.a2ultimate.org</span></li>
+	</ol>
+
+	<div id="waitlist">
+		<h4>Waitlist</h4>
+
+		<ol>
+			{% for registration in waitlist %}
+				<li>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.get_profile.nickname }}</em></li>
+			{% endfor %}
+		</ol>
+	</div>
+
+	<div id="league_players">
+		<h4>Currently {{ registrations|length }} out of a maximum {{ league.max_players }} players registered</h4>
+
+		{% regroup registrations by baggage as registration_baggage %}
+		<table id="player_table">
+			{% for baggage in registration_baggage %}
+				{% if not forloop.counter|divisibleby:'2' %}
+					<tr>
+				{% endif %}
+
+				<td>
+					<div>
+						{% for registration in baggage.list %}
+							<div>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.get_profile.nickname }}</em></div>
+						{% endfor %}
+					</div>
+				</td>
+
+				{% if forloop.counter|divisibleby:'2' %}
+					</tr>
+				{% endif %}
+			{% endfor %}
+		</table>
+	</div>
+{% endblock %}

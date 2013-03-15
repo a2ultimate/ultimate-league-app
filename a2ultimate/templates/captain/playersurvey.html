@@ -1,0 +1,62 @@
+{% extends "layout/layout_user.html" %}
+{% load user_roles %}
+{% load teams %}
+
+{% block content %}
+	<div id="content_tabs">
+		<ul>
+			<li><a href="{% url user %}">My Account</a></li>
+			{% if user|is_captain %}
+				<li class="selected"><a href="{% url captain %}">Captain Resources</a></li>
+			{% endif %}
+			{% if user|in_group:"Junta" %}
+				<li><a href="{% url junta %}">Junta Resources</a></li>
+			{% endif %}
+		</ul>
+	</div>
+
+	<ul id="breadcrumbs">
+		<li><a href="{% url user %}">My Account</a></li>&raquo;
+		<li><a href="{% url captain %}">Captain Resources</a></li>&raquo;
+		<li><a href="{% url playersurvey teamid=team.id %}">Player Survey</a></li>
+	</ul>
+
+	<h1>Player Survey</h1>
+
+	<form method="post" action="{% url playersurvey teamid=team.id %}">{% csrf_token %}
+		{{ formset.management_form }}
+
+		<table id="player_survey_table">
+			<tr>
+				<td></td>
+				<th>Athleticism</th>
+				<th>Forehand</th>
+				<th>Backhand</th>
+				<th>Receiving</th>
+				<th>Handling</th>
+				<th>Strategy</th>
+				<th>Spirit</th>
+				<th>Not Sure</th>
+			</tr>
+			{% for row in survey %}
+				<tr class="{% cycle 'even' 'odd' %}{% if row.form.non_field_errors %} error{% endif %}">
+					<td class="name left">
+						{{ row.user.get_full_name }}
+						{% for hidden in row.form.hidden_fields %}
+						    {{ hidden }}
+						{% endfor %}
+					</td>
+					{% for field in row.form.visible_fields %}
+						<td class="{% if forloop.last %}right{% endif %}{% if field.errors %} error{% endif %}" {% if forloop.last %}onclick="this.children[0].click();"{% endif %}>
+							{{ field }}
+							{% if not forloop.last %}<div class="skill_average">{{ row.user|get_average:field.label }}</div>{% endif %}
+						</td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
+		</table>
+
+		<input class="button button_success" type="submit" value="Update" />
+		<a class="form_cancel" href="{% url playersurvey teamid=team.id %}">cancel</a>
+	</form>
+{% endblock %}

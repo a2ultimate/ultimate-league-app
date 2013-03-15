@@ -1,0 +1,56 @@
+{% extends "layout/layout_home.html" %}
+{% load relative_date %}
+
+{% block content %}
+	<div id="news">
+		<div id="announcements" class="clearfix">
+			<h1>News & Announcements</h1>
+			<ul>
+				{% for announcement in announcements %}
+					<li class="announcement">
+						<a href="{{ announcement.get_absolute_url }}">
+							<div class="announcement_title">{{ announcement.name|truncatewords:10 }}</div>
+							<div class="announcement_date">{{ announcement.created|date:"N d, Y h:ia" }}</div>
+						</a>
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+		<div id="calendar" class="clearfix">
+			<iframe src="https://www.google.com/calendar/embed?showTitle=0&amp;showNav=0&amp;showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;mode=AGENDA&amp;height=400&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=pm3odo50mikpffck6bnrhrqj3c%40group.calendar.google.com&amp;color=%23182C57&amp;ctz=America%2FNew_York" style=" border-width:0 " width="270" height="400" frameborder="0" scrolling="no"></iframe>
+		</div>
+	</div>
+
+	<table id="social_feed">
+		{% for update in updates %}
+			<tr class="update">
+				{% if update.type == 'tweet' %}
+					<td class="user_image">
+						<a style="background-image: url('{{ update.tweet.user.thumbnail_url }}');" href="http://twitter.com/{{ update.tweet.user.screen_name }}" title="{{ update.tweet.user.screen_name }} on Twitter"></a>
+					</td>
+					<td class="update_content">
+						<div class="update_header">
+							<a class="update_user" href="http://twitter.com/{{ update.tweet.user.screen_name }}" target="_blank">@{{ update.tweet.user.screen_name }}</a>
+							<a class="update_datetime" href="http://twitter.com/{{ update.tweet.user.screen_name }}/status/{{ update.tweet.twitter_id }}" target="_blank">{{ update.tweet.pub_time|timesince }} ago</a>
+						</div>
+						{{ update.tweet.text }}
+					</td>
+				{% endif %}
+
+				{% if update.type == 'photo' %}
+					<td class="update_content" colspan="2">
+						{% for photo in update.photoset|slice:":3" %}
+							{% if forloop.first %}
+								<div class="update_header">
+									<a class="update_user" href="http://flickr.com/photos/{{ photo.owner_nsid }}" target="_blank">{{ photo.owner }}</a>
+									<span class="update_datetime">{{ photo.upload_date|timesince }} ago</span>
+								</div>
+							{% endif %}
+							<a href="{{ photo.photopage_url }}" target="_blank"><img class="photo" src="{{ photo.url }}" /></a>
+						{% endfor %}
+					</td>
+				{% endif %}
+			</tr>
+		{% endfor %}
+	</table>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "layout/layout_user.html" %}
+{% load user_roles %}
+{% load teams %}
+
+{% block content %}
+	<div id="content_tabs">
+		<ul>
+			<li><a href="{% url user %}">My Account</a></li>
+			{% if user|is_captain %}
+				<li class="selected"><a href="{% url captain %}">Captain Resources</a></li>
+			{% endif %}
+			{% if user|in_group:"Junta" %}
+				<li><a href="{% url junta %}">Junta Resources</a></li>
+			{% endif %}
+		</ul>
+	</div>
+
+	<div id="captain_divisions">
+		{% for game in captain_games %}
+			{% ifchanged game.schedule %}
+				{% if not forloop.first %}
+						</ul>
+					</div>
+				{% endif %}
+
+				<h3><a class="captain_division_header" href="#">{{ game|get_game_user_teamname:user }} - {{ game.schedule.league|title }}</a></h3>
+				<div class="captain_division_content">
+					<ul class="captain_division_team_links">
+						<li><a href="{% url captaineditteam teamid=game|get_game_user_teamid:user %}">Change Team Name or Color</a></li>
+						<li>
+							<a href="{% url playersurvey teamid=game|get_game_user_teamid:user %}">
+								{% if game|league_player_survey_complete:user %}
+									<span class="status state_success"></span>
+								{% else %}
+									<span class="status state_error"></span>
+								{% endif %}
+								Fill Out Player Survey
+							</a>
+						</li>
+					</ul>
+
+					<h4>Game Reports</h4>
+					<ul>
+			{% endifchanged %}
+
+
+			<li class="captain_division_game">
+				{% if game.report_complete %}
+					<span class="status state_success"></span>
+				{% else %}
+					<span class="status state_error"></span>
+				{% endif %}
+				<a class="accordion_link" href="{% url gamereport teamid=game|get_game_user_teamid:user gameid=game.id %}">On {{ game.date|date:"m/d" }} vs. {{ game|get_game_opponent:user}}</a>
+			</li>
+
+			{% if forloop.last %}
+					</ul>
+				</div>
+			{% endif %}
+
+		{% endfor %}
+	</div>
+{% endblock %}

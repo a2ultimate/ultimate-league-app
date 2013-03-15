@@ -1,0 +1,81 @@
+{% extends "layout/layout_user.html" %}
+
+{% block content %}
+	<h2>
+	    Welcome to {{ league.season|capfirst }} League {{ league.year }}
+	</h2>
+
+	<h3 class="division_title">{{ league.night|capfirst }} Division ({{ league.gender|capfirst }})</h3>
+	
+	<style>
+		#league_summary {
+			border-spacing: 6px;
+		}
+		
+		#league_summary th {
+			color: #666666;
+			font-size: 12px;
+			font-weight: bold;
+			text-align: right;
+		}
+	</style>
+	
+	<table id="league_summary" class="text_information">
+    	<tr>
+    		<th>Date & Time</th>
+    		<td>
+    			<div>{{ league.league_start_date|date:'F d, Y' }} through {{ league.league_end_date|date:'F d, Y' }}</div>
+    			<div>{{ league.times }}</div>
+    		</td>
+    	</tr>
+    	<tr>
+    		<th>Location</th>
+    		<td>
+    			{% for field in league.get_fields %}
+					<div>{{ field.field.name }}</div>
+				{% endfor %}
+    		</td>
+    	</tr>
+    </table>
+
+    {% if league.gender_note %}
+        {{ league.gender_note|safe }}
+	{% endif %}
+
+    <ul class="text_information">
+        <li>{{ league.times }}
+	        <ul>
+	            <li>
+	            	{{ league.league_start_date|date:'F d, Y' }} through {{ league.league_end_date|date:'F d, Y' }}
+	            </li>
+	        </ul>
+        </li>
+        <li>Cost:
+	        <ul>
+	            <li>PayPal: {{ league.paypal_cost|floatformat:2 }}, Check: {{ league.check_cost|floatformat:2 }}</li>
+	        </ul>
+        </li>
+        <li>Where:
+	        <ul>
+				{% for field in league.get_fields %}
+					<li>{{ field.field.name }}</li>
+				{% endfor %}
+	        </ul>
+		</li>
+        <li>Registration dates:
+	        <ul>
+	            <li>Signup cutoff: {{ league.max_players }} or {{ league.waitlist_start_date|date:'F d, Y' }}</li>
+	            {% ifnotequal league.baggage 1 %}
+	                <li>Last chance to join/leave a group: {{ league.freeze_group_date|date:'F d, Y' }}</li>
+				{% endifnotequal %}
+	        </ul>
+        </li>
+        <li>Group info:
+	        <ul>
+	            <li>Maximum group size: {{ league.baggage }}</li>
+	        </ul>
+        </li>
+    </ul>
+    
+
+{% endblock %}

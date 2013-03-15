@@ -1,0 +1,49 @@
+{% extends "layout/layout_user.html" %}
+
+{% block content %}
+
+<h1>Edit Profile and Skills</h1>
+
+<div id="content_tabs">
+	<ul>
+		<li class="selected"><a href="{% url editprofile %}">Edit Profile</a></li>
+		<li><a href="{% url editskills %}">Edit Skills</a></li>
+	</ul>
+</div>
+
+<form id="edit_profile_form" method="post">{% csrf_token %}
+	<div class="field_wrapper">
+		{% for hidden in form.hidden_fields %}
+		    {{ hidden }}
+		{% endfor %}
+	</div>
+	<table class="form_table">
+		{% for field in form.visible_fields %}
+			<tr>
+				<td>{{ field.label_tag }}</td>
+				<td>{{ field }}</td>
+				<td>{{ field.help_text }}</td>
+			</tr>
+			{% if field.errors %}
+				<tr>
+					<td colspan="3">{{ field.errors }}</td>
+				</tr>
+			{% endif %}
+		{% endfor %}
+		{% for field in player_form.visible_fields %}
+			<tr>
+				<td>{{ field.label_tag }}</td>
+				<td>{{ field }}</td>
+				<td>{{ field.help_text }}</td>
+			</tr>
+			{% if field.errors %}
+				<tr>
+					<td colspan="3">{{ field.errors }}</td>
+				</tr>
+			{% endif %}
+		{% endfor %}
+	</table>
+    <input class="button button_success" type="submit" value="Update Profile">
+</form>
+
+{% endblock %}

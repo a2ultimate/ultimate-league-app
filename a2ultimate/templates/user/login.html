@@ -1,0 +1,33 @@
+{% extends "layout/layout_home.html" %}
+
+{% block content %}
+
+<h1>Login</h1>
+
+{% if form.errors %}
+	<p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+<form method="post" action="{% url auth_login %}">{% csrf_token %}
+	<table class="form_table">
+		<tr>
+			<td><label for="id_username">Email Address</label></td>
+			<td>{{ form.username }}</td>
+		</tr>
+		<tr>
+			<td>{{ form.password.label_tag }}</td>
+			<td>{{ form.password }}</td>
+		</tr>
+	</table>
+
+	<input class="button button_success" type="submit" value="Login" />
+	<input type="hidden" name="next" value="{{ next }}" />
+</form>
+
+<h1>Forgot Your Password?</h1>
+Click <a>here</a> for help.
+
+<h1>Don't Have An Account?</h1>
+Create a new account <a href="{% url registration_register %}">here</a>!
+
+{% endblock %}
