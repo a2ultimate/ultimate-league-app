@@ -1,4 +1,4 @@
-a2ultimate
-==========
+ultimate-league-app
+===================
 
-A2Ultimate Ultimate Frisbee League Web Application
+Ultimate Frisbee League Web Application

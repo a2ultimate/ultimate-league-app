@@ -1,5 +1,5 @@
 from django.contrib import admin
-from a2ultimate.leagues.models import *
+from ultimate.leagues.models import *
 
 class FieldAdmin(admin.ModelAdmin):
 	js = (

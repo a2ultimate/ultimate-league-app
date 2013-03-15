@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 from django.contrib.auth.views import login, logout
 
-urlpatterns = patterns('a2ultimate.user.views',
+urlpatterns = patterns('ultimate.user.views',
 	(r'^$', 'index', {}, 'user'),
 
 	(r'^login/$', login, {'template_name': 'user/login.html'}, 'auth_login'),

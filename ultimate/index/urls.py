@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 from django.contrib.auth.views import login, logout
 
-urlpatterns = patterns('a2ultimate.index.views',
+urlpatterns = patterns('ultimate.index.views',
 	(r'^$', 'index', {}, 'home'),
 	(r'^update_feed/$', 'update_feed', {}, 'update_feed'),
 

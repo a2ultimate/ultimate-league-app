@@ -1,8 +1,8 @@
 ultimate-league-app
-===================
+==========
 
 Ultimate Frisbee League Web Application
 
-/tests
+/ultimate-league-app
 
-lol
+main application directory

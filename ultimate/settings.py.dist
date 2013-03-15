@@ -4,7 +4,7 @@ import sys
 PROJECT_ROOT = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(PROJECT_ROOT, '../apps'))
 
-# Django settings for a2ultimate project.
+# Django settings for ultimate-league-app project.
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -35,7 +35,7 @@ USE_I18N = True
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
 # this is really only used for file uploads
-MEDIA_ROOT = '/path/to/project/a2ultimate/media'
+MEDIA_ROOT = '/path/to/project/ultimate-league-app/media'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -65,17 +65,17 @@ MIDDLEWARE_CLASSES = (
 	'django.middleware.csrf.CsrfViewMiddleware',
 	'django.middleware.transaction.TransactionMiddleware',
 
-	'a2ultimate.middleware.http.Http403Middleware',
+	'ultimate.middleware.http.Http403Middleware',
 )
 
-ROOT_URLCONF = 'a2ultimate.urls'
+ROOT_URLCONF = 'ultimate.urls'
 
 TEMPLATE_DIRS = (
 	# Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
 	# Always use forward slashes, even on Windows.
 	# Don't forget to use absolute paths, not relative paths.
-	'/path/to/project/a2ultimate/a2ultimate/templates',
-	'/path/to/project/a2ultimate/apps/pybb/templates',
+	'/path/to/project/ultimate-league-app/ultimate/templates',
+	'/path/to/project/ultimate-league-app/apps/pybb/templates',
 )
 
 INSTALLED_APPS = (
@@ -91,12 +91,12 @@ INSTALLED_APPS = (
 	'syncr.flickr',
 	'syncr.twitter',
 	'tagging',
-	'a2ultimate',
-	'a2ultimate.captain',
-	'a2ultimate.index',
-	'a2ultimate.junta',
-	'a2ultimate.leagues',
-	'a2ultimate.user',
+	'ultimate',
+	'ultimate.captain',
+	'ultimate.index',
+	'ultimate.junta',
+	'ultimate.leagues',
+	'ultimate.user',
 	'pybb',
 	'pytils',
 )
@@ -108,7 +108,7 @@ AUTHENTICATION_BACKENDS = (
 AUTH_PROFILE_MODULE = 'leagues.player'
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-	'a2ultimate.context_processors.menu_leagues',
+	'ultimate.context_processors.menu_leagues',
 	'django.contrib.auth.context_processors.auth',
 	'django.contrib.messages.context_processors.messages',
 	'django.core.context_processors.debug',

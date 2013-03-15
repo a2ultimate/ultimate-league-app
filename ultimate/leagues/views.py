@@ -7,9 +7,9 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
-from a2ultimate.leagues.models import *
+from ultimate.leagues.models import *
 
-from a2ultimate.forms import RegistrationAttendanceForm
+from ultimate.forms import RegistrationAttendanceForm
 
 from paypal.standard.forms import PayPalPaymentsForm
 
@@ -145,7 +145,7 @@ def registration(request, year, season, division, section=None):
 			'cancel_return': 'http://www.annarborultimate.org/play/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration/',
 			'invoice': registration.paypal_invoice_id,
 			'item_name': str(league.season).capitalize() + ' League ' + str(league.year) + ' - ' + str(league.night).capitalize(),
-			'notify_url': 'http://www.annarborultimate.org/play/payment/notification/callback/for/a2ultimate/secret/',
+			'notify_url': 'http://www.annarborultimate.org/play/payment/notification/callback/for/ultimate/secret/',
 			'return_url': 'http://www.annarborultimate.org/play/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration/',
 		}
 

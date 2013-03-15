@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import *
 
-urlpatterns = patterns('a2ultimate.junta.views',
+urlpatterns = patterns('ultimate.junta.views',
 	(r'^$', 'index', {}, 'junta'),
 )
