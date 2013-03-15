@@ -3,9 +3,9 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.utils.http import int_to_base36
 
-from a2ultimate.captain.models import *
-from a2ultimate.leagues.models import *
-from a2ultimate.user.models import *
+from ultimate.captain.models import *
+from ultimate.leagues.models import *
+from ultimate.user.models import *
 
 class SignupForm(forms.ModelForm):
 	username = forms.CharField(widget=forms.HiddenInput, required=False)

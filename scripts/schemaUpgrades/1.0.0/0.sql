@@ -1,4 +1,4 @@
-# A2Ultimate Database Schema Changes
+# Database Schema Changes
 
 
 ALTER TABLE `attendance` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `auth_group` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `auth_group_permissions` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `auth_message` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `auth_permission` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `auth_user` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `auth_user_groups` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `auth_user_user_permissions` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `baggage` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `django_admin_log` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `django_content_type` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `django_session` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `django_site` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `field` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `field_league` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `field_names` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `game` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `game_sponsor` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `league` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `league_skip_dates` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `player` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `player_info` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `registration` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `schedule` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `score_report` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `skills` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `skills_type` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `sponsor` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `static_content` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `static_nav_bar` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `team` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; ALTER TABLE `team_member` ENGINE = INNODB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -88,12 +88,12 @@ ALTER TABLE  `game_teams` ADD FOREIGN KEY (  `team_id` ) REFERENCES  `team` (
 `id`
 ) ON DELETE CASCADE ON UPDATE CASCADE ;
 
-INSERT INTO  `game_teams` ( 
-SELECT  NULL AS `id`, `id` AS `game_id` ,  `team1_id` AS  `team_id` 
+INSERT INTO  `game_teams` (
+SELECT  NULL AS `id`, `id` AS `game_id` ,  `team1_id` AS  `team_id`
 FROM  `game` );
 
-INSERT INTO  `game_teams` ( 
-SELECT  NULL AS `id`, `id` AS `game_id` ,  `team2_id` AS  `team_id` 
+INSERT INTO  `game_teams` (
+SELECT  NULL AS `id`, `id` AS `game_id` ,  `team2_id` AS  `team_id`
 FROM  `game` );
 
 ALTER TABLE  `game` DROP  `team1_id` ,
@@ -224,8 +224,8 @@ UPDATE player SET salt = SHA1(RAND());
 
 UPDATE player SET new_password = CONCAT(  'sha1$', player.salt,  '$', SHA1( CONCAT( player.salt, player.password ) ) );
 
-INSERT INTO auth_user (username, first_name, last_name, email, 
-PASSWORD , is_staff, is_active, is_superuser, date_joined ) 
+INSERT INTO auth_user (username, first_name, last_name, email,
+PASSWORD , is_staff, is_active, is_superuser, date_joined )
 SELECT email, firstname, lastname, email, new_password,  '0',  '1',  '0', registered
 FROM player;
 

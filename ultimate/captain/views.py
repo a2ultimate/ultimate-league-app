@@ -11,10 +11,10 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
-from a2ultimate.captain.models import *
-from a2ultimate.user.models import *
-from a2ultimate.forms import *
-from a2ultimate.middleware.http import Http403
+from ultimate.captain.models import *
+from ultimate.user.models import *
+from ultimate.forms import *
+from ultimate.middleware.http import Http403
 
 @login_required
 def index(request):

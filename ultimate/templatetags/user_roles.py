@@ -1,7 +1,7 @@
 from django import template
 register = template.Library()
 
-from a2ultimate.leagues.models import TeamMember
+from ultimate.leagues.models import TeamMember
 
 @register.filter
 def in_group(user, groups):

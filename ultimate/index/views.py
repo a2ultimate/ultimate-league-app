@@ -19,7 +19,7 @@ import datetime
 import pytz
 import traceback
 
-from a2ultimate.index.models import *
+from ultimate.index.models import *
 from pybb.models import Forum, Topic
 
 from paypal.standard.forms import PayPalPaymentsForm
