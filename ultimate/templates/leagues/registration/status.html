@@ -2,11 +2,13 @@
 
 {% block content %}
 
-<h2>
+<h1>
 	{{ league.season|capfirst }} League {{ league.year }} - {{ league.night|title }} Registration
-</h2>
+</h1>
 
-<h3>Registration Status</h3>
+{% include 'leagues/registration/_progress.html' %}
+
+<h2>Registration Status</h2>
 
 {% if registration.is_complete %}
 	<p>
@@ -44,7 +46,7 @@
 
 		<form method="post">{% csrf_token %}
 			<input class="hidden" type="hidden" name="pay_type" value="paypal" />
-			<input class="button button_success" type="submit" value="Switch Payment Type to PayPal" />
+			<input class="button button_info" type="submit" value="Switch Payment Type to PayPal" />
 		</form>
 	{% endif %}
 	{% if registration.pay_type = 'paypal' %}
@@ -73,7 +75,7 @@
 
 		<form method="post">{% csrf_token %}
 			<input class="hidden" type="hidden" name="pay_type" value="check" />
-			<input class="button button_success" type="submit" value="Switch Payment Type to Check" />
+			<input class="button button_info" type="submit" value="Switch Payment Type to Check" />
 		</form>
 	{% endif %}
 {% endif %}

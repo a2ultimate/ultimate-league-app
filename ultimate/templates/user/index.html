@@ -16,109 +16,115 @@
 		</ul>
 	</div>
 
-	{% if next_game %}
-		<div id="next_game">
-			<div>Your Next Game Is On:</div>
-			<div id="next_game_date">{{ next_game.date|date:"l F dS, Y" }}</div>
-			<div id="next_game_time">{{ next_game.schedule.league.times }}</div>
-			<div id="next_game_field">
-				@ {{ next_game.field_name.field.name }} {{ next_game.field_name.name }}
-				<a href="{{ MEDIA_URL }}{{ next_game.field_name.field.layout_link }}">Field Layout</a>
-			</div>
+	<div>
+		{% if next_game %}
+			<div id="next_game">
+				<div>Your Next Game Is On:</div>
+				<div id="next_game_date">{{ next_game.date|date:"l F dS, Y" }}</div>
+				<div id="next_game_time">{{ next_game.schedule.league.times }}</div>
+				<div id="next_game_field">
+					@ {{ next_game.field_name.field.name }} {{ next_game.field_name.name }}
+					<a href="{{ MEDIA_URL }}{{ next_game.field_name.field.layout_link }}">Field Layout</a>
+				</div>
 
-			<table>
-				<tr>
-					<td class="team_column">
-						<div class="team">
-							<div class="team_name">{{ next_game.get_teams|get_team_name:0 }}</div>
-							<div class="team_info">
-								<span class="team_info_left">{{ next_game.get_teams|get_team_color:0 }}</span>
-								<span class="team_info_right">Team #{{ next_game.get_teams|get_team_id:0 }}</span>
+				<table>
+					<tr>
+						<td class="team_column">
+							<div class="team">
+								<div class="team_name">{{ next_game.get_teams|get_team_name:0 }}</div>
+								<div class="team_info">
+									<span class="team_info_left">{{ next_game.get_teams|get_team_color:0 }}</span>
+									<span class="team_info_right">Team #{{ next_game.get_teams|get_team_id:0 }}</span>
+								</div>
+								<div class="team_members">
+									{% with next_game.get_teams|get_team:0 as team %}
+										{% for team_member in team.get_members %}
+											<div class="team_member">
+												{% ifequal team_member.user user %}<span class="strong">{% endifequal %}
+												{{ team_member.user.get_full_name }} <em>{{ team_member.user.get_profile.nickname }}</em>
+												{% ifequal team_member.user user %}</span>{% endifequal %}
+											</div>
+										{% endfor %}
+									{% endwith %}
+								</div>
 							</div>
-							<div class="team_members">
-								{% with next_game.get_teams|get_team:0 as team %}
-									{% for team_member in team.get_members %}
-										<div class="team_member">
-											{% ifequal team_member.user user %}<span class="strong">{% endifequal %}
-											{{ team_member.user.get_full_name }} <em>{{ team_member.user.get_profile.nickname }}</em>
-											{% ifequal team_member.user user %}</span>{% endifequal %}
-										</div>
-									{% endfor %}
-								{% endwith %}
+						</td>
+						<td><h2>VS</h2></td>
+						<td class="team_column">
+							<div class="team">
+								<div class="team_name">{{ next_game.get_teams|get_team_name:1 }}</div>
+								<div class="team_info">
+									<span class="team_info_left">{{ next_game.get_teams|get_team_color:1 }}</span>
+									<span class="team_info_right">Team #{{ next_game.get_teams|get_team_id:1 }}</span>
+								</div>
+								<div class="team_members">
+									{% with next_game.get_teams|get_team:1 as team %}
+										{% for team_member in team.get_members %}
+											<div class="team_member">
+												{% ifequal team_member.user user %}<strong>{% endifequal %}
+												{{ team_member.user.get_full_name }} <em>{{ team_member.user.get_profile.nickname }}</em>
+												{% ifequal team_member.user user %}</strong>{% endifequal %}
+											</div>
+										{% endfor %}
+									{% endwith %}
+								</div>
 							</div>
-						</div>
-					</td>
-					<td><h2>VS</h2></td>
-					<td class="team_column">
-						<div class="team">
-							<div class="team_name">{{ next_game.get_teams|get_team_name:1 }}</div>
-							<div class="team_info">
-								<span class="team_info_left">{{ next_game.get_teams|get_team_color:1 }}</span>
-								<span class="team_info_right">Team #{{ next_game.get_teams|get_team_id:1 }}</span>
-							</div>
-							<div class="team_members">
-								{% with next_game.get_teams|get_team:1 as team %}
-									{% for team_member in team.get_members %}
-										<div class="team_member">
-											{% ifequal team_member.user user %}<strong>{% endifequal %}
-											{{ team_member.user.get_full_name }} <em>{{ team_member.user.get_profile.nickname }}</em>
-											{% ifequal team_member.user user %}</strong>{% endifequal %}
-										</div>
-									{% endfor %}
-								{% endwith %}
-							</div>
-						</div>
-					</td>
-				</tr>
-			</table>
-		</div>
-	{% endif %}
-
-	{% if following_game %}
-		<p id="following_game">
-			The following game is on <strong>{{ following_game.date|date:"l F dS, Y" }}</strong> from <strong>{{ following_game.schedule.league.times }}</strong><br />
-			@ <strong>{{ following_game.field_name.field.name }} {{ following_game.field_name.name }}</strong>
-		</p>
-	{% endif %}
-
-	<h2>Profile</h2>
-	<a href="{% url editprofile %}">Edit Profile</a>
-
-	<h2>Registrations</h2>
-	{% if registrations %}
-		<table id="user_registrations">
-			<tr>
-				<th>Year</th>
-				<th>Season</th>
-				<th>Night</th>
-				<th>Status*</th>
-				<th>Baggage Group</th>
-			</tr>
-			{% for league in current_leagues %}
-				{% for reg in league|league_registrations:user %}
-					<tr class="{% cycle 'even' 'odd' %}">
-						<td class="left">{{ reg.league.year }}</td>
-						<td>{{ reg.league.season|capfirst }}</td>
-						<td>{{ reg.league.night|capfirst }}</td>
-						<td>{{ reg.get_status_display }}</td>
-						<td class="right">
-							{% for baggage_reg in reg.baggage.get_registrations %}
-								<div>{{ baggage_reg.user.get_full_name }}</div>
-							{% endfor %}
-							{% if reg.league.baggage > 1 and reg.league.freeze_group_date|timesince != '0 minutes' %}
-								<div><a href="{% url league_group year=league.year season=league.season division=league.night %}">Edit Group</a></div>
-							{% endif %}
 						</td>
 					</tr>
-				{% endfor %}
-			{% endfor%}
-		</table>
-		<p id="user_registrations_note">
-			*It can sometimes take a while for PayPal to confirm a payment. Try clicking reload after a few minutes have passed.<br />
-			If you used the echeck feature of paypal it may take up to a week to clear.<br />
-			If paying by check, the status will remain unconfirmed until your check is received and processed.<br />
-		</p>
-	{% else %}
-		<p class="none_found">No registrations found</p>
-	{% endif %}
+				</table>
+			</div>
+		{% endif %}
+
+		{% if following_game %}
+			<p id="following_game">
+				The following game is on <strong>{{ following_game.date|date:"l F dS, Y" }}</strong> from <strong>{{ following_game.schedule.league.times }}</strong><br />
+				@ <strong>{{ following_game.field_name.field.name }} {{ following_game.field_name.name }}</strong>
+			</p>
+		{% endif %}
+
+		<h2>Profile</h2>
+		<a href="{% url editprofile %}">Edit Profile</a>
+
+		<h2>Registrations</h2>
+		{% if registrations %}
+			<table id="user_registrations">
+				<tr>
+					<th>League</th>
+					<th>Status</th>
+					<th>Group</th>
+				</tr>
+				{% for league in current_leagues %}
+					{% for registration in league|league_registrations:user %}
+						<tr class="{% cycle 'even' 'odd' %}">
+							<td class="left">
+								{{ registration.league.season|capfirst }}
+								{{ registration.league.year }}
+								{{ registration.league.night|capfirst }}
+							</td>
+							<td>{{ registration.get_progress }}% - {{ registration.get_status }}</td>
+							<td class="right">
+								{% for baggage_reg in registration.baggage.get_registrations %}
+									<div>{{ baggage_reg.user.get_full_name }}</div>
+								{% empty %}
+									No group
+								{% endfor %}
+
+								{% if registration.league.baggage > 1 and registration.league.freeze_group_date|timeuntil != '0 minutes' %}
+									<div><a href="{% url league_group year=league.year season=league.season division=league.night %}">Edit Group</a></div>
+								{% endif %}
+							</td>
+						</tr>
+					{% endfor %}
+				{% endfor%}
+			</table>
+
+			<p id="user_registrations_note">
+				It can sometimes take a while for PayPal to confirm a payment. Try clicking reload after a few minutes have passed.<br />
+				If you used the echeck feature of paypal it may take up to a week to clear.<br />
+				If paying by check, the status will remain unconfirmed until your check is received and processed.<br />
+			</p>
+		{% else %}
+			<p class="none_found">No registrations found</p>
+		{% endif %}
+	</div>
 {% endblock %}

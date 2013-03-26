@@ -2,11 +2,13 @@
 
 {% block content %}
 
-<h2>
+<h1>
 	{{ league.season|capfirst }} League {{ league.year }} - {{ league.night|title }} Registration
-</h2>
+</h1>
 
-<h3>Attendance and Captaining</h3>
+{% include 'leagues/registration/_progress.html' %}
+
+<h2>Attendance and Captaining</h2>
 
 <form method="post">{% csrf_token %}
 	{{ attendance_form.id }}

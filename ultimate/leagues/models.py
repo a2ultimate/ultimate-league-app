@@ -1,5 +1,6 @@
 from django import forms
 from django.db import models
+from django.db.models import Count
 from django.contrib.auth.models import User
 
 from pybb.models import *
@@ -242,11 +243,41 @@ class Registrations(models.Model):
 	class Meta:
 		db_table = u'registrations'
 
+	def get_status(self):
+		status = 'Completed'
+		if self.conduct_complete:
+			status = 'Conduct Completed'
+			if self.waiver_complete:
+				status = 'Waiver Completed'
+				if self.attendance != None and self.captain != None:
+					status = 'Attendance Completed'
+
+					if self.pay_type == 'check' and not self.check_complete:
+						status = 'Waiting for Check'
+					elif self.pay_type == 'check' and self.check_complete:
+						status = 'Check Completed'
+					elif self.pay_type == 'paypal' and not self.paypal_complete:
+						status = 'Waiting for Paypal'
+					elif self.pay_type == 'paypal' and self.paypal_complete:
+						status = 'Paypal Completed'
+		return status
+
+	def get_progress(self):
+		percentage = 0
+		if self.conduct_complete:
+			percentage = 20
+			if self.waiver_complete:
+				percentage = 40
+				if self.attendance != None and self.captain != None:
+					percentage = 60
+					if self.pay_type:
+						percentage = 80
+						if self.check_complete or self.paypal_complete:
+							percentage = 100
+		return percentage
+
 	def is_complete(self):
 		return bool(self.conduct_complete and self.waiver_complete and self.attendance != None and self.captain != None and self.pay_type and (self.check_complete or self.paypal_complete))
-
-	def get_status(self):
-		return 'Completed'
 
 	def __unicode__(self):
 		return '%d %s %s - %s %s' % (self.league.year, self.league.season, self.league.night, self.user)
@@ -261,6 +292,10 @@ class Team(models.Model):
 	class Meta:
 		db_table = u'team'
 
+	@property
+	def size(self):
+		return self.teammember_set.all().count()
+
 	def get_members(self):
 		return self.teammember_set.all()
 
@@ -268,7 +303,10 @@ class Team(models.Model):
 		return bool(self.teammember_set.filter(user=user))
 
 	def player_survey_complete(self, user):
-		return bool(self.skillsreport_set.filter(submitted_by=user).count() > 0)
+		skill_reports = self.skillsreport_set.annotate(num_skills=Count('skills')).filter(submitted_by=user)
+		# since you don't rate yourself, looking for a skill report and teamsize - 1 skill entries
+		return bool(skill_reports.count() > 0) and \
+			bool(skill_reports.filter(num_skills__gte=self.size - 1).count() > 0)
 
 class TeamMember(models.Model):
 	id = models.AutoField(primary_key=True)
@@ -302,8 +340,8 @@ class Game(models.Model):
 	def get_reports(self):
 		return self.gamereport_set.all()
 
-	def report_complete(self):
-		for report in self.gamereport_set.all():
+	def report_complete_for_user(self, user):
+		for report in self.gamereport_set.filter(team__teammember__user=user, team__teammember__captain=1):
 			if (report.is_complete):
 				return True
 		return False
