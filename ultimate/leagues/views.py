@@ -112,7 +112,7 @@ def registration(request, year, season, division, section=None):
 			else:
 				messages.error(request, 'You must select a valid payment type to continue.')
 
-		# return HttpResponseRedirect(reverse('league_registration', kwargs={'year': year, 'season': season, 'division': division}))
+		return HttpResponseRedirect(reverse('league_registration', kwargs={'year': year, 'season': season, 'division': division}))
 
 	if section == 'conduct' or not registration.conduct_complete:
 		return render_to_response('leagues/registration/conduct.html',
@@ -153,7 +153,7 @@ def registration(request, year, season, division, section=None):
 		# https://ppmts.custhelp.com/app/answers/detail/a_id/165
 
 	return render_to_response('leagues/registration/status.html',
-		{'paypal_form': paypal_form, 'league': league, 'registration': registration},
+		{'paypal_form': paypal_form, 'league': league, 'registration': registration, 'section': section},
 		context_instance=RequestContext(request))
 
 

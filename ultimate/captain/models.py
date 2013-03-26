@@ -27,7 +27,9 @@ class GameReport(models.Model):
 
 	@property
 	def is_complete(self):
-		return bool(self.gamereportattendance_set.count() > 0) and bool(self.gamereportscore_set.count() > 1)
+		# TODO collapse reports with more than 1 attendance report, more than 2 score sets
+		return bool(self.gamereportattendance_set.count() >= 1) and \
+			bool(self.gamereportscore_set.count() >= 2)
 
 class GameReportAttendance(models.Model):
 	id = models.AutoField(primary_key=True)

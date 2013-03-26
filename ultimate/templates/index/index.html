@@ -21,36 +21,30 @@
 		</div>
 	</div>
 
-	<table id="social_feed">
+	<ul id="social_feed">
 		{% for update in updates %}
-			<tr class="update">
+			<li class="update">
 				{% if update.type == 'tweet' %}
-					<td class="user_image">
-						<a style="background-image: url('{{ update.tweet.user.thumbnail_url }}');" href="http://twitter.com/{{ update.tweet.user.screen_name }}" title="{{ update.tweet.user.screen_name }} on Twitter"></a>
-					</td>
-					<td class="update_content">
-						<div class="update_header">
-							<a class="update_user" href="http://twitter.com/{{ update.tweet.user.screen_name }}" target="_blank">@{{ update.tweet.user.screen_name }}</a>
-							<a class="update_datetime" href="http://twitter.com/{{ update.tweet.user.screen_name }}/status/{{ update.tweet.twitter_id }}" target="_blank">{{ update.tweet.pub_time|timesince }} ago</a>
-						</div>
-						{{ update.tweet.text }}
-					</td>
+					<a style="background-image: url('{{ update.tweet.user.thumbnail_url }}');" href="http://twitter.com/{{ update.tweet.user.screen_name }}" title="{{ update.tweet.user.screen_name }} on Twitter"></a>
+					<div class="update_header">
+						<a class="update_user" href="http://twitter.com/{{ update.tweet.user.screen_name }}" target="_blank">@{{ update.tweet.user.screen_name }}</a>
+						<a class="update_datetime" href="http://twitter.com/{{ update.tweet.user.screen_name }}/status/{{ update.tweet.twitter_id }}" target="_blank">{{ update.tweet.pub_time|timesince }} ago</a>
+					</div>
+					{{ update.tweet.text }}
 				{% endif %}
 
 				{% if update.type == 'photo' %}
-					<td class="update_content" colspan="2">
-						{% for photo in update.photoset|slice:":3" %}
-							{% if forloop.first %}
-								<div class="update_header">
-									<a class="update_user" href="http://flickr.com/photos/{{ photo.owner_nsid }}" target="_blank">{{ photo.owner }}</a>
-									<span class="update_datetime">{{ photo.upload_date|timesince }} ago</span>
-								</div>
-							{% endif %}
-							<a href="{{ photo.photopage_url }}" target="_blank"><img class="photo" src="{{ photo.url }}" /></a>
-						{% endfor %}
-					</td>
+					{% for photo in update.photoset|slice:":3" %}
+						{% if forloop.first %}
+							<div class="update_header">
+								<a class="update_user" href="http://flickr.com/photos/{{ photo.owner_nsid }}" target="_blank">{{ photo.owner }}</a>
+								<span class="update_datetime">{{ photo.upload_date|timesince }} ago</span>
+							</div>
+						{% endif %}
+						<a href="{{ photo.photopage_url }}" target="_blank"><img class="photo" src="{{ photo.url }}" /></a>
+					{% endfor %}
 				{% endif %}
-			</tr>
+			</li>
 		{% endfor %}
-	</table>
+	</ul>
 {% endblock %}
