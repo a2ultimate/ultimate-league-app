@@ -1,6 +1,7 @@
 {% extends "layout/layout_user.html" %}
-{% load user_roles %}
+{% load games %}
 {% load teams %}
+{% load user_roles %}
 
 {% block content %}
 	<div id="content_tabs">
@@ -45,7 +46,7 @@
 
 
 			<li class="captain_division_game">
-				{% if game.report_complete %}
+				{% if game|report_complete_for_user:user %}
 					<span class="status state_success"></span>
 				{% else %}
 					<span class="status state_error"></span>

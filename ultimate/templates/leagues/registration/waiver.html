@@ -2,11 +2,13 @@
 
 {% block content %}
 
-<h2>
+<h1>
 	{{ league.season|capfirst }} League {{ league.year }} - {{ league.night|title }} Registration
-</h2>
+</h1>
 
-<h3>Waiver / Release</h3>
+{% include 'leagues/registration/_progress.html' %}
+
+<h2>Waiver / Release</h2>
 
 <p>I understand that Ultimate and other flying disc sports are strenuous physical activities which may put me at risk of bodily injury or harm.</p>
 <p>I hearby release the Ann Arbor Ultimate Summer League and its members and officers from any and all liability for any injury I may sustain while participating in or observing any AAUSL event or activity.</p>

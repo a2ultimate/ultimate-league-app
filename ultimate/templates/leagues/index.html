@@ -1,51 +1,88 @@
 {% extends "layout/layout_user.html" %}
 
 {% block content %}
-	<h2>
-	    Welcome to {{ season|capfirst }} League {{ year }}
-	</h2>
+	<h1>
+		{{ season|capfirst }} League {{ year }}
+	</h1>
 
-	<p>	    
-	    Ann Arbor Ultimate  is very excited to present {{ season|capfirst }} League {{ year }}.
-	    There are <b>{{ leagues|length }}</b> divisions:
+	<p>
+		Ann Arbor Ultimate is very excited to present {{ season|capfirst }} League {{ year }}.
+		There are <strong>{{ leagues|length }}</strong> divisions.
 	</p>
 
 	{% for league in leagues %}
-	    <h3 class="division_title">{{ league.night|capfirst }} Division ({{ league.gender|capfirst }})</h3>
-	    {% if league.gender_note %}
-	        {{ league.gender_note|safe }}
+		<h2 class="division_title">{{ league.night|capfirst }} Division ({{ league.gender|capfirst }})</h2>
+		{% if league.gender_note %}
+			{{ league.gender_note|safe }}
 		{% endif %}
-	    <ul class="text_information">
-	        <li>{{ league.times }}
-		        <ul>
-		            <li>
-		            {{ league.league_start_date|date:'F d, Y' }} through {{ league.league_end_date|date:'F d, Y' }}
-		            </li>
-		        </ul>
-	        </li>
-	        <li>Cost:
-		        <ul>
-		            <li>PayPal: {{ league.paypal_cost|floatformat:2 }}, Check: {{ league.check_cost|floatformat:2 }}</li>
-		        </ul>
-	        </li>
-	        <li>Where:
-		        <ul>
-					{% for field in league.get_fields %}
-						<li>{{ field.field.name }}</li>
-					{% endfor %}
-		        </ul>
-			</li>
-	        <li>Registration dates:
-	        <ul>
-	            <li>Signup cutoff: {{ league.max_players }} or {{ league.waitlist_start_date|date:'F d, Y' }}</li>
-	            {% ifnotequal league.baggage 1 %}
-	                <li>Last chance to join/leave a group: {{ league.freeze_group_date|date:'F d, Y' }}</li>
-				{% endifnotequal %}
-	        </ul></li>
-	        <li>Group info:
-	        <ul>
-	            <li>Maximum group size: {{ league.baggage }}</li>
-	        </ul></li>
-	    </ul>
+
+		<table class="league_info_table">
+			<tr class="gray">
+				<th colspan="2">
+					Dates
+				</th>
+				<th>
+					Times
+				</th>
+			</tr>
+			<tr>
+				<td colspan="2">
+					{{ league.league_start_date|date:'F d, Y' }} through {{ league.league_end_date|date:'F d, Y' }}
+				</td>
+				<td>
+					{{ league.times }}
+				</td>
+			</tr>
+			<tr class="gray">
+				<th colspan="3">
+					Location
+				</th>
+			</tr>
+			{% for field in league.get_fields %}
+				<tr>
+					<td colspan="3">{{ field.field.name }}</td>
+				</tr>
+			{% endfor %}
+			<tr class="gray">
+				<th colspan="2">
+					Cost
+				</th>
+				<th>
+					Group Size
+				</th>
+			</tr>
+			<tr>
+				<td>
+					PayPal ${{ league.paypal_cost|floatformat:2 }}
+				</td>
+				<td>
+					Check ${{ league.check_cost|floatformat:2 }}
+				</td>
+				<td>
+					{{ league.baggage }}
+				</td>
+			</tr>
+			<tr class="gray">
+				<th colspan="3">
+					Important Dates
+				</th>
+			</tr>
+			<tr>
+				<td>
+					Signup Cutoff/Deadline
+				</td>
+				<td>
+					{{ league.max_players }} Players or {{ league.waitlist_start_date|date:'F d, Y' }}
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Group Change Deadline
+				</td>
+				<td>
+					{{ league.freeze_group_date|date:'F d, Y' }}
+				</td>
+			</tr>
+		</table>
 	{% endfor %}
 {% endblock %}

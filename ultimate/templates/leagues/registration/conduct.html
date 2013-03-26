@@ -2,11 +2,13 @@
 
 {% block content %}
 
-<h2>
+<h1>
 	{{ league.season|capfirst }} League {{ league.year }} - {{ league.night|title }} Registration
-</h2>
+</h1>
 
-<h3>Player Code of Conduct</h3>
+{% include 'leagues/registration/_progress.html' %}
+
+<h2>Player Code of Conduct</h2>
 <p>As a player I agree:
 	<ul class="text_information">
 		<li>To uphold the spirit of the game and to treat other players with respect.</li>

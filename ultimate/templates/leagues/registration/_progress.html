@@ -1,0 +1,41 @@
+{% load league_registrations %}
+
+<div class="progress_bar progress_bar_labeled">
+	<div class="progress success" style="width: {{ registration.get_progress }}%;"></div>
+
+	<div class="tick {{ registration|get_registration_tick_color:20 }}" style="left: 20%;"></div>
+	<div class="tick {{ registration|get_registration_tick_color:40 }}" style="left: 40%;"></div>
+	<div class="tick {{ registration|get_registration_tick_color:60 }}" style="left: 60%;"></div>
+	<div class="tick {{ registration|get_registration_tick_color:80 }}" style="left: 80%;"></div>
+	<div class="tick {{ registration|get_registration_tick_color:100 }}" style="left: 100%;"></div>
+
+	{% if registration.get_progress >= 0 %}
+		<a class="tick_label" style="left: 20%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='conduct' %}">Code of Conduct</a>
+	{% else %}
+		<span class="tick_label" style="left: 20%">Code of Conduct</span>
+	{% endif %}
+
+	{% if registration.get_progress >= 20 %}
+		<a class="tick_label" style="left: 40%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='waiver' %}">Waiver</a>
+	{% else %}
+		<span class="tick_label" style="left: 40%">Waiver</span>
+	{% endif %}
+
+	{% if registration.get_progress >= 40 %}
+		<a class="tick_label" style="left: 60%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='attendance' %}">Attendance</a>
+	{% else %}
+		<span class="tick_label" style="left: 60%">Attendance</span>
+	{% endif %}
+
+	{% if registration.get_progress >= 60 %}
+		<a class="tick_label" style="left: 80%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='pay_type' %}">Payment Type</a>
+	{% else %}
+		<span class="tick_label" style="left: 80%">Payment Type</span>
+	{% endif %}
+
+	{% if registration.get_progress >= 80 %}
+		<a class="tick_label" style="left: 100%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='status' %}">Status</a>
+	{% else %}
+		<span class="tick_label" style="left: 100%">Status</span>
+	{% endif %}
+</div>
