@@ -232,7 +232,7 @@ class Registrations(models.Model):
 	updated = models.DateTimeField(auto_now=True)
 	conduct_complete = models.BooleanField()
 	waiver_complete = models.BooleanField()
-	pay_type = models.TextField(choices=REGISTRATION_PAYMENT_CHOICES, blank=True)
+	pay_type = models.TextField(choices=REGISTRATION_PAYMENT_CHOICES, null=True)
 	check_complete = models.BooleanField()
 	paypal_invoice_id = models.CharField(max_length=127)
 	paypal_complete = models.BooleanField()
