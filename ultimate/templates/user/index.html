@@ -1,20 +1,9 @@
 {% extends "layout/layout_user.html" %}
-{% load user_roles %}
 {% load league_registrations %}
 {% load teams %}
 
 {% block content %}
-	<div id="content_tabs">
-		<ul>
-			<li class="selected"><a href="{% url user %}">My Account</a></li>
-			{% if user|is_captain %}
-				<li><a href="{% url captain %}">Captain Resources</a></li>
-			{% endif %}
-			{% if user|in_group:"Junta" %}
-				<li><a href="{% url junta %}">Junta Resources</a></li>
-			{% endif %}
-		</ul>
-	</div>
+	{% include "layout/account_tabs.html" with selected_tab="user" %}
 
 	<div>
 		{% if next_game %}

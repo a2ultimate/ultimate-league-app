@@ -1,24 +1,7 @@
 {% extends "layout/layout_user.html" %}
-{% load user_roles %}
-{% load teams %}
 
 {% block content %}
-	<div id="content_tabs">
-		<ul>
-			<li class="selected"><a href="{% url user %}">My Account</a></li>
-			{% if user|is_captain %}
-				<li><a href="{% url captain %}">Captain Resources</a></li>
-			{% endif %}
-			{% if user|in_group:"Junta" %}
-				<li><a href="{% url junta %}">Junta Resources</a></li>
-			{% endif %}
-		</ul>
-	</div>
-	
-	<ul id="breadcrumbs">
-		<li><a href="{% url user %}">My Account</a></li>&raquo;
-		<li><a href="{% url junta %}">Junta Resources</a></li>
-	</ul>
+	{% include "layout/account_tabs.html" with selected_tab="junta" %}
 
-	<h1>Junta</h1>
+	<h1>Junta Resources</h1>
 {% endblock %}
