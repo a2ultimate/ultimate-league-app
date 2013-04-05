@@ -48,7 +48,7 @@
 			<li><a href="{% url contact %}">Contacts</a></li>
 			{% if user.is_superuser %}<li><a href="{% url home %}admin">Admin</a></li>{% endif %}
 			{% if menu_leagues %}
-				<li><span>Active Leagues:</span></li>
+				<li><span>Leagues</span></li>
 				{% regroup menu_leagues by year as league_years %}
 
 				{% for league_list in league_years %}

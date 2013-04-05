@@ -25,7 +25,13 @@
 									<li>
 										<span class="league_name">{{ night.night|capfirst }}</span>
 										<ul>
-											<li><a href="{% url league_registration year=league_list.grouper season=league.grouper division=night.night %}">Registration</a></li>
+											{% if night.is_accepting_registrations %}
+												{% if night.is_accepting_waitlist %}
+													<li><a href="{% url league_registration year=league_list.grouper season=league.grouper division=night.night %}">Register for Waitlist</a></li>
+												{% else %}
+													<li><a href="{% url league_registration year=league_list.grouper season=league.grouper division=night.night %}">Register</a></li>
+												{% endif %}
+											{% endif %}
 											<li><a href="{% url league_summary year=league_list.grouper season=league.grouper division=night.night %}">Summary</a></li>
 											<li><a href="{% url league_details year=league_list.grouper season=league.grouper division=night.night %}">Detailed Info</a></li>
 											<li><a href="{% url league_players year=league_list.grouper season=league.grouper division=night.night %}">Players</a></li>

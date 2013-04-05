@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 
 from pybb.models import *
 
+from datetime import date, datetime
+
 class Field(models.Model):
 	id = models.AutoField(primary_key=True)
 	name = models.TextField()
@@ -95,6 +97,14 @@ class League(models.Model):
 			return self.schedule_set.all()[0].get_games().count() / (self.team_set.all().count() / 2)
 		except:
 			return 0
+
+	@property
+	def is_accepting_registrations(self):
+		return self.state == 'active' and self.league_end_date > date.today()
+
+	@property
+	def is_accepting_waitlist(self):
+		return self.state == 'active' and date.today() >= self.waitlist_start_date
 
 	def __unicode__(self):
 		return '%s %d %s' % (self.season, self.year, self.night)
