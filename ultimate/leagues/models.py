@@ -2,6 +2,7 @@ from django import forms
 from django.db import models
 from django.db.models import Count
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 
 from pybb.models import *
 
@@ -302,6 +303,31 @@ class Registrations(models.Model):
 
 	def is_complete(self):
 		return bool(self.conduct_complete and self.waiver_complete and self.attendance != None and self.captain != None and self.pay_type and (self.check_complete or self.paypal_complete))
+
+	def add_to_baggage_group(self, email):
+		try:
+			registration = Registrations.objects.get(user__email=email, league=self.league)
+		except ObjectDoesNotExist:
+			return False
+
+		if (registration.baggage.get_registrations().count() < registration.league.baggage):
+			self.baggage.delete()
+			self.baggage = registration.baggage
+			self.save()
+
+		return False
+
+	def leave_baggage_group(self):
+		baggage = Baggage()
+		baggage.save()
+
+		if (self.baggage.get_registrations().count() <= 1):
+			self.baggage.delete()
+
+		self.baggage = baggage
+		self.save()
+
+		return baggage.id
 
 	def __unicode__(self):
 		return '%d %s %s - %s %s' % (self.league.year, self.league.season, self.league.night, self.user)

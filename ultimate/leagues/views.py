@@ -56,6 +56,19 @@ def group(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
 	registration = get_object_or_404(Registrations, league=league, user=request.user)
 
+	if request.method == 'POST':
+		if 'leave_group' in request.POST:
+			registration.leave_baggage_group()
+
+		elif 'add_group' in request.POST and 'email' in request.POST:
+			email = request.POST.get('email')
+			if (registration.add_to_baggage_group(email)):
+				messages.success(request, 'You were successfully added to ' + email + '\'s group.')
+			else:
+				messages.error(request, 'Could not create baggage group.')
+
+		return HttpResponseRedirect(reverse('league_group', kwargs={'year': year, 'season': season, 'division': division}))
+
 	return render_to_response('leagues/group.html',
 		{'league': league, 'registration': registration},
 		context_instance=RequestContext(request))
@@ -100,11 +113,21 @@ def registration(request, year, season, division, section=None):
 		# payment type response
 		if 'pay_type' in request.POST:
 			if request.POST.get('pay_type').lower() == 'check':
+				if not registration.baggage_id:
+					baggage = Baggage()
+					baggage.save()
+					registration.baggage_id = baggage.id
+
 				registration.pay_type = 'check'
 				registration.save()
 				messages.success(request, 'Payment type set to check.')
 
 			elif request.POST.get('pay_type').lower() == 'paypal':
+				if not registration.baggage_id:
+					baggage = Baggage()
+					baggage.save()
+					registration.baggage_id = baggage.id
+
 				registration.pay_type = 'paypal'
 				registration.save()
 				messages.success(request, 'Payment type set to PayPal.')
