@@ -1,0 +1,74 @@
+{% extends "layout/layout_user.html" %}
+{% load games %}
+{% load leagues %}
+
+{% block content %}
+	{% include "layout/account_tabs.html" with selected_tab="junta" %}
+
+	{% if leagues %}
+		<h1>Captain Status</h1>
+
+		<ul class="league_list">
+			{% regroup leagues by year as league_years %}
+
+			{% for league_list in league_years %}
+				{% regroup league_list.list by season as league_seasons %}
+
+				{% for league in league_seasons %}
+					<li>
+						<h3>{{ league.grouper|capfirst }} {{ league_list.grouper }}</h3>
+						<ul>
+							{% for night in league.list %}
+								<li>
+									<a href="{% url captainstatus_league year=league_list.grouper season=league.grouper division=night.night %}">{{ night.night|capfirst }}</a>
+								</li>
+							{% endfor %}
+						</ul>
+					</li>
+				{% endfor %}
+			{% endfor %}
+		</ul>
+	{% else %}
+		<h1>{{ league.season|capfirst }} League {{ league.year }} {{ league.night|capfirst }} Captain Status</h1>
+
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Captain</th>
+					{% regroup schedule.get_games|dictsort:"date" by date as games %}
+					{% for game_date in games %}
+						<th>{{ game_date.grouper|date:"m/d" }}</th>
+					{% endfor %}
+					<th>Total</th>
+					<th>Survey</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for captain in league|get_league_captains_teammember %}
+					<tr class="{% ifchanged captain.team %}table-bordered-row{% endifchanged %}">
+						<td>
+							{{ captain.user.get_full_name }}
+						</td>
+						{% for game in league|get_user_games:captain.user %}
+							<td>
+								{% if game|report_complete_for_user:captain.user %}
+									<span class="status state_success center_margin" title="Score report submitted"></span>
+								{% else %}
+									<span class="status state_error center_margin" title="No score report submitted"></span>
+								{% endif %}
+							</td>
+						{% endfor %}
+						<td>{{ league|get_num_reports_for_user:captain.user }}</td>
+						<td>
+							{% if league|get_player_survey_status:captain.user %}
+								<span class="status state_success center_margin" title="Player survey submitted"></span>
+							{% else %}
+								<span class="status state_error center_margin" title="No player survey submitted"></span>
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endif %}
+{% endblock %}

@@ -17,6 +17,11 @@
 		{% endif %}
 
 		<table class="league_info_table">
+			<tr>
+				<td><a href="{% url league_details year=league.year season=league.season division=league.night %}">Detailed Info</a></td>
+				<td><a href="{% url league_players year=league.year season=league.season division=league.night %}">Players</a></td>
+				<td><a href="{% url league_teams year=league.year season=league.season division=league.night %}">Teams & Schedules</a></td>
+			</tr>
 			<tr class="gray">
 				<th colspan="2">
 					Dates
@@ -83,6 +88,18 @@
 					{{ league.freeze_group_date|date:'F d, Y' }}
 				</td>
 			</tr>
+
+			{% if league.is_accepting_registrations %}
+				<tr class="gray">
+					<td colspan="3">
+						{% if league.is_accepting_waitlist %}
+							<a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register for the Waitlist</a>
+						{% else %}
+							<a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register Now!</a>
+						{% endif %}
+					</td>
+				</tr>
+			{% endif %}
 		</table>
 	{% endfor %}
 {% endblock %}

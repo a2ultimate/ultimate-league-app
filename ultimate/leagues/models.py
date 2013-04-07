@@ -92,11 +92,23 @@ class League(models.Model):
 	def get_league_registrations_for_user(self, user):
 		return self.registrations_set.filter(user=user)
 
+	def get_user_games(self, user):
+		return self.schedule_set.all()[0].get_games().filter(gameteams__team__teammember__user=user).order_by('date')
+
 	def get_num_game_events(self):
 		try:
 			return self.schedule_set.all()[0].get_games().count() / (self.team_set.all().count() / 2)
 		except:
 			return 0
+
+	def get_league_captains(self):
+		return User.objects.filter(teammember__team__league=self, teammember__captain=1)
+
+	def get_league_captains_teammember(self):
+		return TeamMember.objects.filter(team__league=self, captain=1).order_by('team')
+
+	def player_survey_complete_for_user(self, user):
+		return bool(self.team_set.filter(teammember__user=user)[0].player_survey_complete(user))
 
 	@property
 	def is_accepting_registrations(self):
@@ -350,10 +362,16 @@ class Game(models.Model):
 	def get_reports(self):
 		return self.gamereport_set.all()
 
-	def report_complete_for_user(self, user):
+	def report_complete_for_team(self, user):
 		for report in self.gamereport_set.filter(team__teammember__user=user, team__teammember__captain=1):
 			if (report.is_complete):
 				return True
+		return False
+
+	def report_complete_for_user(self, user):
+		for report in self.gamereport_set.filter(last_updated_by=user, team__teammember__user=user, team__teammember__captain=1):
+			if (report.is_complete):
+				return report.game.id
 		return False
 
 class GameTeams(models.Model):

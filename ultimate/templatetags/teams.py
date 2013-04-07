@@ -73,8 +73,3 @@ def get_game_user_teamid(game, user):
 def get_game_user_teamname(game, user):
 	return game.get_user_team(user).name
 
-# returns whether a user has filled out a player survey for a league
-@register.filter
-def league_player_survey_complete(game, user):
-	return game.get_user_team(user).player_survey_complete(user)
-

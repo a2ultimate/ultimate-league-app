@@ -154,6 +154,10 @@ table tr.gray td:last-child {
 	border-bottom-right-radius: 4px;
 }
 
+.center_margin {
+	margin: 0 auto;
+}
+
 /* HEADER */
 
 #header_container {
@@ -693,6 +697,179 @@ input[type="submit"] {
 	background-color: #cea70c;
 }
 
+
+
+.table {
+	margin-bottom: 20px;
+	width: 100%;
+}
+
+.table th,
+.table td {
+	border-top: 1px solid #DDDDDD;
+	line-height: 20px;
+	padding: 8px;
+	text-align: left;
+	vertical-align: middle;
+}
+
+.table thead th {
+	vertical-align: bottom;
+}
+
+.table caption + thead tr:first-child th,
+.table caption + thead tr:first-child td,
+.table colgroup + thead tr:first-child th,
+.table colgroup + thead tr:first-child td,
+.table thead:first-child tr:first-child th,
+.table thead:first-child tr:first-child td {
+	border-top: 0;
+}
+
+.table tbody + tbody {
+	border-top: 2px solid #DDDDDD;
+}
+
+.table .table {
+	background-color: #FFFFFF;
+}
+
+.table-condensed th,
+.table-condensed td {
+	padding: 4px 5px;
+}
+
+.table-bordered {
+	border: 1px solid #DDDDDD;
+	border-collapse: separate;
+	border-left: 0;
+	border-radius: 4px;
+}
+
+.table-bordered th,
+.table-bordered td {
+	border-left: 1px solid #DDDDDD;
+}
+
+.table-bordered caption + thead tr:first-child th,
+.table-bordered caption + tbody tr:first-child th,
+.table-bordered caption + tbody tr:first-child td,
+.table-bordered colgroup + thead tr:first-child th,
+.table-bordered colgroup + tbody tr:first-child th,
+.table-bordered colgroup + tbody tr:first-child td,
+.table-bordered thead:first-child tr:first-child th,
+.table-bordered tbody:first-child tr:first-child th,
+.table-bordered tbody:first-child tr:first-child td {
+	border-top: 0;
+}
+
+.table-bordered thead:first-child tr:first-child > th:first-child,
+.table-bordered tbody:first-child tr:first-child > td:first-child,
+.table-bordered tbody:first-child tr:first-child > th:first-child {
+	border-top-left-radius: 4px;
+}
+
+.table-bordered thead:first-child tr:first-child > th:last-child,
+.table-bordered tbody:first-child tr:first-child > td:last-child,
+.table-bordered tbody:first-child tr:first-child > th:last-child {
+	border-top-right-radius: 4px;
+}
+
+.table-bordered thead:last-child tr:last-child > th:first-child,
+.table-bordered tbody:last-child tr:last-child > td:first-child,
+.table-bordered tbody:last-child tr:last-child > th:first-child,
+.table-bordered tfoot:last-child tr:last-child > td:first-child,
+.table-bordered tfoot:last-child tr:last-child > th:first-child {
+	border-bottom-left-radius: 4px;
+}
+
+.table-bordered thead:last-child tr:last-child > th:last-child,
+.table-bordered tbody:last-child tr:last-child > td:last-child,
+.table-bordered tbody:last-child tr:last-child > th:last-child,
+.table-bordered tfoot:last-child tr:last-child > td:last-child,
+.table-bordered tfoot:last-child tr:last-child > th:last-child {
+	border-bottom-right-radius: 4px;
+}
+
+.table-bordered tfoot + tbody:last-child tr:last-child > td:first-child {
+	border-bottom-left-radius: 0;
+}
+
+.table-bordered tfoot + tbody:last-child tr:last-child > td:last-child {
+	border-bottom-right-radius: 0;
+}
+
+.table-bordered caption + thead tr:first-child th:first-child,
+.table-bordered caption + tbody tr:first-child td:first-child,
+.table-bordered colgroup + thead tr:first-child th:first-child,
+.table-bordered colgroup + tbody tr:first-child td:first-child {
+	border-top-left-radius: 4px;
+}
+
+.table-bordered caption + thead tr:first-child th:last-child,
+.table-bordered caption + tbody tr:first-child td:last-child,
+.table-bordered colgroup + thead tr:first-child th:last-child,
+.table-bordered colgroup + tbody tr:first-child td:last-child {
+	border-top-right-radius: 4px;
+}
+
+.table-bordered-row th,
+.table-bordered-row td {
+	border-top: 1px solid #999999;
+}
+
+.table-striped > tbody > tr:nth-child(odd) > td,
+.table-striped > tbody > tr:nth-child(odd) > th {
+	background-color: #ECEFF1;
+}
+
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
+	background-color: #ECF0F1;
+}
+
+.table > tbody > tr > td.success,
+.table > tbody > tr > th.success,
+.table > tbody > tr.success > td {
+	background-color: #DFF0D8;
+	border-color: #D6E9C6;
+}
+
+.table > tbody > tr > td.danger,
+.table > tbody > tr > th.danger,
+.table > tbody > tr.danger > td {
+	background-color: #F2DEDE;
+	border-color: #EED3D7;
+}
+
+.table > tbody > tr > td.warning,
+.table > tbody > tr > th.warning,
+.table > tbody > tr.warning > td {
+	background-color: #FCF8E3;
+	border-color: #FBEED5;
+}
+
+.table-hover > tbody > tr > td.success:hover,
+.table-hover > tbody > tr > th.success:hover,
+.table-hover > tbody > tr.success:hover > td {
+	background-color: #D0E9C6;
+	border-color: #C9E2b3;
+}
+
+.table-hover > tbody > tr > td.danger:hover,
+.table-hover > tbody > tr > th.danger:hover,
+.table-hover > tbody > tr.danger:hover > td {
+	background-color: #EBCCCC;
+	border-color: #E6C1C7;
+}
+
+.table-hover > tbody > tr > td.warning:hover,
+.table-hover > tbody > tr > th.warning:hover,
+.table-hover > tbody > tr.warning:hover > td {
+	background-color: #FAF2CC;
+	border-color: #F8E5BE;
+}
+
 .form_cancel {
 	padding: 0 6px;
 }
@@ -892,6 +1069,14 @@ input[type="submit"] {
 .slide_selector .slider_description .right {
 	float: right;
 	text-align: right;
+}
+
+span.status {
+	border-radius: 50%;
+	display: block;
+	height: 12px;
+	left: 0;
+	width: 12px;
 }
 
 

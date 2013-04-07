@@ -1,4 +1,5 @@
 {% extends "layout/layout_user.html" %}
+{% load leagues %}
 {% load games %}
 {% load teams %}
 
@@ -21,7 +22,7 @@
 						<li><a href="{% url captaineditteam teamid=game|get_game_user_teamid:user %}">Change Team Name or Color</a></li>
 						<li>
 							<a href="{% url playersurvey teamid=game|get_game_user_teamid:user %}">
-								{% if game|league_player_survey_complete:user %}
+								{% if game.schedule.league|get_player_survey_status:user %}
 									<span class="status state_success"></span>
 								{% else %}
 									<span class="status state_error"></span>
@@ -37,7 +38,7 @@
 
 
 			<li class="captain_division_game">
-				{% if game|report_complete_for_user:user %}
+				{% if game|report_complete_for_team:user %}
 					<span class="status state_success"></span>
 				{% else %}
 					<span class="status state_error"></span>
