@@ -54,3 +54,5 @@ captaining,
 `guardian_email`
 FROM registration
 WHERE league_id != 0;
+
+DROP TABLE registration;
