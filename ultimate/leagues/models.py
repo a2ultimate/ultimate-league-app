@@ -314,6 +314,7 @@ class Registrations(models.Model):
 			self.baggage.delete()
 			self.baggage = registration.baggage
 			self.save()
+			return True
 
 		return False
 
