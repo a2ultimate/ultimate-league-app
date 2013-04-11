@@ -1,4 +1,5 @@
 {% extends "layout/layout_user.html" %}
+{% load leagues %}
 {% load teams %}
 
 {% block content %}
@@ -16,7 +17,7 @@
 		{% endfor %}
 	</ol>
 
-	{% if league.baggage > 1 and league.freeze_group_date|timeuntil != '0 minutes' %}
+	{% if league.baggage > 1 and not registration.league.freeze_group_date|is_past_deadline %}
 		<form method="POST">{% csrf_token %}
 			<input class="button button_error" type="submit" name="leave_group" value="Leave Group" />
 		</form>

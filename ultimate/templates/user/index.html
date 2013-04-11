@@ -1,4 +1,5 @@
 {% extends "layout/layout_user.html" %}
+{% load leagues %}
 {% load league_registrations %}
 {% load teams %}
 
@@ -98,7 +99,7 @@
 									No group
 								{% endfor %}
 
-								{% if registration.league.baggage > 1 and registration.league.freeze_group_date|timeuntil != '0 minutes' %}
+								{% if registration.league.baggage > 1 and not registration.league.freeze_group_date|is_past_deadline %}
 									<div><a href="{% url league_group year=league.year season=league.season division=league.night %}">Edit Group</a></div>
 								{% endif %}
 							</td>
