@@ -1,5 +1,6 @@
 {% extends "layout/layout_user.html" %}
 {% load leagues %}
+{% load math_tags %}
 {% load teams %}
 
 {% block content %}
@@ -18,14 +19,16 @@
 	</ol>
 
 	{% if league.baggage > 1 and not registration.league.freeze_group_date|is_past_deadline %}
-		<form method="POST">{% csrf_token %}
-			<input class="button button_error" type="submit" name="leave_group" value="Leave Group" />
-		</form>
+		{% if registration.baggage.num_registrations > 1 %}
+			<form method="POST">{% csrf_token %}
+				<input class="button button_error" type="submit" name="leave_group" value="Leave Group" />
+			</form>
+		{% endif %}
 
 		<form method="POST">{% csrf_token %}
-			{% if league|num_spots_left:registration.baggage.get_registrations > 0 %}
+			{% if registration.baggage.num_registrations < league.baggage %}
 				<h2>Add Another Player To Your Group</h2>
-				<p>You have room for {{ league|num_spots_left:registration.baggage.get_registrations }} more players in your group. Enter the email of the player you would like to add below.</p>
+				<p>You have room for {{ league.baggage|subtract:registration.baggage.num_registrations }} more players in your group. Enter the email of the player you would like to add below.</p>
 
 				<div class="control_group">
 					<input name="email" type="text" />

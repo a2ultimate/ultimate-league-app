@@ -36,10 +36,6 @@ def get_team_name_font_size(name):
 		return 21
 
 @register.filter
-def num_spots_left(league, group):
-	return int(league.baggage) - int(len(group))
-
-@register.filter
 def get_league_teamid(league_games, user):
 	return league_games['list'][0].get_user_team(user).id
 

@@ -185,6 +185,10 @@ class Baggage(models.Model):
 	def get_registrations(self):
 		return self.registrations_set.all()
 
+	@property
+	def num_registrations(self):
+		return self.registrations_set.all().count()
+
 REGISTRATION_STATUS_CHOICES=(
 	('new', 'New'),
 	('refunded', 'Refunded'),
