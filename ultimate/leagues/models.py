@@ -309,7 +309,7 @@ class Registrations(models.Model):
 		try:
 			registration = Registrations.objects.get(user__email=email, league=self.league)
 		except ObjectDoesNotExist:
-			return False
+			return 'No registration found for ' + email + '.'
 
 		if (registration.baggage.get_registrations().count() < registration.league.baggage):
 			self.baggage.delete()
@@ -317,20 +317,28 @@ class Registrations(models.Model):
 			self.save()
 			return True
 
-		return False
+		return 'Baggage group for ' + email + ' is full.'
 
-	@transaction.commit_on_success
+	@transaction.commit_manually
 	def leave_baggage_group(self):
-		baggage = Baggage()
-		baggage.save()
+		try:
+			baggage = Baggage()
+			baggage.save()
 
-		if (self.baggage.get_registrations().count() <= 1):
-			self.baggage.delete()
+			if (self.baggage.get_registrations().count() <= 1):
+				self.baggage.delete()
 
-		self.baggage = baggage
-		self.save()
+			self.baggage = baggage
+			self.save()
 
-		return baggage.id
+		except:
+			transaction.rollback()
+			return False
+		else:
+			transaction.commit()
+
+		return True
+
 
 	def __unicode__(self):
 		return '%d %s %s - %s %s' % (self.league.year, self.league.season, self.league.night, self.user)

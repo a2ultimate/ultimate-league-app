@@ -58,14 +58,18 @@ def group(request, year, season, division):
 
 	if request.method == 'POST':
 		if 'leave_group' in request.POST:
-			registration.leave_baggage_group()
+			if (registration.leave_baggage_group()):
+				messages.success(request, 'You were successfully removed from your baggage group.')
+			else:
+				messages.error(request, 'You could not be removed from your baggage group.')
 
 		elif 'add_group' in request.POST and 'email' in request.POST:
 			email = request.POST.get('email')
-			if (registration.add_to_baggage_group(email)):
+			message = registration.add_to_baggage_group(email)
+			if (message == True):
 				messages.success(request, 'You were successfully added to ' + email + '\'s group.')
 			else:
-				messages.error(request, 'Could not create baggage group.')
+				messages.error(request, message)
 
 		return HttpResponseRedirect(reverse('league_group', kwargs={'year': year, 'season': season, 'division': division}))
 
