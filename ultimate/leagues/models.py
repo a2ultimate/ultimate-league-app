@@ -1,5 +1,5 @@
 from django import forms
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Count
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
@@ -304,6 +304,7 @@ class Registrations(models.Model):
 	def is_complete(self):
 		return bool(self.conduct_complete and self.waiver_complete and self.attendance != None and self.captain != None and self.pay_type and (self.check_complete or self.paypal_complete))
 
+	@transaction.commit_on_success
 	def add_to_baggage_group(self, email):
 		try:
 			registration = Registrations.objects.get(user__email=email, league=self.league)
@@ -318,6 +319,7 @@ class Registrations(models.Model):
 
 		return False
 
+	@transaction.commit_on_success
 	def leave_baggage_group(self):
 		baggage = Baggage()
 		baggage.save()
