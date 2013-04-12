@@ -322,10 +322,16 @@ class Registrations(models.Model):
 
 	@transaction.commit_on_success
 	def add_to_baggage_group(self, email):
+		if self.waitlist:
+			return 'You are currently on the waitlist and are ineligible to form baggage groups.'
+
 		try:
 			registration = Registrations.objects.get(user__email=email, league=self.league)
 		except ObjectDoesNotExist:
 			return 'No registration found for ' + email + '.'
+
+		if registration.waitlist:
+			return email + ' is currently on the waitlist and is ineligible to form baggage groups.'
 
 		baggage_limit = self.league.baggage
 
