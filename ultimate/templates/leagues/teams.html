@@ -2,9 +2,8 @@
 {% load teams %}
 
 {% block content %}
-	<h2>
-	    Teams &amp; Schedules for {{ league.night|capfirst }} {{ league.season|capfirst }} {{ league.year }}
-	</h2>
+	<h1>{{ league.season|capfirst }} League {{ league.year }}</h1>
+	<h2 class="division_title">{{ league.night|capfirst }} Division ({{ league.gender|capfirst }}) Teams & Schedules</h2>
 
 	{% if schedule %}
 		{% regroup schedule.get_games|dictsort:"date" by date as games %}

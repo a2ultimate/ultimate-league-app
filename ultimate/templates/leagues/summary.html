@@ -1,11 +1,9 @@
 {% extends "layout/layout_user.html" %}
 
 {% block content %}
-	<h1>
-		{{ league.season|capfirst }} League {{ league.year }}
-	</h1>
+	<h1>{{ league.season|capfirst }} League {{ league.year }}</h1>
+	<h2>{{ league.night|capfirst }} Division ({{ league.gender|capfirst }}) Summary</h2>
 
-	<h2 class="division_title">{{ league.night|capfirst }} Division ({{ league.gender|capfirst }})</h2>
 	{% if league.gender_note %}
 		{{ league.gender_note|safe }}
 	{% endif %}

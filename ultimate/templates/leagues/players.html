@@ -1,9 +1,8 @@
 {% extends "layout/layout_user.html" %}
 
 {% block content %}
-	<h2>
-	    {{ league.season|capfirst }} League {{ league.year }} Players
-	</h2>
+	<h1>{{ league.season|capfirst }} League {{ league.year }}</h1>
+	<h2 class="division_title">{{ league.night|capfirst }} Division ({{ league.gender|capfirst }}) Players</h2>
 
 	<p>To add someone to your group, you need to know their email address.</p>
 	<p>If you know your friend's email address and would like to be in a group with them, <a href="{% url league_group year=league.year season=league.season division=league.night %}">click here</a> to add them.</p>
