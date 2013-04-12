@@ -1517,16 +1517,6 @@ ul.captain_division_team_links li {
 	width: 44%;
 }
 
-#user_registrations {
-	width: 100%;
-}
-
-#user_registrations th,
-#user_registrations td {
-	padding: 4px 8px;
-	text-align: left;
-}
-
 #user_registrations_note {
 	color: #999999;
 	font-size: 13px;

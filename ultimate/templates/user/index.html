@@ -77,35 +77,39 @@
 
 		<h2>Registrations</h2>
 		{% if registrations %}
-			<table id="user_registrations">
-				<tr>
-					<th>League</th>
-					<th>Status</th>
-					<th>Group</th>
-				</tr>
-				{% for league in current_leagues %}
-					{% for registration in league|league_registrations:user %}
-						<tr class="{% cycle 'even' 'odd' %}">
-							<td class="left">
-								{{ registration.league.season|capfirst }}
-								{{ registration.league.year }}
-								{{ registration.league.night|capfirst }}
-							</td>
-							<td>{{ registration.get_progress }}% - {{ registration.get_status }}</td>
-							<td class="right">
-								{% for baggage_reg in registration.baggage.get_registrations %}
-									<div>{{ baggage_reg.user.get_full_name }}</div>
-								{% empty %}
-									No group
-								{% endfor %}
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>League</th>
+						<th>Status</th>
+						<th>Group</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for league in current_leagues %}
+						{% for registration in league|league_registrations:user %}
+							<tr>
+								<td>
+									{{ registration.league.season|capfirst }}
+									{{ registration.league.year }}
+									{{ registration.league.night|capfirst }}
+								</td>
+								<td>{{ registration.get_progress }}% - {{ registration.get_status }}</td>
+								<td>
+									{% for baggage_reg in registration.baggage.get_registrations %}
+										<div>{{ baggage_reg.user.get_full_name }}</div>
+									{% empty %}
+										No group
+									{% endfor %}
 
-								{% if registration.league.baggage > 1 and not registration.league.freeze_group_date|is_past_deadline %}
-									<div><a href="{% url league_group year=league.year season=league.season division=league.night %}">Edit Group</a></div>
-								{% endif %}
-							</td>
-						</tr>
-					{% endfor %}
-				{% endfor%}
+									{% if registration.league.baggage > 1 and not registration.league.freeze_group_date|is_past_deadline %}
+										<div><a href="{% url league_group year=league.year season=league.season division=league.night %}">Edit Group</a></div>
+									{% endif %}
+								</td>
+							</tr>
+						{% endfor %}
+					{% endfor%}
+				</tbody>
 			</table>
 
 			<p id="user_registrations_note">
