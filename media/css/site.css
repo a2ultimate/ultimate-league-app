@@ -813,11 +813,6 @@ input[type="submit"] {
 	border-top-right-radius: 4px;
 }
 
-.table-bordered-row th,
-.table-bordered-row td {
-	border-top: 1px solid #999999;
-}
-
 .table-striped > tbody > tr:nth-child(odd) > td,
 .table-striped > tbody > tr:nth-child(odd) > th {
 	background-color: #ECEFF1;

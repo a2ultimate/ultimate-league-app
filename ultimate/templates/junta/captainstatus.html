@@ -43,9 +43,10 @@
 					<th>Survey</th>
 				</tr>
 			</thead>
-			<tbody>
-				{% for captain in league|get_league_captains_teammember %}
-					<tr class="{% ifchanged captain.team %}table-bordered-row{% endifchanged %}">
+			{% for captain in league|get_league_captains_teammember %}
+				{% ifchanged captain.team %}{% if not forloop.first %}</tbody>{% endif %}{% endifchanged %}
+				{% ifchanged captain.team %}<tbody>{% endifchanged %}
+					<tr>
 						<td>
 							{{ captain.user.get_full_name }}
 						</td>
@@ -67,8 +68,8 @@
 							{% endif %}
 						</td>
 					</tr>
-				{% endfor %}
-			</tbody>
+				{% if forloop.last %}</tbody>{% endif %}
+			{% endfor %}
 		</table>
 	{% endif %}
 {% endblock %}
