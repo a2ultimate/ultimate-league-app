@@ -17,15 +17,15 @@
 		<li>Anything else? Email <span class="email">registration.at.a2ultimate.org</span></li>
 	</ol>
 
-	<div id="waitlist">
-		<h4>Waitlist</h4>
+	{% if waitlist|length %}
+		<h3>Waitlist</h3>
 
 		<ol>
 			{% for registration in waitlist %}
 				<li>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.get_profile.nickname }}</em></li>
 			{% endfor %}
 		</ol>
-	</div>
+	{% endif %}
 
 	<div id="league_players">
 		<h4>Currently {{ registrations|length }} out of a maximum {{ league.max_players }} players registered</h4>

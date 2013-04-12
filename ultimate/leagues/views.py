@@ -15,7 +15,7 @@ from paypal.standard.forms import PayPalPaymentsForm
 
 def index(request, year, season):
 	return render_to_response('leagues/index.html',
-		{'leagues': League.objects.filter(year=year, season=season, state='active').order_by('reg_start_date', 'league_start_date'), 'year': year, 'season': season},
+		{'leagues': League.objects.filter(year=year, season=season, state='active').order_by('league_start_date'), 'year': year, 'season': season},
 		context_instance=RequestContext(request))
 
 def summary(request, year, season, division):
@@ -33,8 +33,8 @@ def details(request, year, season, division):
 def players(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
 
-	registrations = Registration.objects.filter(league=league, status__in=GOOD_REGISTRATION_STATUS_CHOICES).extra(select={'num_baggage':'select COUNT(r1.baggage_id) FROM registration AS r1 WHERE r1.baggage_id = registration.baggage_id'}).order_by('num_baggage', 'baggage', 'reg_time')
-	waitlist = Registration.objects.filter(league=league, status__in=WAITLIST_REGISTRATION_STATUS_CHOICES).order_by('reg_time')
+	registrations = league.get_completed_registrations()
+	waitlist = league.get_waitlisted_registrations()
 
 	return render_to_response('leagues/players.html',
 		{'league': league, 'registrations': registrations, 'waitlist': waitlist},

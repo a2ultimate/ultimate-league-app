@@ -89,6 +89,17 @@ class League(models.Model):
 	def get_league_registrations_for_user(self, user):
 		return self.registrations_set.filter(user=user)
 
+	def get_registrations(self):
+		return Registrations.objects.filter(league=self).order_by('registered')
+
+	def get_completed_registrations(self):
+		registrations = Registrations.objects.filter(league=self).extra(select={'num_baggage':'select COUNT(r1.baggage_id) FROM registrations AS r1 WHERE r1.baggage_id = registrations.baggage_id'}).order_by('num_baggage', 'registered')
+		return [r for r in registrations if r.is_complete and not r.waitlist]
+
+	def get_waitlisted_registrations(self):
+		registrations = Registrations.objects.filter(league=self).order_by('registered')
+		return [r for r in registrations if r.is_complete and r.waitlist]
+
 	def get_user_games(self, user):
 		return self.schedule_set.all()[0].get_games().filter(gameteams__team__teammember__user=user).order_by('date')
 
