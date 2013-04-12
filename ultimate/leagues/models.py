@@ -259,6 +259,7 @@ class Registrations(models.Model):
 	baggage = models.ForeignKey('leagues.Baggage', null=True, blank=True)
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
+	registered = models.DateTimeField()
 	conduct_complete = models.BooleanField()
 	waiver_complete = models.BooleanField()
 	pay_type = models.TextField(choices=REGISTRATION_PAYMENT_CHOICES, null=True)
@@ -315,13 +316,24 @@ class Registrations(models.Model):
 		except ObjectDoesNotExist:
 			return 'No registration found for ' + email + '.'
 
-		if (registration.baggage.get_registrations().count() < registration.league.baggage):
-			self.baggage.delete()
-			self.baggage = registration.baggage
-			self.save()
-			return True
+		baggage_limit = self.league.baggage
 
-		return 'Baggage group for ' + email + ' is full.'
+		current_baggage = self.baggage
+		current_baggage_registrations = current_baggage.get_registrations()
+
+		target_baggage = registration.baggage
+
+		if (current_baggage_registrations.count() + target_baggage.num_registrations > baggage_limit):
+			return 'Baggage group with ' + email + ' exceeds limit.'
+
+		for current_baggage_registration in current_baggage_registrations:
+			current_baggage_registration.baggage = target_baggage
+			current_baggage_registration.save()
+
+		current_baggage.delete()
+
+		return True
+
 
 	@transaction.commit_manually
 	def leave_baggage_group(self):

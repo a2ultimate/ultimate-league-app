@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `registrations` (
   `baggage_id` int(11) NULL DEFAULT NULL,
   `created` datetime NOT NULL,
   `updated` datetime NOT NULL,
+  `registered` datetime NOT NULL,
   `conduct_complete` BOOLEAN NOT NULL DEFAULT 0,
   `waiver_complete` BOOLEAN NOT NULL DEFAULT 0,
   `pay_type` ENUM('check', 'paypal') NULL DEFAULT NULL,
@@ -26,8 +27,8 @@ CREATE TABLE IF NOT EXISTS `registrations` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 ALTER TABLE `registrations`
-  ADD CONSTRAINT `registrations_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `registrations_ibfk_2` FOREIGN KEY (`baggage_id`) REFERENCES `baggage` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `registrations_ibfk_1` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+  ADD CONSTRAINT `registrations_ibfk_2` FOREIGN KEY (`baggage_id`) REFERENCES `baggage` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
   ADD CONSTRAINT `registrations_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 
@@ -38,6 +39,7 @@ NULL,
 user_id,
 league_id,
 baggage_id,
+reg_time,
 reg_time,
 reg_time,
 status NOT IN ('new'),
