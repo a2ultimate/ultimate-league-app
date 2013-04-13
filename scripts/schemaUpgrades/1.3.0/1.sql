@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS `registrations` (
   `check_complete` BOOLEAN NOT NULL DEFAULT 0,
   `paypal_invoice_id` VARCHAR(127) NULL DEFAULT NULL,
   `paypal_complete` BOOLEAN NOT NULL DEFAULT 0,
+  `refunded` BOOLEAN NOT NULL DEFAULT 0,
   `waitlist` BOOLEAN NOT NULL DEFAULT 0,
   `attendance` int(2) NULL DEFAULT NULL,
   `captain` int(2) NULL DEFAULT NULL,

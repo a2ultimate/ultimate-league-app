@@ -93,12 +93,12 @@ class League(models.Model):
 		return Registrations.objects.filter(league=self).order_by('registered')
 
 	def get_completed_registrations(self):
-		registrations = Registrations.objects.filter(league=self).extra(select={'num_baggage':'select COUNT(r1.baggage_id) FROM registrations AS r1 WHERE r1.baggage_id = registrations.baggage_id'}).order_by('num_baggage', 'registered')
-		return [r for r in registrations if r.is_complete and not r.waitlist]
+		registrations = Registrations.objects.filter(league=self).extra(select={'baggage_size':'select COUNT(r1.baggage_id) FROM registrations AS r1 WHERE r1.baggage_id = registrations.baggage_id'}).order_by('baggage_size', 'baggage', 'registered')
+		return [r for r in registrations if not r.waitlist and not r.refunded and r.is_complete()]
 
 	def get_waitlisted_registrations(self):
 		registrations = Registrations.objects.filter(league=self).order_by('registered')
-		return [r for r in registrations if r.is_complete and r.waitlist]
+		return [r for r in registrations if r.waitlist and not r.refunded and r.is_complete()]
 
 	def get_user_games(self, user):
 		return self.schedule_set.all()[0].get_games().filter(gameteams__team__teammember__user=user).order_by('date')
@@ -277,6 +277,7 @@ class Registrations(models.Model):
 	check_complete = models.BooleanField()
 	paypal_invoice_id = models.CharField(max_length=127)
 	paypal_complete = models.BooleanField()
+	refunded = models.BooleanField()
 	waitlist = models.BooleanField()
 	attendance = models.IntegerField(null=True, blank=True)
 	captain = models.IntegerField(null=True, blank=True)
@@ -285,8 +286,10 @@ class Registrations(models.Model):
 		db_table = u'registrations'
 
 	def get_status(self):
-		status = 'Completed'
-		if self.conduct_complete:
+		status = 'New'
+		if self.refunded:
+			status = 'Refunded'
+		elif self.conduct_complete:
 			status = 'Conduct Completed'
 			if self.waiver_complete:
 				status = 'Waiver Completed'
@@ -318,7 +321,7 @@ class Registrations(models.Model):
 		return percentage
 
 	def is_complete(self):
-		return bool(self.conduct_complete and self.waiver_complete and self.attendance != None and self.captain != None and self.pay_type and (self.check_complete or self.paypal_complete))
+		return bool(self.conduct_complete and self.waiver_complete and self.attendance != None and self.captain != None and self.pay_type and (self.check_complete or self.paypal_complete)) and not self.refunded
 
 	@transaction.commit_on_success
 	def add_to_baggage_group(self, email):
