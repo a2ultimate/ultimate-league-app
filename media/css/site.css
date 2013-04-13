@@ -200,47 +200,80 @@ table tr.gray td:last-child {
 	padding: 0 6px;
 }
 
-#menu_container {
-	background: #ECEFF1;
+.navbar_container {
+	background-color: #ECEFF1;
 	margin-bottom: 12px;
+	min-height: 32px;
+	position: relative;
 }
 
-#menu {
+.navbar {
 	color: #777777;
 	font-size: 15px;
 	letter-spacing: 1px;
-	line-height: 32px;
-	margin-bottom: 10px;
-	min-height: 32px;
-	padding: 0 18px;
+	line-height: 38px;
 	margin: 0 auto;
+	min-height: 38px;
 	position: relative;
 	width: 960px;
 }
 
-#menu li {
+.navbar:before,
+.navbar:after {
+  display: table;
+  content: " ";
+}
+
+.navbar:after {
+  clear: both;
+}
+
+.navbar:before,
+.navbar:after {
+  display: table;
+  content: " ";
+}
+
+.navbar:after {
+  clear: both;
+}
+
+.nav {
+	display: block;
 	float: left;
+	left: 0;
 	list-style: none;
+	margin: 0;
+	padding-left: 0;
+	position: relative;
+}
+
+.nav.pull_right {
+	float: right;
+}
+
+.nav li {
+	float: left;
 	margin: 0;
 	padding: 0;
 }
 
-#menu a {
+.nav a {
 	color: #555555;
 	font-weight: bold;
-	padding: 6px 14px;
+	padding: 10px 14px;
 	text-decoration: none;
 }
 
-#menu a:hover {
+.nav a:hover {
 	background: #CCCCCC;
 }
 
-#menu a:active {
+.nav a:active {
 	background: #AAAAAA;
 }
 
-#menu span {
+.nav span {
 	margin: 0 10px;
 }
 
