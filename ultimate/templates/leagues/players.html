@@ -1,4 +1,5 @@
 {% extends "layout/layout_user.html" %}
+{% load utility %}
 
 {% block content %}
 	<h1>{{ league.season|capfirst }} League {{ league.year }}</h1>
@@ -29,25 +30,25 @@
 	<div id="league_players">
 		<h4>Currently {{ registrations|length }} out of a maximum {{ league.max_players }} players registered</h4>
 
-		{% regroup registrations by baggage as registration_baggage %}
-		<table id="player_table">
-			{% for baggage in registration_baggage %}
+		<table class="table table-striped">
+			<tbody>
+			{% regroup registrations|dictsort:"baggage.id" by baggage as baggage_group %}
+			{% for baggage in baggage_group|groups_sort %}
 				{% if not forloop.counter|divisibleby:'2' %}
 					<tr>
 				{% endif %}
 
-				<td>
-					<div>
-						{% for registration in baggage.list %}
-							<div>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.get_profile.nickname }}</em></div>
-						{% endfor %}
-					</div>
+				<td class="col-span-6">
+					{% for registration in baggage.list %}
+						<div>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.get_profile.nickname }}</em></div>
+					{% endfor %}
 				</td>
 
 				{% if forloop.counter|divisibleby:'2' %}
 					</tr>
 				{% endif %}
 			{% endfor %}
+			</tbody>
 		</table>
 	</div>
 {% endblock %}
