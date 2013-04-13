@@ -9,41 +9,45 @@
 		{% regroup schedule.get_games|dictsort:"date" by date as games %}
 		{% regroup schedule.get_games by field_name as field_names %}
 		{% regroup field_names by grouper.field as fields %}
-		<table id="schedule">
-			<tr>
-				<td></td>
-				{% for field in fields %}
-					<td class="schedule_field" colspan="{{ field.list|length }}">
-						<div>{{ field.grouper.name }}</div>
-						<div><a href="{{ MEDIA_URL }}{{ field.grouper.layout_link }}">Field Layout</a></div>
-					</td>
-				{% endfor %}
-			</tr>
-
-			<tr>
-				<td></td>
-				{% for field_name in field_names %}
-					<td class="schedule_header">{{ field_name.grouper.name }}</td>
-				{% endfor %}
-			</tr>
-
-			{% for game_date in games %}
-				<tr class="{% cycle 'even' 'odd' %}">
-					<td class="schedule_header schedule_date">
-						{{ game_date.grouper|date:"m/d" }}
-					</td>
-
-					{% for field_name in field_names %}
-						<td class="schedule_game{% if forloop.last %} right{% endif %}">
-							{% for team in game_date.list|get_field_game_teams:field_name.grouper %}
-								<div class="schedule_team">{{ team.team.id }}</div>
-							{% empty %}
-								-
-							{% endfor %}
-						</td>
+		<table id="schedule_table" class="table table-striped">
+			<thead>
+				<tr>
+					<td></td>
+					{% for field in fields %}
+						<th class="center_text" colspan="{{ field.list|length }}">
+							<div>{{ field.grouper.name }}</div>
+							<div><a href="{{ MEDIA_URL }}{{ field.grouper.layout_link }}">Field Layout</a></div>
+						</th>
 					{% endfor %}
 				</tr>
-			{% endfor %}
+
+				<tr>
+					<td></td>
+					{% for field_name in field_names %}
+						<th class="center_text">{{ field_name.grouper.name }}</th>
+					{% endfor %}
+				</tr>
+			</thead>
+
+			<tbody>
+				{% for game_date in games %}
+					<tr>
+						<th style="width:8%;">
+							{{ game_date.grouper|date:"m/d" }}
+						</th>
+
+						{% for field_name in field_names %}
+							<td class="center_text">
+								{% for team in game_date.list|get_field_game_teams:field_name.grouper %}
+									<div>{{ team.team.id }}</div>
+								{% empty %}
+									-
+								{% endfor %}
+							</td>
+						{% endfor %}
+					</tr>
+				{% endfor %}
+			</tbody>
 		</table>
 	{% endif %}
 

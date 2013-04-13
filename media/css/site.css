@@ -154,6 +154,10 @@ table tr.gray td:last-child {
 	margin: 0 auto;
 }
 
+.center_text {
+	text-align: center;
+}
+
 /* HEADER */
 
 #header_container {
@@ -740,6 +744,11 @@ input[type="submit"] {
 	padding: 8px;
 	text-align: left;
 	vertical-align: middle;
+}
+
+.table th.center_text,
+.table td.center_text {
+	text-align: center;
 }
 
 .table thead th {
@@ -1361,50 +1370,12 @@ ul.captain_division_team_links li {
 
 /*  LEAGUE / TEAMS */
 
-#schedule {
-	border-spacing: 6px;
-	color: #666666;
-	margin: 18px 0;
-	text-align: center;
-	vertical-align: middle;
-	width: 100%;
+#schedule_table thead th {
+	border-right: 2px solid #DDDDDD;
 }
 
-#schedule td {
-	padding: 6px inherit;
-}
-
-.schedule_field {
-	color: #666666;
-	font-size: 13px;
-	font-weight: bold;
-	letter-spacing: 1px;
-}
-
-.schedule_field a {
-	font-size: 10px;
-	position: relative;
-	top: -4px;
-}
-
-.schedule_header {
-	font-size: 11px;
-	font-weight: bold;
-	letter-spacing: 2px;
-}
-
-.schedule_date {
-	min-width: 48px;
-}
-
-.schedule_game {
-	font-size: 10px;
-	letter-spacing: 3px;
-}
-
-.schedule_team {
-	font-size: 11px;
-	font-weight: bold;
+#schedule_table thead th:last-child {
+	border-right: 0;
 }
 
 #teams {
