@@ -14,8 +14,9 @@ from ultimate.forms import RegistrationAttendanceForm
 from paypal.standard.forms import PayPalPaymentsForm
 
 def index(request, year, season):
+	leagues = League.objects.filter(year=year, season=season).order_by('league_start_date')
 	return render_to_response('leagues/index.html',
-		{'leagues': League.objects.filter(year=year, season=season, state='active').order_by('league_start_date'), 'year': year, 'season': season},
+		{'leagues': leagues, 'year': year, 'season': season},
 		context_instance=RequestContext(request))
 
 def summary(request, year, season, division):
