@@ -1359,29 +1359,6 @@ ul.captain_division_team_links li {
 	font-size: 17px;
 }
 
-/* LEAGUE / PLAYERS */
-
-#player_table {
-	font-size: 13px;
-	letter-spacing: 1px;
-	width: 100%;
-}
-
-#player_table td > div {
-	background: #BDC3C7;
-	border-radius: 2px;
-	margin: 6px 1%;
-	padding: 4px 8px;
-}
-
-#player_table td {
-	vertical-align: top;
-}
-
-#player_table td em {
-	font-size: 11px;
-}
-
 /*  LEAGUE / TEAMS */
 
 #schedule {
