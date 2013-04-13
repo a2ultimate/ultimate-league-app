@@ -93,7 +93,7 @@ class League(models.Model):
 		return Registrations.objects.filter(league=self).order_by('registered')
 
 	def get_completed_registrations(self):
-		registrations = Registrations.objects.filter(league=self).extra(select={'baggage_size':'select COUNT(r1.baggage_id) FROM registrations AS r1 WHERE r1.baggage_id = registrations.baggage_id'}).order_by('baggage_size', 'baggage', 'registered')
+		registrations = Registrations.objects.filter(league=self).order_by('registered')
 		return [r for r in registrations if not r.waitlist and not r.refunded and r.is_complete()]
 
 	def get_waitlisted_registrations(self):
