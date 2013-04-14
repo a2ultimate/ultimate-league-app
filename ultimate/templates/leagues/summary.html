@@ -1,8 +1,8 @@
 {% extends "layout/layout_user.html" %}
 
 {% block content %}
-	<h1>{{ league.season|capfirst }} League {{ league.year }}</h1>
-	<h2>{{ league.night|capfirst }} Division ({{ league.gender|capfirst }}) Summary</h2>
+	<h1>{{ league.season|capfirst }} League {{ league.year }} {{ league.night|capfirst }} Division ({{ league.gender|capfirst }}) </h1>
+	{% include "layout/league_tabs.html" with selected_tab="summary" %}
 
 	{% if league.gender_note %}
 		{{ league.gender_note|safe }}

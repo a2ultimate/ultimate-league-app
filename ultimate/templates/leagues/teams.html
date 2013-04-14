@@ -3,8 +3,8 @@
 {% load utility %}
 
 {% block content %}
-	<h1>{{ league.season|capfirst }} League {{ league.year }}</h1>
-	<h2 class="division_title">{{ league.night|capfirst }} Division ({{ league.gender|capfirst }}) Teams & Schedules</h2>
+	<h1>{{ league.season|capfirst }} League {{ league.year }} {{ league.night|capfirst }} Division ({{ league.gender|capfirst }}) </h1>
+	{% include "layout/league_tabs.html" with selected_tab="teams" %}
 
 	{% if schedule %}
 		<table id="schedule_table" class="table table-striped">
