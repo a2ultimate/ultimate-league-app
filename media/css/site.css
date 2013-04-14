@@ -910,11 +910,6 @@ input[type="submit"] {
 	text-decoration: none;
 }
 
-.nav_tabs + div,
-.nav_tabs + form {
-	margin: 12px;
-}
-
 .nav_tabs:before,
 .nav_tabs:after {
 	display: table;
@@ -945,7 +940,7 @@ input[type="submit"] {
 .progress_bar {
 	background: #DDDDDD;
 	border-radius: 6px;
-	margin: 18px 12px;
+	margin: 36px 12px 18px 4px;
 	padding: 0;
 	position: relative;
 	text-align: left;
