@@ -59,7 +59,7 @@
 								{% endif %}
 							</td>
 						{% endfor %}
-						<td>{{ league|get_num_reports_for_user:captain.user }}</td>
+						<td class="text_center">{{ league|get_num_reports_for_user:captain.user }}</td>
 						<td>
 							{% if league|get_player_survey_status:captain.user %}
 								<span class="status state_success center_margin" title="Player survey submitted"></span>

@@ -107,13 +107,10 @@ class League(models.Model):
 		return [r for r in registrations if r.waitlist and not r.refunded and r.is_complete()]
 
 	def get_user_games(self, user):
-		return self.schedule_set.all()[0].get_games().filter(gameteams__team__teammember__user=user).order_by('date')
+		return Game.objects.filter(schedule__league=self, gameteams__team__teammember__user=user).order_by('date')
 
 	def get_num_game_events(self):
-		try:
-			return self.schedule_set.all()[0].get_games().count() / (self.team_set.all().count() / 2)
-		except:
-			return 0
+		return Game.objects.filter(schedule__league=self).values('date').distinct().count()
 
 	def get_league_captains(self):
 		return User.objects.filter(teammember__team__league=self, teammember__captain=1)
@@ -122,7 +119,7 @@ class League(models.Model):
 		return TeamMember.objects.filter(team__league=self, captain=1).order_by('team')
 
 	def player_survey_complete_for_user(self, user):
-		return bool(self.team_set.filter(teammember__user=user)[0].player_survey_complete(user))
+		return bool(self.team_set.get(teammember__user=user).player_survey_complete(user))
 
 	@property
 	def is_accepting_registrations(self):
