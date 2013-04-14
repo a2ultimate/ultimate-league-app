@@ -47,7 +47,7 @@ a:hover {
 	-moz-transition: color .15s ease-in-out;
 	-webkit-transition: color .15s ease-in-out;
 
-	color:  #333333;
+	color: #333333;
 	transition: color .15s ease-in-out;
 }
 
@@ -188,22 +188,12 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 
 .navbar:before,
 .navbar:after {
-  display: table;
-  content: " ";
+	display: table;
+	content: " ";
 }
 
 .navbar:after {
-  clear: both;
-}
-
-.navbar:before,
-.navbar:after {
-  display: table;
-  content: " ";
-}
-
-.navbar:after {
-  clear: both;
+	clear: both;
 }
 
 .nav {
@@ -299,10 +289,7 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 /* CONTENT */
 
 #content_container {
-	clear: both;
-	margin-bottom: 10px;
-
-	margin: 0 auto;
+	margin: 0 auto 10px;
 	width: 960px;
 }
 
@@ -362,8 +349,10 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 }
 
 #content {
-	margin-left: 245px;
+	float: left;
+	margin-left: 12px;
 	padding: 4px 12px 12px;
+	width: 722px;
 }
 
 /* COMPONENTS */
@@ -385,7 +374,7 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 }
 
 .none_found {
-	color:  #BDC3C7;
+	color: #BDC3C7;
 	font-size: 16px;
 	font-weight: bold;
 	margin: 8px 0;
@@ -526,12 +515,12 @@ input[type="color"]:focus,
 }
 
 .control_group {
-  margin-bottom: 10px;
+	margin-bottom: 10px;
 }
 
 legend + .control_group {
-  margin-top: 20px;
-  -webkit-margin-top-collapse: separate;
+	margin-top: 20px;
+	-webkit-margin-top-collapse: separate;
 }
 
 .control_group.error textarea,
@@ -884,53 +873,59 @@ input[type="submit"] {
 }
 
 
-#content_tabs {
+.nav_tabs {
 	border-bottom: 3px solid #2ECC71;
 	letter-spacing: 1px;
-	margin-bottom: 14px;
-	min-height: 32px;
-}
-
-#content_tabs ul {
-	float: left;
 	list-style: none;
 	margin: 0;
+	margin-bottom: 12px;
 	padding: 0;
 }
 
-#content_tabs li {
+.nav_tabs li {
 	float: left;
-	list-style: none;
+	line-height: 32px;
 }
 
-#content_tabs ul li a {
+.nav_tabs li a {
 	background: #E9E9E9;
 	border-top-left-radius: 2px;
 	border-top-right-radius: 2px;
 	display: block;
-	font-size: 13px;
-	height: 32px;
+	font-size: 14px;
 	line-height: 32px;
-	margin-right: 5px;
-	padding: 0px 20px;
+	margin-right: 8px;
+	padding: 2px 20px;
 	text-decoration: none;
 }
 
-#content_tabs ul li a:hover {
+.nav_tabs li a:hover {
 	background: #EEEEEE;
 }
 
-#content_tabs ul li.selected a {
+.nav_tabs li.selected a {
 	background: #2ECC71;
 	color: white;
 	font-size: 14px;
 	text-decoration: none;
 }
 
-#content_tabs + div,
-#content_tabs + form {
+.nav_tabs + div,
+.nav_tabs + form {
 	margin: 12px;
 }
+
+.nav_tabs:before,
+.nav_tabs:after {
+	display: table;
+	line-height: 0;
+	content: "";
+}
+
+.nav_tabs:after {
+	clear: both;
+}
+
 
 #breadcrumbs {
 	display: inline;
@@ -1156,7 +1151,7 @@ span.status {
 	border-radius: 4px;
 	display: block;
 	height: 48px;
-	width:  48px;
+	width: 48px;
 }
 
 .update_content {
@@ -1302,8 +1297,8 @@ ul.captain_division_team_links li {
 }
 
 #player_survey_table .skill_average {
-	font-size:  11px;
-	font-weight:  bold;
+	font-size: 11px;
+	font-weight: bold;
 	letter-spacing: 1px;
 }
 
