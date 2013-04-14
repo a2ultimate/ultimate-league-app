@@ -7,7 +7,7 @@ DROP TABLE `test_car`, `test_manufacturer`, `player_info`;
 
 TRUNCATE  `auth_user`;
 
-ALTER TABLE  `league` CHANGE  `where_id`  `field_id` INT( 11 ) NULL DEFAULT NULL;
+ALTER TABLE `league` DROP `where_id`;
 
 ALTER TABLE  `static_content` DROP INDEX  `static_content_nav_bar_id`;
 
@@ -114,10 +114,6 @@ ALTER TABLE  `game_sponsor` ADD FOREIGN KEY (  `sponsor_id` ) REFERENCES  `spons
 
 
 /* LEAGUE */
-ALTER TABLE  `league` ADD INDEX (  `field_id` );
-ALTER TABLE  `league` ADD FOREIGN KEY (  `field_id` ) REFERENCES  `field` (
-`id`
-) ON DELETE CASCADE ON UPDATE CASCADE ;
 UPDATE  `league` SET  `night` =  'Spring Bonanza Hat Tournament' WHERE  `league`.`id` =49;
 
 
