@@ -126,11 +126,11 @@ class League(models.Model):
 
 	@property
 	def is_accepting_registrations(self):
-		return self.state == 'active' and self.league_end_date > date.today()
+		return self.state in ['active', 'planning'] and self.league_end_date > date.today()
 
 	@property
 	def is_accepting_waitlist(self):
-		return self.state == 'active' and date.today() >= self.waitlist_start_date
+		return self.state in ['active', 'planning'] and date.today() >= self.waitlist_start_date
 
 	def __unicode__(self):
 		return '%s %d %s' % (self.season, self.year, self.night)
@@ -276,7 +276,7 @@ class Registrations(models.Model):
 	baggage = models.ForeignKey('leagues.Baggage', null=True, blank=True)
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
-	registered = models.DateTimeField()
+	registered = models.DateTimeField(null=True)
 	conduct_complete = models.BooleanField()
 	waiver_complete = models.BooleanField()
 	pay_type = models.TextField(choices=REGISTRATION_PAYMENT_CHOICES, null=True)

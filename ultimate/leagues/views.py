@@ -10,6 +10,7 @@ from django.template import RequestContext
 from ultimate.leagues.models import *
 
 from ultimate.forms import RegistrationAttendanceForm
+from ultimate.middleware.http import Http403
 
 from paypal.standard.forms import PayPalPaymentsForm
 
@@ -59,6 +60,7 @@ def teams(request, year, season, division):
 		{'league': league, 'schedule': schedule, 'field_names': league.get_field_names(), 'teams': Team.objects.filter(league=league), 'user_games': league.get_user_games(request.user)},
 		context_instance=RequestContext(request))
 
+@login_required
 def group(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
 	registration = get_object_or_404(Registrations, league=league, user=request.user)
@@ -87,6 +89,10 @@ def group(request, year, season, division):
 @login_required
 def registration(request, year, season, division, section=None):
 	league = get_object_or_404(League, year=year, season=season, night=division)
+
+	if league.state not in ['active'] and not request.user.is_staff and not request.user.is_superuser:
+		raise Http403
+
 	registration, created = Registrations.objects.get_or_create(user=request.user, league=league)
 	attendance_form = None
 	paypal_form = None

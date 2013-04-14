@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `registrations` (
   `baggage_id` int(11) NULL DEFAULT NULL,
   `created` datetime NOT NULL,
   `updated` datetime NOT NULL,
-  `registered` datetime NOT NULL,
+  `registered` datetime NULL DEFAULT NULL,
   `conduct_complete` BOOLEAN NOT NULL DEFAULT 0,
   `waiver_complete` BOOLEAN NOT NULL DEFAULT 0,
   `pay_type` ENUM('check', 'paypal') NULL DEFAULT NULL,
