@@ -1314,23 +1314,12 @@ ul.captain_division_team_links li {
 
 /* LEAGUE / INDEX */
 
-.league_info_table {
-	/*width: 100%;*/
-}
-
-.league_info_table th,
-.league_info_table td {
-	padding: 8px 12px;
-	text-align: left;
-}
-
 .league_info_table th {
 	background: #ECEFF1;
-	font-size: 13px;
 }
 
 .league_info_table td {
-	font-size: 16px;
+	font-size: 15px;
 }
 
 /* LEAGUE / DETAILS */
