@@ -10,9 +10,14 @@ textarea {
 	outline: none;
 }
 
-/* html5boilerplate */
+
 body{font-size:1em;line-height:1.4}::-moz-selection{background:#b3d4fc;text-shadow:none}::selection{background:#b3d4fc;text-shadow:none}hr{display:block;height:1px;border:0;border-top:1px solid #ccc;margin:1em 0;padding:0}img{vertical-align:middle}fieldset{border:0;margin:0;padding:0}textarea{resize:vertical}.chromeframe{margin:.2em 0;background:#ccc;color:#000;padding:.2em 0}
 
+* {
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
 
 html {
 	-webkit-text-size-adjust: 100%;
@@ -46,7 +51,7 @@ a:hover {
 	transition: color .15s ease-in-out;
 }
 
-h1, h2, h3, h4, h5, h6, th, strong {
+h1, h2, h3, h4, h5, h6, th, strong, .strong {
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	font-weight: bold;
 	margin: 10px 0;
@@ -105,57 +110,20 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 	font-weight: normal;
 }
 
-table td {
-	padding: 0 6px;
-}
-
-table .even,
-table .gray {
-	background: #ECEFF1;
-}
-
-table tr:first-child th:first-child,
-table tr.even th:first-child,
-table tr.gray th:first-child,
-table tr:first-child td:first-child,
-table tr.even td:first-child,
-table tr.gray td:first-child {
-	border-top-left-radius: 4px;
-}
-
-table tr:first-child th:last-child,
-table tr.even th:last-child,
-table tr.gray th:last-child,
-table tr:first-child td:last-child,
-table tr.even td:last-child,
-table tr.gray td:last-child {
-	border-top-right-radius: 4px;
-}
-
-table tr:last-child th:first-child,
-table tr.even th:first-child,
-table tr.gray th:first-child,
-table tr:last-child td:first-child,
-table tr.even td:first-child,
-table tr.gray td:first-child {
-	border-bottom-left-radius: 4px;
-}
-
-table tr:last-child th:last-child,
-table tr.even th:last-child,
-table tr.gray th:last-child,
-table tr:last-child td:last-child,
-table tr.even td:last-child,
-table tr.gray td:last-child {
-	border-bottom-right-radius: 4px;
-}
-
 .center_margin {
 	margin: 0 auto;
 }
 
-.center_text {
+.text_center {
 	text-align: center;
+}
+
+.text_right {
+	text-align: right;
+}
+
+.pull_right {
+	float: right;
 }
 
 /* HEADER */
@@ -731,7 +699,6 @@ input[type="submit"] {
 }
 
 
-
 .table {
 	margin-bottom: 20px;
 	width: 100%;
@@ -746,9 +713,14 @@ input[type="submit"] {
 	vertical-align: middle;
 }
 
-.table th.center_text,
-.table td.center_text {
+.table th.text_center,
+.table td.text_center {
 	text-align: center;
+}
+
+.table th.text_right,
+.table td.text_right {
+	text-align: right;
 }
 
 .table thead th {
@@ -781,7 +753,6 @@ input[type="submit"] {
 	border: 1px solid #DDDDDD;
 	border-collapse: separate;
 	border-left: 0;
-	border-radius: 4px;
 }
 
 .table-bordered th,
@@ -1133,7 +1104,7 @@ span.status {
 }
 
 .announcement {
-	border-radius: 4px;
+	border-radius: 2px;
 	color: #666666;
 	font-size: 18px;
 }
@@ -1378,50 +1349,44 @@ ul.captain_division_team_links li {
 	border-right: 0;
 }
 
-#teams {
-	border-spacing: 6px;
-	margin: 18px 0;
+#schedule_table tbody th {
+	width: 8%;
+}
+
+#schedule_table tbody tr.active th,
+#schedule_table tbody tr.active td {
+	background-color: #BDC3C7;
+	color: #FFFFFF;
+}
+
+.teams_table {
+	max-width: 50%;
 	width: 100%;
 }
 
-.team {
-	padding: 0;
+.teams_table td {
+	max-width: 50%;
 	vertical-align: top;
+	width: 50%;
 }
 
-.team > div {
+.team {
 	background: #ECF0F1;
-	border-radius: 2px;
-	margin: 8px 0;
-	padding: 12px;
-	text-align: center;
-}
-
-.team:first-child {
-	padding-right: 12px;
-}
-
-.team:last-child {
-	padding-left: 12px;
-}
-
-.team_name {
-	color: #666666;
-	font-size: 24px;
-	font-weight: bold;
-	min-height: 30px;
-	overflow: hidden;
+	margin: 8px;
 	padding-bottom: 4px;
-	text-align: center;
-	text-overflow: ellipsis;
-	word-wrap: break-word;
 }
 
 .team_info {
-	font-size: 12px;
+	padding: 12px 8px;
+}
+
+.team_name {
+	font-size: 24px;
 	font-weight: bold;
-	min-height: 16px;
-	padding: 0 8px;
+	line-height: 18px;
+	min-height: 38px;
+	padding: 4px 0;
+	text-align: center;
 }
 
 .team_info_left {
@@ -1433,25 +1398,13 @@ ul.captain_division_team_links li {
 }
 
 .team_members {
-	border-top: 1px solid #FFFFFF;
 	padding: 8px 0 4px;
-}
-
-.team_member {
-	color: #333333;
-	font-size: 13px;
-	padding: 1px 0;
+	text-align: center;
 }
 
 .team_member .strong {
 	color: #555555;
 	font-weight: bold;
-}
-
-.team_member_nickname {
-	color: #999999;
-	font-size: 13px;
-	font-style: italic;
 }
 
 /* USER PAGE */

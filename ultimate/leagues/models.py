@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from pybb.models import *
 
 from datetime import date, datetime
+import re
 
 class Field(models.Model):
 	id = models.AutoField(primary_key=True)
@@ -17,6 +18,7 @@ class Field(models.Model):
 	note = models.TextField()
 	class Meta:
 		db_table = u'field'
+		ordering = ['name']
 
 	def __unicode__(self):
 		return self.name
@@ -27,6 +29,7 @@ class FieldNames(models.Model):
 	field = models.ForeignKey('leagues.Field')
 	class Meta:
 		db_table = u'field_names'
+		ordering = ['field__name', 'name']
 
 	def __unicode__(self):
 		return '%s %s' % (self.field.name, self.name)
@@ -85,6 +88,9 @@ class League(models.Model):
 
 	def get_fields(self):
 		return self.fieldleague_set.all()
+
+	def get_field_names(self):
+		return FieldNames.objects.filter(field__fieldleague__league=self, game__schedule__league=self).distinct().order_by('field__name', 'name')
 
 	def get_league_registrations_for_user(self, user):
 		return self.registrations_set.filter(user=user)
@@ -394,6 +400,32 @@ class Team(models.Model):
 	def size(self):
 		return self.teammember_set.all().count()
 
+	@property
+	def css_background_color(self):
+		if (re.search(r'black', self.color, re.I)):
+			return '#2C3E50'
+		if (re.search(r'blue', self.color, re.I)):
+			return '#3498DB'
+		if (re.search(r'green', self.color, re.I)):
+			return '#2ECC71'
+		if (re.search(r'orange', self.color, re.I)):
+			return '#E67E22'
+		if (re.search(r'pink', self.color, re.I)):
+			return '#EE6FA0'
+		if (re.search(r'red', self.color, re.I)):
+			return '#E74C3C'
+		if (re.search(r'white', self.color, re.I)):
+			return '#FFFFFF'
+		if (re.search(r'yellow', self.color, re.I)):
+			return '#F1C40F'
+		return '#95A5A6'
+
+	@property
+	def css_text_color(self):
+		if (re.search(r'white', self.color, re.I)):
+			return '#2C3E50'
+		return '#FFFFFF'
+
 	def get_members(self):
 		return self.teammember_set.all()
 
@@ -429,7 +461,7 @@ class Game(models.Model):
 		ordering = ['date', 'field_name']
 
 	def get_teams(self):
-		return self.gameteams_set.all()
+		return Team.objects.filter(gameteams__game=self).all()
 
 	def get_user_team(self, user):
 		return self.gameteams_set.filter(team__teammember__user=user)[0:1].get().team

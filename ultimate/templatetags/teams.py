@@ -28,12 +28,10 @@ def get_field_game_teams(games, field_name):
 
 @register.filter
 def get_team_name_font_size(name):
-	if len(name) <= 14:
+	if len(name) <= 17:
 		return 24
-	# elif len(name) <= 17:
-	# 	return 21
 	else:
-		return 21
+		return 20
 
 @register.filter
 def get_league_teamid(league_games, user):

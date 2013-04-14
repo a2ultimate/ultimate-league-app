@@ -50,7 +50,7 @@ def teams(request, year, season, division):
 		schedule = None
 
 	return render_to_response('leagues/teams.html',
-		{'league': league, 'schedule': schedule, 'teams': Team.objects.filter(league=league)},
+		{'league': league, 'schedule': schedule, 'field_names': league.get_field_names(), 'teams': Team.objects.filter(league=league), 'user_games': league.get_user_games(request.user)},
 		context_instance=RequestContext(request))
 
 def group(request, year, season, division):
