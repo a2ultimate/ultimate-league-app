@@ -10,19 +10,19 @@
 
 	<div id="captain_divisions">
 		{% for game in captain_games %}
-			{% ifchanged game.schedule %}
+			{% ifchanged game.league %}
 				{% if not forloop.first %}
 						</ul>
 					</div>
 				{% endif %}
 
-				<h3><a class="captain_division_header" href="#">{{ game|get_game_user_teamname:user }} - {{ game.schedule.league|title }}</a></h3>
+				<h3><a class="captain_division_header" href="#">{{ game|get_game_user_teamname:user }} - {{ game.league|title }}</a></h3>
 				<div class="captain_division_content">
 					<ul class="captain_division_team_links">
 						<li><a href="{% url captaineditteam teamid=game|get_game_user_teamid:user %}">Change Team Name or Color</a></li>
 						<li>
 							<a href="{% url playersurvey teamid=game|get_game_user_teamid:user %}">
-								{% if game.schedule.league|get_player_survey_status:user %}
+								{% if game.league|get_player_survey_status:user %}
 									<span class="status state_success"></span>
 								{% else %}
 									<span class="status state_error"></span>

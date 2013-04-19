@@ -9,12 +9,6 @@ class LeagueAdmin(admin.ModelAdmin):
 	save_on_top = True
 
 
-class ScheduleAdmin(admin.ModelAdmin):
-	list_display = ('__unicode__', 'score_report',)
-	list_select_related = True
-
-
 admin.site.register(Field)
 admin.site.register(League, LeagueAdmin)
-admin.site.register(Schedule, ScheduleAdmin)
 admin.site.register(Game)

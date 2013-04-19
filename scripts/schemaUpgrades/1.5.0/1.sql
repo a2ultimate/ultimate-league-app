@@ -68,4 +68,9 @@ UPDATE `game`
 JOIN `schedule` ON `schedule`.`id` = `game`.`schedule_id`
 SET `game`.`league_id` = `schedule`.`league_id`;
 
+ALTER TABLE  `game` ADD FOREIGN KEY (  `league_id` ) REFERENCES  `a2ultimate_build_2013_03_10`.`league` (
+`id`
+) ON DELETE RESTRICT ON UPDATE RESTRICT ;
+
+DROP TABLE `schedule`;
 

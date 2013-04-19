@@ -67,11 +67,6 @@ ALTER TABLE  `game` ADD FOREIGN KEY (  `field_name_id` ) REFERENCES  `field_name
 `id`
 ) ON DELETE CASCADE ON UPDATE CASCADE ;
 
-ALTER TABLE  `game` ADD INDEX (  `schedule_id` );
-ALTER TABLE  `game` ADD FOREIGN KEY (  `schedule_id` ) REFERENCES  `schedule` (
-`id`
-) ON DELETE CASCADE ON UPDATE CASCADE ;
-
 /* GAME_TEAM */
 CREATE TABLE  `game_teams` (
 `id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY ,

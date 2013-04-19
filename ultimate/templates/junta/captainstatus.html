@@ -35,7 +35,7 @@
 			<thead>
 				<tr>
 					<th>Captain</th>
-					{% regroup schedule.get_games|dictsort:"date" by date as games %}
+					{% regroup league.get_games|dictsort:"date" by date as games %}
 					{% for game_date in games %}
 						<th>{{ game_date.grouper|date:"m/d" }}</th>
 					{% endfor %}

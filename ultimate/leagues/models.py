@@ -90,7 +90,7 @@ class League(models.Model):
 		return self.fieldleague_set.all()
 
 	def get_field_names(self):
-		return FieldNames.objects.filter(field__fieldleague__league=self, game__schedule__league=self).distinct().order_by('field__name', 'name')
+		return FieldNames.objects.filter(field__fieldleague__league=self, game__league=self).distinct().order_by('field__name', 'name')
 
 	def get_league_registrations_for_user(self, user):
 		return self.registrations_set.filter(user=user)
@@ -106,11 +106,14 @@ class League(models.Model):
 		registrations = Registrations.objects.filter(league=self).order_by('registered')
 		return [r for r in registrations if r.waitlist and not r.refunded and r.is_complete()]
 
+	def get_games(self):
+		return self.game_set.all().order_by('field_name__field__name', 'field_name__name')
+
 	def get_user_games(self, user):
-		return Game.objects.filter(schedule__league=self, gameteams__team__teammember__user=user).order_by('date')
+		return Game.objects.filter(league=self, gameteams__team__teammember__user=user).order_by('date')
 
 	def get_num_game_events(self):
-		return Game.objects.filter(schedule__league=self).values('date').distinct().count()
+		return Game.objects.filter(league=self).values('date').distinct().count()
 
 	def get_league_captains(self):
 		return User.objects.filter(teammember__team__league=self, teammember__captain=1)
@@ -140,26 +143,6 @@ class FieldLeague(models.Model):
 
 	class Meta:
 		db_table = u'field_league'
-
-
-class Schedule(models.Model):
-	id = models.AutoField(primary_key=True)
-	league = models.ForeignKey('leagues.League')
-
-	class Meta:
-		db_table = u'schedule'
-
-	def get_games(self):
-		return self.game_set.all().order_by('field_name__field__name', 'field_name__name')
-
-	def score_report(self):
-		return '<a href="%d/score_report/">View score reports</a>' % self.id
-	score_report.allow_tags = True
-
-	def __unicode__(self):
-		return '%d %s %s' % (self.league.year,
-			self.league.season.title(),
-			self.league.night.title())
 
 
 GENDER_CHOICES = (
@@ -451,7 +434,7 @@ class Game(models.Model):
 	id = models.AutoField(primary_key=True)
 	date = models.DateField()
 	field_name = models.ForeignKey('leagues.FieldNames')
-	schedule = models.ForeignKey('leagues.Schedule')
+	league = models.ForeignKey('leagues.league')
 
 	class Meta:
 		db_table = u'game'

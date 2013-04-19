@@ -6,7 +6,7 @@
 	<h1>{{ league.season|title }} League {{ league.year }} {{ league.night|title }} Division ({{ league.gender|title }})</h1>
 	{% include "layout/league_tabs.html" with selected_tab="teams" %}
 
-	{% if schedule %}
+	{% if league.get_games|length %}
 		<table id="schedule_table" class="table table-striped">
 			<thead>
 				<tr>
@@ -29,7 +29,7 @@
 			</thead>
 
 			<tbody>
-				{% regroup schedule.get_games|dictsort:"field_name.field"|dictsort:"field_name.name"|dictsort:"date" by date as games_list %}
+				{% regroup league.get_games|dictsort:"field_name.field"|dictsort:"field_name.name"|dictsort:"date" by date as games_list %}
 				{% for date in games_list %}
 					<tr class="{% if date.grouper|time_until_days < 7 and date.grouper|time_until_days >= 0 %}active{% endif %}">
 						<th class="text_right">
@@ -60,6 +60,8 @@
 				{% endfor %}
 			</tbody>
 		</table>
+	{% else %}
+		<h5>The schedule for this league has not yet been completed.</h5>
 	{% endif %}
 
 	{% if teams %}
@@ -100,6 +102,6 @@
 			{% endfor %}
 		</table>
 	{% else %}
-		No teams have been formed for this league yet.
+		<h5>Teams for this league have not yet been formed.</h5>
 	{% endif %}
 {% endblock %}
