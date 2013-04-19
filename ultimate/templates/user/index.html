@@ -68,7 +68,7 @@
 
 		{% if following_game %}
 			<p id="following_game">
-				The following game is on <strong>{{ following_game.date|date:"l F dS, Y" }}</strong> from <strong>{{ following_game.schedule.league.times }}</strong><br />
+				The following game is on <strong>{{ following_game.date|date:"l F dS, Y" }}</strong> from <strong>{{ following_game.league.times }}</strong><br />
 				@ <strong>{{ following_game.field_name.field.name }} {{ following_game.field_name.name }}</strong>
 			</p>
 		{% endif %}
