@@ -3,30 +3,6 @@ from django import template
 register = template.Library()
 
 @register.filter
-def get_team(team, index):
-	return team[index].team
-
-@register.filter
-def get_team_id(team, index):
-	return team[index].team.id
-
-@register.filter
-def get_team_name(team, index):
-	return team[index].team.name
-
-@register.filter
-def get_team_color(team, index):
-	return team[index].team.color
-
-@register.filter
-def get_field_game_teams(games, field_name):
-	for i, game in enumerate(games):
-		if game.field_name == field_name:
-			del games[i]
-			return game.get_teams()
-	return None
-
-@register.filter
 def get_team_name_font_size(name):
 	if len(name) <= 17:
 		return 24

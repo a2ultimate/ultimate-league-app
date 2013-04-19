@@ -1349,6 +1349,18 @@ ul.captain_division_team_links li {
 	width: 50%;
 }
 
+.teams_table_game td.team_container {
+	max-width: 45%;
+	width: 45%;
+}
+
+.teams_table_game td.divider {
+	max-width: 10%;
+	text-align: center;
+	vertical-align: middle;
+	width: 10%;
+}
+
 .team {
 	background: #ECF0F1;
 	margin: 8px;
@@ -1388,8 +1400,7 @@ ul.captain_division_team_links li {
 
 /* USER PAGE */
 
-#next_game {
-	font-size: 12px;
+.next_game_info {
 	text-align: center;
 }
 
@@ -1413,17 +1424,8 @@ ul.captain_division_team_links li {
 	font-size: 11px;
 }
 
-#next_game table {
-	width: 100%;
-}
-
 #following_game {
-	font-size: 12px;
 	text-align: center;
-}
-
-.team_column {
-	width: 44%;
 }
 
 #user_registrations_note {
