@@ -10,12 +10,20 @@ from django.template import RequestContext
 from ultimate.leagues.models import *
 
 from ultimate.forms import RegistrationAttendanceForm
+from ultimate.middleware.http import Http403
 
 from paypal.standard.forms import PayPalPaymentsForm
 
 def index(request, year, season):
+	if request.user.is_superuser:
+		leagues = League.objects.filter(year=year, season=season).order_by('league_start_date')
+	elif request.user.is_staff:
+		leagues = League.objects.filter(year=year, season=season, state__in=['active', 'planning']).order_by('league_start_date')
+	else:
+		leagues = League.objects.filter(year=year, season=season, state__in=['active']).order_by('league_start_date')
+
 	return render_to_response('leagues/index.html',
-		{'leagues': League.objects.filter(year=year, season=season, state='active').order_by('reg_start_date', 'league_start_date'), 'year': year, 'season': season},
+		{'leagues': leagues, 'year': year, 'season': season},
 		context_instance=RequestContext(request))
 
 def summary(request, year, season, division):
@@ -33,8 +41,8 @@ def details(request, year, season, division):
 def players(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
 
-	registrations = Registration.objects.filter(league=league, status__in=GOOD_REGISTRATION_STATUS_CHOICES).extra(select={'num_baggage':'select COUNT(r1.baggage_id) FROM registration AS r1 WHERE r1.baggage_id = registration.baggage_id'}).order_by('num_baggage', 'baggage', 'reg_time')
-	waitlist = Registration.objects.filter(league=league, status__in=WAITLIST_REGISTRATION_STATUS_CHOICES).order_by('reg_time')
+	registrations = league.get_completed_registrations()
+	waitlist = league.get_waitlisted_registrations()
 
 	return render_to_response('leagues/players.html',
 		{'league': league, 'registrations': registrations, 'waitlist': waitlist},
@@ -43,18 +51,31 @@ def players(request, year, season, division):
 def teams(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
 
-	try:
-		schedule = Schedule.objects.get(league=league)
-	except Schedule.DoesNotExist:
-		schedule = None
-
 	return render_to_response('leagues/teams.html',
-		{'league': league, 'schedule': schedule, 'teams': Team.objects.filter(league=league)},
+		{'league': league, 'field_names': league.get_field_names(), 'teams': Team.objects.filter(league=league), 'user_games': league.get_user_games(request.user)},
 		context_instance=RequestContext(request))
 
+@login_required
 def group(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
 	registration = get_object_or_404(Registrations, league=league, user=request.user)
+
+	if request.method == 'POST':
+		if 'leave_group' in request.POST:
+			if (registration.leave_baggage_group()):
+				messages.success(request, 'You were successfully removed from your baggage group.')
+			else:
+				messages.error(request, 'You could not be removed from your baggage group.')
+
+		elif 'add_group' in request.POST and 'email' in request.POST:
+			email = request.POST.get('email')
+			message = registration.add_to_baggage_group(email)
+			if (message == True):
+				messages.success(request, 'You were successfully added to ' + email + '\'s group.')
+			else:
+				messages.error(request, message)
+
+		return HttpResponseRedirect(reverse('league_group', kwargs={'year': year, 'season': season, 'division': division}))
 
 	return render_to_response('leagues/group.html',
 		{'league': league, 'registration': registration},
@@ -63,6 +84,10 @@ def group(request, year, season, division):
 @login_required
 def registration(request, year, season, division, section=None):
 	league = get_object_or_404(League, year=year, season=season, night=division)
+
+	if league.state not in ['active'] and not request.user.is_staff and not request.user.is_superuser:
+		raise Http403
+
 	registration, created = Registrations.objects.get_or_create(user=request.user, league=league)
 	attendance_form = None
 	paypal_form = None
@@ -100,11 +125,21 @@ def registration(request, year, season, division, section=None):
 		# payment type response
 		if 'pay_type' in request.POST:
 			if request.POST.get('pay_type').lower() == 'check':
+				if not registration.baggage_id:
+					baggage = Baggage()
+					baggage.save()
+					registration.baggage_id = baggage.id
+
 				registration.pay_type = 'check'
 				registration.save()
 				messages.success(request, 'Payment type set to check.')
 
 			elif request.POST.get('pay_type').lower() == 'paypal':
+				if not registration.baggage_id:
+					baggage = Baggage()
+					baggage.save()
+					registration.baggage_id = baggage.id
+
 				registration.pay_type = 'paypal'
 				registration.save()
 				messages.success(request, 'Payment type set to PayPal.')

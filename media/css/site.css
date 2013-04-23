@@ -10,9 +10,14 @@ textarea {
 	outline: none;
 }
 
-/* html5boilerplate */
+
 body{font-size:1em;line-height:1.4}::-moz-selection{background:#b3d4fc;text-shadow:none}::selection{background:#b3d4fc;text-shadow:none}hr{display:block;height:1px;border:0;border-top:1px solid #ccc;margin:1em 0;padding:0}img{vertical-align:middle}fieldset{border:0;margin:0;padding:0}textarea{resize:vertical}.chromeframe{margin:.2em 0;background:#ccc;color:#000;padding:.2em 0}
 
+* {
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
 
 html {
 	-webkit-text-size-adjust: 100%;
@@ -42,15 +47,11 @@ a:hover {
 	-moz-transition: color .15s ease-in-out;
 	-webkit-transition: color .15s ease-in-out;
 
-	color:  #333333;
+	color: #333333;
 	transition: color .15s ease-in-out;
 }
 
-em {
-	font-size: 11px;
-}
-
-h1, h2, h3, h4, h5, h6, th, strong {
+h1, h2, h3, h4, h5, h6, th, strong, .strong {
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	font-weight: bold;
 	margin: 10px 0;
@@ -109,49 +110,20 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 	font-weight: normal;
 }
 
-table td {
-	padding: 0 6px;
+.center_margin {
+	margin: 0 auto;
 }
 
-table .even,
-table .gray {
-	background: #ECEFF1;
+.text_center {
+	text-align: center;
 }
 
-table tr:first-child th:first-child,
-table tr.even th:first-child,
-table tr.gray th:first-child,
-table tr:first-child td:first-child,
-table tr.even td:first-child,
-table tr.gray td:first-child {
-	border-top-left-radius: 4px;
+.text_right {
+	text-align: right;
 }
 
-table tr:first-child th:last-child,
-table tr.even th:last-child,
-table tr.gray th:last-child,
-table tr:first-child td:last-child,
-table tr.even td:last-child,
-table tr.gray td:last-child {
-	border-top-right-radius: 4px;
-}
-
-table tr:last-child th:first-child,
-table tr.even th:first-child,
-table tr.gray th:first-child,
-table tr:last-child td:first-child,
-table tr.even td:first-child,
-table tr.gray td:first-child {
-	border-bottom-left-radius: 4px;
-}
-
-table tr:last-child th:last-child,
-table tr.even th:last-child,
-table tr.gray th:last-child,
-table tr:last-child td:last-child,
-table tr.even td:last-child,
-table tr.gray td:last-child {
-	border-bottom-right-radius: 4px;
+.pull_right {
+	float: right;
 }
 
 /* HEADER */
@@ -196,47 +168,70 @@ table tr.gray td:last-child {
 	padding: 0 6px;
 }
 
-#menu_container {
-	background: #ECEFF1;
+.navbar_container {
+	background-color: #ECEFF1;
 	margin-bottom: 12px;
+	min-height: 32px;
+	position: relative;
 }
 
-#menu {
+.navbar {
 	color: #777777;
 	font-size: 15px;
 	letter-spacing: 1px;
-	line-height: 32px;
-	margin-bottom: 10px;
-	min-height: 32px;
-	padding: 0 18px;
+	line-height: 38px;
 	margin: 0 auto;
+	min-height: 38px;
 	position: relative;
 	width: 960px;
 }
 
-#menu li {
+.navbar:before,
+.navbar:after {
+	display: table;
+	content: " ";
+}
+
+.navbar:after {
+	clear: both;
+}
+
+.nav {
+	display: block;
 	float: left;
+	left: 0;
 	list-style: none;
+	margin: 0;
+	padding-left: 0;
+	position: relative;
+}
+
+.nav.pull_right {
+	float: right;
+}
+
+.nav li {
+	float: left;
 	margin: 0;
 	padding: 0;
 }
 
-#menu a {
+.nav a {
 	color: #555555;
 	font-weight: bold;
-	padding: 6px 14px;
+	padding: 10px 14px;
 	text-decoration: none;
 }
 
-#menu a:hover {
+.nav a:hover {
 	background: #CCCCCC;
 }
 
-#menu a:active {
+.nav a:active {
 	background: #AAAAAA;
 }
 
-#menu span {
+.nav span {
 	margin: 0 10px;
 }
 
@@ -294,10 +289,7 @@ table tr.gray td:last-child {
 /* CONTENT */
 
 #content_container {
-	clear: both;
-	margin-bottom: 10px;
-
-	margin: 0 auto;
+	margin: 0 auto 10px;
 	width: 960px;
 }
 
@@ -357,8 +349,10 @@ table tr.gray td:last-child {
 }
 
 #content {
-	margin-left: 245px;
+	float: left;
+	margin-left: 12px;
 	padding: 4px 12px 12px;
+	width: 722px;
 }
 
 /* COMPONENTS */
@@ -380,7 +374,7 @@ table tr.gray td:last-child {
 }
 
 .none_found {
-	color:  #BDC3C7;
+	color: #BDC3C7;
 	font-size: 16px;
 	font-weight: bold;
 	margin: 8px 0;
@@ -521,12 +515,12 @@ input[type="color"]:focus,
 }
 
 .control_group {
-  margin-bottom: 10px;
+	margin-bottom: 10px;
 }
 
 legend + .control_group {
-  margin-top: 20px;
-  -webkit-margin-top-collapse: separate;
+	margin-top: 20px;
+	-webkit-margin-top-collapse: separate;
 }
 
 .control_group.error textarea,
@@ -693,6 +687,182 @@ input[type="submit"] {
 	background-color: #cea70c;
 }
 
+
+.table {
+	margin-bottom: 20px;
+	width: 100%;
+}
+
+.table th,
+.table td {
+	border-top: 1px solid #DDDDDD;
+	line-height: 20px;
+	padding: 8px;
+	text-align: left;
+	vertical-align: middle;
+}
+
+.table th.text_center,
+.table td.text_center {
+	text-align: center;
+}
+
+.table th.text_right,
+.table td.text_right {
+	text-align: right;
+}
+
+.table thead th {
+	vertical-align: bottom;
+}
+
+.table caption + thead tr:first-child th,
+.table caption + thead tr:first-child td,
+.table colgroup + thead tr:first-child th,
+.table colgroup + thead tr:first-child td,
+.table thead:first-child tr:first-child th,
+.table thead:first-child tr:first-child td {
+	border-top: 0;
+}
+
+.table tbody + tbody {
+	border-top: 2px solid #DDDDDD;
+}
+
+.table .table {
+	background-color: #FFFFFF;
+}
+
+.table-condensed th,
+.table-condensed td {
+	padding: 4px 5px;
+}
+
+.table-bordered {
+	border: 1px solid #DDDDDD;
+	border-collapse: separate;
+	border-left: 0;
+}
+
+.table-bordered th,
+.table-bordered td {
+	border-left: 1px solid #DDDDDD;
+}
+
+.table-bordered caption + thead tr:first-child th,
+.table-bordered caption + tbody tr:first-child th,
+.table-bordered caption + tbody tr:first-child td,
+.table-bordered colgroup + thead tr:first-child th,
+.table-bordered colgroup + tbody tr:first-child th,
+.table-bordered colgroup + tbody tr:first-child td,
+.table-bordered thead:first-child tr:first-child th,
+.table-bordered tbody:first-child tr:first-child th,
+.table-bordered tbody:first-child tr:first-child td {
+	border-top: 0;
+}
+
+.table-bordered thead:first-child tr:first-child > th:first-child,
+.table-bordered tbody:first-child tr:first-child > td:first-child,
+.table-bordered tbody:first-child tr:first-child > th:first-child {
+	border-top-left-radius: 4px;
+}
+
+.table-bordered thead:first-child tr:first-child > th:last-child,
+.table-bordered tbody:first-child tr:first-child > td:last-child,
+.table-bordered tbody:first-child tr:first-child > th:last-child {
+	border-top-right-radius: 4px;
+}
+
+.table-bordered thead:last-child tr:last-child > th:first-child,
+.table-bordered tbody:last-child tr:last-child > td:first-child,
+.table-bordered tbody:last-child tr:last-child > th:first-child,
+.table-bordered tfoot:last-child tr:last-child > td:first-child,
+.table-bordered tfoot:last-child tr:last-child > th:first-child {
+	border-bottom-left-radius: 4px;
+}
+
+.table-bordered thead:last-child tr:last-child > th:last-child,
+.table-bordered tbody:last-child tr:last-child > td:last-child,
+.table-bordered tbody:last-child tr:last-child > th:last-child,
+.table-bordered tfoot:last-child tr:last-child > td:last-child,
+.table-bordered tfoot:last-child tr:last-child > th:last-child {
+	border-bottom-right-radius: 4px;
+}
+
+.table-bordered tfoot + tbody:last-child tr:last-child > td:first-child {
+	border-bottom-left-radius: 0;
+}
+
+.table-bordered tfoot + tbody:last-child tr:last-child > td:last-child {
+	border-bottom-right-radius: 0;
+}
+
+.table-bordered caption + thead tr:first-child th:first-child,
+.table-bordered caption + tbody tr:first-child td:first-child,
+.table-bordered colgroup + thead tr:first-child th:first-child,
+.table-bordered colgroup + tbody tr:first-child td:first-child {
+	border-top-left-radius: 4px;
+}
+
+.table-bordered caption + thead tr:first-child th:last-child,
+.table-bordered caption + tbody tr:first-child td:last-child,
+.table-bordered colgroup + thead tr:first-child th:last-child,
+.table-bordered colgroup + tbody tr:first-child td:last-child {
+	border-top-right-radius: 4px;
+}
+
+.table-striped > tbody > tr:nth-child(odd) > td,
+.table-striped > tbody > tr:nth-child(odd) > th {
+	background-color: #ECEFF1;
+}
+
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
+	background-color: #ECF0F1;
+}
+
+.table > tbody > tr > td.success,
+.table > tbody > tr > th.success,
+.table > tbody > tr.success > td {
+	background-color: #DFF0D8;
+	border-color: #D6E9C6;
+}
+
+.table > tbody > tr > td.danger,
+.table > tbody > tr > th.danger,
+.table > tbody > tr.danger > td {
+	background-color: #F2DEDE;
+	border-color: #EED3D7;
+}
+
+.table > tbody > tr > td.warning,
+.table > tbody > tr > th.warning,
+.table > tbody > tr.warning > td {
+	background-color: #FCF8E3;
+	border-color: #FBEED5;
+}
+
+.table-hover > tbody > tr > td.success:hover,
+.table-hover > tbody > tr > th.success:hover,
+.table-hover > tbody > tr.success:hover > td {
+	background-color: #D0E9C6;
+	border-color: #C9E2b3;
+}
+
+.table-hover > tbody > tr > td.danger:hover,
+.table-hover > tbody > tr > th.danger:hover,
+.table-hover > tbody > tr.danger:hover > td {
+	background-color: #EBCCCC;
+	border-color: #E6C1C7;
+}
+
+.table-hover > tbody > tr > td.warning:hover,
+.table-hover > tbody > tr > th.warning:hover,
+.table-hover > tbody > tr.warning:hover > td {
+	background-color: #FAF2CC;
+	border-color: #F8E5BE;
+}
+
 .form_cancel {
 	padding: 0 6px;
 }
@@ -703,53 +873,54 @@ input[type="submit"] {
 }
 
 
-#content_tabs {
+.nav_tabs {
 	border-bottom: 3px solid #2ECC71;
 	letter-spacing: 1px;
-	margin-bottom: 14px;
-	min-height: 32px;
-}
-
-#content_tabs ul {
-	float: left;
 	list-style: none;
 	margin: 0;
+	margin-bottom: 12px;
 	padding: 0;
 }
 
-#content_tabs li {
+.nav_tabs li {
 	float: left;
-	list-style: none;
+	line-height: 32px;
 }
 
-#content_tabs ul li a {
+.nav_tabs li a {
 	background: #E9E9E9;
 	border-top-left-radius: 2px;
 	border-top-right-radius: 2px;
 	display: block;
-	font-size: 13px;
-	height: 32px;
+	font-size: 14px;
 	line-height: 32px;
-	margin-right: 5px;
-	padding: 0px 20px;
+	margin-right: 8px;
+	padding: 2px 20px;
 	text-decoration: none;
 }
 
-#content_tabs ul li a:hover {
+.nav_tabs li a:hover {
 	background: #EEEEEE;
 }
 
-#content_tabs ul li.selected a {
+.nav_tabs li.selected a {
 	background: #2ECC71;
 	color: white;
 	font-size: 14px;
 	text-decoration: none;
 }
 
-#content_tabs + div,
-#content_tabs + form {
-	margin: 12px;
+.nav_tabs:before,
+.nav_tabs:after {
+	display: table;
+	line-height: 0;
+	content: "";
 }
+
+.nav_tabs:after {
+	clear: both;
+}
+
 
 #breadcrumbs {
 	display: inline;
@@ -769,7 +940,7 @@ input[type="submit"] {
 .progress_bar {
 	background: #DDDDDD;
 	border-radius: 6px;
-	margin: 18px 12px;
+	margin: 36px 12px 18px 4px;
 	padding: 0;
 	position: relative;
 	text-align: left;
@@ -894,6 +1065,14 @@ input[type="submit"] {
 	text-align: right;
 }
 
+span.status {
+	border-radius: 50%;
+	display: block;
+	height: 12px;
+	left: 0;
+	width: 12px;
+}
+
 
 /* INDEX / INDEX */
 
@@ -915,7 +1094,7 @@ input[type="submit"] {
 }
 
 .announcement {
-	border-radius: 4px;
+	border-radius: 2px;
 	color: #666666;
 	font-size: 18px;
 }
@@ -967,7 +1146,7 @@ input[type="submit"] {
 	border-radius: 4px;
 	display: block;
 	height: 48px;
-	width:  48px;
+	width: 48px;
 }
 
 .update_content {
@@ -1113,8 +1292,8 @@ ul.captain_division_team_links li {
 }
 
 #player_survey_table .skill_average {
-	font-size:  11px;
-	font-weight:  bold;
+	font-size: 11px;
+	font-weight: bold;
 	letter-spacing: 1px;
 }
 
@@ -1125,23 +1304,12 @@ ul.captain_division_team_links li {
 
 /* LEAGUE / INDEX */
 
-.league_info_table {
-	/*width: 100%;*/
-}
-
-.league_info_table th,
-.league_info_table td {
-	padding: 8px 12px;
-	text-align: left;
-}
-
 .league_info_table th {
 	background: #ECEFF1;
-	font-size: 13px;
 }
 
 .league_info_table td {
-	font-size: 16px;
+	font-size: 15px;
 }
 
 /* LEAGUE / DETAILS */
@@ -1150,121 +1318,66 @@ ul.captain_division_team_links li {
 	font-size: 17px;
 }
 
-/* LEAGUE / PLAYERS */
-
-#player_table {
-	font-size: 13px;
-	letter-spacing: 1px;
-	width: 100%;
-}
-
-#player_table td > div {
-	background: #BDC3C7;
-	border-radius: 2px;
-	margin: 6px 1%;
-	padding: 4px 8px;
-}
-
-#player_table td {
-	vertical-align: top;
-}
-
-#player_table td em {
-	font-size: 11px;
-}
-
 /*  LEAGUE / TEAMS */
 
-#schedule {
-	border-spacing: 6px;
-	color: #666666;
-	margin: 18px 0;
+#schedule_table thead th {
+	border-right: 2px solid #DDDDDD;
+}
+
+#schedule_table thead th:last-child {
+	border-right: 0;
+}
+
+#schedule_table tbody th {
+	width: 8%;
+}
+
+#schedule_table tbody tr.active th,
+#schedule_table tbody tr.active td {
+	background-color: #BDC3C7;
+	color: #FFFFFF;
+}
+
+.teams_table {
+	max-width: 50%;
+	width: 100%;
+}
+
+.teams_table td {
+	max-width: 50%;
+	vertical-align: top;
+	width: 50%;
+}
+
+.teams_table_game td.team_container {
+	max-width: 45%;
+	width: 45%;
+}
+
+.teams_table_game td.divider {
+	max-width: 10%;
 	text-align: center;
 	vertical-align: middle;
-	width: 100%;
-}
-
-#schedule td {
-	padding: 6px inherit;
-}
-
-.schedule_field {
-	color: #666666;
-	font-size: 13px;
-	font-weight: bold;
-	letter-spacing: 1px;
-}
-
-.schedule_field a {
-	font-size: 10px;
-	position: relative;
-	top: -4px;
-}
-
-.schedule_header {
-	font-size: 11px;
-	font-weight: bold;
-	letter-spacing: 2px;
-}
-
-.schedule_date {
-	min-width: 48px;
-}
-
-.schedule_game {
-	font-size: 10px;
-	letter-spacing: 3px;
-}
-
-.schedule_team {
-	font-size: 11px;
-	font-weight: bold;
-}
-
-#teams {
-	border-spacing: 6px;
-	margin: 18px 0;
-	width: 100%;
+	width: 10%;
 }
 
 .team {
-	padding: 0;
-	vertical-align: top;
-}
-
-.team > div {
 	background: #ECF0F1;
-	border-radius: 2px;
-	margin: 8px 0;
-	padding: 12px;
-	text-align: center;
-}
-
-.team:first-child {
-	padding-right: 12px;
-}
-
-.team:last-child {
-	padding-left: 12px;
-}
-
-.team_name {
-	color: #666666;
-	font-size: 24px;
-	font-weight: bold;
-	min-height: 30px;
-	overflow: hidden;
+	margin: 8px;
 	padding-bottom: 4px;
-	text-align: center;
-	text-overflow: ellipsis;
-	word-wrap: break-word;
 }
 
 .team_info {
-	font-size: 12px;
+	padding: 12px 8px;
+}
+
+.team_name {
+	font-size: 24px;
 	font-weight: bold;
-	min-height: 16px;
-	padding: 0 8px;
+	line-height: 18px;
+	min-height: 38px;
+	padding: 4px 0;
+	text-align: center;
 }
 
 .team_info_left {
@@ -1276,14 +1389,8 @@ ul.captain_division_team_links li {
 }
 
 .team_members {
-	border-top: 1px solid #FFFFFF;
 	padding: 8px 0 4px;
-}
-
-.team_member {
-	color: #333333;
-	font-size: 13px;
-	padding: 1px 0;
+	text-align: center;
 }
 
 .team_member .strong {
@@ -1291,16 +1398,9 @@ ul.captain_division_team_links li {
 	font-weight: bold;
 }
 
-.team_member_nickname {
-	color: #999999;
-	font-size: 13px;
-	font-style: italic;
-}
-
 /* USER PAGE */
 
-#next_game {
-	font-size: 12px;
+.next_game_info {
 	text-align: center;
 }
 
@@ -1324,27 +1424,8 @@ ul.captain_division_team_links li {
 	font-size: 11px;
 }
 
-#next_game table {
-	width: 100%;
-}
-
 #following_game {
-	font-size: 12px;
 	text-align: center;
-}
-
-.team_column {
-	width: 44%;
-}
-
-#user_registrations {
-	width: 100%;
-}
-
-#user_registrations th,
-#user_registrations td {
-	padding: 4px 8px;
-	text-align: left;
 }
 
 #user_registrations_note {

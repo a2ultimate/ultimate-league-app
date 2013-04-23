@@ -1,9 +1,9 @@
 {% extends "layout/layout_user.html" %}
+{% load utility %}
 
 {% block content %}
-	<h2>
-	    {{ league.season|capfirst }} League {{ league.year }} Players
-	</h2>
+	<h1>{{ league.season|title }} League {{ league.year }} {{ league.night|title }} Division ({{ league.gender|title }})</h1>
+	{% include "layout/league_tabs.html" with selected_tab="players" %}
 
 	<p>To add someone to your group, you need to know their email address.</p>
 	<p>If you know your friend's email address and would like to be in a group with them, <a href="{% url league_group year=league.year season=league.season division=league.night %}">click here</a> to add them.</p>
@@ -17,38 +17,38 @@
 		<li>Anything else? Email <span class="email">registration.at.a2ultimate.org</span></li>
 	</ol>
 
-	<div id="waitlist">
-		<h4>Waitlist</h4>
+	{% if waitlist|length %}
+		<h3>Waitlist</h3>
 
 		<ol>
 			{% for registration in waitlist %}
 				<li>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.get_profile.nickname }}</em></li>
 			{% endfor %}
 		</ol>
-	</div>
+	{% endif %}
 
 	<div id="league_players">
 		<h4>Currently {{ registrations|length }} out of a maximum {{ league.max_players }} players registered</h4>
 
-		{% regroup registrations by baggage as registration_baggage %}
-		<table id="player_table">
-			{% for baggage in registration_baggage %}
+		<table class="table table-striped">
+			<tbody>
+			{% regroup registrations|dictsort:"baggage.id" by baggage as baggage_group %}
+			{% for baggage in baggage_group|groups_sort %}
 				{% if not forloop.counter|divisibleby:'2' %}
 					<tr>
 				{% endif %}
 
-				<td>
-					<div>
-						{% for registration in baggage.list %}
-							<div>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.get_profile.nickname }}</em></div>
-						{% endfor %}
-					</div>
+				<td class="col-span-6">
+					{% for registration in baggage.list %}
+						<div>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.get_profile.nickname }}</em></div>
+					{% endfor %}
 				</td>
 
 				{% if forloop.counter|divisibleby:'2' %}
 					</tr>
 				{% endif %}
 			{% endfor %}
+			</tbody>
 		</table>
 	</div>
 {% endblock %}

@@ -1,0 +1,10 @@
+<ul class="nav_tabs">
+	{% if league.is_accepting_registrations or selected_tab == 'registration' %}
+		<li class="{% if selected_tab == 'registration' %}selected{% endif %}"><a href="{% url league_registration year=league.year season=league.season division=league.night %}">Registration</a></li>
+	{% endif %}
+
+	<li class="{% if selected_tab == 'summary' %}selected{% endif %}"><a href="{% url league_summary year=league.year season=league.season division=league.night %}">Summary</a></li>
+	<li class="{% if selected_tab == 'details' %}selected{% endif %}"><a href="{% url league_details year=league.year season=league.season division=league.night %}">Detailed Info</a></li>
+	<li class="{% if selected_tab == 'players' %}selected{% endif %}"><a href="{% url league_players year=league.year season=league.season division=league.night %}">Players</a></li>
+	<li class="{% if selected_tab == 'teams' %}selected{% endif %}"><a href="{% url league_teams year=league.year season=league.season division=league.night %}">Teams & Schedules</a></li>
+</ul>
