@@ -39,31 +39,35 @@
 			</ul>
 		</div>
 	</div>
-	<div id="menu_container">
-		<ul id="menu">
-			<li><a href="{% url home %}">Home</a></li>
-			<li><a href="{% url user %}">My Account</a></li>
-			<li><a href="{% url pybb:index %}" target="_blank">Forum</a></li>
-			<li><a href="{% url pybb:forum 8 %}">Lost & Found</a></li>
-			<li><a href="{% url contact %}">Contacts</a></li>
-			{% if user.is_superuser %}<li><a href="{% url home %}admin">Admin</a></li>{% endif %}
-			{% if menu_leagues %}
-				<li><span>Active Leagues:</span></li>
-				{% regroup menu_leagues by year as league_years %}
+	<div class="navbar_container">
+		<div class="navbar">
+			<ul class="nav">
+				<li><a href="{% url home %}">Home</a></li>
+				<li><a href="{% url user %}">My Account</a></li>
+				<li><a href="{% url pybb:index %}" target="_blank">Forum</a></li>
+				<li><a href="{% url contact %}">Contacts</a></li>
+				{% if user.is_superuser %}<li><a href="{% url home %}admin">Admin</a></li>{% endif %}
+			</ul>
 
-				{% for league_list in league_years %}
-					{% regroup league_list.list by season as league_seasons %}
+			<ul class="nav pull_right">
+				{% if menu_leagues %}
+					<li><span>Leagues</span></li>
+					{% regroup menu_leagues by year as league_years %}
 
-					{% for league in league_seasons %}
-						<li>
-							<a href="{% url league_index year=league_list.grouper season=league.grouper %}">
-								{{ league.grouper|capfirst }} {{ league_list.grouper }}
-							</a>
-						</li>
+					{% for league_list in league_years %}
+						{% regroup league_list.list by season as league_seasons %}
+
+						{% for league in league_seasons %}
+							<li>
+								<a href="{% url league_index year=league_list.grouper season=league.grouper %}">
+									{{ league.grouper|capfirst }} {{ league_list.grouper }}
+								</a>
+							</li>
+						{% endfor %}
 					{% endfor %}
-				{% endfor %}
-			{% else %}
-				<p>No leagues are available.</p>
-			{% endif %}
-		</ul>
+				{% else %}
+					<p>No leagues are available.</p>
+				{% endif %}
+			</ul>
+		</div>
 	</div>

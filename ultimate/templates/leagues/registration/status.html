@@ -2,11 +2,10 @@
 
 {% block content %}
 
-<h1>
-	{{ league.season|capfirst }} League {{ league.year }} - {{ league.night|title }} Registration
-</h1>
+<h1>{{ league.season|title }} League {{ league.year }} {{ league.night|title }} Division ({{ league.gender|title }})</h1>
+{% include "layout/league_tabs.html" with selected_tab="registration" %}
 
-{% include 'leagues/registration/_progress.html' %}
+{% include "leagues/registration/_progress.html" %}
 
 <h2>Registration Status</h2>
 

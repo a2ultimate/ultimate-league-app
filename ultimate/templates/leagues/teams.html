@@ -1,67 +1,87 @@
 {% extends "layout/layout_user.html" %}
 {% load teams %}
+{% load utility %}
 
 {% block content %}
-	<h2>
-	    Teams &amp; Schedules for {{ league.night|capfirst }} {{ league.season|capfirst }} {{ league.year }}
-	</h2>
+	<h1>{{ league.season|title }} League {{ league.year }} {{ league.night|title }} Division ({{ league.gender|title }})</h1>
+	{% include "layout/league_tabs.html" with selected_tab="teams" %}
 
-	{% if schedule %}
-		{% regroup schedule.get_games|dictsort:"date" by date as games %}
-		{% regroup schedule.get_games by field_name as field_names %}
-		{% regroup field_names by grouper.field as fields %}
-		<table id="schedule">
-			<tr>
-				<td></td>
-				{% for field in fields %}
-					<td class="schedule_field" colspan="{{ field.list|length }}">
-						<div>{{ field.grouper.name }}</div>
-						<div><a href="{{ MEDIA_URL }}{{ field.grouper.layout_link }}">Field Layout</a></div>
-					</td>
-				{% endfor %}
-			</tr>
-
-			<tr>
-				<td></td>
-				{% for field_name in field_names %}
-					<td class="schedule_header">{{ field_name.grouper.name }}</td>
-				{% endfor %}
-			</tr>
-
-			{% for game_date in games %}
-				<tr class="{% cycle 'even' 'odd' %}">
-					<td class="schedule_header schedule_date">
-						{{ game_date.grouper|date:"m/d" }}
-					</td>
-
-					{% for field_name in field_names %}
-						<td class="schedule_game{% if forloop.last %} right{% endif %}">
-							{% for team in game_date.list|get_field_game_teams:field_name.grouper %}
-								<div class="schedule_team">{{ team.team.id }}</div>
-							{% empty %}
-								-
-							{% endfor %}
-						</td>
+	{% if league.get_games|length %}
+		<table id="schedule_table" class="table table-striped">
+			<thead>
+				<tr>
+					<td></td>
+					{% regroup field_names by field as fields %}
+					{% for field in fields %}
+						<th class="text_center" colspan="{{ field.list|length }}">
+							<div>{{ field.grouper }}</div>
+							<div><a href="{{ MEDIA_URL }}{{ field_name.field.layout_link }}">Field Layout</a></div>
+						</th>
 					{% endfor %}
 				</tr>
-			{% endfor %}
+
+				<tr>
+					<td></td>
+					{% for field_name in field_names %}
+						<th class="text_center">{{ field_name.name }}</th>
+					{% endfor %}
+				</tr>
+			</thead>
+
+			<tbody>
+				{% regroup league.get_games|dictsort:"field_name.field"|dictsort:"field_name.name"|dictsort:"date" by date as games_list %}
+				{% for date in games_list %}
+					<tr class="{% if date.grouper|time_until_days < 7 and date.grouper|time_until_days >= 0 %}active{% endif %}">
+						<th class="text_right">
+							<div>{{ date.grouper|date:"M" }}</div>
+							<div>{{ date.grouper|date:"jS" }}</div>
+						</th>
+
+						{% for field_name in field_names %}
+							<td class="text_center">
+								{% for game in date.list|slice:":forloop.counter" %}
+									{% ifequal game.field_name field_name %}
+										{% if game in user_games %}
+											{% for team in game.get_teams %}
+												<div style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">{{ team.id }}</div>
+											{% endfor %}
+										{% else %}
+											{% for team in game.get_teams %}
+												<div>{{ team.id }}</div>
+											{% endfor %}
+										{% endif %}
+									{% endifequal %}
+								{% empty %}
+									-
+								{% endfor %}
+							</td>
+						{% endfor %}
+					</tr>
+				{% endfor %}
+			</tbody>
 		</table>
+	{% else %}
+		<h5>The schedule for this league has not yet been completed.</h5>
 	{% endif %}
 
 	{% if teams %}
-		<table id="teams">
+		<table class="teams_table">
 			{% for team in teams %}
 				{% if forloop.counter0|divisibleby:"2" %}
 					<tr>
 				{% endif %}
-				<td class="team">
-					<div>
-						<div class="team_name" style="font-size: {{ team.name|get_team_name_font_size }}px;">
-							{{ team.name }}
-						</div>
-						<div class="team_info">
-							<span class="team_info_left">{{ team.color }}</span>
-							<span class="team_info_right">Team #{{ team.id }}</span>
+
+				<td>
+					<div class="team">
+						<div class="team_info" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
+							<div class="team_name" style="font-size: {{ team.name|get_team_name_font_size }}px;">
+								{{ team.name }}
+							</div>
+
+							<div>
+								<div class="pull_right">{{ team.color }}</div>
+								<div>Team {{ team.id }}</div>
+							</div>
 						</div>
 						<div class="team_members">
 							{% for team_member in team.get_members %}
@@ -75,12 +95,13 @@
 						</div>
 					</div>
 				</td>
+
 				{% if not forloop.counter0|divisibleby:"2" %}
 					</tr>
 				{% endif %}
 			{% endfor %}
 		</table>
 	{% else %}
-		No teams have been formed for this league yet.
+		<h5>Teams for this league have not yet been formed.</h5>
 	{% endif %}
 {% endblock %}

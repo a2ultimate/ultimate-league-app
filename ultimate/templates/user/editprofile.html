@@ -4,12 +4,10 @@
 
 <h1>Edit Profile and Skills</h1>
 
-<div id="content_tabs">
-	<ul>
-		<li class="selected"><a href="{% url editprofile %}">Edit Profile</a></li>
-		<li><a href="{% url editskills %}">Edit Skills</a></li>
-	</ul>
-</div>
+<ul class="nav_tabs">
+	<li class="selected"><a href="{% url editprofile %}">Edit Profile</a></li>
+	<li><a href="{% url editskills %}">Edit Skills</a></li>
+</ul>
 
 <form id="edit_profile_form" method="post">{% csrf_token %}
 	<div class="field_wrapper">

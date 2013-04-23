@@ -1,9 +1,13 @@
 from django import forms
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Count
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 
 from pybb.models import *
+
+from datetime import date, datetime
+import re
 
 class Field(models.Model):
 	id = models.AutoField(primary_key=True)
@@ -14,6 +18,7 @@ class Field(models.Model):
 	note = models.TextField()
 	class Meta:
 		db_table = u'field'
+		ordering = ['name']
 
 	def __unicode__(self):
 		return self.name
@@ -24,6 +29,7 @@ class FieldNames(models.Model):
 	field = models.ForeignKey('leagues.Field')
 	class Meta:
 		db_table = u'field_names'
+		ordering = ['field__name', 'name']
 
 	def __unicode__(self):
 		return '%s %s' % (self.field.name, self.name)
@@ -44,42 +50,38 @@ LEAGUE_GENDER_CHOICES = (
 	('competitive', 'Competitve league'),
 	('showcase',    'Showcase league'),
 	('party',       'No group-limits party night'),
-	('open',        'Open, can be coed, no gender match'),
-	('women',       'Women only, no boys'),
+	('open',        'Open, no gender match'),
+	('women',       'Women only'),
 	)
 
 class League(models.Model):
 	id = models.AutoField(primary_key=True)
-	baggage = models.IntegerField(help_text='This is the max size for baggage groups')
-	night = models.CharField(max_length=96, help_text='The league night (lowercase), spaces are okay here, but don\'t get too fancy with the !@_(#$^\'s')
-	season = models.CharField(max_length=96, help_text='Season name (lowercase) - NO SPACES')
-	year = models.IntegerField(help_text='Four digit year, i.e. 2008')
+	night = models.CharField(max_length=96, help_text='lower case, no special characters, e.g. "sunday", "tuesday and thursday", "end of season tournament"')
+	season = models.CharField(max_length=96, help_text='lower case, no special characters, e.g. "late fall", "winter"')
+	year = models.IntegerField(help_text='four digit year, e.g. 2013')
 	gender = models.CharField(max_length=96, choices=LEAGUE_GENDER_CHOICES)
-	gender_note = models.TextField(help_text='Summary text describing gender rules for this league, and anything else that should go on the league info page')
-	times = models.TextField(help_text='Start end times, i.e. 6:00-8:00pm')
-	reg_start_date = models.DateField(help_text='Day registration opens, although I\'m not sure anything limits people from signing up before')
-	waitlist_start_date = models.DateField(help_text='The day waitlist starts, so the day AFTER registration closes')
-	freeze_group_date = models.DateField(help_text='The last day people have to form groups on their own')
-	league_start_date = models.DateField(help_text='First game of this league night')
-	league_end_date = models.DateField(help_text='Last game of this league night')
-	paypal_cost = models.IntegerField(help_text='Cost if they pay via paypal')
-	check_cost = models.IntegerField(help_text='Cost if they pay via check')
-	mail_check_address = models.TextField(help_text='Current treasurer\'s address, or wherever to send the checks')
-	max_players = models.IntegerField(help_text='Total number of players that can sign up, if this is reached before waitlist would have normally started, this will force waitlist registration')
-	state = models.CharField(max_length=96, choices=LEAGUE_STATE_CHOICES, help_text=''''There are 3 states:<br/>
-		Archived: For leagues past, or leagues that were cancelled, this will
-		remove the league from the links on the left side of the webpage,<br/>
-		Planning: This let\'s us put the info into the system, and people
-		signed in with junta priviliges will be able to see it, but not normal
-		users,<br/>
-		Active: Everyone can see it, and it appears in the side bar links''')
-	field = models.ManyToManyField(Field, db_table='field_league', help_text='''Select the fields these games will be played at (Hold
-		Ctrl or Apple if you need to select more than one), use
-		the green "+" icon if we're playing at a new field''')
-	details = models.TextField(help_text='All text to go on details page.  HTML okay')
-	league_email = models.CharField(max_length=192, blank=True, help_text='Email address for all players in this league.')
-	league_captains_email = models.CharField(max_length=192, blank=True, help_text='Email address for all captains in this league.')
-	division_email = models.CharField(max_length=192, blank=True, help_text='Email address for players in just this division (night).')
+	gender_note = models.TextField(help_text='gender or other notes for league, e.g. 50/50 league, showcase league notes')
+	baggage = models.IntegerField(help_text='max baggage group size')
+	times = models.TextField(help_text='start to end time, e.g. 6:00-8:00pm')
+	reg_start_date = models.DateField(help_text='date that registration process is open (not currently automated)')
+	waitlist_start_date = models.DateField(help_text='date that waitlist is started (regardless of number of registrations)')
+	freeze_group_date = models.DateField(help_text='date of last day to form groups')
+	league_start_date = models.DateField(help_text='date of first game')
+	league_end_date = models.DateField(help_text='date of last game')
+	paypal_cost = models.IntegerField()
+	check_cost = models.IntegerField()
+	max_players = models.IntegerField(help_text='max players for league, extra registrations will be placed on waitlist')
+	state = models.CharField(max_length=96, choices=LEAGUE_STATE_CHOICES, help_text='''
+		Archived - not visible to anyone<br/>
+		Planning - only visibil to junta<br/>
+		Active - visible to everyone''')
+	field = models.ManyToManyField(Field, db_table='field_league', help_text='''Select the fields these games will be played at, use
+		the green "+" icon if we're playing at a new field.''')
+	details = models.TextField(help_text='details page text, use HTML')
+	league_email = models.CharField(max_length=192, blank=True, help_text='email address for entire season')
+	league_captains_email = models.CharField(max_length=192, blank=True, help_text='email address for league captains')
+	division_email = models.CharField(max_length=192, blank=True, help_text='email address for just this league')
+	mail_check_address = models.TextField(help_text='treasurer mailing address')
 
 	class Meta:
 		db_table = u'league'
@@ -87,17 +89,52 @@ class League(models.Model):
 	def get_fields(self):
 		return self.fieldleague_set.all()
 
+	def get_field_names(self):
+		return FieldNames.objects.filter(field__fieldleague__league=self, game__league=self).distinct().order_by('field__name', 'name')
+
 	def get_league_registrations_for_user(self, user):
 		return self.registrations_set.filter(user=user)
 
+	def get_registrations(self):
+		return Registrations.objects.filter(league=self).order_by('registered')
+
+	def get_completed_registrations(self):
+		registrations = Registrations.objects.filter(league=self).order_by('registered')
+		return [r for r in registrations if not r.waitlist and not r.refunded and r.is_complete()]
+
+	def get_waitlisted_registrations(self):
+		registrations = Registrations.objects.filter(league=self).order_by('registered')
+		return [r for r in registrations if r.waitlist and not r.refunded and r.is_complete()]
+
+	def get_games(self):
+		return self.game_set.all().order_by('field_name__field__name', 'field_name__name')
+
+	def get_user_games(self, user):
+		return Game.objects.filter(league=self, gameteams__team__teammember__user=user).order_by('date')
+
 	def get_num_game_events(self):
-		try:
-			return self.schedule_set.all()[0].get_games().count() / (self.team_set.all().count() / 2)
-		except:
-			return 0
+		return Game.objects.filter(league=self).values('date').distinct().count()
+
+	def get_league_captains(self):
+		return User.objects.filter(teammember__team__league=self, teammember__captain=1)
+
+	def get_league_captains_teammember(self):
+		return TeamMember.objects.filter(team__league=self, captain=1).order_by('team')
+
+	def player_survey_complete_for_user(self, user):
+		return bool(self.team_set.get(teammember__user=user).player_survey_complete(user))
+
+	@property
+	def is_accepting_registrations(self):
+		return self.state in ['active', 'planning'] and self.league_end_date > date.today()
+
+	@property
+	def is_accepting_waitlist(self):
+		return self.state in ['active', 'planning'] and date.today() >= self.waitlist_start_date
 
 	def __unicode__(self):
 		return '%s %d %s' % (self.season, self.year, self.night)
+
 
 class FieldLeague(models.Model):
 	id = models.AutoField(primary_key=True)
@@ -107,30 +144,12 @@ class FieldLeague(models.Model):
 	class Meta:
 		db_table = u'field_league'
 
-class Schedule(models.Model):
-	id = models.AutoField(primary_key=True)
-	league = models.ForeignKey('leagues.League')
-
-	class Meta:
-		db_table = u'schedule'
-
-	def get_games(self):
-		return self.game_set.all().order_by('field_name__field__name', 'field_name__name')
-
-	def score_report(self):
-		return '<a href="%d/score_report/">View score reports</a>' % self.id
-	score_report.allow_tags = True
-
-	def __unicode__(self):
-		return '%d %s %s' % (self.league.year,
-			self.league.season.title(),
-			self.league.night.title())
-
 
 GENDER_CHOICES = (
 	('M', 'Male'),
 	('F', 'Female'),
 )
+
 
 class Player(PybbProfile):
 	user = models.ForeignKey(User, db_column='id')
@@ -153,6 +172,7 @@ class Player(PybbProfile):
 	def get_spirit(self):
 		return self.user.skills.exclude(spirit=0)
 
+
 class Baggage(models.Model):
 	id = models.AutoField(primary_key=True)
 
@@ -161,6 +181,10 @@ class Baggage(models.Model):
 
 	def get_registrations(self):
 		return self.registrations_set.all()
+
+	@property
+	def num_registrations(self):
+		return self.registrations_set.all().count()
 
 REGISTRATION_STATUS_CHOICES=(
 	('new', 'New'),
@@ -202,6 +226,7 @@ BAD_REGISTRATION_STATUS_CHOICES=[
 	'paypal-canceled_reversal',
 ]
 
+
 class Registration(models.Model):
 	id = models.AutoField(primary_key=True)
 	league = models.ForeignKey('leagues.League')
@@ -223,6 +248,7 @@ REGISTRATION_PAYMENT_CHOICES=[
 	('paypal', 'paypal')
 ]
 
+
 class Registrations(models.Model):
 	id = models.AutoField(primary_key=True)
 	user = models.ForeignKey(User)
@@ -230,12 +256,14 @@ class Registrations(models.Model):
 	baggage = models.ForeignKey('leagues.Baggage', null=True, blank=True)
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
+	registered = models.DateTimeField(null=True)
 	conduct_complete = models.BooleanField()
 	waiver_complete = models.BooleanField()
-	pay_type = models.TextField(choices=REGISTRATION_PAYMENT_CHOICES, blank=True)
+	pay_type = models.TextField(choices=REGISTRATION_PAYMENT_CHOICES, null=True)
 	check_complete = models.BooleanField()
 	paypal_invoice_id = models.CharField(max_length=127)
 	paypal_complete = models.BooleanField()
+	refunded = models.BooleanField()
 	waitlist = models.BooleanField()
 	attendance = models.IntegerField(null=True, blank=True)
 	captain = models.IntegerField(null=True, blank=True)
@@ -244,8 +272,10 @@ class Registrations(models.Model):
 		db_table = u'registrations'
 
 	def get_status(self):
-		status = 'Completed'
-		if self.conduct_complete:
+		status = 'New'
+		if self.refunded:
+			status = 'Refunded'
+		elif self.conduct_complete:
 			status = 'Conduct Completed'
 			if self.waiver_complete:
 				status = 'Waiver Completed'
@@ -277,10 +307,64 @@ class Registrations(models.Model):
 		return percentage
 
 	def is_complete(self):
-		return bool(self.conduct_complete and self.waiver_complete and self.attendance != None and self.captain != None and self.pay_type and (self.check_complete or self.paypal_complete))
+		return bool(self.conduct_complete and self.waiver_complete and self.attendance != None and self.captain != None and self.pay_type and (self.check_complete or self.paypal_complete)) and not self.refunded
+
+	@transaction.commit_on_success
+	def add_to_baggage_group(self, email):
+		if self.waitlist:
+			return 'You are currently on the waitlist and are ineligible to form baggage groups.'
+
+		try:
+			registration = Registrations.objects.get(user__email=email, league=self.league)
+		except ObjectDoesNotExist:
+			return 'No registration found for ' + email + '.'
+
+		if registration.waitlist:
+			return email + ' is currently on the waitlist and is ineligible to form baggage groups.'
+
+		baggage_limit = self.league.baggage
+
+		current_baggage = self.baggage
+		current_baggage_registrations = current_baggage.get_registrations()
+
+		target_baggage = registration.baggage
+
+		if (current_baggage_registrations.count() + target_baggage.num_registrations > baggage_limit):
+			return 'Baggage group with ' + email + ' exceeds limit.'
+
+		for current_baggage_registration in current_baggage_registrations:
+			current_baggage_registration.baggage = target_baggage
+			current_baggage_registration.save()
+
+		current_baggage.delete()
+
+		return True
+
+
+	@transaction.commit_manually
+	def leave_baggage_group(self):
+		try:
+			baggage = Baggage()
+			baggage.save()
+
+			if (self.baggage.get_registrations().count() <= 1):
+				self.baggage.delete()
+
+			self.baggage = baggage
+			self.save()
+
+		except:
+			transaction.rollback()
+			return False
+		else:
+			transaction.commit()
+
+		return True
+
 
 	def __unicode__(self):
 		return '%d %s %s - %s %s' % (self.league.year, self.league.season, self.league.night, self.user)
+
 
 class Team(models.Model):
 	id = models.AutoField(primary_key=True)
@@ -296,6 +380,32 @@ class Team(models.Model):
 	def size(self):
 		return self.teammember_set.all().count()
 
+	@property
+	def css_background_color(self):
+		if (re.search(r'black', self.color, re.I)):
+			return '#2C3E50'
+		if (re.search(r'blue', self.color, re.I)):
+			return '#3498DB'
+		if (re.search(r'green', self.color, re.I)):
+			return '#2ECC71'
+		if (re.search(r'orange', self.color, re.I)):
+			return '#E67E22'
+		if (re.search(r'pink', self.color, re.I)):
+			return '#EE6FA0'
+		if (re.search(r'red', self.color, re.I)):
+			return '#E74C3C'
+		if (re.search(r'white', self.color, re.I)):
+			return '#FFFFFF'
+		if (re.search(r'yellow', self.color, re.I)):
+			return '#F1C40F'
+		return '#95A5A6'
+
+	@property
+	def css_text_color(self):
+		if (re.search(r'white', self.color, re.I)):
+			return '#2C3E50'
+		return '#FFFFFF'
+
 	def get_members(self):
 		return self.teammember_set.all()
 
@@ -308,6 +418,7 @@ class Team(models.Model):
 		return bool(skill_reports.count() > 0) and \
 			bool(skill_reports.filter(num_skills__gte=self.size - 1).count() > 0)
 
+
 class TeamMember(models.Model):
 	id = models.AutoField(primary_key=True)
 	team = models.ForeignKey('leagues.Team')
@@ -318,18 +429,19 @@ class TeamMember(models.Model):
 		db_table = u'team_member'
 		ordering = ['-captain', 'user__last_name']
 
+
 class Game(models.Model):
 	id = models.AutoField(primary_key=True)
 	date = models.DateField()
 	field_name = models.ForeignKey('leagues.FieldNames')
-	schedule = models.ForeignKey('leagues.Schedule')
+	league = models.ForeignKey('leagues.league')
 
 	class Meta:
 		db_table = u'game'
 		ordering = ['date', 'field_name']
 
 	def get_teams(self):
-		return self.gameteams_set.all()
+		return Team.objects.filter(gameteams__game=self).all()
 
 	def get_user_team(self, user):
 		return self.gameteams_set.filter(team__teammember__user=user)[0:1].get().team
@@ -340,11 +452,18 @@ class Game(models.Model):
 	def get_reports(self):
 		return self.gamereport_set.all()
 
-	def report_complete_for_user(self, user):
+	def report_complete_for_team(self, user):
 		for report in self.gamereport_set.filter(team__teammember__user=user, team__teammember__captain=1):
 			if (report.is_complete):
 				return True
 		return False
+
+	def report_complete_for_user(self, user):
+		for report in self.gamereport_set.filter(last_updated_by=user, team__teammember__user=user, team__teammember__captain=1):
+			if (report.is_complete):
+				return report.game.id
+		return False
+
 
 class GameTeams(models.Model):
 	id = models.AutoField(primary_key=True)
@@ -358,6 +477,7 @@ SKILL_CHOICES=[
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
 ]
 
+
 class SkillsType(models.Model):
 	id = models.AutoField(primary_key=True)
 	description = models.TextField()
@@ -365,6 +485,7 @@ class SkillsType(models.Model):
 
 	class Meta:
 		db_table = u'skills_type'
+
 
 class SkillsReport(models.Model):
 	id = models.AutoField(primary_key=True)
@@ -374,6 +495,7 @@ class SkillsReport(models.Model):
 
 	class Meta:
 		db_table = u'skills_report'
+
 
 class Skills(models.Model):
 	id = models.AutoField(primary_key=True)

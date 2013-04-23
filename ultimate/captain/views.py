@@ -18,7 +18,7 @@ from ultimate.middleware.http import Http403
 
 @login_required
 def index(request):
-	captain_games = Game.objects.select_related('schedule', 'schedule__league').filter(gameteams__team__teammember__user=request.user, gameteams__team__teammember__captain=1).distinct().order_by('-date')
+	captain_games = Game.objects.select_related('league').filter(gameteams__team__teammember__user=request.user, gameteams__team__teammember__captain=1).distinct().order_by('-league__league_start_date', '-date')
 
 	return render_to_response('captain/index.html',
 		{'captain_games': captain_games},

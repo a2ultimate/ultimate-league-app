@@ -1,9 +1,8 @@
 {% extends "layout/layout_user.html" %}
 
 {% block content %}
-	<h2>
-	    {{ league.season|capfirst }} League {{ league.year }} Details
-	</h2>
+	<h1>{{ league.season|title }} League {{ league.year }} {{ league.night|title }} Division ({{ league.gender|title }})</h1>
+	{% include "layout/league_tabs.html" with selected_tab="details" %}
 
 	<div id="league_details">
 		{{ league.details|safe }}
