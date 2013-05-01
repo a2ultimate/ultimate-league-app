@@ -113,7 +113,9 @@ class League(models.Model):
 		return Game.objects.filter(league=self, gameteams__team__teammember__user=user).order_by('date')
 
 	def get_num_game_events(self):
-		return Game.objects.filter(league=self).values('date').distinct().count()
+		# need to use multiply by weekly events count
+		diff = self.league_end_date - self.league_start_date
+		return (diff.days / 7) + 1
 
 	def get_league_captains(self):
 		return User.objects.filter(teammember__team__league=self, teammember__captain=1)
