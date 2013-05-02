@@ -216,8 +216,8 @@ UPDATE player SET salt = SHA1(RAND());
 UPDATE player SET new_password = CONCAT(  'sha1$', player.salt,  '$', SHA1( CONCAT( player.salt, player.password ) ) );
 
 INSERT INTO auth_user (username, first_name, last_name, email,
-PASSWORD , is_staff, is_active, is_superuser, date_joined )
-SELECT email, firstname, lastname, email, new_password,  '0',  '1',  '0', registered
+PASSWORD , is_staff, is_active, is_superuser, last_login, date_joined )
+SELECT email, firstname, lastname, email, new_password,  '0',  '1',  '0', registered, registered
 FROM player;
 
 ALTER TABLE  `player` ADD  `user_id` INT( 11 ) NOT NULL AFTER  `id`;
