@@ -175,13 +175,15 @@ def registration(request, year, season, division, section=None):
 		registration.save()
 
 	if not registration.paypal_complete and not registration.check_complete:
+		baseUrl = request.build_absolute_uri(getattr(settings, 'FORCE_SCRIPT_NAME', ''))
+
 		paypal_dict = {
 			'amount': league.paypal_cost,
-			'cancel_return': 'http://www.annarborultimate.org/play/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration/',
+			'cancel_return': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration/',
 			'invoice': registration.paypal_invoice_id,
 			'item_name': str(league.season).capitalize() + ' League ' + str(league.year) + ' - ' + str(league.night).capitalize(),
-			'notify_url': 'http://www.annarborultimate.org/play/payment/notification/callback/for/ultimate/secret/',
-			'return_url': 'http://www.annarborultimate.org/play/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration/',
+			'notify_url': baseUrl + '/payment/notification/callback/for/ultimate/secret/',
+			'return_url': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration/',
 		}
 
 		paypal_form = PayPalPaymentsForm(initial=paypal_dict)
