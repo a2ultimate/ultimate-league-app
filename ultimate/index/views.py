@@ -61,6 +61,7 @@ def index(request):
 
 def update_feed(request):
 	# try:
+	#	twitterSearchTerms = getattr(settings, 'TWITTER_SEARCH', 'ultimatefrisbee')
 	# 	twitterSyncr = TwitterSyncr('aaultimate')
 	# 	twitterSearchFeed = feedparser.parse('http://search.twitter.com/search.atom?lang=en&q=ultimate+frisbee')
 
@@ -76,6 +77,7 @@ def update_feed(request):
 	# 	print 'twitter unknown feed error'
 
 
+	flickrSearchTerms = getattr(settings, 'FLICKR_SEARCH', 'ultimatefrisbee')
 	flickrSyncr = FlickrSyncr('1d6f830e7130f7196c4104d70589c031', '73ad75aac80ea1a8')
 	flickrSearchFeed = feedparser.parse('http://api.flickr.com/services/feeds/photos_public.gne?tags=frisbee&format=atom')
 
