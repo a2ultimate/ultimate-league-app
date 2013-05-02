@@ -78,8 +78,8 @@ def update_feed(request):
 
 
 	flickrSearchTerms = getattr(settings, 'FLICKR_SEARCH', 'ultimatefrisbee')
-	flickrSyncr = FlickrSyncr('1d6f830e7130f7196c4104d70589c031', '73ad75aac80ea1a8')
-	flickrSearchFeed = feedparser.parse('http://api.flickr.com/services/feeds/photos_public.gne?tags=frisbee&format=atom')
+	flickrSyncr = FlickrSyncr(getattr(settings, 'FLICKR_KEY', None), getattr(settings, 'FLICKR_SECRET', None))
+	flickrSearchFeed = feedparser.parse('http://api.flickr.com/services/feeds/photos_public.gne?tags=' + flickrSearchTerms + '&format=atom')
 
 	for photo in flickrSearchFeed.entries:
 		photoID = photo.id.rsplit('/', 1)[1]

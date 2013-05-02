@@ -140,6 +140,9 @@ PYBB_DEFAULT_TITLE = 'A2Ultimate Forums'
 PYBB_ENABLE_SELF_CSS = 1
 PYBB_TEMPLATE = 'bootstrap_base.css'
 
-# SOCIAL SEARCH TERMS
+# SOCIAL
+FLICKR_KEY = ''
+FLICKR_SECRET = ''
 FLICKR_SEARCH = 'ultimate+frisbee'
+
 TWITTER_SEARCH = 'ultimate+frisbee'
