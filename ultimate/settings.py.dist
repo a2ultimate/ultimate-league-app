@@ -90,7 +90,6 @@ INSTALLED_APPS = (
 	'paypal.standard.ipn',
 	'syncr.flickr',
 	'syncr.twitter',
-	'tagging',
 	'ultimate',
 	'ultimate.captain',
 	'ultimate.index',
