@@ -146,3 +146,4 @@ FLICKR_SECRET = ''
 FLICKR_SEARCH = 'ultimate+frisbee'
 
 TWITTER_SEARCH = 'ultimate+frisbee'
+TWITTER_USERNAME = ''

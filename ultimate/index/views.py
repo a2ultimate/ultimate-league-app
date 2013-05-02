@@ -61,8 +61,9 @@ def index(request):
 
 def update_feed(request):
 	# try:
+	#	twitterUsername = getattr(settings, 'TWITTER_SEARCH', None)
 	#	twitterSearchTerms = getattr(settings, 'TWITTER_SEARCH', 'ultimatefrisbee')
-	# 	twitterSyncr = TwitterSyncr('aaultimate')
+	# 	twitterSyncr = TwitterSyncr(twitterUsername)
 	# 	twitterSearchFeed = feedparser.parse('http://search.twitter.com/search.atom?lang=en&q=ultimate+frisbee')
 
 	# 	for tweet in twitterSearchFeed.entries:
