@@ -41,6 +41,7 @@ MEDIA_ROOT = '/path/to/project/ultimate-league-app/media'
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = '/a2ultimate/media/'
+STATIC_URL = '/a2ultimate/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -52,8 +53,8 @@ SECRET_KEY = '6049&3+&tx+%%*#4$6@#!wch=+xeibo+mz4_*ru7u3!wh-p2_g'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-	'django.template.loaders.filesystem.load_template_source',
-	'django.template.loaders.app_directories.load_template_source',
+	'django.template.loaders.filesystem.Loader',
+	'django.template.loaders.app_directories.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -75,7 +76,6 @@ TEMPLATE_DIRS = (
 	# Always use forward slashes, even on Windows.
 	# Don't forget to use absolute paths, not relative paths.
 	'/path/to/project/ultimate-league-app/ultimate/templates',
-	'/path/to/project/ultimate-league-app/apps/pybb/templates',
 )
 
 INSTALLED_APPS = (
@@ -90,7 +90,6 @@ INSTALLED_APPS = (
 	'paypal.standard.ipn',
 	'syncr.flickr',
 	'syncr.twitter',
-	'tagging',
 	'ultimate',
 	'ultimate.captain',
 	'ultimate.index',
@@ -99,6 +98,7 @@ INSTALLED_APPS = (
 	'ultimate.user',
 	'pybb',
 	'pytils',
+	'south',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -136,7 +136,13 @@ PAYPAL_RECEIVER_EMAIL = ''
 PAYPAL_TEST = True			# Testing mode on
 
 # PYBB - http://www.pybbm.org/
-PYBB_STATIC_URL = '/a2ultimate/pybb/'
 PYBB_DEFAULT_TITLE = 'A2Ultimate Forums'
-PYBB_ENABLE_SELF_CSS = 1
-PYBB_TEMPLATE = 'bootstrap_base.css'
+PYBB_TEMPLATE = 'layout/forum_base.html'
+
+# SOCIAL
+FLICKR_KEY = ''
+FLICKR_SECRET = ''
+FLICKR_SEARCH = 'ultimate+frisbee'
+
+TWITTER_SEARCH = 'ultimate+frisbee'
+TWITTER_USERNAME = ''
