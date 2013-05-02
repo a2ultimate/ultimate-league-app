@@ -182,7 +182,7 @@ def registration(request, year, season, division, section=None):
 			'cancel_return': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration/',
 			'invoice': registration.paypal_invoice_id,
 			'item_name': str(league.season).capitalize() + ' League ' + str(league.year) + ' - ' + str(league.night).capitalize(),
-			'notify_url': baseUrl + '/payment/notification/callback/for/ultimate/secret/',
+			'notify_url': baseUrl + '/leagues/registration/payment/notification/callback/for/a2ultimate/secret/',
 			'return_url': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration/',
 		}
 
