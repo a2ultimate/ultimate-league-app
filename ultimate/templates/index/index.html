@@ -33,7 +33,7 @@
 				{% endif %}
 
 				{% if update.type == 'photo' %}
-					{% for photo in update.photoset|slice:":3" %}
+					{% for photo in update.photoset %}
 						{% if forloop.first %}
 							<div class="update_header">
 								<a class="update_user" href="http://flickr.com/photos/{{ photo.owner_nsid }}" target="_blank">{{ photo.owner }}</a>
