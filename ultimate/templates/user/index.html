@@ -94,9 +94,11 @@
 					{% for registration in league|league_registrations:user %}
 						<tr>
 							<td>
-								{{ registration.league.season|capfirst }}
-								{{ registration.league.year }}
-								{{ registration.league.night|capfirst }}
+								<a href="{% url league_registration year=registration.league.year season=registration.league.season division=registration.league.night %}">
+									{{ registration.league.season|capfirst }}
+									{{ registration.league.year }}
+									{{ registration.league.night|capfirst }}
+								</a>
 							</td>
 							<td>{{ registration.get_progress }}% - {{ registration.get_status }}</td>
 							<td>
