@@ -9,6 +9,15 @@
 	<li class="selected"><a href="{% url editskills %}">Edit Skills</a></li>
 </ul>
 
+<p>
+	Slide the green dot to select a value for each skill. The skill
+	values will be used by our team balancing algorithm
+	in an effort to create fair and even teams. Values should reflect
+	skill level relative to the average league player.
+</p>
+
+<hr />
+
 <form id="edit_profile_form" method="post">{% csrf_token %}
 
 	<div id="athletic" class="slide_selector" data-slider-min="1">
