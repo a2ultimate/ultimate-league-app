@@ -394,6 +394,8 @@ class Team(models.Model):
 			return '#E67E22'
 		if (re.search(r'pink', self.color, re.I)):
 			return '#EE6FA0'
+		if (re.search(r'purple', self.color, re.I)):
+			return '#695399'
 		if (re.search(r'red', self.color, re.I)):
 			return '#E74C3C'
 		if (re.search(r'white', self.color, re.I)):
