@@ -57,7 +57,6 @@ def playersurvey(request, teamid):
 		.extra(select={'average_athletic':'select AVG(skills.athletic) FROM skills WHERE skills.user_id = auth_user.id AND skills.athletic != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
 		.extra(select={'average_forehand':'select AVG(skills.forehand) FROM skills WHERE skills.user_id = auth_user.id AND skills.forehand != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
 		.extra(select={'average_backhand':'select AVG(skills.backhand) FROM skills WHERE skills.user_id = auth_user.id AND skills.backhand != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-		.extra(select={'average_handle':'select AVG(skills.handle) FROM skills WHERE skills.user_id = auth_user.id AND skills.handle != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
 		.extra(select={'average_receive':'select AVG(skills.receive) FROM skills WHERE skills.user_id = auth_user.id AND skills.receive != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
 		.extra(select={'average_strategy':'select AVG(skills.strategy) FROM skills WHERE skills.user_id = auth_user.id AND skills.strategy != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
 		.extra(select={'average_spirit':'select AVG(skills.spirit) FROM skills WHERE skills.user_id = auth_user.id AND skills.spirit != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \

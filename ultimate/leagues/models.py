@@ -510,7 +510,6 @@ class Skills(models.Model):
 	forehand = models.PositiveIntegerField(default=0)
 	backhand = models.PositiveIntegerField(default=0)
 	receive = models.PositiveIntegerField(default=0)
-	handle = models.PositiveIntegerField(default=0)
 	strategy = models.PositiveIntegerField(default=0)
 	skills_type = models.ForeignKey('leagues.SkillsType')
 	user = models.ForeignKey(User)

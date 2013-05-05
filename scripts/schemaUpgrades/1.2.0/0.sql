@@ -36,8 +36,7 @@ CHANGE  `backhand`  `backhand` INT( 11 ) NOT NULL DEFAULT  '0',
 CHANGE  `receive`  `receive` INT( 11 ) NOT NULL DEFAULT  '0',
 CHANGE  `strategy`  `strategy` INT( 11 ) NOT NULL DEFAULT  '0',
 CHANGE  `position`  `position` INT( 11 ) NOT NULL DEFAULT  '0',
-CHANGE  `spirit`  `spirit` INT( 11 ) NOT NULL DEFAULT  '7',
-CHANGE  `handle`  `handle` INT( 11 ) NOT NULL DEFAULT  '0';
+CHANGE  `spirit`  `spirit` INT( 11 ) NOT NULL DEFAULT  '7';
 
 ALTER TABLE  `league` CHANGE  `night`  `night` VARCHAR( 32 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
 CHANGE  `season`  `season` VARCHAR( 32 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
@@ -94,7 +93,7 @@ ALTER TABLE `game_report`
   ADD CONSTRAINT `game_report_ibfk_3` FOREIGN KEY (`last_updated_by_id`) REFERENCES `auth_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `game_report_ibfk_1` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `game_report_ibfk_2` FOREIGN KEY (`game_id`) REFERENCES `game` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-  
+
 ALTER TABLE  `game_report_attendance` ADD FOREIGN KEY (  `report_id` ) REFERENCES  `game_report` (
 `id`
 ) ON DELETE CASCADE ON UPDATE CASCADE ;
@@ -110,5 +109,5 @@ ALTER TABLE `game_report_comment`
 ALTER TABLE `game_report_scores`
   ADD CONSTRAINT `game_report_scores_ibfk_1` FOREIGN KEY (`report_id`) REFERENCES `game_report` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `game_report_scores_ibfk_2` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-  
+
 ALTER TABLE  `game_report_comment` ADD  `spirit` INT( 3 ) NOT NULL AFTER  `submitted_by_id`;
