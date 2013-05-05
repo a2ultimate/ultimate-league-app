@@ -66,7 +66,7 @@
 			</table>
 		</div>
 	{% else %}
-		<h5>You have no upcoming games.</h5>
+		<p class="none_found">No upcoming games found</p>
 	{% endif %}
 
 	{% if following_game %}
@@ -77,7 +77,13 @@
 	{% endif %}
 
 	<h2>Profile</h2>
-	<a href="{% url editprofile %}">Edit Profile</a>
+	<p>
+		<a href="{% url editprofile %}">Edit Profile</a>
+	</p>
+	<p>
+		<a href="{% url editskills %}">Edit Skills</a>
+	</p>
+
 
 	<h2>Registrations</h2>
 	{% if registrations %}
