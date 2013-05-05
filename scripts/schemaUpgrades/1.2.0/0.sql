@@ -29,12 +29,12 @@ ALTER TABLE  `skills` ADD FOREIGN KEY (  `skills_report_id` ) REFERENCES  `skill
 `id`
 ) ON DELETE NO ACTION ON UPDATE CASCADE ;
 
-ALTER TABLE  `skills` CHANGE  `athletic`  `athletic` INT( 11 ) NOT NULL DEFAULT  '0',
-CHANGE  `experience`  `experience` INT( 11 ) NOT NULL DEFAULT  '0',
-CHANGE  `forehand`  `forehand` INT( 11 ) NOT NULL DEFAULT  '0',
-CHANGE  `backhand`  `backhand` INT( 11 ) NOT NULL DEFAULT  '0',
-CHANGE  `receive`  `receive` INT( 11 ) NOT NULL DEFAULT  '0',
-CHANGE  `strategy`  `strategy` INT( 11 ) NOT NULL DEFAULT  '0',
+ALTER TABLE  `skills` CHANGE  `athletic`  `athletic` INT( 11 ) NOT NULL DEFAULT  '1',
+CHANGE  `experience`  `experience` INT( 11 ) NOT NULL DEFAULT  '1',
+CHANGE  `forehand`  `forehand` INT( 11 ) NOT NULL DEFAULT  '1',
+CHANGE  `backhand`  `backhand` INT( 11 ) NOT NULL DEFAULT  '1',
+CHANGE  `receive`  `receive` INT( 11 ) NOT NULL DEFAULT  '1',
+CHANGE  `strategy`  `strategy` INT( 11 ) NOT NULL DEFAULT  '1',
 CHANGE  `position`  `position` INT( 11 ) NOT NULL DEFAULT  '0',
 CHANGE  `spirit`  `spirit` INT( 11 ) NOT NULL DEFAULT  '7';
 

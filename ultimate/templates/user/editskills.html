@@ -11,7 +11,7 @@
 
 <form id="edit_profile_form" method="post">{% csrf_token %}
 
-	<div id="athletic" class="slide_selector">
+	<div id="athletic" class="slide_selector" data-slider-min="1">
 		<label for="id_athletic">Athleticism: How fast are you?</label>
 		{{ form.athletic }}
 		<div class="slider_errors">{{ form.athletic.errors }}</div>
@@ -22,7 +22,7 @@
 		</div>
 	</div>
 
-	<div id="forehand" class="slide_selector">
+	<div id="forehand" class="slide_selector" data-slider-min="1">
 		<label for="id_forhand">Forehand: How well can you throw a forehand?</label>
 		{{ form.forehand }}
 		<div class="slider_errors">{{ form.forhand.errors }}</div>
@@ -33,7 +33,7 @@
 		</div>
 	</div>
 
-	<div id="backhand" class="slide_selector">
+	<div id="backhand" class="slide_selector" data-slider-min="1">
 		<label for="id_backhand">Backhand: How well can you throw a backhand?</label>
 		{{ form.backhand }}
 		<div class="slider_errors">{{ form.backhand.errors }}</div>
@@ -44,7 +44,7 @@
 		</div>
 	</div>
 
-	<div id="receive" class="slide_selector">
+	<div id="receive" class="slide_selector" data-slider-min="1">
 		<label for="id_receive">Receiving: How well can you catch the disc?</label>
 		{{ form.receive }}
 		<div class="slider_errors">{{ form.receive.errors }}</div>
@@ -55,7 +55,7 @@
 		</div>
 	</div>
 
-	<div id="strategy" class="slide_selector">
+	<div id="strategy" class="slide_selector" data-slider-min="1">
 		<label for="id_strategy">Strategy: How well do you know the strategy of ultimate?</label>
 		{{ form.strategy }}
 		<div class="slider_errors">{{ form.strategy.errors }}</div>
@@ -66,7 +66,7 @@
 		</div>
 	</div>
 
-	<div id="experience" class="slide_selector">
+	<div id="experience" class="slide_selector" data-slider-min="1">
 		<label for="id_experience">Experience: What's the highest level you've played at?</label>
 		{{ form.experience }}
 		<div class="slider_errors">{{ form.experience.errors }}</div>
