@@ -1044,6 +1044,22 @@ input[type="submit"] {
 	width: 500px;
 }
 
+.slide_selector .ui-slider-handle {
+	cursor: hand;
+	cursor: grab !important;
+	cursor: -moz-grab;
+	cursor: url('../images/cursors/openhand.cur'), pointer !important;
+	cursor: -webkit-grab;
+}
+
+.slide_selector .ui-slider-handle:active {
+	cursor: hand;
+	cursor: grabbing!important;
+	cursor: -moz-grabbing;
+	cursor: -webkit-grabbing;
+	cursor: url('../images/cursors/closedhand.cur'), pointer !important;
+}
+
 .slide_selector .slider_description {
 	font-size: 13px;
 	margin: 0 auto;
