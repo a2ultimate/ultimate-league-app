@@ -46,7 +46,10 @@ def signup(request):
 		form = SignupForm(request.POST)
 		if form.is_valid():
 			new_user = form.save()
+			messages.success(request, 'Your account was created. You may now log in.')
 			return HttpResponseRedirect(reverse('user'))
+		else:
+			messages.error(request, 'There was an error on the form you submitted.')
 	else:
 		form = SignupForm()
 	return render_to_response('user/signup.html',
