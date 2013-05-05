@@ -97,7 +97,7 @@ class EditPlayerForm(forms.ModelForm):
 
 	class Meta:
 		model = Player
-		exclude = ('id', 'groups', 'user', 'highest_level', 'post_count', 'language',)
+		exclude = ('id', 'groups', 'user', 'highest_level', 'post_count', 'language', 'time_zone',)
 
 SKILL_CHOICES = [ (i,i) for i in range(0,11) ]
 
