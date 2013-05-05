@@ -90,7 +90,7 @@ def editskills(request):
 #		skills = None
 
 	skills, created = Skills.objects.get_or_create(user=request.user, submitted_by=request.user,
-		defaults={'user':request.user, 'updated': datetime.now()})
+		defaults={'skills_type': SkillsType.objects.get(id=1), 'updated': datetime.now(), 'user':request.user})
 
 	if request.method == 'POST':
 		form = EditSkillsForm(request.POST, instance=skills)
