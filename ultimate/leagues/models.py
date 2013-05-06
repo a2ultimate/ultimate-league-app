@@ -314,7 +314,7 @@ class Registrations(models.Model):
 	@property
 	def baggage_size(self):
 		if self.baggage:
-			self.baggage.num_registrations
+			return self.baggage.num_registrations
 		else:
 			return 0
 
