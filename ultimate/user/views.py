@@ -46,7 +46,10 @@ def signup(request):
 		form = SignupForm(request.POST)
 		if form.is_valid():
 			new_user = form.save()
+			messages.success(request, 'Your account was created. You may now log in.')
 			return HttpResponseRedirect(reverse('user'))
+		else:
+			messages.error(request, 'There was an error on the form you submitted.')
 	else:
 		form = SignupForm()
 	return render_to_response('user/signup.html',
@@ -90,7 +93,7 @@ def editskills(request):
 #		skills = None
 
 	skills, created = Skills.objects.get_or_create(user=request.user, submitted_by=request.user,
-		defaults={'user':request.user, 'updated': datetime.now()})
+		defaults={'skills_type': SkillsType.objects.get(id=1), 'updated': datetime.now(), 'user':request.user})
 
 	if request.method == 'POST':
 		form = EditSkillsForm(request.POST, instance=skills)

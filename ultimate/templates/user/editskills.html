@@ -9,9 +9,18 @@
 	<li class="selected"><a href="{% url editskills %}">Edit Skills</a></li>
 </ul>
 
+<p>
+	Slide the green dot to select a value for each skill. The skill
+	values will be used by our team balancing algorithm
+	in an effort to create fair and even teams. Values should reflect
+	skill level relative to the average league player.
+</p>
+
+<hr />
+
 <form id="edit_profile_form" method="post">{% csrf_token %}
 
-	<div id="athletic" class="slide_selector">
+	<div id="athletic" class="slide_selector" data-slider-min="1">
 		<label for="id_athletic">Athleticism: How fast are you?</label>
 		{{ form.athletic }}
 		<div class="slider_errors">{{ form.athletic.errors }}</div>
@@ -22,7 +31,7 @@
 		</div>
 	</div>
 
-	<div id="forehand" class="slide_selector">
+	<div id="forehand" class="slide_selector" data-slider-min="1">
 		<label for="id_forhand">Forehand: How well can you throw a forehand?</label>
 		{{ form.forehand }}
 		<div class="slider_errors">{{ form.forhand.errors }}</div>
@@ -33,7 +42,7 @@
 		</div>
 	</div>
 
-	<div id="backhand" class="slide_selector">
+	<div id="backhand" class="slide_selector" data-slider-min="1">
 		<label for="id_backhand">Backhand: How well can you throw a backhand?</label>
 		{{ form.backhand }}
 		<div class="slider_errors">{{ form.backhand.errors }}</div>
@@ -44,7 +53,7 @@
 		</div>
 	</div>
 
-	<div id="receive" class="slide_selector">
+	<div id="receive" class="slide_selector" data-slider-min="1">
 		<label for="id_receive">Receiving: How well can you catch the disc?</label>
 		{{ form.receive }}
 		<div class="slider_errors">{{ form.receive.errors }}</div>
@@ -55,18 +64,7 @@
 		</div>
 	</div>
 
-	<div id="handle" class="slide_selector">
-		<label for="id_handle">Handling: How well can you handle?</label>
-		{{ form.handle }}
-		<div class="slider_errors">{{ form.handle.errors }}</div>
-		<div class="slider"></div>
-		<div class="slider_description">
-			<div class="left">I don't know what handling is.</div>
-			<div class="right">Handling is not a problem even in heavy wind.</div>
-		</div>
-	</div>
-
-	<div id="strategy" class="slide_selector">
+	<div id="strategy" class="slide_selector" data-slider-min="1">
 		<label for="id_strategy">Strategy: How well do you know the strategy of ultimate?</label>
 		{{ form.strategy }}
 		<div class="slider_errors">{{ form.strategy.errors }}</div>
@@ -77,7 +75,7 @@
 		</div>
 	</div>
 
-	<div id="experience" class="slide_selector">
+	<div id="experience" class="slide_selector" data-slider-min="1">
 		<label for="id_experience">Experience: What's the highest level you've played at?</label>
 		{{ form.experience }}
 		<div class="slider_errors">{{ form.experience.errors }}</div>
@@ -95,6 +93,7 @@
 	</div>
 
     <input class="button button_success" type="submit" value="Update Skills">
+    <a href="{% url user %}">Cancel</a>
 </form>
 
 {% endblock %}

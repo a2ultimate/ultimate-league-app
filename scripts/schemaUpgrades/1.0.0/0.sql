@@ -344,7 +344,6 @@ CHANGE  `user_id`  `user_id` INT( 11 ) NOT NULL ,
 CHANGE  `submitted_by_id`  `submitted_by_id` INT( 11 ) NOT NULL ,
 CHANGE  `updated`  `updated` DATE NOT NULL ,
 CHANGE  `spirit`  `spirit` INT( 11 ) NOT NULL;
-ALTER TABLE  `skills` ADD  `handle` INT( 11 ) NOT NULL AFTER `strategy`;
 ALTER TABLE  `skills` ADD  `not_sure` BOOLEAN NOT NULL DEFAULT  '0';
 
 ALTER TABLE  `skills_type` CHANGE  `description`  `description` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,

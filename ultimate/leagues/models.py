@@ -165,7 +165,7 @@ class Player(PybbProfile):
 	gender = models.CharField(max_length=3, choices=GENDER_CHOICES)
 	height_inches = models.IntegerField()
 	highest_level = models.TextField()
-	birthdate = models.DateField()
+	birthdate = models.DateField(help_text='e.g. ' + date.today().strftime('%Y-%m-%d'))
 	jersey_size = models.CharField(max_length=45)
 
 	class Meta:
@@ -311,8 +311,18 @@ class Registrations(models.Model):
 	def is_complete(self):
 		return bool(self.conduct_complete and self.waiver_complete and self.attendance != None and self.captain != None and self.pay_type and (self.check_complete or self.paypal_complete)) and not self.refunded
 
+	@property
+	def baggage_size(self):
+		if self.baggage:
+			self.baggage.num_registrations
+		else:
+			return 0
+
 	@transaction.commit_on_success
 	def add_to_baggage_group(self, email):
+		if self.is_complete:
+			return 'Your registration is currently incomplete and is ineligible to form baggage groups.'
+
 		if self.waitlist:
 			return 'You are currently on the waitlist and are ineligible to form baggage groups.'
 
@@ -394,6 +404,8 @@ class Team(models.Model):
 			return '#E67E22'
 		if (re.search(r'pink', self.color, re.I)):
 			return '#EE6FA0'
+		if (re.search(r'purple', self.color, re.I)):
+			return '#695399'
 		if (re.search(r'red', self.color, re.I)):
 			return '#E74C3C'
 		if (re.search(r'white', self.color, re.I)):
@@ -503,13 +515,12 @@ class Skills(models.Model):
 	id = models.AutoField(primary_key=True)
 	skills_report = models.ForeignKey('leagues.SkillsReport')
 	highest_level = models.TextField()
-	athletic = models.PositiveIntegerField(default=0)
-	experience = models.PositiveIntegerField(default=0)
-	forehand = models.PositiveIntegerField(default=0)
-	backhand = models.PositiveIntegerField(default=0)
-	receive = models.PositiveIntegerField(default=0)
-	handle = models.PositiveIntegerField(default=0)
-	strategy = models.PositiveIntegerField(default=0)
+	athletic = models.PositiveIntegerField(default=1)
+	experience = models.PositiveIntegerField(default=1)
+	forehand = models.PositiveIntegerField(default=1)
+	backhand = models.PositiveIntegerField(default=1)
+	receive = models.PositiveIntegerField(default=1)
+	strategy = models.PositiveIntegerField(default=1)
 	skills_type = models.ForeignKey('leagues.SkillsType')
 	user = models.ForeignKey(User)
 	submitted_by = models.ForeignKey(User, related_name='skills_submitted_by_set')

@@ -34,8 +34,8 @@
 	{% endif %}
 
 	{% if registration.get_progress >= 80 %}
-		<a class="tick_label" style="left: 100%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='status' %}">Status</a>
+		<a class="tick_label" style="left: 100%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='status' %}">Status {{ registration.get_progress }}%</a>
 	{% else %}
-		<span class="tick_label" style="left: 100%">Status</span>
+		<span class="tick_label" style="left: 100%">Status {{ registration.get_progress }}%</span>
 	{% endif %}
 </div>

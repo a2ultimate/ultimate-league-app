@@ -345,7 +345,7 @@ CHANGE  `user_id`  `user_id` INT( 11 ) NOT NULL ,
 CHANGE  `submitted_by_id`  `submitted_by_id` INT( 11 ) NOT NULL ,
 CHANGE  `updated`  `updated` DATE NOT NULL ,
 CHANGE  `spirit`  `spirit` INT( 11 ) NOT NULL;
-ALTER TABLE  `skills` ADD  `handle` INT( 11 ) NOT NULL AFTER `strategy`;
+
 ALTER TABLE  `skills` ADD  `not_sure` BOOLEAN NOT NULL DEFAULT  '0';
 
 ALTER TABLE  `skills_type` CHANGE  `description`  `description` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
@@ -405,15 +405,14 @@ ALTER TABLE  `skills` ADD FOREIGN KEY (  `skills_report_id` ) REFERENCES  `skill
 `id`
 ) ON DELETE NO ACTION ON UPDATE CASCADE ;
 
-ALTER TABLE  `skills` CHANGE  `athletic`  `athletic` INT( 11 ) NOT NULL DEFAULT  '0',
-CHANGE  `experience`  `experience` INT( 11 ) NOT NULL DEFAULT  '0',
-CHANGE  `forehand`  `forehand` INT( 11 ) NOT NULL DEFAULT  '0',
-CHANGE  `backhand`  `backhand` INT( 11 ) NOT NULL DEFAULT  '0',
-CHANGE  `receive`  `receive` INT( 11 ) NOT NULL DEFAULT  '0',
-CHANGE  `strategy`  `strategy` INT( 11 ) NOT NULL DEFAULT  '0',
+ALTER TABLE  `skills` CHANGE  `athletic`  `athletic` INT( 11 ) NOT NULL DEFAULT  '1',
+CHANGE  `experience`  `experience` INT( 11 ) NOT NULL DEFAULT  '1',
+CHANGE  `forehand`  `forehand` INT( 11 ) NOT NULL DEFAULT  '1',
+CHANGE  `backhand`  `backhand` INT( 11 ) NOT NULL DEFAULT  '1',
+CHANGE  `receive`  `receive` INT( 11 ) NOT NULL DEFAULT  '1',
+CHANGE  `strategy`  `strategy` INT( 11 ) NOT NULL DEFAULT  '1',
 CHANGE  `position`  `position` INT( 11 ) NOT NULL DEFAULT  '0',
-CHANGE  `spirit`  `spirit` INT( 11 ) NOT NULL DEFAULT  '7',
-CHANGE  `handle`  `handle` INT( 11 ) NOT NULL DEFAULT  '0';
+CHANGE  `spirit`  `spirit` INT( 11 ) NOT NULL DEFAULT  '7';
 
 ALTER TABLE  `league` CHANGE  `night`  `night` VARCHAR( 32 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
 CHANGE  `season`  `season` VARCHAR( 32 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
