@@ -311,8 +311,18 @@ class Registrations(models.Model):
 	def is_complete(self):
 		return bool(self.conduct_complete and self.waiver_complete and self.attendance != None and self.captain != None and self.pay_type and (self.check_complete or self.paypal_complete)) and not self.refunded
 
+	@property
+	def baggage_size(self):
+		if self.baggage:
+			self.baggage.num_registrations
+		else:
+			return 0
+
 	@transaction.commit_on_success
 	def add_to_baggage_group(self, email):
+		if self.is_complete:
+			return 'Your registration is currently incomplete and is ineligible to form baggage groups.'
+
 		if self.waitlist:
 			return 'You are currently on the waitlist and are ineligible to form baggage groups.'
 

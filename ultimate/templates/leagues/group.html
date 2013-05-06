@@ -14,7 +14,7 @@
 		<p>You are currently on the wait list and are ineligible to form a group.</p>
 	{% else %}
 
-		<h2>Your current group is{% if not registration.baggage.get_registrations %} empty.{% endif %}</h2>
+		<h3>Your current group is{% if not registration.baggage.get_registrations %} empty.{% endif %}</h3>
 
 		<ol>
 			{% for baggage_reg in registration.baggage.get_registrations %}
@@ -22,27 +22,33 @@
 			{% endfor %}
 		</ol>
 
-		{% if league.baggage > 1 and not registration.league.freeze_group_date|is_past_deadline %}
-			{% if registration.baggage.num_registrations > 1 %}
-				<form method="POST">{% csrf_token %}
-					<input class="button button_error" type="submit" name="leave_group" value="Leave Group" />
-				</form>
-			{% endif %}
-
-			<form method="POST">{% csrf_token %}
-				{% if registration.baggage.num_registrations < league.baggage %}
-					<h2>Add Another Player To Your Group</h2>
-					<p>You have room for {{ league.baggage|subtract:registration.baggage.num_registrations }} more players in your group. Enter the email of the player you would like to add below.</p>
-
-					<div class="control_group">
-						<input name="email" type="text" />
-					</div>
-
-					<input class="button button_success" name="add_group" value="Add Player" type="submit" />
-				{% else %}
-					<h3>Your group is full for this league.</h3>
+		{% if league.baggage > 1 %}
+			{% if registration.is_complete and not registration.league.freeze_group_date|is_past_deadline and not registration.waitlist %}
+				{% if registration.baggage_size > 1 %}
+					<form method="POST">{% csrf_token %}
+						<input class="button button_error" type="submit" name="leave_group" value="Leave Group" />
+					</form>
 				{% endif %}
-			</form>
+
+				<form method="POST">{% csrf_token %}
+					{% if registration.baggage_size < league.baggage %}
+						<h2>Add Another Player To Your Group</h2>
+						<p>You have room for {{ league.baggage|subtract:registration.baggage_size }} more players in your group. Enter the email of the player you would like to add below.</p>
+
+						<div class="control_group">
+							<input name="email" type="text" />
+						</div>
+
+						<input class="button button_success" name="add_group" value="Add Player" type="submit" />
+					{% else %}
+						<h4>Your group is full for this league.</h4>
+					{% endif %}
+				</form>
+			{% else %}
+				<p>Only complete, non-waitlisted registrations are eligible to form baggage groups.</p>
+			{% endif %}
+		{% else %}
+			<p>This league does not support baggage groups.</p>
 		{% endif %}
 	{% endif %}
 
