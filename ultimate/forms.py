@@ -97,7 +97,7 @@ class EditPlayerForm(forms.ModelForm):
 
 	class Meta:
 		model = Player
-		exclude = ('id', 'groups', 'user', 'highest_level', 'post_count', 'language',)
+		exclude = ('id', 'groups', 'user', 'highest_level', 'post_count', 'language', 'time_zone',)
 
 SKILL_CHOICES = [ (i,i) for i in range(0,11) ]
 
@@ -107,7 +107,6 @@ class EditSkillsForm(forms.ModelForm):
 	forehand = forms.IntegerField(min_value=1, max_value=10, initial=1)
 	backhand = forms.IntegerField(min_value=1, max_value=10, initial=1)
 	receive = forms.IntegerField(min_value=1, max_value=10, initial=1)
-	handle = forms.IntegerField(min_value=1, max_value=10, initial=1)
 	strategy = forms.IntegerField(min_value=1, max_value=10, initial=1)
 
 	class Meta:
@@ -120,7 +119,6 @@ class PlayerSurveyForm(forms.ModelForm):
 	forehand = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
 	backhand = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
 	receive = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
-	handle = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
 	strategy = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
 	spirit = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
 	not_sure = forms.BooleanField(required=False)
@@ -149,7 +147,6 @@ class PlayerSurveyForm(forms.ModelForm):
 		del self._errors['forehand']
 		del self._errors['backhand']
 		del self._errors['receive']
-		del self._errors['handle']
 		del self._errors['strategy']
 		del self._errors['spirit']
 

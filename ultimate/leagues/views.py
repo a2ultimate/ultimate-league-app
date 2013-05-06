@@ -52,9 +52,14 @@ def players(request, year, season, division):
 def teams(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
 
+	if request.user.is_authenticated():
+		user_games = league.get_user_games(request.user)
+	else:
+		user_games = None
+
 	return render_to_response('leagues/teams.html',
-		{'league': league, 'field_names': league.get_field_names(), 'teams': Team.objects.filter(league=league), 'user_games': league.get_user_games(request.user)},
-		context_instance=RequestContext(request))
+	{'league': league, 'field_names': league.get_field_names(), 'teams': Team.objects.filter(league=league), 'user_games': user_games},
+	context_instance=RequestContext(request))
 
 @login_required
 def group(request, year, season, division):

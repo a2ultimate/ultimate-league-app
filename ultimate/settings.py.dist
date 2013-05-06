@@ -10,7 +10,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-	('Ann Arbor Ultimate', 'webmaster@a2ultimate.org'),
+	('Ann Arbor Ultimate', 'webmaster@annarborultimate.org'),
 )
 
 MANAGERS = ADMINS
