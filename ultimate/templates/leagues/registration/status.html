@@ -14,13 +14,13 @@
 <h2>Registration Status</h2>
 
 {% if registration.is_complete %}
-	<p>
-		Your registration is complete. You may <a href="{% url league_group year=league.year season=league.season division=league.night %}">form a baggage group here</a>.
-	</p>
+	<h3>
+		Your registration is <strong class="text_success">complete</strong>. You may <a href="{% url league_group year=league.year season=league.season division=league.night %}">form a baggage group here</a>.
+	</h3>
 {% else %}
-	<p>
-		Your registration is <strong>not</strong> complete.
-	</p>
+	<h3>
+		Your registration is <strong class="text_error">not complete</strong>.
+	</h3>
 {% endif %}
 
 <hr />
