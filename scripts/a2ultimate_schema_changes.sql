@@ -487,3 +487,7 @@ ALTER TABLE `game_report_scores`
   ADD CONSTRAINT `game_report_scores_ibfk_2` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE  `game_report_comment` ADD  `spirit` INT( 3 ) NOT NULL AFTER  `submitted_by_id`;
+
+DELETE s1 FROM `skills` AS s1
+JOIN skills AS s2 ON s1.user_id = s2.user_id AND s1.submitted_by_id = s2.submitted_by_id
+WHERE s1.id != s2.id
