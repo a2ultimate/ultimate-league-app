@@ -1,10 +1,10 @@
 {% extends 'pybb/base.html' %}
 {% load pybb_tags i18n %}
 
-{% block title %}{{ target_user.username }}{% endblock %}
+{% block title %}{{ target_user.get_full_name }}{% endblock %}
 
 {% block content %}
-    <h1>{{ target_user.username }}</h1>
+    <h1>{{ target_user.get_full_name }}</h1>
     <div class="userinfo">
         <div class="info">
             <div class="label">{% trans "Statistics" %}</div>
@@ -13,7 +13,7 @@
             <div>{% trans "Number of topics" %}: {{ topic_count }}.
                 {% comment %}
                 &nbsp;
-                <a href="{% url pybb:user_topics profile.username %}">
+                <a href="{% url pybb:user_topics profile.get_full_name %}">
                     {% trans "Find all topics" %}
                 </a>
                 {% endcomment %}
@@ -24,7 +24,7 @@
     </div>
     <div class='controls'>
         {% if perms.pybb.block_users %}
-            <a href='{% url pybb:block_user target_user.username %}'>{% trans 'Block' %}</a>
+            <a href='{% url pybb:block_user target_user.get_full_name %}'>{% trans 'Block' %}</a>
         {% endif %}
         {% if perms.pybb.can_edit %}
             <a href='{% url admin:pybb_profile_change target_user.pybb_profile.id %}'>{% trans 'Edit' %}</a>

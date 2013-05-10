@@ -2,7 +2,7 @@
 {% load pybb_tags i18n %}
 
 {% block content %}
-    <h1><a href="{{ profile.pybb_profile.get_absolute_url }}">{{ profile.username }}</a></h1>
+    <h1><a href="{{ profile.pybb_profile.get_absolute_url }}">{{ profile.get_full_name }}</a></h1>
     <div class="userinfo">
         {% for topic in list %}
         <li class="user">
