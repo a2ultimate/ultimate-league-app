@@ -23,7 +23,10 @@
 							<ul class="league_list">
 								{% for night in league.list %}
 									<li>
-										<span class="league_name">{{ night.night|title }}</span>
+										<div class="league_name">
+											{{ night.night|title }}
+											{% if night.state != 'active' %}<em>({{ night.state|capfirst }})</em>{% endif %}
+										</div>
 										<ul>
 											{% if night.is_accepting_registrations %}
 												{% if night.is_accepting_waitlist %}

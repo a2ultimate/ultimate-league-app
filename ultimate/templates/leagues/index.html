@@ -11,7 +11,10 @@
 	</p>
 
 	{% for league in leagues %}
-		<h2 class="division_title">{{ league.night|title }} Division ({{ league.gender|capfirst }})</h2>
+		<h2 class="division_title">
+			{{ league.night|title }} Division ({{ league.gender|capfirst }})
+			{% if league.state != 'active' %}<em>({{ league.state|capfirst }})</em>{% endif %}
+		</h2>
 		{% if league.gender_note %}
 			{{ league.gender_note|safe }}
 		{% endif %}
