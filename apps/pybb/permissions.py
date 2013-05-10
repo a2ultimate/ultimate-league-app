@@ -41,6 +41,9 @@ class DefaultPermissionHandler(object):
 
     def may_create_topic(self, user, forum):
         """ return True if `user` is allowed to create a new topic in `forum` """
+        if forum.category.position == 0 and not user.is_superuser:
+            return False
+
         return user.has_perm('pybb.add_topic')
 
     #
