@@ -13,7 +13,7 @@
     <tbody>
     <tr>
         <td class="post-info">
-            <div class="post-author"><a href="{{ post.user.get_profile.get_absolute_url }}">{{ post.user.username }}</a></div>
+            <div class="post-author"><a href="{{ post.user.get_profile.get_absolute_url }}">{{ post.user.get_full_name }}</a></div>
             {% if post.user.get_profile.rank %}
                 {% with post.user.get_profile as profile %}
                     <div class="rank">
