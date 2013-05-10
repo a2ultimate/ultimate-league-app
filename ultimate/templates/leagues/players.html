@@ -2,7 +2,11 @@
 {% load utility %}
 
 {% block content %}
-	<h1>{{ league.season|title }} League {{ league.year }} {{ league.night|title }} Division ({{ league.gender|title }})</h1>
+	<h1>
+		{{ league.season|title }} League {{ league.year }} {{ league.night|title }} Division ({{ league.gender|title }})
+		{% if league.state != 'active' %}<em>({{ league.state|capfirst }})</em>{% endif %}
+	</h1>
+
 	{% include "layout/league_tabs.html" with selected_tab="players" %}
 
 	<p>To add someone to your group, you need to know their email address.</p>

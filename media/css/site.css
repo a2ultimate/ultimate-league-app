@@ -361,16 +361,32 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 	background: #2ECC71;
 }
 
+.text_success {
+	color: #2ECC71;
+}
+
 .state_info {
 	background: #3498DB;
+}
+
+.text_info {
+	color: #3498DB;
 }
 
 .state_warning {
 	background: #F1C40F;
 }
 
+.text_warning {
+	color: #F1C40F;
+}
+
 .state_error {
 	background: #E74C3C;
+}
+
+.text_error {
+	color: #E74C3C;
 }
 
 .none_found {
