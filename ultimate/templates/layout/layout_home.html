@@ -37,7 +37,10 @@
 									<ul>
 										{% for night in league.list %}
 											<li>
-												<a href="{% url league_summary year=league_list.grouper season=league.grouper division=night.night %}">{{ night.night|capfirst }}</a>
+												<a href="{% url league_summary year=league_list.grouper season=league.grouper division=night.night %}">
+													{{ night.night|capfirst }}
+													{% if night.state != 'active' %}<em>({{ night.state|capfirst }})</em>{% endif %}
+												</a>
 											</li>
 										{% endfor %}
 									</ul>
