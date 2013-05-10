@@ -11,95 +11,95 @@
 	</p>
 
 	{% for league in leagues %}
-		<h2 class="division_title">{{ league.night|capfirst }} Division ({{ league.gender|capfirst }})</h2>
+		<h2 class="division_title">{{ league.night|title }} Division ({{ league.gender|capfirst }})</h2>
 		{% if league.gender_note %}
 			{{ league.gender_note|safe }}
 		{% endif %}
 
-	<table class="table league_info_table">
-		<tr>
-			<td><a href="{% url league_details year=league.year season=league.season division=league.night %}">Detailed Info</a></td>
-			<td><a href="{% url league_players year=league.year season=league.season division=league.night %}">Players</a></td>
-			<td><a href="{% url league_teams year=league.year season=league.season division=league.night %}">Teams & Schedules</a></td>
-		</tr>
-		<tr>
-			<th colspan="2">
-				Dates
-			</th>
-			<th>
-				Times
-			</th>
-		</tr>
-		<tr>
-			<td colspan="2">
-				{{ league.league_start_date|date:'F d, Y' }} through {{ league.league_end_date|date:'F d, Y' }}
-			</td>
-			<td>
-				{{ league.times }}
-			</td>
-		</tr>
-		<tr>
-			<th colspan="3">
-				Location
-			</th>
-		</tr>
-		{% for field in league.get_fields %}
+		<table class="table league_info_table">
 			<tr>
-				<td colspan="3">{{ field.field.name }}</td>
+				<td><a href="{% url league_details year=league.year season=league.season division=league.night %}">Detailed Info</a></td>
+				<td><a href="{% url league_players year=league.year season=league.season division=league.night %}">Players</a></td>
+				<td><a href="{% url league_teams year=league.year season=league.season division=league.night %}">Teams & Schedules</a></td>
 			</tr>
-		{% endfor %}
-		<tr>
-			<th colspan="2">
-				Cost
-			</th>
-			<th>
-				Group Size
-			</th>
-		</tr>
-		<tr>
-			<td>
-				PayPal ${{ league.paypal_cost|floatformat:2 }}
-			</td>
-			<td>
-				Check ${{ league.check_cost|floatformat:2 }}
-			</td>
-			<td>
-				{{ league.baggage }}
-			</td>
-		</tr>
-		<tr>
-			<th colspan="3">
-				Important Dates
-			</th>
-		</tr>
-		<tr>
-			<td>
-				Signup Cutoff/Deadline
-			</td>
-			<td colspan="2">
-				{{ league.max_players }} Players or {{ league.waitlist_start_date|date:'F d, Y' }}
-			</td>
-		</tr>
-		<tr>
-			<td>
-				Group Change Deadline
-			</td>
-			<td colspan="2">
-				{{ league.freeze_group_date|date:'F d, Y' }}
-			</td>
-		</tr>
-
-		{% if league.is_accepting_registrations %}
 			<tr>
-				<td colspan="3">
-					{% if league.is_accepting_waitlist %}
-						<a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register for the Waitlist</a>
-					{% else %}
-						<a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register Now!</a>
-					{% endif %}
+				<th colspan="2">
+					Dates
+				</th>
+				<th>
+					Times
+				</th>
+			</tr>
+			<tr>
+				<td colspan="2">
+					{{ league.league_start_date|date:'F d, Y' }} through {{ league.league_end_date|date:'F d, Y' }}
+				</td>
+				<td>
+					{{ league.times }}
 				</td>
 			</tr>
-		{% endif %}
-	</table>
+			<tr>
+				<th colspan="3">
+					Location
+				</th>
+			</tr>
+			{% for field in league.get_fields %}
+				<tr>
+					<td colspan="3">{{ field.field.name }}</td>
+				</tr>
+			{% endfor %}
+			<tr>
+				<th colspan="2">
+					Cost
+				</th>
+				<th>
+					Group Size
+				</th>
+			</tr>
+			<tr>
+				<td>
+					PayPal ${{ league.paypal_cost|floatformat:2 }}
+				</td>
+				<td>
+					Check ${{ league.check_cost|floatformat:2 }}
+				</td>
+				<td>
+					{{ league.baggage }}
+				</td>
+			</tr>
+			<tr>
+				<th colspan="3">
+					Important Dates
+				</th>
+			</tr>
+			<tr>
+				<td>
+					Signup Cutoff/Deadline
+				</td>
+				<td colspan="2">
+					{{ league.max_players }} Players or {{ league.waitlist_start_date|date:'F d, Y' }}
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Group Change Deadline
+				</td>
+				<td colspan="2">
+					{{ league.freeze_group_date|date:'F d, Y' }}
+				</td>
+			</tr>
+
+			{% if league.is_accepting_registrations %}
+				<tr>
+					<td colspan="3">
+						{% if league.is_accepting_waitlist %}
+							<a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register for the Waitlist</a>
+						{% else %}
+							<a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register Now!</a>
+						{% endif %}
+					</td>
+				</tr>
+			{% endif %}
+		</table>
 	{% endfor %}
 {% endblock %}

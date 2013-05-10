@@ -23,7 +23,7 @@
 							<ul class="league_list">
 								{% for night in league.list %}
 									<li>
-										<span class="league_name">{{ night.night|capfirst }}</span>
+										<span class="league_name">{{ night.night|title }}</span>
 										<ul>
 											{% if night.is_accepting_registrations %}
 												{% if night.is_accepting_waitlist %}
