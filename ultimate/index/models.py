@@ -9,3 +9,7 @@ class StaticContent(models.Model):
 	nav_bar_id = models.IntegerField(unique=True, null=True, blank=True)
 	class Meta:
 		db_table = u'static_content'
+		verbose_name_plural = 'static content'
+
+	def __unicode__(self):
+		return self.url

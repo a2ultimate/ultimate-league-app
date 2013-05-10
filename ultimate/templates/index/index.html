@@ -7,10 +7,11 @@
 			<ul>
 				{% for announcement in announcements %}
 					<li class="announcement">
-						<a href="{{ announcement.get_absolute_url }}">
-							<div class="announcement_title">{{ announcement.name|truncatewords:10 }}</div>
-							<div class="announcement_date">{{ announcement.created|date:"N d, Y h:ia" }}</div>
-						</a>
+						<div class="announcement_title">{{ announcement.name|truncatewords:10 }}</div>
+						<div>
+							{{ announcement.created|date:"N d, Y h:ia" }}
+							<a href="{{ announcement.get_absolute_url }}">Read More...</a>
+						</div>
 					</li>
 				{% endfor %}
 			</ul>

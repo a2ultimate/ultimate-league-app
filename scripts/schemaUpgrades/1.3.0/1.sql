@@ -33,7 +33,7 @@ ALTER TABLE `registrations`
   ADD CONSTRAINT `registrations_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 
-INSERT INTO `registrations` (`id`, `user_id`, `league_id`, `baggage_id`, `created`, `updated`, `conduct_complete`, `waiver_complete`, `pay_type`, `check_complete`, `paypal_invoice_id`, `paypal_complete`, `waitlist`, `attendance`, `captain`, `guardian`, `guardian_name`, `guardian_email`)
+INSERT INTO `registrations` (`id`, `user_id`, `league_id`, `baggage_id`, `created`, `updated`, `registered`, `conduct_complete`, `waiver_complete`, `pay_type`, `check_complete`, `paypal_invoice_id`, `paypal_complete`, `waitlist`, `attendance`, `captain`, `guardian`, `guardian_name`, `guardian_email`)
 
 SELECT
 NULL,

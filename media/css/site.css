@@ -1099,6 +1099,7 @@ span.status {
 
 #announcements {
 	float: left;
+	font-size: 13px;
 	padding-right: 16px;
 	width: 400px;
 }
@@ -1110,28 +1111,14 @@ span.status {
 }
 
 .announcement {
-	border-radius: 2px;
-	color: #666666;
-	font-size: 18px;
-}
-
-.announcement:hover {
-	background: #ECEFF1;
-}
-
-.announcement a {
-	display: block;
-	padding: 6px;
+	border-bottom: 1px solid #ECEFF1;
+	padding: 12px 0;
 }
 
 .announcement_title {
 	color: #666666;
+	font-size: 20px;
 	font-weight: bold;
-}
-
-.announcement_date {
-	color: #999999;
-	font-size: 12px;
 	letter-spacing: 1px;
 }
 

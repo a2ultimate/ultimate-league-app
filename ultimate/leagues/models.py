@@ -29,6 +29,7 @@ class FieldNames(models.Model):
 	field = models.ForeignKey('leagues.Field')
 	class Meta:
 		db_table = u'field_names'
+		verbose_name_plural = 'field names'
 		ordering = ['field__name', 'name']
 
 	def __unicode__(self):
@@ -272,6 +273,7 @@ class Registrations(models.Model):
 
 	class Meta:
 		db_table = u'registrations'
+		verbose_name_plural = 'registrations'
 
 	def get_status(self):
 		status = 'New'
@@ -375,7 +377,7 @@ class Registrations(models.Model):
 
 
 	def __unicode__(self):
-		return '%d %s %s - %s %s' % (self.league.year, self.league.season, self.league.night, self.user)
+		return '%d %s %s - %s %s' % (self.league.year, self.league.season, self.league.night, self.user, self.get_status())
 
 
 class Team(models.Model):
@@ -405,7 +407,7 @@ class Team(models.Model):
 		if (re.search(r'pink', self.color, re.I)):
 			return '#EE6FA0'
 		if (re.search(r'purple', self.color, re.I)):
-			return '#695399'
+			return '#9B59B6'
 		if (re.search(r'red', self.color, re.I)):
 			return '#E74C3C'
 		if (re.search(r'white', self.color, re.I)):
@@ -431,6 +433,9 @@ class Team(models.Model):
 		# since you don't rate yourself, looking for a skill report and teamsize - 1 skill entries
 		return bool(skill_reports.count() > 0) and \
 			bool(skill_reports.filter(num_skills__gte=self.size - 1).count() > 0)
+
+	def __unicode__(self):
+		return '%s (%s)' % (self.name, self.color)
 
 
 class TeamMember(models.Model):
@@ -510,6 +515,9 @@ class SkillsReport(models.Model):
 	class Meta:
 		db_table = u'skills_report'
 
+	def __unicode__(self):
+		return '%s, %s, %s' % (self.team, self.team.league, self.submitted_by)
+
 
 class Skills(models.Model):
 	id = models.AutoField(primary_key=True)
@@ -530,3 +538,7 @@ class Skills(models.Model):
 
 	class Meta:
 		db_table = u'skills'
+		verbose_name_plural = 'skills'
+
+	def __unicode__(self):
+		return '%s %s <- %s' % (str(self.updated), self.user, self.submitted_by)
