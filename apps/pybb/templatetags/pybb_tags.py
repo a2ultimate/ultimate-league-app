@@ -5,6 +5,7 @@ from string import strip
 import time
 
 from django import template
+from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.encoding import smart_unicode
 from django.utils.html import escape
@@ -59,27 +60,18 @@ class PybbTimeNode(template.Node):
 
         if delta.days == 0:
             if delta.seconds < 60:
-                if context['LANGUAGE_CODE'].startswith('ru') and pytils_enabled:
-                    msg = _('seconds ago,seconds ago,seconds ago')
-                    msg = pytils.numeral.choose_plural(delta.seconds, msg)
-                else:
-                    msg = _('seconds ago')
+                msg = _('seconds ago')
                 return u'%d %s' % (delta.seconds, msg)
 
             elif delta.seconds < 3600:
-                minutes = int(delta.seconds / 60)
-                if context['LANGUAGE_CODE'].startswith('ru') and pytils_enabled:
-                    msg = _('minutes ago,minutes ago,minutes ago')
-                    msg = pytils.numeral.choose_plural(minutes, msg)
-                else:
-                    msg = _('minutes ago')
+                msg = _('minutes ago')
                 return u'%d %s' % (minutes, msg)
         if context['user'].is_authenticated():
             if time.daylight:
                 tz1 = time.altzone
             else:
                 tz1 = time.timezone
-            tz = tz1 + context['user'].get_profile().time_zone * 60 * 60
+            tz = tz1 + getattr(settings, 'PYBB_DEFAULT_TIME_ZONE', 0) * 60 * 60
             context_time = context_time + timedelta(seconds=tz)
         if today < context_time < tomorrow:
             return _('today, %s') % context_time.strftime('%H:%M')
@@ -114,7 +106,7 @@ def pybb_editable_by(post, user):
     """
     Check if the post could be edited by the user.
     """
-    return perms.may_edit_post(user, post)    
+    return perms.may_edit_post(user, post)
 
 
 @register.filter

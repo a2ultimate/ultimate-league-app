@@ -81,10 +81,6 @@ class FeaturesTest(TestCase, SharedTestModule):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.forum.get_absolute_url())
 
-    def test_profile_language_default(self):
-        user = User.objects.create_user(username='user2', password='user2', email='user2@example.com')
-        self.assertEqual(user.get_profile().language, settings.LANGUAGE_CODE)
-
     def test_profile_edit(self):
         # Self profile edit
         self.login_client()

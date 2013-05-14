@@ -102,15 +102,12 @@ class PostAdmin(admin.ModelAdmin):
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'time_zone', 'language', 'post_count']
+    list_display = ['user', 'post_count']
     list_per_page = 20
     ordering = ['-user']
     search_fields = ['user__username', 'user__first_name', 'user__last_name']
     fieldsets = (
-        (None, {
-                'fields': ('time_zone', 'language')
-                }
-         )
+        (None,)
         )
 
 

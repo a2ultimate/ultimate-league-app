@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import get_object_or_404, render_to_response
+from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
@@ -197,7 +197,7 @@ def registration(request, year, season, division, section=None):
 			'invoice': registration.paypal_invoice_id,
 			'item_name': str(league.season).capitalize() + ' League ' + str(league.year) + ' - ' + str(league.night).capitalize(),
 			'notify_url': baseUrl + '/leagues/registration/payment/notification/callback/for/a2ultimate/secret/',
-			'return_url': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration/',
+			'return_url': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration-complete/',
 		}
 
 		paypal_form = PayPalPaymentsForm(initial=paypal_dict)
@@ -208,6 +208,8 @@ def registration(request, year, season, division, section=None):
 		context_instance=RequestContext(request))
 
 
-
+@csrf_exempt
+def registrationcomplete(request, year, season, division):
+	return redirect('league_registration', year=year, season=season, division=division)
 
 
