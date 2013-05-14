@@ -64,6 +64,7 @@ class PybbTimeNode(template.Node):
                 return u'%d %s' % (delta.seconds, msg)
 
             elif delta.seconds < 3600:
+                minutes = int(delta.seconds / 60)
                 msg = _('minutes ago')
                 return u'%d %s' % (minutes, msg)
         if context['user'].is_authenticated():
