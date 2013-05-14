@@ -27,7 +27,7 @@ from paypal.standard.forms import PayPalPaymentsForm
 import feedparser
 
 def index(request):
-	announcements = Topic.objects.filter(forum__name__exact='Announcements')[:5]
+	announcements = Topic.objects.filter(forum__name__exact='Announcements').order_by('-created')[:5]
 
 	updates = list()
 
