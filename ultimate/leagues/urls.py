@@ -13,6 +13,7 @@ urlpatterns = patterns('ultimate.leagues.views',
 
 	(r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/registration/$', 'registration', {}, 'league_registration'),
 	(r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/registration/section/(?P<section>[^/]+)/$', 'registration', {}, 'league_registration_section'),
+	(r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/registration-complete/$', 'registrationcomplete', {}, 'league_registration_complete'),
 
 	(r'^registration/payment/notification/callback/for/a2ultimate/secret/', include('paypal.standard.ipn.urls')),
 )
