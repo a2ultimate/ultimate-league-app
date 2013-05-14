@@ -46,6 +46,8 @@ def signup(request):
 		form = SignupForm(request.POST)
 		if form.is_valid():
 			new_user = form.save()
+			# player = Player(user=new_user)
+			# player.save()
 			messages.success(request, 'Your account was created. You may now log in.')
 			return HttpResponseRedirect(reverse('user'))
 		else:
@@ -61,7 +63,7 @@ def editprofile(request):
 	try:
 		player = Player.objects.get(user=request.user)
 	except Player.DoesNotExist:
-		player = None
+		player = Player(user=request.user)
 
 	if request.method == 'POST':
 		form = EditProfileForm(request.POST, instance=request.user)
