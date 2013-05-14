@@ -171,7 +171,6 @@ except (AttributeError, ValueError, ObjectDoesNotExist):
 class EditProfileForm(forms.ModelForm):
     class Meta(object):
         model = profile_model
-        fields = ['time_zone', 'language']
 
 
 class UserSearchForm(forms.Form):
