@@ -1117,7 +1117,7 @@ span.status {
 	float: left;
 	font-size: 13px;
 	padding-right: 16px;
-	width: 400px;
+	width: 424px;
 }
 
 #announcements ul {
@@ -1133,7 +1133,7 @@ span.status {
 
 .announcement_title {
 	color: #666666;
-	font-size: 20px;
+	font-size: 17px;
 	font-weight: bold;
 	letter-spacing: 1px;
 }

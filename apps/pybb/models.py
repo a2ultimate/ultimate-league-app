@@ -306,11 +306,6 @@ class PybbProfile(models.Model):
             ("block_users", "Can block any user"),
         )
 
-    time_zone = models.FloatField(_('Time zone'), choices=TZ_CHOICES,
-        default=float(defaults.PYBB_DEFAULT_TIME_ZONE))
-    language = models.CharField(_('Language'), max_length=10, blank=True,
-        choices=settings.LANGUAGES,
-        default=settings.LANGUAGE_CODE)
     post_count = models.IntegerField(_('Post count'), blank=True, default=0)
 
     def save(self, *args, **kwargs):

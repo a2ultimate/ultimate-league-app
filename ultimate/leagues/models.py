@@ -167,7 +167,7 @@ class Player(PybbProfile):
 	height_inches = models.IntegerField()
 	highest_level = models.TextField()
 	birthdate = models.DateField(help_text='e.g. ' + date.today().strftime('%Y-%m-%d'))
-	jersey_size = models.CharField(max_length=45)
+	jersey_size = models.CharField(max_length=45, help_text='XS, S, M, L, XL, XXL')
 
 	class Meta:
 		db_table = u'player'

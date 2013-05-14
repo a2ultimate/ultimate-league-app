@@ -19,14 +19,3 @@ class PybbMiddleware(object):
                 # and grant permissions for add posts
                 user_saved(request.user, created=True)
                 profile = request.user.get_profile()
-
-            language = translation.get_language_from_request(request)
-
-            if not profile.language:
-                profile.language = language
-                profile.save()
-
-            if profile.language and profile.language != language:
-                request.session['django_language'] = profile.language
-                translation.activate(profile.language)
-                request.LANGUAGE_CODE = translation.get_language()
