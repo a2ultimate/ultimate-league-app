@@ -322,7 +322,7 @@ class Registrations(models.Model):
 
 	@transaction.commit_on_success
 	def add_to_baggage_group(self, email):
-		if self.is_complete:
+		if not self.is_complete:
 			return 'Your registration is currently incomplete and is ineligible to form baggage groups.'
 
 		if self.waitlist:
