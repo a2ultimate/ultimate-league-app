@@ -28,7 +28,7 @@ body {
 	background: #F5F5F5;
 	border-top: 4px solid #3498DB;
 	color: #555555;
-	font: normal 300 14px 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
+	font: normal 300 14px 'Lato', 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
 	margin: 0;
 	padding: 0;
 }
@@ -52,7 +52,7 @@ a:hover {
 }
 
 h1, h2, h3, h4, h5, h6, th, strong, .strong {
-	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
 	font-weight: bold;
 	margin: 10px 0;
 	text-rendering: optimizelegibility;
