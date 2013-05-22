@@ -48,7 +48,7 @@ LEAGUE_GENDER_CHOICES = (
 	('hat_free',    'Hat tourney (no pay, just add to registration list)'),
 	('hat_nocap',   'Hat tourney (no captains)'),
 	('bonanza_free','Clinics and pickup (no pay)'),
-	('competitive', 'Competitve league'),
+	('competitive', 'Competitive league'),
 	('showcase',    'Showcase league'),
 	('party',       'No group-limits party night'),
 	('open',        'Open, no gender match'),
@@ -322,7 +322,10 @@ class Registrations(models.Model):
 
 	@transaction.commit_on_success
 	def add_to_baggage_group(self, email):
-		if self.is_complete:
+		if self.user.email == email:
+			return 'You cannot form a baggage group with yourself.'
+
+		if not self.is_complete:
 			return 'Your registration is currently incomplete and is ineligible to form baggage groups.'
 
 		if self.waitlist:
@@ -343,7 +346,10 @@ class Registrations(models.Model):
 
 		target_baggage = registration.baggage
 
-		if (current_baggage_registrations.count() + target_baggage.num_registrations > baggage_limit):
+		if target_baggage == current_baggage:
+			return email + ' is already part of your baggage group.'
+
+		if (current_baggage_registrations.count() + target_baggage.num_registrations) > baggage_limit:
 			return 'Baggage group with ' + email + ' exceeds limit.'
 
 		for current_baggage_registration in current_baggage_registrations:

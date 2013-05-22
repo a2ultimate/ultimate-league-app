@@ -28,7 +28,7 @@ body {
 	background: #F5F5F5;
 	border-top: 4px solid #3498DB;
 	color: #555555;
-	font: normal 300 14px 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
+	font: normal 300 15px 'Lato', 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
 	margin: 0;
 	padding: 0;
 }
@@ -52,7 +52,7 @@ a:hover {
 }
 
 h1, h2, h3, h4, h5, h6, th, strong, .strong {
-	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
 	font-weight: bold;
 	margin: 10px 0;
 	text-rendering: optimizelegibility;
@@ -107,7 +107,7 @@ h6 {
 
 h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 	color: #999999;
-	font-weight: normal;
+	font-weight: 300;
 }
 
 .center_margin {
@@ -177,7 +177,6 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 
 .navbar {
 	color: #777777;
-	font-size: 15px;
 	letter-spacing: 1px;
 	line-height: 38px;
 	margin: 0 auto;
@@ -281,7 +280,6 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 }
 
 #footer_bar {
-	font-size: 13px;
 	padding: 3px;
 	text-align: center;
 }
@@ -307,8 +305,39 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 	width: 190px;
 }
 
-#sidebar .image_wrapper {
-	text-align: center;
+.social_icon {
+	background-size: 100%;
+	border-radius: 5px;
+	display: inline-block;
+	height: 30px;
+	margin: 0 4px 4px;
+	text-align: left;
+	text-indent: -999em;
+	width: 30px;
+}
+
+/* Facebook */
+.no-svg .social_icon.social_icon_facebook {
+	background: url("../images/social/fc-webicon-facebook-m.png");
+}
+.svg .social_icon.social_icon_facebook {
+	background: url("../images/social/fc-webicon-facebook.svg");
+}
+
+/* Flickr */
+.no-svg .social_icon.social_icon_flickr {
+	background: url("../images/social/fc-webicon-flickr-m.png");
+}
+.svg .social_icon.social_icon_flickr {
+	background: url("../images/social/fc-webicon-flickr.svg");
+}
+
+/* Twitter */
+.no-svg .social_icon.social_icon_twitter {
+	background: url("../images/social/fc-webicon-twitter-m.png");
+}
+.svg .social_icon.social_icon_twitter {
+	background: url("../images/social/fc-webicon-twitter.svg");
 }
 
 #sidebar ul {
@@ -326,26 +355,26 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 }
 
 #sidebar > ul > li > ul {
-	margin: 6px 0 4px;
+	margin: 6px 0 4px 2px;
 }
 
 #sidebar > ul > li > ul > li {
-	font-size: 14px;
-	font-weight: normal;
+	font-size: 16px;
+	font-weight: 300;
 	margin: 6px 0;
 	padding: 0;
 }
 
 #sidebar ul.league_list > li {
-	margin: 12px 0 12px 8px;
+	margin: 12px 0;
 }
 
 #sidebar ul.league_list > li > ul > li {
-	margin: 4px 0 4px 20px
+	margin: 4px 0 4px 12px
 }
 
 #sidebar .league_name {
-	font-size: 16px;
+	font-size: 17px;
 }
 
 #content {
@@ -391,7 +420,7 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 
 .none_found {
 	color: #BDC3C7;
-	font-size: 16px;
+	font-size: 17px;
 	font-weight: bold;
 	margin: 8px 0;
 }
@@ -448,7 +477,6 @@ input[type="color"],
 	border-radius: 6px;
 	border: 2px solid #DCE4EC;
 	color: #34495E;
-	font-size: 14px;
 	padding: 8px 0 9px 10px;
 	text-indent: 1px;
 	width: 192px;
@@ -891,6 +919,8 @@ input[type="submit"] {
 
 .nav_tabs {
 	border-bottom: 3px solid #2ECC71;
+	font-size: 14px;
+	font-weight: 400;
 	letter-spacing: 1px;
 	list-style: none;
 	margin: 0;
@@ -908,10 +938,9 @@ input[type="submit"] {
 	border-top-left-radius: 2px;
 	border-top-right-radius: 2px;
 	display: block;
-	font-size: 14px;
 	line-height: 32px;
 	margin-right: 8px;
-	padding: 2px 20px;
+	padding: 2px 16px;
 	text-decoration: none;
 }
 
@@ -922,7 +951,6 @@ input[type="submit"] {
 .nav_tabs li.selected a {
 	background: #2ECC71;
 	color: white;
-	font-size: 14px;
 	text-decoration: none;
 }
 
@@ -940,7 +968,7 @@ input[type="submit"] {
 
 #breadcrumbs {
 	display: inline;
-	font-size: 13px;
+	font-size: 14px;
 	letter-spacing: 1px;
 	list-style: none;
 	margin: 0;
@@ -1029,7 +1057,6 @@ input[type="submit"] {
 }
 
 .slide_selector label {
-	font-size: 15px;
 	font-weight: 300;
 	letter-spacing: 1px;
 	vertical-align: -2px;
@@ -1077,7 +1104,6 @@ input[type="submit"] {
 }
 
 .slide_selector .slider_description {
-	font-size: 13px;
 	margin: 0 auto;
 	min-height: 40px;
 	width: 600px;
@@ -1115,7 +1141,6 @@ span.status {
 
 #announcements {
 	float: left;
-	font-size: 13px;
 	padding-right: 16px;
 	width: 424px;
 }
@@ -1127,8 +1152,11 @@ span.status {
 }
 
 .announcement {
-	border-bottom: 1px solid #ECEFF1;
-	padding: 12px 0;
+	background: #ECF0F1;
+	border-radius: 2px;
+	font-size: 14px;
+	margin: 8px 0;
+	padding: 12px 6px;
 }
 
 .announcement_title {
@@ -1311,7 +1339,7 @@ ul.captain_division_team_links li {
 }
 
 #player_survey_table .skill_average {
-	font-size: 11px;
+	font-size: 13px;
 	font-weight: bold;
 	letter-spacing: 1px;
 }
@@ -1327,17 +1355,15 @@ ul.captain_division_team_links li {
 	background: #ECEFF1;
 }
 
-.league_info_table td {
-	font-size: 15px;
-}
-
 /* LEAGUE / DETAILS */
 
-#league_details h2 {
-	font-size: 17px;
-}
+
 
 /*  LEAGUE / TEAMS */
+
+#schedule_table {
+	table-layout: fixed;
+}
 
 #schedule_table thead th {
 	border-right: 2px solid #DDDDDD;
@@ -1347,7 +1373,8 @@ ul.captain_division_team_links li {
 	border-right: 0;
 }
 
-#schedule_table tbody th {
+#schedule_table tr th:first-child,
+#schedule_table tr td:first-child {
 	width: 8%;
 }
 
@@ -1448,7 +1475,7 @@ ul.captain_division_team_links li {
 
 #user_registrations_note {
 	color: #999999;
-	font-size: 13px;
+	font-size: 14px;
 }
 
 #edit_profile_form input[type=text],
