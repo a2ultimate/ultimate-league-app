@@ -9,7 +9,7 @@
 					<li class="announcement">
 						<div class="announcement_title">{{ announcement.name|truncatewords:10 }}</div>
 						<div>
-							{{ announcement.created|date:"N d, Y h:ia" }}
+							{{ announcement.created|timesince }} ago
 							<a href="{{ announcement.get_absolute_url }}">Read More...</a>
 						</div>
 					</li>
