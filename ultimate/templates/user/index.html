@@ -91,7 +91,7 @@
 			<thead>
 				<tr>
 					<th>League</th>
-					<th>Status</th>
+					<th colspan="2">Status</th>
 					<th>Group</th>
 				</tr>
 			</thead>
@@ -106,7 +106,8 @@
 									{{ registration.league.night|capfirst }}
 								</a>
 							</td>
-							<td>{{ registration.get_progress }}% - {{ registration.get_status }}</td>
+							<td>{{ registration.get_progress }}%</td>
+							<td>{{ registration.get_status }}</td>
 							<td>
 								{% for baggage_reg in registration.baggage.get_registrations %}
 									<div>{{ baggage_reg.user.get_full_name }}</div>
