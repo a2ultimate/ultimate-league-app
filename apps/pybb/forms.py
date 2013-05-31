@@ -168,9 +168,7 @@ try:
 except (AttributeError, ValueError, ObjectDoesNotExist):
     profile_model = Profile
 
-# class EditProfileForm(forms.ModelForm):
-#     class Meta(object):
-#         model = profile_model
+
 
 
 class UserSearchForm(forms.Form):

@@ -4,7 +4,7 @@ from django.conf.urls import *
 
 from pybb.feeds import LastPosts, LastTopics
 from pybb.views import IndexView, CategoryView, ForumView, TopicView,\
-    AddPostView, EditPostView, UserView, PostView, ProfileEditView,\
+    AddPostView, EditPostView, UserView, PostView,\
     DeletePostView, StickTopicView, UnstickTopicView, CloseTopicView,\
     OpenTopicView, ModeratePost, TopicPollVoteView, LatestTopicsView
 
@@ -24,9 +24,6 @@ urlpatterns += patterns('pybb.views',
                         # User
                         url('^users/(?P<username>[^/]+)/$', UserView.as_view(), name='user'),
                         url('^block_user/([^/]+)/$', 'block_user', name='block_user'),
-
-                        # Profile
-                        # url('^profile/edit/$', ProfileEditView.as_view(), name='edit_profile'),
 
                         # Topic
                         url('^topic/(?P<pk>\d+)/$', TopicView.as_view(), name='topic'),
