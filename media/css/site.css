@@ -188,7 +188,7 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 .navbar:before,
 .navbar:after {
 	display: table;
-	content: " ";
+	content: ' ';
 }
 
 .navbar:after {
@@ -306,38 +306,41 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 }
 
 .social_icon {
-	background-size: 100%;
+	background: transparent url('../images/social_sprite.png') 0 0 no-repeat;
+	background-size: 96px 32px;
 	border-radius: 5px;
 	display: inline-block;
-	height: 30px;
+	height: 32px;
 	margin: 0 4px 4px;
 	text-align: left;
 	text-indent: -999em;
-	width: 30px;
+	width: 32px;
 }
 
-/* Facebook */
-.no-svg .social_icon.social_icon_facebook {
-	background: url("../images/social/fc-webicon-facebook-m.png");
-}
-.svg .social_icon.social_icon_facebook {
-	background: url("../images/social/fc-webicon-facebook.svg");
+.social_icon:active {
+	position: relative;
+	top: 1px;
 }
 
-/* Flickr */
-.no-svg .social_icon.social_icon_flickr {
-	background: url("../images/social/fc-webicon-flickr-m.png");
-}
-.svg .social_icon.social_icon_flickr {
-	background: url("../images/social/fc-webicon-flickr.svg");
+.social_icon.social_icon_facebook {
+	background-position: 0 0;
 }
 
-/* Twitter */
-.no-svg .social_icon.social_icon_twitter {
-	background: url("../images/social/fc-webicon-twitter-m.png");
+.social_icon.social_icon_flickr {
+	background-position: -64px 0;
 }
-.svg .social_icon.social_icon_twitter {
-	background: url("../images/social/fc-webicon-twitter.svg");
+
+.social_icon.social_icon_twitter {
+	background-position: -32px 0;
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+	   only screen and (min-resolution: 144dpi),
+	   only screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+
+	.social_icon {
+		background: transparent url('../images/social_sprite@2x.png') 0 0 no-repeat;
+	}
 }
 
 #sidebar ul {
@@ -958,7 +961,7 @@ input[type="submit"] {
 .nav_tabs:after {
 	display: table;
 	line-height: 0;
-	content: "";
+	content: '';
 }
 
 .nav_tabs:after {
@@ -1516,7 +1519,7 @@ ul.captain_division_team_links li {
 }
 
 .ir:before {
-	content: "";
+	content: '';
 	display: block;
 	width: 0;
 	height: 150%;
@@ -1554,7 +1557,7 @@ ul.captain_division_team_links li {
 
 .clearfix:before,
 .clearfix:after {
-	content: " ";
+	content: ' ';
 	display: table;
 }
 
@@ -1584,11 +1587,11 @@ ul.captain_division_team_links li {
 	}
 
 	a[href]:after {
-		content: " (" attr(href) ")";
+		content: ' (' attr(href) ')';
 	}
 
 	abbr[title]:after {
-		content: " (" attr(title) ")";
+		content: ' (' attr(title) ')';
 	}
 
 	/*
@@ -1598,7 +1601,7 @@ ul.captain_division_team_links li {
 	.ir a:after,
 	a[href^="javascript:"]:after,
 	a[href^="#"]:after {
-		content: "";
+		content: '';
 	}
 
 	pre,
