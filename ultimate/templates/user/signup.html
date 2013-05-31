@@ -7,7 +7,7 @@
 <form method="post">{% csrf_token %}
 	<div class="hidden">
 		{% for hidden in form.hidden_fields %}
-		    {{ hidden }}
+			{{ hidden }}
 		{% endfor %}
 	</div>
 
@@ -25,7 +25,7 @@
 			{% endif %}
 		{% endfor %}
 	</table>
-    <input class="button button_success" type="submit" value="Create Account">
+	<input class="button button_success" type="submit" value="Create Account">
 </form>
 
 {% endblock %}
