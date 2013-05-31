@@ -189,6 +189,10 @@ class Baggage(models.Model):
 	def num_registrations(self):
 		return self.registrations_set.all().count()
 
+	def __unicode__(self):
+		return '%d' % (self.id)
+
+
 REGISTRATION_STATUS_CHOICES=(
 	('new', 'New'),
 	('refunded', 'Refunded'),
@@ -325,7 +329,7 @@ class Registrations(models.Model):
 		if self.user.email == email:
 			return 'You cannot form a baggage group with yourself.'
 
-		if not self.is_complete:
+		if not self.is_complete():
 			return 'Your registration is currently incomplete and is ineligible to form baggage groups.'
 
 		if self.waitlist:
@@ -335,6 +339,9 @@ class Registrations(models.Model):
 			registration = Registrations.objects.get(user__email=email, league=self.league)
 		except ObjectDoesNotExist:
 			return 'No registration found for ' + email + '.'
+
+		if not registration.is_complete():
+			return email + ' has an incomplete registration and is ineligible to form baggage groups.'
 
 		if registration.waitlist:
 			return email + ' is currently on the waitlist and is ineligible to form baggage groups.'
