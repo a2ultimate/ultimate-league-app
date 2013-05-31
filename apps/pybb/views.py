@@ -27,7 +27,7 @@ except ImportError:
 from pure_pagination import Paginator
 
 from pybb.models import Category, Forum, Topic, Post, TopicReadTracker, ForumReadTracker, PollAnswerUser
-from pybb.forms import  PostForm, AdminPostForm, EditProfileForm, PollAnswerFormSet, PollForm
+from pybb.forms import  PostForm, AdminPostForm, PollAnswerFormSet, PollForm
 from pybb.templatetags.pybb_tags import pybb_topic_poll_not_voted
 from pybb import defaults
 
@@ -321,23 +321,6 @@ class ModeratePost(generic.RedirectView):
         post.on_moderation = False
         post.save()
         return post.get_absolute_url()
-
-
-# class ProfileEditView(generic.UpdateView):
-
-#     template_name = 'pybb/edit_profile.html'
-#     form_class = EditProfileForm
-
-#     def get_object(self, queryset=None):
-#         return self.request.user.get_profile()
-
-#     @method_decorator(login_required)
-#     @method_decorator(csrf_protect)
-#     def dispatch(self, request, *args, **kwargs):
-#         return super(ProfileEditView, self).dispatch(request, *args, **kwargs)
-
-#     def get_success_url(self):
-#         return reverse('pybb:edit_profile')
 
 
 class DeletePostView(generic.DeleteView):
