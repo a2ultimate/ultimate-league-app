@@ -308,7 +308,6 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 .social_icon {
 	background: transparent url('../images/social_sprite.png') 0 0 no-repeat;
 	background-size: 96px 32px;
-	border-radius: 5px;
 	display: inline-block;
 	height: 32px;
 	margin: 0 4px 4px;
