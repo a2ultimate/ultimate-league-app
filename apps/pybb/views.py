@@ -323,21 +323,21 @@ class ModeratePost(generic.RedirectView):
         return post.get_absolute_url()
 
 
-class ProfileEditView(generic.UpdateView):
+# class ProfileEditView(generic.UpdateView):
 
-    template_name = 'pybb/edit_profile.html'
-    form_class = EditProfileForm
+#     template_name = 'pybb/edit_profile.html'
+#     form_class = EditProfileForm
 
-    def get_object(self, queryset=None):
-        return self.request.user.get_profile()
+#     def get_object(self, queryset=None):
+#         return self.request.user.get_profile()
 
-    @method_decorator(login_required)
-    @method_decorator(csrf_protect)
-    def dispatch(self, request, *args, **kwargs):
-        return super(ProfileEditView, self).dispatch(request, *args, **kwargs)
+#     @method_decorator(login_required)
+#     @method_decorator(csrf_protect)
+#     def dispatch(self, request, *args, **kwargs):
+#         return super(ProfileEditView, self).dispatch(request, *args, **kwargs)
 
-    def get_success_url(self):
-        return reverse('pybb:edit_profile')
+#     def get_success_url(self):
+#         return reverse('pybb:edit_profile')
 
 
 class DeletePostView(generic.DeleteView):

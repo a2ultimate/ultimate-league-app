@@ -26,7 +26,7 @@ urlpatterns += patterns('pybb.views',
                         url('^block_user/([^/]+)/$', 'block_user', name='block_user'),
 
                         # Profile
-                        url('^profile/edit/$', ProfileEditView.as_view(), name='edit_profile'),
+                        # url('^profile/edit/$', ProfileEditView.as_view(), name='edit_profile'),
 
                         # Topic
                         url('^topic/(?P<pk>\d+)/$', TopicView.as_view(), name='topic'),
