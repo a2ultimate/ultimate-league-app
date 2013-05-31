@@ -13,6 +13,8 @@ ADMINS = (
 	('Ann Arbor Ultimate', 'webmaster@annarborultimate.org'),
 )
 
+DEFAULT_FROM_EMAIL = 'Ann Arbor Ultimate <webmaster@a2ultimate.org>'
+
 MANAGERS = ADMINS
 
 DATABASES = {
