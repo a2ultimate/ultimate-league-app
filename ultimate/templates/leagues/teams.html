@@ -65,7 +65,7 @@
 			</tbody>
 		</table>
 	{% else %}
-		<h5>The schedule for this league has not yet been completed.</h5>
+		<div class="text_center">The schedule for this league has not yet been completed.</div>
 	{% endif %}
 
 	{% if teams %}
@@ -106,6 +106,6 @@
 			{% endfor %}
 		</table>
 	{% else %}
-		<h5>Teams for this league have not yet been formed.</h5>
+		<div class="text_center">Teams for this league have not yet been formed.</div>
 	{% endif %}
 {% endblock %}

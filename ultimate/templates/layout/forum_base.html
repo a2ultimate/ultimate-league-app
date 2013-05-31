@@ -47,7 +47,7 @@
 						</li>
 						{% if request.user.is_authenticated %}
 							<li>
-								<a href="{% url pybb:edit_profile %}">Profile [logged as {{ request.user.username }}]</a>
+								<a href="{% url user %}">Profile</a>
 							</li>
 							<li>
 								<a href="{% url auth_logout %}">Logout</a>
