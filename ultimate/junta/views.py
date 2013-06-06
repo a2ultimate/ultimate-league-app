@@ -45,10 +45,10 @@ def registrationexport(request, year=None, season=None, division=None):
 			.extra(select={'average_spirit':'select COALESCE(AVG(skills.spirit), 7) FROM skills WHERE skills.user_id = registrations.user_id AND skills.spirit != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
 			.extra(select={'highest_level':'select highest_level FROM skills WHERE skills.user_id = registrations.user_id AND skills.user_id = skills.submitted_by_id'})
 
-		# response = HttpResponse(content_type='text/csv')
-		# response['Content-Disposition'] = 'attachment; filename="' + league.__unicode__() + '.txt"'
+		response = HttpResponse(content_type='text/csv')
+		response['Content-Disposition'] = 'attachment; filename="' + league.__unicode__() + '.txt"'
 
-		response = HttpResponse()
+		# response = HttpResponse()
 
 		t = loader.get_template('junta/registrationexport.txt')
 		c = Context({
