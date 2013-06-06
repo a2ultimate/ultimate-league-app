@@ -1,8 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, render_to_response
+from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
-from django.template import RequestContext
+from django.shortcuts import get_object_or_404, render_to_response
+from django.template import RequestContext, loader, Context
 
 from ultimate.junta.models import *
 from ultimate.leagues.models import *
@@ -27,4 +28,35 @@ def captainstatus(request, year=None, season=None, division=None):
 
 	return render_to_response('junta/captainstatus.html',
 		{'league': league, 'leagues': leagues},
+		context_instance=RequestContext(request))
+
+def registrationexport(request, year=None, season=None, division=None):
+	leagues = League.objects.all().order_by('-league_start_date')
+
+	if (year and season and division):
+		league = get_object_or_404(League, year=year, season=season, night=division)
+		registrations = Registrations.objects.filter(Q(check_complete=1) | Q(paypal_complete=1), league=league, waitlist=0, refunded=0) \
+			.extra(select={'average_athletic':'select AVG(skills.athletic) FROM skills WHERE skills.user_id = registrations.user_id AND skills.athletic != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
+			.extra(select={'average_forehand':'select AVG(skills.forehand) FROM skills WHERE skills.user_id = registrations.user_id AND skills.forehand != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
+			.extra(select={'average_backhand':'select AVG(skills.backhand) FROM skills WHERE skills.user_id = registrations.user_id AND skills.backhand != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
+			.extra(select={'average_receive':'select AVG(skills.receive) FROM skills WHERE skills.user_id = registrations.user_id AND skills.receive != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
+			.extra(select={'experience':'select MAX(skills.experience) FROM skills WHERE skills.user_id = registrations.user_id AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
+			.extra(select={'average_strategy':'select AVG(skills.strategy) FROM skills WHERE skills.user_id = registrations.user_id AND skills.strategy != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
+			.extra(select={'average_spirit':'select AVG(skills.spirit) FROM skills WHERE skills.user_id = registrations.user_id AND skills.spirit != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'})
+
+		# response = HttpResponse(content_type='text/csv')
+		# response['Content-Disposition'] = 'attachment; filename="' + league.__unicode__() + '.txt"'
+
+		response = HttpResponse()
+
+		t = loader.get_template('junta/registrationexport.txt')
+		c = Context({
+			'leagues': leagues,
+			'registrations': registrations,
+		})
+		response.write(t.render(c))
+		return response
+
+	return render_to_response('junta/registrationexport.html',
+		{'leagues': leagues},
 		context_instance=RequestContext(request))

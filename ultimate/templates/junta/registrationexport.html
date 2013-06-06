@@ -1,0 +1,30 @@
+{% extends "layout/layout_user.html" %}
+{% load games %}
+{% load leagues %}
+
+{% block content %}
+	{% include "layout/account_tabs.html" with selected_tab="junta" %}
+
+	<h1>Registration Export</h1>
+
+	<ul class="league_list">
+		{% regroup leagues by year as league_years %}
+
+		{% for league_list in league_years %}
+			{% regroup league_list.list by season as league_seasons %}
+
+			{% for league in league_seasons %}
+				<li>
+					<h3>{{ league.grouper|capfirst }} {{ league_list.grouper }}</h3>
+					<ul>
+						{% for night in league.list %}
+							<li>
+								<a href="{% url registrationexport_league year=league_list.grouper season=league.grouper division=night.night %}">{{ night.night|capfirst }}</a>
+							</li>
+						{% endfor %}
+					</ul>
+				</li>
+			{% endfor %}
+		{% endfor %}
+	</ul>
+{% endblock %}
