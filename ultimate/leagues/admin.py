@@ -19,7 +19,7 @@ class RegistrationsAdmin(admin.ModelAdmin):
 		}),
 		('Advanced options', {
 			'classes': ('collapse',),
-			'fields': ('created', 'updated', 'conduct_complete', 'waiver_complete', 'pay_type', 'paypal_invoice_id',)
+			'fields': ('created', 'updated', 'conduct_complete', 'waiver_complete', 'pay_type', 'paypal_invoice_id', 'baggage',)
 		}),
 	)
 	readonly_fields = ('created', 'updated',)

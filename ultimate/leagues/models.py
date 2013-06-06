@@ -175,6 +175,11 @@ class Player(PybbProfile):
 	def get_spirit(self):
 		return self.user.skills.exclude(spirit=0)
 
+	def age(self, now=None):
+		if now is None:
+			now = date.today()
+		return (now.year - self.birthdate.year) - int((now.month, now.day) < (self.birthdate.month, self.birthdate.day))
+
 
 class Baggage(models.Model):
 	id = models.AutoField(primary_key=True)
