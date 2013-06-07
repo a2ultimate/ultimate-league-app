@@ -1,0 +1,35 @@
+{% extends "layout/layout_user.html" %}
+{% load games %}
+{% load leagues %}
+
+{% block content %}
+	{% include "layout/account_tabs.html" with selected_tab="junta" %}
+
+	<h1>Team Import</h1>
+
+	<form method="post" enctype="multipart/form-data">{% csrf_token %}
+		<table class="form_table">
+			<tr>
+				<td>League</td>
+				<td>
+					<select name="league_id">
+						<option></option>
+						{% for league in leagues %}
+							<option value="{{ league.id }}">{{ league }}</option>
+						{% endfor %}
+					</select>
+				</td>
+			</tr>
+
+			<tr>
+				<td>Team File (TSV)</td>
+				<td>
+					<input name="file" type="file" />
+				</td>
+			</tr>
+		</table>
+
+		<input class="button button_success" type="submit" value="Import Teams" />
+		<a class="form_cancel" href="{% url junta %}">Cancel</a>
+	</form>
+{% endblock %}
