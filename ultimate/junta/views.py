@@ -79,8 +79,9 @@ def teamimport(request):
 
 	if request.method == 'POST':
 		league = get_object_or_404(League, id=request.POST['league_id'])
+		uploadFile = request.FILES['file']
 
-		rows = csv.reader(request.FILES['file'], dialect='excel-tab')
+		rows = [row for row in csv.reader(uploadFile.read().splitlines(), dialect='excel-tab')]
 
 		current_team = None
 		current_team_count = None
