@@ -16,6 +16,7 @@ def index(request):
 		{},
 		context_instance=RequestContext(request))
 
+@login_required
 def captainstatus(request, year=None, season=None, division=None):
 	league = None
 	leagues = None
@@ -30,6 +31,7 @@ def captainstatus(request, year=None, season=None, division=None):
 		{'league': league, 'leagues': leagues},
 		context_instance=RequestContext(request))
 
+@login_required
 def registrationexport(request, year=None, season=None, division=None):
 	leagues = League.objects.all().order_by('-league_start_date')
 
