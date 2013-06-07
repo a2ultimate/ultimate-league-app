@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from ultimate.leagues.models import Registrations
+from ultimate.leagues.models import League, Registrations
 
 from paypal.standard.ipn.signals import payment_was_successful
 
@@ -13,6 +13,15 @@ def payment_success(sender, **kwargs):
 
 	try:
 		registration = Registrations.objects.get(paypal_invoice_id=ipn_obj.invoice)
+
+		num_registrations = len(registration.league.get_completed_registrations())
+
+		if num_registrations > registration.league.max_players:
+			registration.waitlist = 1
+
+		if registration.league.is_accepting_waitlist:
+			registration.waitlist = 1
+
 		registration.paypal_complete = 1
 		registration.registered = datetime.now()
 		registration.save()
