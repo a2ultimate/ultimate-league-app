@@ -1,9 +1,13 @@
+import csv
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext, loader, Context
+
 
 from ultimate.junta.models import *
 from ultimate.leagues.models import *
@@ -15,6 +19,7 @@ def index(request):
 	return render_to_response('junta/index.html',
 		{},
 		context_instance=RequestContext(request))
+
 
 @login_required
 def captainstatus(request, year=None, season=None, division=None):
@@ -30,6 +35,7 @@ def captainstatus(request, year=None, season=None, division=None):
 	return render_to_response('junta/captainstatus.html',
 		{'league': league, 'leagues': leagues},
 		context_instance=RequestContext(request))
+
 
 @login_required
 def registrationexport(request, year=None, season=None, division=None):
@@ -63,3 +69,46 @@ def registrationexport(request, year=None, season=None, division=None):
 	return render_to_response('junta/registrationexport.html',
 		{'leagues': leagues},
 		context_instance=RequestContext(request))
+
+
+@login_required
+@transaction.commit_on_success
+def teamimport(request):
+	# TODO needs validation
+	leagues = League.objects.all().order_by('-league_start_date')
+
+	if request.method == 'POST':
+		league = get_object_or_404(League, id=request.POST['league_id'])
+
+		rows = csv.reader(request.FILES['file'], dialect='excel-tab')
+
+		current_team = None
+		current_team_count = None
+		for row in rows:
+			if row[0] != 'Team':
+				team_count = row[0]
+				email = row[7]
+				captain = row[23]
+				if team_count not in (None, '') and email not in (None, '') and captain != None:
+					if team_count != current_team_count:
+						current_team_count = team_count
+						current_team = Team()
+						current_team.league = league
+						current_team.save()
+						current_team.name = 'Team ' + str(current_team.id)
+						current_team.save()
+
+					team_member = TeamMember()
+					team_member.captain = bool(captain)
+					team_member.team = current_team
+					team_member.user = User.objects.get(email=email)
+					team_member.save()
+
+		messages.success(request, 'Teams were successfully imported.')
+		return HttpResponseRedirect(reverse('junta'))
+
+
+	return render_to_response('junta/teamimport.html',
+		{'leagues': leagues},
+		context_instance=RequestContext(request))
+
