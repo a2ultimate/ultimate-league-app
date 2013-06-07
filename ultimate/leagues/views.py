@@ -15,6 +15,7 @@ from ultimate.middleware.http import Http403
 
 from paypal.standard.forms import PayPalPaymentsForm
 
+
 def index(request, year, season):
 	if request.user.is_superuser:
 		leagues = League.objects.filter(year=year, season=season).order_by('league_start_date')
@@ -27,17 +28,20 @@ def index(request, year, season):
 		{'leagues': leagues, 'year': year, 'season': season},
 		context_instance=RequestContext(request))
 
+
 def summary(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
 	return render_to_response('leagues/summary.html',
 		{'league': league},
 		context_instance=RequestContext(request))
 
+
 def details(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
 	return render_to_response('leagues/details.html',
 		{'league': league},
 		context_instance=RequestContext(request))
+
 
 def players(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
@@ -48,6 +52,7 @@ def players(request, year, season, division):
 	return render_to_response('leagues/players.html',
 		{'league': league, 'registrations': registrations, 'waitlist': waitlist},
 		context_instance=RequestContext(request))
+
 
 def teams(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
@@ -60,6 +65,7 @@ def teams(request, year, season, division):
 	return render_to_response('leagues/teams.html',
 	{'league': league, 'field_names': league.get_field_names(), 'teams': Team.objects.filter(league=league), 'user_games': user_games},
 	context_instance=RequestContext(request))
+
 
 @login_required
 def group(request, year, season, division):
@@ -87,7 +93,7 @@ def group(request, year, season, division):
 		{'league': league, 'registration': registration},
 		context_instance=RequestContext(request))
 
-@csrf_exempt
+
 @login_required
 def registration(request, year, season, division, section=None):
 	league = get_object_or_404(League, year=year, season=season, night=division)
@@ -101,67 +107,61 @@ def registration(request, year, season, division, section=None):
 
 	if request.method == 'POST':
 
-		@csrf_protect
-		def handle_post(request):
-			# conduct response
-			if 'conduct_accept' in request.POST:
-				registration.conduct_complete = 1
+		# conduct response
+		if 'conduct_accept' in request.POST:
+			registration.conduct_complete = 1
+			registration.save()
+			messages.success(request, 'Code of conduct response saved.')
+		elif 'conduct_decline' in request.POST:
+			registration.conduct_complete = 0
+			registration.save()
+			messages.error(request, 'You must accept the code of conduct to continue.')
+
+		# waiver response
+		if 'waiver_accept' in request.POST:
+			registration.waiver_complete = 1
+			registration.save()
+			messages.success(request, 'Waiver response saved.')
+		elif 'waiver_decline' in request.POST:
+			registration.waiver_complete = 0
+			registration.save()
+			messages.error(request, 'You must accept the waiver to continue.')
+
+		# attendance/captaining response
+		if 'id' in request.POST and 'attendance' in request.POST and 'captain' in request.POST:
+			attendance_form = RegistrationAttendanceForm(request.POST, instance=registration)
+			if attendance_form.is_valid():
+				attendance_form.save()
+				messages.success(request, 'Attendance and captaining response saved.')
+			else:
+				messages.error(request, 'You must provide an attendance and captaining rating to continue.')
+
+		# payment type response
+		if 'pay_type' in request.POST:
+			if request.POST.get('pay_type').lower() == 'check':
+				if not registration.baggage_id:
+					baggage = Baggage()
+					baggage.save()
+					registration.baggage_id = baggage.id
+
+				registration.pay_type = 'check'
 				registration.save()
-				messages.success(request, 'Code of conduct response saved.')
-			elif 'conduct_decline' in request.POST:
-				registration.conduct_complete = 0
+				messages.success(request, 'Payment type set to check.')
+
+			elif request.POST.get('pay_type').lower() == 'paypal':
+				if not registration.baggage_id:
+					baggage = Baggage()
+					baggage.save()
+					registration.baggage_id = baggage.id
+
+				registration.pay_type = 'paypal'
 				registration.save()
-				messages.error(request, 'You must accept the code of conduct to continue.')
+				messages.success(request, 'Payment type set to PayPal.')
 
-			# waiver response
-			if 'waiver_accept' in request.POST:
-				registration.waiver_complete = 1
-				registration.save()
-				messages.success(request, 'Waiver response saved.')
-			elif 'waiver_decline' in request.POST:
-				registration.waiver_complete = 0
-				registration.save()
-				messages.error(request, 'You must accept the waiver to continue.')
+			else:
+				messages.error(request, 'You must select a valid payment type to continue.')
 
-			# attendance/captaining response
-			if 'id' in request.POST and 'attendance' in request.POST and 'captain' in request.POST:
-				attendance_form = RegistrationAttendanceForm(request.POST, instance=registration)
-				if attendance_form.is_valid():
-					attendance_form.save()
-					messages.success(request, 'Attendance and captaining response saved.')
-				else:
-					messages.error(request, 'You must provide an attendance and captaining rating to continue.')
-
-			# payment type response
-			if 'pay_type' in request.POST:
-				if request.POST.get('pay_type').lower() == 'check':
-					if not registration.baggage_id:
-						baggage = Baggage()
-						baggage.save()
-						registration.baggage_id = baggage.id
-
-					registration.pay_type = 'check'
-					registration.save()
-					messages.success(request, 'Payment type set to check.')
-
-				elif request.POST.get('pay_type').lower() == 'paypal':
-					if not registration.baggage_id:
-						baggage = Baggage()
-						baggage.save()
-						registration.baggage_id = baggage.id
-
-					registration.pay_type = 'paypal'
-					registration.save()
-					messages.success(request, 'Payment type set to PayPal.')
-
-				else:
-					messages.error(request, 'You must select a valid payment type to continue.')
-
-			return HttpResponseRedirect(reverse('league_registration', kwargs={'year': year, 'season': season, 'division': division}))
-
-		# if the request came from paypal, don't check for the csrf token
-		if 'paypal' not in request.META.get('HTTP_REFERER', request.META.get('HTTP_ORIGIN', '')).lower():
-			return handle_post(request)
+		return HttpResponseRedirect(reverse('league_registration', kwargs={'year': year, 'season': season, 'division': division}))
 
 	if section == 'conduct' or not registration.conduct_complete:
 		return render_to_response('leagues/registration/conduct.html',
