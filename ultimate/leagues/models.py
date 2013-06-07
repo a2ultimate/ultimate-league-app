@@ -175,7 +175,9 @@ class Player(PybbProfile):
 	def get_spirit(self):
 		return self.user.skills.exclude(spirit=0)
 
-	def age(self, now=None):
+	def get_age(self, now=None):
+		if not self.birthdate:
+			return 0
 		if now is None:
 			now = date.today()
 		return (now.year - self.birthdate.year) - int((now.month, now.day) < (self.birthdate.month, self.birthdate.day))

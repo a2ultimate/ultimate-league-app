@@ -28,6 +28,9 @@ def payment_success(sender, **kwargs):
 
 		print 'PayPal IPN Success: ' + ipn_obj.invoice
 	except Registrations.DoesNotExist:
-		print 'PayPal IPN Error: ' + ipn_obj.invoice
+		print 'PayPal IPN Error: ' + ipn_obj.invoice + ' - Registration does not exist'
+	except Exception, e:
+		print 'PayPal IPN Error: ' + ipn_obj.invoice + ' - Unknown error'
+		print '%s' % e
 
 payment_was_successful.connect(payment_success)
