@@ -15,7 +15,7 @@ class LeagueAdmin(admin.ModelAdmin):
 class RegistrationsAdmin(admin.ModelAdmin):
 	fieldsets = (
 		(None, {
-			'fields': ('user', 'league', 'registered', 'paypal_complete', 'check_complete', 'refunded', 'attendance', 'captain',)
+			'fields': ('user', 'league', 'registered', 'paypal_complete', 'check_complete', 'waitlist', 'refunded', 'attendance', 'captain',)
 		}),
 		('Advanced options', {
 			'classes': ('collapse',),
