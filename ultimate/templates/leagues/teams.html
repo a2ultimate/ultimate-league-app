@@ -84,7 +84,11 @@
 
 							<div>
 								<div class="pull_right">{{ team.color }}</div>
-								<div>Team {{ team.id }}</div>
+								{% if user.is_authenticated and team.email %}
+									<div><a style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}" title="Email team list">Team {{ team.id }} (email)</a></div>
+								{% else %}
+									<div>Team {{ team.id }}</div>
+								{% endif %}
 							</div>
 						</div>
 						<div class="team_members">
