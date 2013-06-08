@@ -105,8 +105,8 @@ class TeamAdmin(admin.ModelAdmin):
 	save_as = True
 	save_on_top = True
 
-	list_display = ('id', 'name', 'color', 'league',)
-	list_editable = ('name', 'color',)
+	list_display = ('id', 'name', 'color', 'email', 'league',)
+	list_editable = ('name', 'color', 'email',)
 
 
 admin.site.register(Baggage)

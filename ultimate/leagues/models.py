@@ -404,7 +404,7 @@ class Team(models.Model):
 	id = models.AutoField(primary_key=True)
 	name = models.CharField(max_length=128)
 	color = models.CharField(max_length=96)
-	email = models.TextField()
+	email = models.CharField(max_length=128)
 	league = models.ForeignKey('leagues.League')
 
 	class Meta:
