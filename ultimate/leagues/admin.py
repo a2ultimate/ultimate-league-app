@@ -2,6 +2,40 @@ from django.contrib import admin
 from ultimate.leagues.models import *
 
 
+class GameTeamsInline(admin.TabularInline):
+	model = GameTeams
+	max_num = 2
+
+	def formfield_for_foreignkey(self, db_field, request, **kwargs):
+		if db_field.name == 'team' and request._game_obj_:
+			kwargs['queryset'] = Team.objects.filter(league__id=request._game_obj_.league.id)
+		else:
+			kwargs['queryset'] = Team.objects.filter()
+		return super(GameTeamsInline, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+
+class GameAdmin(admin.ModelAdmin):
+	inlines = [GameTeamsInline,]
+	save_as = True
+	save_on_top = True
+
+	list_display = ('date', 'league', 'field_name', 'game_teams',)
+
+	def get_form(self, request, obj=None, **kwargs):
+		# just save obj reference for future processing in Inline
+		request._game_obj_ = obj
+		return super(GameAdmin, self).get_form(request, obj, **kwargs)
+
+	def game_teams(self, obj):
+		teams = []
+		game_teams = obj.gameteams_set.all()
+
+		for game_team in game_teams:
+			teams.append(game_team.team.id)
+
+		return ', '.join(map(str, teams))
+
+
 class LeagueAdmin(admin.ModelAdmin):
 	save_as = True
 	save_on_top = True
@@ -62,12 +96,25 @@ class SkillsAdmin(admin.ModelAdmin):
 	submitted_by_details.allow_tags = True
 
 
+class TeamMemberInline(admin.TabularInline):
+	model = TeamMember
+
+
+class TeamAdmin(admin.ModelAdmin):
+	inlines = [TeamMemberInline,]
+	save_as = True
+	save_on_top = True
+
+	list_display = ('id', 'name', 'color', 'league',)
+	list_editable = ('name', 'color',)
+
+
 admin.site.register(Baggage)
 admin.site.register(Field)
 admin.site.register(FieldNames)
-admin.site.register(Game)
+admin.site.register(Game, GameAdmin)
 admin.site.register(League, LeagueAdmin)
 admin.site.register(Registrations, RegistrationsAdmin)
 admin.site.register(Skills, SkillsAdmin)
-admin.site.register(Team)
+admin.site.register(Team, TeamAdmin)
 admin.site.register(TeamMember)

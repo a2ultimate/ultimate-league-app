@@ -477,7 +477,7 @@ class Game(models.Model):
 
 	class Meta:
 		db_table = u'game'
-		ordering = ['date', 'field_name']
+		ordering = ['-date', 'field_name']
 
 	def get_teams(self):
 		return Team.objects.filter(gameteams__game=self).all()
