@@ -19,7 +19,7 @@
 					{% for field in fields %}
 						<th class="text_center" colspan="{{ field.list|length }}">
 							<div>{{ field.grouper }}</div>
-							<div><a href="{{ MEDIA_URL }}{{ field_name.field.layout_link }}">Field Layout</a></div>
+							<div><a href="{{ MEDIA_URL }}{{ field.grouper.layout_link }}">Field Layout</a></div>
 						</th>
 					{% endfor %}
 				</tr>
