@@ -19,7 +19,7 @@
 					{% for field in fields %}
 						<th class="text_center" colspan="{{ field.list|length }}">
 							<div>{{ field.grouper }}</div>
-							<div><a href="{{ MEDIA_URL }}{{ field_name.field.layout_link }}">Field Layout</a></div>
+							<div><a href="{{ MEDIA_URL }}{{ field.grouper.layout_link }}">Field Layout</a></div>
 						</th>
 					{% endfor %}
 				</tr>
@@ -84,7 +84,11 @@
 
 							<div>
 								<div class="pull_right">{{ team.color }}</div>
-								<div>Team {{ team.id }}</div>
+								{% if user.is_authenticated and team.email %}
+									<div><a style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}" title="Email team list">Team {{ team.id }} (email)</a></div>
+								{% else %}
+									<div>Team {{ team.id }}</div>
+								{% endif %}
 							</div>
 						</div>
 						<div class="team_members">
