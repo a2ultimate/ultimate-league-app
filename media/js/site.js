@@ -58,7 +58,4 @@ $(function() {
 
 	// login
 	$('#id_username').focus();
-
-	// captain / index
-	$('#captain_divisions').accordion();
 });

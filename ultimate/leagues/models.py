@@ -448,6 +448,9 @@ class Team(models.Model):
 	def on_team(self, user):
 		return bool(self.teammember_set.filter(user=user))
 
+	def get_games(self):
+		return Game.objects.filter(gameteams__team=self)
+
 	def player_survey_complete(self, user):
 		skill_reports = self.skillsreport_set.annotate(num_skills=Count('skills')).filter(submitted_by=user)
 		# since you don't rate yourself, looking for a skill report and teamsize - 1 skill entries
