@@ -8,49 +8,73 @@
 
 	<h1>Captain Resources</h1>
 
-	<div id="captain_divisions">
-		{% for game in captain_games %}
-			{% ifchanged game.league %}
-				{% if not forloop.first %}
-						</ul>
-					</div>
-				{% endif %}
+	<style>
+		.team_list {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
 
-				<h3><a class="captain_division_header" href="#">{{ game|get_game_user_teamname:user }} - {{ game.league|title }}</a></h3>
-				<div class="captain_division_content">
-					<ul class="captain_division_team_links">
-						<li><a href="{% url captaineditteam teamid=game|get_game_user_teamid:user %}">Change Team Name or Color</a></li>
-						<li>
-							<a href="{% url playersurvey teamid=game|get_game_user_teamid:user %}">
-								{% if game.league|get_player_survey_status:user %}
-									<span class="status state_success"></span>
-								{% else %}
-									<span class="status state_error"></span>
-								{% endif %}
-								Fill Out Player Survey
-							</a>
-						</li>
-					</ul>
+		.team_list_header {
+			background: #ECF0F1;
+			border-radius: 2px;
+			margin: 0;
+			padding: 8px 6px;
+		}
 
-					<h4>Game Reports</h4>
-					<ul>
-			{% endifchanged %}
+		.team_list > li > ul {
+			list-style: none;
+			margin: 18px 0;
+			padding: 0;
+		}
 
+		.team_list > li > ul > li {
+			padding: 2px;
+		}
+	</style>
 
-			<li class="captain_division_game">
-				{% if game|report_complete_for_team:user %}
-					<span class="status state_success"></span>
-				{% else %}
-					<span class="status state_error"></span>
-				{% endif %}
-				<a class="accordion_link" href="{% url gamereport teamid=game|get_game_user_teamid:user gameid=game.id %}">On {{ game.date|date:"m/d" }} vs. {{ game|get_game_opponent:user}}</a>
-			</li>
-
-			{% if forloop.last %}
-					</ul>
+	<ul class="team_list">
+		{% for team in captain_teams %}
+			<li>
+				<div class="team_list_header">
+					<div class="pull_right">{{ team.league.year|title }} {{ team.league.season|title }} {{ team.league.night|title }}</div>
+					<div>{{ team.name }}</div>
 				</div>
-			{% endif %}
 
+				<ul>
+					<li>
+						<a href="{% url captaineditteam teamid=team.id %}">
+							<span class="status pull_left"></span>
+							Change Team Name or Color
+						</a>
+					</li>
+					<li>
+						<a href="{% url playersurvey teamid=team.id %}">
+							{% if team.league|get_player_survey_status:user %}
+								<span class="status state_success pull_left"></span>
+							{% else %}
+								<span class="status state_error pull_left"></span>
+							{% endif %}
+							Fill Out Player Survey
+						</a>
+					</li>
+				</ul>
+
+				<ul>
+					{% for game in team.get_games %}
+						<li>
+							{% if game|report_complete_for_team:user %}
+								<span class="status state_success pull_left"></span>
+							{% else %}
+								<span class="status state_error pull_left"></span>
+							{% endif %}
+							<a href="{% url gamereport teamid=team.id gameid=game.id %}">On {{ game.date|date:"m/d" }} vs. {{ game|get_game_opponent:user}}</a>
+						</li>
+					{% empty %}
+						<div class="text_center">No games found</div>
+					{% endfor %}
+				</ul>
+			</li>
 		{% endfor %}
-	</div>
+	</ul>
 {% endblock %}

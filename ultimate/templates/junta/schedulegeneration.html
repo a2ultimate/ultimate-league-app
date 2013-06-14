@@ -1,0 +1,86 @@
+{% extends "layout/layout_user.html" %}
+{% load games %}
+{% load leagues %}
+
+{% block content %}
+	{% include "layout/account_tabs.html" with selected_tab="junta" %}
+
+	{% if leagues %}
+		<h1>Schedule Generation</h1>
+
+		<ul class="league_list">
+			{% regroup leagues by year as league_years %}
+
+			{% for league_list in league_years %}
+				{% regroup league_list.list by season as league_seasons %}
+
+				{% for league in league_seasons %}
+					<li>
+						<h3>{{ league.grouper|capfirst }} {{ league_list.grouper }}</h3>
+						<ul>
+							{% for night in league.list|dictsort:"league_start_date" %}
+								<li>
+									<a href="{% url schedulegeneration_league year=league_list.grouper season=league.grouper division=night.night %}">{{ night.night|capfirst }}</a>
+								</li>
+							{% endfor %}
+						</ul>
+					</li>
+				{% endfor %}
+			{% endfor %}
+		</ul>
+	{% else %}
+		<h1>{{ league.season|capfirst }} League {{ league.year }} {{ league.night|capfirst }} Schedule Generation</h1>
+
+		<table class="table table-striped">
+			<tbody>
+				{% for event in schedule %}
+					<tr>
+						{% for team in event %}
+							{% if forloop.counter0|divisibleby:"2" %}
+								<td class="text_center">
+							{% endif %}
+
+							<div>{{ team.id }}</div>
+
+							{% if not forloop.counter0|divisibleby:"2" %}
+								</td>
+							{% endif %}
+						{% endfor %}
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		<p>
+			You will need to choose {{ num_games }} fields to play on. You may add
+			exceptions and make changes in the admin interface after the schedule
+			is created.
+		</p>
+
+		<form class="wide_form" method="post">{% csrf_token %}
+			<div class="field_wrapper">
+				{% for hidden in form.hidden_fields %}
+					{{ hidden }}
+				{% endfor %}
+			</div>
+
+			<table class="form_table">
+				{% for field in form.visible_fields %}
+					<tr>
+						<td>{{ field.label_tag }}</td>
+						<td>{{ field }}</td>
+						<td>{{ field.help_text }}</td>
+					</tr>
+					{% if field.errors %}
+						<tr>
+							<td colspan="3">{{ field.errors }}</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+			</table>
+
+			<input class="button button_success" type="submit" value="Submit Schedule">
+			<a href="{% url schedulegeneration %}">Cancel</a>
+		</form>
+	{% endif %}
+{% endblock %}

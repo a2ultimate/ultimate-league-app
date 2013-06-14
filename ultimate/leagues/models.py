@@ -404,7 +404,7 @@ class Team(models.Model):
 	id = models.AutoField(primary_key=True)
 	name = models.CharField(max_length=128)
 	color = models.CharField(max_length=96)
-	email = models.TextField()
+	email = models.CharField(max_length=128)
 	league = models.ForeignKey('leagues.League')
 
 	class Meta:
@@ -447,6 +447,9 @@ class Team(models.Model):
 
 	def on_team(self, user):
 		return bool(self.teammember_set.filter(user=user))
+
+	def get_games(self):
+		return Game.objects.filter(gameteams__team=self)
 
 	def player_survey_complete(self, user):
 		skill_reports = self.skillsreport_set.annotate(num_skills=Count('skills')).filter(submitted_by=user)
