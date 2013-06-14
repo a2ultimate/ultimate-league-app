@@ -1,4 +1,6 @@
 import csv
+from datetime import timedelta
+import operator
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -8,6 +10,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext, loader, Context
 
+from ultimate.forms import ScheduleGenerationForm
 
 from ultimate.junta.models import *
 from ultimate.leagues.models import *
@@ -112,4 +115,83 @@ def teamimport(request):
 	return render_to_response('junta/teamimport.html',
 		{'leagues': leagues},
 		context_instance=RequestContext(request))
+
+
+@login_required
+@transaction.commit_on_success
+def schedulegeneration(request, year=None, season=None, division=None):
+	league = None
+	leagues = None
+	form = None
+	schedule = None
+	num_teams = 0
+
+	if (year and season and division):
+		league = get_object_or_404(League, year=year, season=season, night=division)
+		num_events = league.get_num_game_events()
+
+		schedule = []
+		teams = list(Team.objects.filter(league=league))
+		num_teams = len(teams)
+
+		teams = teams[0::2] + list(reversed(teams[1::2]))
+		teams = teams[:1] + teams[2:] + teams[1:2]
+
+		shift = 0
+		for event_num in range(0, num_events):
+			teams = teams[:1] + teams[-1:] + teams[1:-1]
+
+			top = teams[:num_teams // 2]
+			bottom = list(reversed(teams[num_teams // 2:]))
+			games = zip(top, bottom)
+
+			field_shift = (event_num * 2) % (num_teams // 2)
+			print field_shift
+
+			games = games[-field_shift:] + games[:-field_shift]
+
+			schedule_teams = [team for game in games for team in sorted(game, key=operator.attrgetter('id'))]
+			schedule.append(schedule_teams)
+
+		if request.method == 'POST':
+			form = ScheduleGenerationForm(request.POST)
+			if form.is_valid() and len(request.POST.getlist('field_names')) >= (num_teams / 2):
+				event_date = league.league_start_date
+				field_names = request.POST.getlist('field_names')
+				for event in schedule:
+					for i, team in enumerate(event):
+						if (i % 2 == 0):
+							game = Game()
+							game.date = event_date
+							game.field_name = FieldNames.objects.get(id=field_names[i / 2])
+							game.league = league
+							game.save()
+
+						game_team = GameTeams()
+						game_team.game = game
+						game_team.team = team
+						game_team.save()
+
+					event_date = event_date + timedelta(days=7)
+
+				messages.success(request, 'Schedule was successfully generated.')
+				return HttpResponseRedirect(reverse('schedulegeneration'))
+			else:
+				if len(request.POST.getlist('field_names')) >= (num_teams / 2):
+					messages.error(request, 'There was an issue with the form you submitted.')
+				else:
+					messages.error(request, 'You must pick enough fields to cover the number of games for an event.')
+		else:
+			form = ScheduleGenerationForm()
+
+		form.fields['field_names'].queryset = FieldNames.objects.filter(field__league=league)
+
+
+	else:
+		leagues = League.objects.all().order_by('-league_start_date')
+
+	return render_to_response('junta/schedulegeneration.html',
+		{'league': league, 'leagues': leagues, 'form': form, 'schedule': schedule, 'num_games': num_teams / 2},
+		context_instance=RequestContext(request))
+
 
