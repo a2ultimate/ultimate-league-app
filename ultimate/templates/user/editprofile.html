@@ -9,10 +9,10 @@
 	<li><a href="{% url editskills %}">Edit Skills</a></li>
 </ul>
 
-<form id="edit_profile_form" method="post">{% csrf_token %}
+<form id="edit_profile_form" class="wide_form" method="post">{% csrf_token %}
 	<div class="field_wrapper">
 		{% for hidden in form.hidden_fields %}
-		    {{ hidden }}
+			{{ hidden }}
 		{% endfor %}
 	</div>
 	<table class="form_table">
@@ -42,8 +42,8 @@
 		{% endfor %}
 	</table>
 
-    <input class="button button_success" type="submit" value="Update Profile">
-    <a href="{% url user %}">Cancel</a>
+	<input class="button button_success" type="submit" value="Update Profile">
+	<a href="{% url user %}">Cancel</a>
 </form>
 
 {% endblock %}

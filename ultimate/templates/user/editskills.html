@@ -18,7 +18,7 @@
 
 <hr />
 
-<form id="edit_profile_form" method="post">{% csrf_token %}
+<form id="edit_profile_form" class="wide_form" method="post">{% csrf_token %}
 
 	<div id="athletic" class="slide_selector" data-slider-min="1">
 		<label for="id_athletic">Athleticism: How fast are you?</label>
@@ -92,8 +92,8 @@
 		{{ form.highest_level.errors }}
 	</div>
 
-    <input class="button button_success" type="submit" value="Update Skills">
-    <a href="{% url user %}">Cancel</a>
+	<input class="button button_success" type="submit" value="Update Skills">
+	<a href="{% url user %}">Cancel</a>
 </form>
 
 {% endblock %}
