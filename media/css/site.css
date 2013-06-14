@@ -464,6 +464,7 @@ textarea[readonly] {
 	cursor: default;
 }
 
+select[multiple="multiple"],
 textarea,
 input[type="text"],
 input[type="password"],
@@ -562,6 +563,11 @@ input[type="tel"]:focus,
 input[type="color"]:focus,
 .uneditable-input:focus {
 	border-color: #2ECC71;
+}
+
+select[multiple="multiple"] {
+	min-height: 100px;
+	padding-right: 10px;
 }
 
 .control_group {
@@ -1488,10 +1494,10 @@ ul.captain_division_team_links li {
 	font-size: 14px;
 }
 
-#edit_profile_form input[type=text],
-#edit_profile_form input[type=password],
-#edit_profile_form select,
-#edit_profile_form textarea {
+.wide_form input[type=text],
+.wide_form input[type=password],
+.wide_form select,
+.wide_form textarea {
 	max-height: 60px;
 	width: 400px;
 }
