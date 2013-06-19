@@ -61,7 +61,7 @@ class RegistrationsAdmin(admin.ModelAdmin):
 	save_on_top = True
 
 	list_display = ('year', 'season', 'night', 'user_details', 'registered', 'attendance', 'captain', 'waitlist', 'get_status',)
-	list_filter = ('league__year', 'league__season', 'league__night', 'paypal_complete', 'check_complete', 'refunded',)
+	list_filter = ('league__year', 'league__season', 'league__night', 'paypal_complete', 'check_complete', 'waitlist', 'refunded',)
 	search_fields = ['user__first_name', 'user__last_name', 'user__email',]
 
 	def year(self, obj):
@@ -99,11 +99,24 @@ class SkillsAdmin(admin.ModelAdmin):
 class TeamMemberInline(admin.TabularInline):
 	model = TeamMember
 
+	def formfield_for_foreignkey(self, db_field, request, **kwargs):
+		if db_field.name == 'user' and request._team_obj_:
+			request._registration_user_ids_ = Registrations.objects.filter(league__id=request._team_obj_.league.id).values_list('user', flat=True)
+			kwargs['queryset'] = User.objects.filter(id__in=request._registration_user_ids_)
+		else:
+			kwargs['queryset'] = User.objects.filter()
+		return super(TeamMemberInline, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
 
 class TeamAdmin(admin.ModelAdmin):
 	inlines = [TeamMemberInline,]
 	save_as = True
 	save_on_top = True
+
+	def get_form(self, request, obj=None, **kwargs):
+		# just save obj reference for future processing in Inline
+		request._team_obj_ = obj
+		return super(TeamAdmin, self).get_form(request, obj, **kwargs)
 
 	list_display = ('id', 'name', 'color', 'email', 'league',)
 	list_editable = ('name', 'color', 'email',)
