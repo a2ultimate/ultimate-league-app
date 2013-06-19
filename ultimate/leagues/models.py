@@ -471,6 +471,9 @@ class TeamMember(models.Model):
 		db_table = u'team_member'
 		ordering = ['-captain', 'user__last_name']
 
+	def __unicode__(self):
+		return '%s %s' % (self.user.first_name, self.user.last_name)
+
 
 class Game(models.Model):
 	id = models.AutoField(primary_key=True)
@@ -489,7 +492,10 @@ class Game(models.Model):
 		return self.gameteams_set.filter(team__teammember__user=user)[0:1].get().team
 
 	def get_user_opponent(self, user):
-		return self.gameteams_set.exclude(team__teammember__user=user)[0:1].get().team
+		try:
+			return self.gameteams_set.exclude(team__teammember__user=user)[0:1].get().team
+		except ObjectDoesNotExist:
+			return None
 
 	def get_reports(self):
 		return self.gamereport_set.all()

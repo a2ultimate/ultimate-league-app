@@ -11,7 +11,12 @@ def get_team_name_font_size(name):
 
 @register.filter
 def get_game_opponent(game, user):
-	return game.get_user_opponent(user).name
+	try:
+		team_name = game.get_user_opponent(user).name
+	except AttributeError:
+		team_name = 'No Opponent'
+
+	return team_name
 
 #returns whether a user has filled out a player survey for a league
 @register.filter
