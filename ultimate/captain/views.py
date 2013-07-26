@@ -171,12 +171,10 @@ def gamereport(request, teamid, gameid):
 
 			score_us = score_us_form.save(commit=False)
 			score_us.report_id = game_report.id
-			score_us.team_id = teamid
 			score_us.save()
 
 			score_them = score_them_form.save(commit=False)
 			score_them.report_id = game_report.id
-			score_them.team_id = teamid
 			score_them.save()
 
 			GameReportAttendance.objects.filter(report=game_report).delete()
@@ -198,7 +196,9 @@ def gamereport(request, teamid, gameid):
 				attendance.append(attendanceRecord.user.id)
 			score_formset = ScoreFormset(queryset=GameReportScore.objects.filter(report=game_report))
 		else:
-			score_formset = ScoreFormset(queryset=GameReportScore.objects.none())
+			game_teams = game.gameteams_set
+			score_formset = ScoreFormset(queryset=GameReportScore.objects.none(),
+				initial=[{'team': game_teams.filter(team=team).get().team}, {'team': game_teams.exclude(team=team).get().team},])
 
 		score_us_form = score_formset.forms[0]
 		score_them_form = score_formset.forms[1]
