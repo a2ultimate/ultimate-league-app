@@ -599,6 +599,9 @@ class Game(models.Model):
 				return report.game.id
 		return False
 
+	def __unicode__(self):
+		return '%s - %s' % (self.date, self.league)
+
 
 class GameTeams(models.Model):
 	id = models.AutoField(primary_key=True)
