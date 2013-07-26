@@ -3,7 +3,7 @@ from datetime import timedelta
 import operator
 
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
@@ -17,6 +17,7 @@ from ultimate.leagues.models import *
 from ultimate.user.models import *
 
 @login_required
+@user_passes_test(lambda u: u.is_superuser)
 def index(request):
 
 	return render_to_response('junta/index.html',
@@ -71,6 +72,7 @@ def leagueresults(request, year=None, season=None, division=None):
 
 
 @login_required
+@user_passes_test(lambda u: u.is_superuser)
 def registrationexport(request, year=None, season=None, division=None):
 	leagues = League.objects.all().order_by('-league_start_date')
 
@@ -106,6 +108,7 @@ def registrationexport(request, year=None, season=None, division=None):
 
 @login_required
 @transaction.commit_on_success
+@user_passes_test(lambda u: u.is_superuser)
 def teamimport(request):
 	# TODO needs validation
 	leagues = League.objects.all().order_by('-league_start_date')
