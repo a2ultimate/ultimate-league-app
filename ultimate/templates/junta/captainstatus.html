@@ -18,7 +18,7 @@
 					<li>
 						<h3>{{ league.grouper|capfirst }} {{ league_list.grouper }}</h3>
 						<ul>
-							{% for night in league.list %}
+							{% for night in league.list|dictsort:'league_start_date' %}
 								<li>
 									<a href="{% url captainstatus_league year=league_list.grouper season=league.grouper division=night.night %}">{{ night.night|capfirst }}</a>
 								</li>

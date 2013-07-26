@@ -18,12 +18,14 @@
 		<div id="game_report_score" class="clearfix">
 			<div class="team_score">
 				{{ score_us_form.id }}
+				{{ score_us_form.team }}
 				<div class="name good_guys">{{ team.name }}</div>
 				{{ score_us_form.score.errors }}
 				<div class="score_input">{{ score_us_form.score }} points</div>
 			</div>
 			<div class="team_score">
 				{{ score_them_form.id }}
+				{{ score_them_form.team }}
 				<div class="name bad_guys">{{ game|get_game_opponent:user }}</div>
 				{{ score_them_form.score.errors }}
 				<div class="score_input">{{ score_them_form.score }} points</div>
