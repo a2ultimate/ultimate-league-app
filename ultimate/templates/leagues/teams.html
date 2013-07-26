@@ -52,6 +52,8 @@
 										{% else %}
 											{% for team in game.get_teams %}
 												<div>{{ team.id }}</div>
+											{% empty %}
+												TBA
 											{% endfor %}
 										{% endif %}
 									{% endifequal %}

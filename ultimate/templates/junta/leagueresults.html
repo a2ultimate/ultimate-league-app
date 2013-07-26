@@ -1,0 +1,128 @@
+{% extends "layout/layout_user.html" %}
+{% load games %}
+{% load leagues %}
+{% load math_tags %}
+{% load utility %}
+
+{% block content %}
+	{% include "layout/account_tabs.html" with selected_tab="junta" %}
+
+	{% if leagues %}
+		<h1>League Results</h1>
+
+		<ul class="league_list">
+			{% regroup leagues by year as league_years %}
+
+			{% for league_list in league_years %}
+				{% regroup league_list.list by season as league_seasons %}
+
+				{% for league in league_seasons %}
+					<li>
+						<h3>{{ league.grouper|capfirst }} {{ league_list.grouper }}</h3>
+						<ul>
+							{% for night in league.list|dictsort:'league_start_date' %}
+								<li>
+									<a href="{% url leagueresults_league year=league_list.grouper season=league.grouper division=night.night %}">{{ night.night|capfirst }}</a>
+								</li>
+							{% endfor %}
+						</ul>
+					</li>
+				{% endfor %}
+			{% endfor %}
+		</ul>
+	{% else %}
+		<h1>{{ league.season|capfirst }} League {{ league.year }} {{ league.night|capfirst }} Results</h1>
+
+		{% if league.get_games|length %}
+			<table id="schedule_table" class="table table-striped">
+				<thead>
+					<tr>
+						<td></td>
+						{% regroup field_names by field as fields %}
+						{% for field in fields %}
+							<th class="text_center" colspan="{{ field.list|length }}">
+								<div>{{ field.grouper }}</div>
+								<div><a href="{{ MEDIA_URL }}{{ field.grouper.layout_link }}">Field Layout</a></div>
+							</th>
+						{% endfor %}
+					</tr>
+
+					<tr>
+						<td></td>
+						{% for field_name in field_names %}
+							<th class="text_center">{{ field_name.name }}</th>
+						{% endfor %}
+					</tr>
+				</thead>
+
+				<tbody>
+					{% regroup league.get_games|dictsort:"field_name.field"|dictsort:"field_name.name"|dictsort:"date" by date as games_list %}
+					{% for date in games_list %}
+						<tr class="{% if date.grouper|time_until_days < 7 and date.grouper|time_until_days >= 0 %}active{% endif %}">
+							<th class="text_right">
+								<div>{{ date.grouper|date:"M" }}</div>
+								<div>{{ date.grouper|date:"jS" }}</div>
+							</th>
+
+							{% for field_name in field_names %}
+								<td class="text_center">
+									{% for game in date.list|slice:":forloop.counter" %}
+										{% ifequal game.field_name field_name %}
+											{% for team in game.get_teams %}
+												{% for report in game|get_report_for_team:team %}
+													<div class="game_{{ report|get_result:team }}">
+														{{ team.id }}
+														{{ report|get_report_scores_formatted }}
+													</div>
+												{% empty %}
+													<div>{{ team.id }}</div>
+												{% endfor %}
+											{% empty %}
+												TBA
+											{% endfor %}
+										{% endifequal %}
+									{% empty %}
+										-
+									{% endfor %}
+								</td>
+							{% endfor %}
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% else %}
+			<div class="text_center">The schedule for this league has not yet been completed.</div>
+		{% endif %}
+
+		{% if team_records|length %}
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Team Number</th>
+						<th class="text_center">Wins</th>
+						<th class="text_center">Losses</th>
+						<th class="text_center">Ties</th>
+						<th class="text_center">Conflicts</th>
+						<th class="text_center">Points For</th>
+						<th class="text_center">Points Against</th>
+						<th class="text_center">Point Differential</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for team_id, team_record in team_records.items %}
+						<tr>
+							<td>{{ team_id }}</td>
+							<td class="text_center">{{ team_record.wins }}</td>
+							<td class="text_center">{{ team_record.losses }}</td>
+							<td class="text_center">{{ team_record.ties }}</td>
+							<td class="text_center">{{ team_record.conflicts }}</td>
+							<td class="text_center">{{ team_record.points_for }}</td>
+							<td class="text_center">{{ team_record.points_against }}</td>
+							<td class="text_center">{{ team_record.points_for|subtract:team_record.points_against }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% endif %}
+	{% endif %}
+{% endblock %}

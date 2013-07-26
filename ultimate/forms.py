@@ -165,12 +165,13 @@ class GameReportCommentForm(forms.ModelForm):
 
 class GameReportScoreForm(forms.ModelForm):
 	id = forms.IntegerField(widget=forms.HiddenInput, required=False)
+	team = forms.ModelChoiceField(label='', queryset=Team.objects.all(), widget=forms.HiddenInput(), required=True)
 	score = forms.IntegerField(widget=forms.TextInput(attrs={'autocomplete':'off', 'autocorrect':'off'}),
 		min_value=1, required=True)
 
 	class Meta:
 		model = GameReportScore
-		fields = ('id', 'score',)
+		fields = ('id', 'team', 'score',)
 
 
 class RegistrationAttendanceForm(forms.ModelForm):
