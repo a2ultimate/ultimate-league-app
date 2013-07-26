@@ -41,6 +41,36 @@ def captainstatus(request, year=None, season=None, division=None):
 
 
 @login_required
+def leagueresults(request, year=None, season=None, division=None):
+	league = None
+	field_names = None
+	leagues = None
+	team_records = None
+
+
+	if (year and season and division):
+		league = get_object_or_404(League, year=year, season=season, night=division)
+		field_names = league.get_field_names()
+		teams = league.get_teams()
+
+		team_records = {}
+		for team in teams:
+			team_records[team.id] = team.get_record_list()
+
+	else:
+		leagues = League.objects.all().order_by('-league_start_date')
+
+	return render_to_response('junta/leagueresults.html',
+		{
+			'field_names': field_names,
+			'league': league,
+			'leagues': leagues,
+			'team_records': team_records
+		},
+		context_instance=RequestContext(request))
+
+
+@login_required
 def registrationexport(request, year=None, season=None, division=None):
 	leagues = League.objects.all().order_by('-league_start_date')
 

@@ -2,6 +2,7 @@ from django import template
 
 register = template.Library()
 
+
 @register.filter
 def get_team_name_font_size(name):
 	if len(name) <= 17:

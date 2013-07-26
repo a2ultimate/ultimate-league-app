@@ -99,6 +99,9 @@ class League(models.Model):
 	def get_registrations(self):
 		return Registrations.objects.filter(league=self).order_by('registered')
 
+	def get_teams(self):
+		return self.team_set.all()
+
 	def get_completed_registrations(self):
 		registrations = Registrations.objects.filter(league=self).order_by('registered')
 		return [r for r in registrations if not r.waitlist and not r.refunded and r.is_complete()]
@@ -451,6 +454,64 @@ class Team(models.Model):
 	def get_games(self):
 		return Game.objects.filter(gameteams__team=self)
 
+	def get_record_list(self):
+		# return in format {wins, losses, ties, conflicts}
+		team_record = {'wins': 0, 'losses': 0, 'ties': 0, 'conflicts': 0, 'points_for': 0, 'points_against': 0}
+
+		games = self.get_games()
+		for game in games:
+			# reports = game.gamereport_set.all()
+			team_reports = game.gamereport_set.filter(team=self)
+			opponent_reports = game.gamereport_set.exclude(team=self)
+			points_for = float(0)
+			points_against = float(0)
+			report_count = float(team_reports.count() + opponent_reports.count())
+
+			team_result = 0
+			for report in team_reports:
+				points_for += report.gamereportscore_set.all()[0].score
+				points_against += report.gamereportscore_set.all()[1].score
+
+				if report.gamereportscore_set.all()[0].score > report.gamereportscore_set.all()[1].score:
+					# win
+					team_result = 1
+				elif report.gamereportscore_set.all()[0].score < report.gamereportscore_set.all()[1].score:
+					# loss
+					team_result = -1
+				# else: # tie
+
+			opponent_result = 0
+			for report in opponent_reports:
+				points_against += report.gamereportscore_set.all()[0].score
+				points_for += report.gamereportscore_set.all()[1].score
+
+				if report.gamereportscore_set.all()[0].score < report.gamereportscore_set.all()[1].score:
+					# win
+					opponent_result = 1
+				elif report.gamereportscore_set.all()[0].score > report.gamereportscore_set.all()[1].score:
+					# loss
+					opponent_result = -1
+				# else: # tie
+
+			if team_result == 1 and opponent_result == 1:
+				team_record['wins'] += 1
+			elif team_result == -1 and opponent_result == -1:
+				team_record['losses'] += 1
+			elif team_result == 0 and opponent_result == 0:
+				team_record['ties'] += 1
+			elif team_reports.count() > 0 and opponent_reports.count() > 0:
+				team_record['conflicts'] += 1
+
+			if report_count > 1:
+				points_for /= report_count
+				points_against /= report_count
+
+			team_record['points_for'] += points_for
+			team_record['points_against'] += points_against
+
+		return team_record
+
+
 	def player_survey_complete(self, user):
 		skill_reports = self.skillsreport_set.annotate(num_skills=Count('skills')).filter(submitted_by=user)
 		# since you don't rate yourself, looking for a skill report and teamsize - 1 skill entries
@@ -499,6 +560,9 @@ class Game(models.Model):
 
 	def get_reports(self):
 		return self.gamereport_set.all()
+
+	def get_report_for_team(self, team):
+		return self.gamereport_set.filter(team=team)
 
 	def report_complete_for_team(self, user):
 		for report in self.gamereport_set.filter(team__teammember__user=user, team__teammember__captain=1):

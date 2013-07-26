@@ -1396,6 +1396,29 @@ ul.captain_division_team_links li {
 	color: #FFFFFF;
 }
 
+#schedule_table .game_win {
+	background-color: #2ECC71;
+	color: #FFFFFF;
+}
+
+#schedule_table .game_loss {
+	background-color: #E74C3C;
+	color: #FFFFFF;
+}
+
+#schedule_table .game_tie {
+	background-color: #F1C40F;
+	color: #FFFFFF;
+}
+
+#schedule_table hr {
+	background-color: #999999;
+	border: 0;
+	height: 2px;
+	margin: 2px 0;
+	padding: 0;
+}
+
 .teams_table {
 	width: 100%;
 }
