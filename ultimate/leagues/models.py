@@ -456,11 +456,11 @@ class Team(models.Model):
 
 	def get_record_list(self):
 		# return in format {wins, losses, ties, conflicts}
-		team_record = {'wins': 0, 'losses': 0, 'ties': 0, 'conflicts': 0, 'points_for': 0, 'points_against': 0}
+		team_record = {'wins': 0, 'losses': 0, 'ties': 0, 'conflicts': 0, 'blanks': 0, 'points_for': 0, 'points_against': 0}
 
 		games = self.get_games()
 		for game in games:
-			# reports = game.gamereport_set.all()
+
 			team_reports = game.gamereport_set.filter(team=self)
 			opponent_reports = game.gamereport_set.exclude(team=self)
 			points_for = float(0)
@@ -477,8 +477,10 @@ class Team(models.Model):
 					team_result = 1
 				elif report.gamereportscore_set.all()[0].score < report.gamereportscore_set.all()[1].score:
 					# loss
-					team_result = -1
-				# else: # tie
+					team_result = 2
+				else:
+					# tie
+					team_result = 3
 
 			opponent_result = 0
 			for report in opponent_reports:
@@ -490,17 +492,38 @@ class Team(models.Model):
 					opponent_result = 1
 				elif report.gamereportscore_set.all()[0].score > report.gamereportscore_set.all()[1].score:
 					# loss
-					opponent_result = -1
-				# else: # tie
+					opponent_result = 2
+				else:
+					# tie
+					team_result = 3
 
-			if team_result == 1 and opponent_result == 1:
+			if (team_result == 1 and opponent_result == 1) or \
+				(team_result == 1 and opponent_result == 0) or \
+				(opponent_result == 1 and team_result == 0):
+
 				team_record['wins'] += 1
-			elif team_result == -1 and opponent_result == -1:
+
+			elif (team_result == 2 and opponent_result == 2) or \
+				(team_result == 2 and opponent_result == 0) or \
+				(opponent_result == 2 and team_result == 0):
+
 				team_record['losses'] += 1
-			elif team_result == 0 and opponent_result == 0:
+
+			elif (team_result == 3 and opponent_result == 3) or \
+				(team_result == 3 and opponent_result == 0) or \
+				(opponent_result == 3 and team_result == 0):
+
 				team_record['ties'] += 1
-			elif team_reports.count() > 0 and opponent_reports.count() > 0:
+
+			elif team_result != opponent_result and \
+				team_result != 0 and \
+				opponent_result != 0:
+
 				team_record['conflicts'] += 1
+
+			else:
+
+				team_record['blanks'] += 1
 
 			if report_count > 1:
 				points_for /= report_count
