@@ -47,6 +47,7 @@ def editteam(request, teamid):
 		context_instance=RequestContext(request))
 
 @login_required
+@transaction.commit_on_success
 def playersurvey(request, teamid):
 	team = get_object_or_404(Team, id=teamid)
 
@@ -119,6 +120,7 @@ def playersurvey(request, teamid):
 		context_instance=RequestContext(request))
 
 @login_required
+@transaction.commit_on_success
 def gamereport(request, teamid, gameid):
 	team = get_object_or_404(Team, id=teamid)
 	game = get_object_or_404(Game, id=gameid)
