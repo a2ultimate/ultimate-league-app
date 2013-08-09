@@ -342,7 +342,7 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 	   only screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
 
 	.social_icon {
-		background: transparent url('../images/social_sprite@2x.png') 0 0 no-repeat;
+		background-image: url('../images/social_sprite@2x.png');
 	}
 }
 
@@ -1396,6 +1396,10 @@ ul.captain_division_team_links li {
 	color: #FFFFFF;
 }
 
+#schedule_table td > a {
+	display: block;
+}
+
 #schedule_table .game_win {
 	background-color: #2ECC71;
 	color: #FFFFFF;
@@ -1478,8 +1482,13 @@ ul.captain_division_team_links li {
 }
 
 .team_member .strong {
-	color: #555555;
 	font-weight: bold;
+}
+
+.team_counts {
+	font-size: 13px;
+	letter-spacing: 1px;
+	padding: 8px 0 4px;
 }
 
 /* USER PAGE */

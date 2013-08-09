@@ -35,8 +35,8 @@ def get_num_reports_for_user(league, user):
 
 @register.filter
 def get_result(report, team):
-	homeReportScore = report.gamereportscore_set.all()[0]
-	awayReportScore = report.gamereportscore_set.all()[1]
+	homeReportScore = report.gamereportscore_set.filter(team=team)[0]
+	awayReportScore = report.gamereportscore_set.exclude(team=team)[0]
 
 	if homeReportScore.score > awayReportScore.score:
 		return 'win'

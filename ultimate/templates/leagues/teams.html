@@ -47,7 +47,9 @@
 									{% ifequal game.field_name field_name %}
 										{% if game in user_games %}
 											{% for team in game.get_teams %}
-												<div style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">{{ team.id }}</div>
+												<a href="#team_roster_{{ team.id }}" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
+													{{ team.id }}
+												</a>
 											{% endfor %}
 										{% else %}
 											{% for team in game.get_teams %}
@@ -77,7 +79,7 @@
 					<tr>
 				{% endif %}
 
-				<td>
+				<td id="team_roster_{{ team.id }}">
 					<div class="team">
 						<div class="team_info" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
 							<div class="team_name" style="font-size: {{ team.name|get_team_name_font_size }}px;">
@@ -93,16 +95,42 @@
 								{% endif %}
 							</div>
 						</div>
+
 						<div class="team_members">
 							{% for team_member in team.get_members %}
 								<div class="team_member">
-									{% if team_member.captain %}<span class="strong">{% endif %}
-										{{ team_member.user.get_full_name }}
-									{% if team_member.captain %}</span>{% endif %}
+									{% if team_member.captain %}
+										{% if user.is_authenticated %}
+											<a href="mailto:{{ team_member.user.email }}">
+										{% endif %}
+
+										<span class="strong">
+									{% endif %}
+
+									{{ team_member.user.get_full_name }}
+
+									{% if team_member.captain %}
+										</span>
+									{% endif %}
+
 									<em>{{ team_member.user.get_profile.nickname }}</em>
+
+									{% if team_member.captain %}
+										</a>
+									{% endif %}
 								</div>
 							{% endfor %}
 						</div>
+
+						{% if perms.junta %}
+							<div class="team_counts text_center">
+								<em>
+									{{ team.get_members|length }} Player{{ team.get_members|length|pluralize }},
+									{{ team.get_male_members|length }} Male{{ team.get_male_members|length|pluralize }},
+									{{ team.get_female_members|length }} Female{{ team.get_female_members|length|pluralize }}
+								</em>
+							</div>
+						{% endif %}
 					</div>
 				</td>
 
