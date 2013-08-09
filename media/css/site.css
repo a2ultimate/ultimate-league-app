@@ -342,7 +342,7 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 	   only screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
 
 	.social_icon {
-		background: transparent url('../images/social_sprite@2x.png') 0 0 no-repeat;
+		background-image: url('../images/social_sprite@2x.png');
 	}
 }
 
