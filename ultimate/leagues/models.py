@@ -448,6 +448,12 @@ class Team(models.Model):
 	def get_members(self):
 		return self.teammember_set.all()
 
+	def get_male_members(self):
+		return self.get_members().filter(user__player__gender__iexact='M')
+
+	def get_female_members(self):
+		return self.get_members().filter(user__player__gender__iexact='F')
+
 	def on_team(self, user):
 		return bool(self.teammember_set.filter(user=user))
 

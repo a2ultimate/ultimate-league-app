@@ -1482,8 +1482,13 @@ ul.captain_division_team_links li {
 }
 
 .team_member .strong {
-	color: #555555;
 	font-weight: bold;
+}
+
+.team_counts {
+	font-size: 13px;
+	letter-spacing: 1px;
+	padding: 8px 0 4px;
 }
 
 /* USER PAGE */
