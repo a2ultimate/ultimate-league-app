@@ -206,10 +206,14 @@ def gamereport(request, teamid, gameid):
 		score_them_form = score_formset.forms[1]
 
 	return render_to_response('captain/gamereport.html',
-		{'game_report': game_report, 'game': game, 'team': team,
+		{
+			'game_report': game_report,
+			'game': game,
+			'team': team,
 			'attendance': attendance,
 			'comment_form': comment_form,
 			'score_formset': score_formset,
 			'score_us_form': score_us_form,
-			'score_them_form': score_them_form},
+			'score_them_form': score_them_form
+		},
 		context_instance=RequestContext(request))

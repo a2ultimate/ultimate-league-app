@@ -469,14 +469,17 @@ class Team(models.Model):
 
 			team_result = 0
 			for report in team_reports:
-				points_for += report.gamereportscore_set.all()[0].score
-				points_against += report.gamereportscore_set.all()[1].score
+				team_score = report.gamereportscore_set.filter(team=self)[0].score
+				opponent_score = report.gamereportscore_set.exclude(team=self)[0].score
 
-				if report.gamereportscore_set.all()[0].score > report.gamereportscore_set.all()[1].score:
-					# win
+				points_for += team_score
+				points_against += opponent_score
+
+				if team_score > opponent_score:
+					# team win
 					team_result = 1
-				elif report.gamereportscore_set.all()[0].score < report.gamereportscore_set.all()[1].score:
-					# loss
+				elif team_score < opponent_score:
+					# team loss
 					team_result = 2
 				else:
 					# tie
@@ -484,18 +487,21 @@ class Team(models.Model):
 
 			opponent_result = 0
 			for report in opponent_reports:
-				points_against += report.gamereportscore_set.all()[0].score
-				points_for += report.gamereportscore_set.all()[1].score
+				team_score = report.gamereportscore_set.filter(team=self)[0].score
+				opponent_score = report.gamereportscore_set.exclude(team=self)[0].score
 
-				if report.gamereportscore_set.all()[0].score < report.gamereportscore_set.all()[1].score:
+				points_for += team_score
+				points_against += opponent_score
+
+				if team_score > opponent_score:
 					# win
 					opponent_result = 1
-				elif report.gamereportscore_set.all()[0].score > report.gamereportscore_set.all()[1].score:
+				elif team_score < opponent_score:
 					# loss
 					opponent_result = 2
 				else:
 					# tie
-					team_result = 3
+					opponent_result = 3
 
 			if (team_result == 1 and opponent_result == 1) or \
 				(team_result == 1 and opponent_result == 0) or \
