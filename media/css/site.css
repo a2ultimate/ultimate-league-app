@@ -1396,6 +1396,10 @@ ul.captain_division_team_links li {
 	color: #FFFFFF;
 }
 
+#schedule_table td > a {
+	display: block;
+}
+
 #schedule_table .game_win {
 	background-color: #2ECC71;
 	color: #FFFFFF;
