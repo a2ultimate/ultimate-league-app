@@ -179,29 +179,31 @@ def registration(request, year, season, division, section=None):
 			{'attendance_form': attendance_form, 'league': league, 'registration': registration},
 			context_instance=RequestContext(request))
 
-	if section == 'pay_type' or not registration.pay_type or (registration.pay_type != 'check' and registration.pay_type != 'paypal'):
-		return render_to_response('leagues/registration/payment.html',
-			{'league': league, 'registration': registration},
-			context_instance=RequestContext(request))
+	if league.check_cost > 0 or league.paypal_cost > 0:
 
-	if not registration.paypal_invoice_id:
-		registration.paypal_invoice_id = str(uuid.uuid4())
-		registration.save()
+		if section == 'pay_type' or not registration.pay_type or (registration.pay_type != 'check' and registration.pay_type != 'paypal'):
+			return render_to_response('leagues/registration/payment.html',
+				{'league': league, 'registration': registration},
+				context_instance=RequestContext(request))
 
-	if not registration.paypal_complete and not registration.check_complete:
-		baseUrl = request.build_absolute_uri(getattr(settings, 'FORCE_SCRIPT_NAME', ''))
+		if not registration.paypal_invoice_id:
+			registration.paypal_invoice_id = str(uuid.uuid4())
+			registration.save()
 
-		paypal_dict = {
-			'amount': league.paypal_cost,
-			'cancel_return': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration/',
-			'invoice': registration.paypal_invoice_id,
-			'item_name': str(league.season).capitalize() + ' League ' + str(league.year) + ' - ' + str(league.night).capitalize(),
-			'notify_url': baseUrl + '/leagues/registration/payment/notification/callback/for/a2ultimate/secret/',
-			'return_url': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration-complete/',
-		}
+		if not registration.paypal_complete and not registration.check_complete:
+			baseUrl = request.build_absolute_uri(getattr(settings, 'FORCE_SCRIPT_NAME', ''))
 
-		paypal_form = PayPalPaymentsForm(initial=paypal_dict)
-		# https://ppmts.custhelp.com/app/answers/detail/a_id/165
+			paypal_dict = {
+				'amount': league.paypal_cost,
+				'cancel_return': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration/',
+				'invoice': registration.paypal_invoice_id,
+				'item_name': str(league.season).capitalize() + ' League ' + str(league.year) + ' - ' + str(league.night).capitalize(),
+				'notify_url': baseUrl + '/leagues/registration/payment/notification/callback/for/a2ultimate/secret/',
+				'return_url': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration-complete/',
+			}
+
+			paypal_form = PayPalPaymentsForm(initial=paypal_dict)
+			# https://ppmts.custhelp.com/app/answers/detail/a_id/165
 
 	return render_to_response('leagues/registration/status.html',
 		{'paypal_form': paypal_form, 'league': league, 'registration': registration, 'section': section},

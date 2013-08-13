@@ -39,7 +39,7 @@
 
 <hr />
 
-{% if not registration.is_complete %}
+{% if not registration.is_complete and registration.league.paypal_cost > 0 and registration.league.check_cost > 0 %}
 	{% if registration.pay_type = 'check' %}
 		<p>
 			You're currently set to pay by check. You may send a check for <strong>${{ league.check_cost }}</strong> to:

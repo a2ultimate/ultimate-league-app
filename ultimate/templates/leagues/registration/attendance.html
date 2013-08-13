@@ -17,7 +17,7 @@
 	{{ attendance_form.id }}
 
 	<div id="attendance" class="slide_selector" data-slider-max="{{ league.get_num_game_events }}">
-		<label for="id_attendance">There are {{ league.get_num_game_events }} game. How many games will you <strong>miss</strong>?</label>
+		<label for="id_attendance">There {{ league.get_num_game_events|pluralize:"is,are" }} {{ league.get_num_game_events }} game{{ league.get_num_game_events|pluralize }}. How many games will you <strong>miss</strong>?</label>
 		{{ attendance_form.attendance }}
 		<div class="slider_errors">{{ attendance_form.attendance.errors }}</div>
 		<div class="slider"></div>
