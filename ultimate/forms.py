@@ -127,28 +127,6 @@ class PlayerSurveyForm(forms.ModelForm):
 		model = Skills
 		exclude = ('id', 'skills_report', 'highest_level', 'experience', 'position', 'skills_type', 'user', 'submitted_by', 'updated',)
 
-	def clean(self):
-		if self.cleaned_data.get('not_sure'):
-			self.removeErrorsFromSkills()
-		elif (not self.cleaned_data.get('athletic')
-				and not self.cleaned_data.get('forehand')
-				and not self.cleaned_data.get('backhand')
-				and not self.cleaned_data.get('receive')
-				and not self.cleaned_data.get('handle')
-				and not self.cleaned_data.get('strategy')
-				and not self.cleaned_data.get('spirit')):
-			self.removeErrorsFromSkills()
-			raise forms.ValidationError, 'You must fill in values greater than 1 or mark "Not Sure"'
-
-		return self.cleaned_data
-
-	def removeErrorsFromSkills(self):
-		del self._errors['athletic']
-		del self._errors['forehand']
-		del self._errors['backhand']
-		del self._errors['receive']
-		del self._errors['strategy']
-		del self._errors['spirit']
 
 class EditTeamInformationForm(forms.ModelForm):
 	class Meta:
