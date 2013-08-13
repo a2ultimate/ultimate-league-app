@@ -132,6 +132,17 @@ def registration(request, year, season, division, section=None):
 			attendance_form = RegistrationAttendanceForm(request.POST, instance=registration)
 			if attendance_form.is_valid():
 				attendance_form.save()
+
+				if not registration.baggage_id:
+					baggage = Baggage()
+					baggage.save()
+					registration.baggage_id = baggage.id
+					registration.save()
+
+				if league.check_cost == 0 or league.paypal_cost == 0:
+					registration.registered = datetime.now()
+					registration.save()
+
 				messages.success(request, 'Attendance and captaining response saved.')
 			else:
 				messages.error(request, 'You must provide an attendance and captaining rating to continue.')
@@ -139,21 +150,11 @@ def registration(request, year, season, division, section=None):
 		# payment type response
 		if 'pay_type' in request.POST:
 			if request.POST.get('pay_type').lower() == 'check':
-				if not registration.baggage_id:
-					baggage = Baggage()
-					baggage.save()
-					registration.baggage_id = baggage.id
-
 				registration.pay_type = 'check'
 				registration.save()
 				messages.success(request, 'Payment type set to check.')
 
 			elif request.POST.get('pay_type').lower() == 'paypal':
-				if not registration.baggage_id:
-					baggage = Baggage()
-					baggage.save()
-					registration.baggage_id = baggage.id
-
 				registration.pay_type = 'paypal'
 				registration.save()
 				messages.success(request, 'Payment type set to PayPal.')
