@@ -300,32 +300,52 @@ class Registrations(models.Model):
 				if self.attendance != None and self.captain != None:
 					status = 'Attendance Completed'
 
-					if self.pay_type == 'check' and not self.check_complete:
-						status = 'Waiting for Check'
-					elif self.pay_type == 'check' and self.check_complete:
-						status = 'Check Completed'
-					elif self.pay_type == 'paypal' and not self.paypal_complete:
-						status = 'Waiting for Paypal'
-					elif self.pay_type == 'paypal' and self.paypal_complete:
-						status = 'Paypal Completed'
+					if self.league.check_cost == 0 and self.league.paypal_cost == 0:
+						status = 'Registration Completed'
+
+					else:
+						if self.pay_type == 'check' and not self.check_complete:
+							status = 'Waiting for Check'
+						elif self.pay_type == 'check' and self.check_complete:
+							status = 'Check Completed'
+						elif self.pay_type == 'paypal' and not self.paypal_complete:
+							status = 'Waiting for Paypal'
+						elif self.pay_type == 'paypal' and self.paypal_complete:
+							status = 'Paypal Completed'
 		return status
 
 	def get_progress(self):
 		percentage = 0
+		interval = 20
+
+		if self.league.check_cost == 0 and self.league.paypal_cost == 0:
+			interval = 25
+
 		if self.conduct_complete:
-			percentage = 20
+			percentage += interval
 			if self.waiver_complete:
-				percentage = 40
+				percentage += interval
 				if self.attendance != None and self.captain != None:
-					percentage = 60
-					if self.pay_type:
-						percentage = 80
+					percentage += interval
+
+					if self.league.check_cost == 0 and self.league.paypal_cost == 0:
+						percentage += interval
+
+					elif self.pay_type:
+						percentage += interval
 						if self.check_complete or self.paypal_complete:
-							percentage = 100
+							percentage += interval
+
 		return percentage
 
 	def is_complete(self):
-		return bool(self.conduct_complete and self.waiver_complete and self.attendance != None and self.captain != None and self.pay_type and (self.check_complete or self.paypal_complete)) and not self.refunded
+		return bool(self.conduct_complete and \
+			self.waiver_complete and \
+			self.attendance != None and \
+			self.captain != None and \
+			((self.league.check_cost == 0 and self.league.paypal_cost == 0) or \
+			(self.pay_type and 	(self.check_complete or self.paypal_complete))) and \
+			not self.refunded)
 
 	@property
 	def baggage_size(self):
