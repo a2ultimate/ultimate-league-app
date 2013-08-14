@@ -35,7 +35,7 @@
 						{% endfor %}
 					</td>
 					{% for field in row.form.visible_fields %}
-						<td class="{% if forloop.last %}right{% endif %}{% if field.errors %} error{% endif %}" {% if forloop.last %}onclick="this.children[0].click();"{% endif %}>
+						<td class="{% if forloop.last %}right{% endif %}{% if field.errors %} error{% endif %}">
 							{{ field }}
 							{% if not forloop.last %}<div class="skill_average">{{ row.user|get_average:field.label }}</div>{% endif %}
 						</td>
