@@ -9,6 +9,7 @@ from pybb.models import *
 from datetime import date, datetime
 import re
 
+
 class Field(models.Model):
 	id = models.AutoField(primary_key=True)
 	name = models.TextField()
@@ -23,6 +24,7 @@ class Field(models.Model):
 	def __unicode__(self):
 		return self.name
 
+
 class FieldNames(models.Model):
 	id = models.AutoField(primary_key=True)
 	name = models.TextField()
@@ -35,27 +37,28 @@ class FieldNames(models.Model):
 	def __unicode__(self):
 		return '%s %s' % (self.field.name, self.name)
 
-LEAGUE_STATE_CHOICES = (
-	('archived', 'Archived'),
-	('planning', 'Planning'),
-	('active', 'Active'),
-	)
-
-LEAGUE_GENDER_CHOICES = (
-	('coed',        'Normal co-ed gender matched'),
-	('50/50',       '50/50 league'),
-	('hat',         'Hat tourney'),
-	('hat_free',    'Hat tourney (no pay, just add to registration list)'),
-	('hat_nocap',   'Hat tourney (no captains)'),
-	('bonanza_free','Clinics and pickup (no pay)'),
-	('competitive', 'Competitive league'),
-	('showcase',    'Showcase league'),
-	('party',       'No group-limits party night'),
-	('open',        'Open, no gender match'),
-	('women',       'Women only'),
-	)
 
 class League(models.Model):
+	LEAGUE_STATE_CHOICES = (
+		('archived',	'Archived'),
+		('planning',	'Planning'),
+		('active',		'Active'),
+	)
+
+	LEAGUE_GENDER_CHOICES = (
+		('coed',			'Normal co-ed gender matched'),
+		('50/50',			'50/50 league'),
+		('hat',				'Hat tourney'),
+		('hat_free',		'Hat tourney (no pay, just add to registration list)'),
+		('hat_nocap',		'Hat tourney (no captains)'),
+		('bonanza_free',	'Clinics and pickup (no pay)'),
+		('competitive',		'Competitive league'),
+		('showcase',		'Showcase league'),
+		('party',			'No group-limits party night'),
+		('open',			'Open, no gender match'),
+		('women',			'Women only'),
+	)
+
 	id = models.AutoField(primary_key=True)
 	night = models.CharField(max_length=96, help_text='lower case, no special characters, e.g. "sunday", "tuesday and thursday", "end of season tournament"')
 	season = models.CharField(max_length=96, help_text='lower case, no special characters, e.g. "late fall", "winter"')
@@ -151,13 +154,12 @@ class FieldLeague(models.Model):
 		db_table = u'field_league'
 
 
-GENDER_CHOICES = (
-	('M', 'Male'),
-	('F', 'Female'),
-)
-
-
 class Player(PybbProfile):
+	GENDER_CHOICES = (
+		('M',	'Male'),
+		('F',	'Female'),
+	)
+
 	user = models.ForeignKey(User, db_column='id')
 	groups = models.TextField()
 	nickname = models.CharField(max_length=90)
@@ -166,7 +168,7 @@ class Player(PybbProfile):
 	city = models.CharField(max_length=127)
 	state = models.CharField(max_length=6)
 	zipcode = models.CharField(max_length=15)
-	gender = models.CharField(max_length=3, choices=GENDER_CHOICES)
+	gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
 	height_inches = models.IntegerField()
 	highest_level = models.TextField()
 	birthdate = models.DateField(help_text='e.g. ' + date.today().strftime('%Y-%m-%d'))
@@ -203,82 +205,24 @@ class Baggage(models.Model):
 		return '%d' % (self.id)
 
 
-REGISTRATION_STATUS_CHOICES=(
-	('new', 'New'),
-	('refunded', 'Refunded'),
-	('reversed', 'Reversed'),
-	('clicked_waiver', 'Clicked Waiver'),
-	('check_pending', 'Check Pending'),
-	('clicked_insurance', 'Clicked Insurance'),
-	('check_completed', 'Check Completed'),
-	('paypal_pending', 'Paypal Pending'),
-	('paypal_completed', 'Paypal Completed'),
-	('paypal-pending_waitlist', 'Paypal Pending Waitlist'),
-	('paypal-completed_waitlist', 'Paypal Completed Waitlist'),
-	('paypal-canceled_reversal', 'Paypal Canceled Reversal'),
-	('paypal-denied', 'Paypal Denied'),
-	('check-completed_waitlist', 'Check Completed Waitlist'),
-)
-
-GOOD_REGISTRATION_STATUS_CHOICES=[
-	'check_completed',
-	'paypal_pending',
-	'paypal_completed',
-]
-
-WAITLIST_REGISTRATION_STATUS_CHOICES=[
-	'paypal-pending_waitlist',
-	'paypal-completed_waitlist',
-	'check-completed_waitlist',
-]
-
-BAD_REGISTRATION_STATUS_CHOICES=[
-	'new',
-	'refunded',
-	'reversed',
-	'clicked_waiver',
-	'check_pending',
-	'clicked_insurance',
-	'paypal-denied',
-	'paypal-canceled_reversal',
-]
-
-
-class Registration(models.Model):
-	id = models.AutoField(primary_key=True)
-	league = models.ForeignKey('leagues.League')
-	status = models.TextField(choices=REGISTRATION_STATUS_CHOICES)
-	user = models.ForeignKey(User)
-	captaining = models.IntegerField()
-	baggage = models.ForeignKey('leagues.Baggage')
-	reg_time = models.DateTimeField()
-	attendance = models.IntegerField()
-
-	class Meta:
-		db_table = u'registration'
-
-	def __unicode__(self):
-		return '%d %s %s - %s %s' % (self.league.year, self.league.season, self.league.night, self.status, self.user)
-
-REGISTRATION_PAYMENT_CHOICES=[
-	('check', 'check'),
-	('paypal', 'paypal')
-]
-
-
 class Registrations(models.Model):
+	REGISTRATION_PAYMENT_CHOICES = (
+		('check',	'Check'),
+		('paypal',	'PayPal'),
+	)
+
 	id = models.AutoField(primary_key=True)
 	user = models.ForeignKey(User)
 	league = models.ForeignKey('leagues.League')
 	baggage = models.ForeignKey('leagues.Baggage', null=True, blank=True)
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
-	registered = models.DateTimeField(null=True)
+	registered = models.DateTimeField(null=True, blank=True)
 	conduct_complete = models.BooleanField()
 	waiver_complete = models.BooleanField()
-	pay_type = models.CharField(choices=REGISTRATION_PAYMENT_CHOICES, null=True, blank=True)
+	pay_type = models.CharField(choices=REGISTRATION_PAYMENT_CHOICES, max_length=6, null=True, blank=True)
 	check_complete = models.BooleanField()
-	paypal_invoice_id = models.CharField(max_length=127, blank=True)
+	paypal_invoice_id = models.CharField(max_length=127, null=True, blank=True)
 	paypal_complete = models.BooleanField()
 	refunded = models.BooleanField()
 	waitlist = models.BooleanField()
@@ -643,7 +587,7 @@ class GameTeams(models.Model):
 	class Meta:
 		db_table = u'game_teams'
 
-SKILL_CHOICES=[
+SKILL_CHOICES = [
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
 ]
 
