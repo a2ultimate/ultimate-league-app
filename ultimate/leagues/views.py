@@ -192,7 +192,7 @@ def registration(request, year, season, division, section=None):
 			registration.save()
 
 		if not registration.paypal_complete and not registration.check_complete:
-			baseUrl = request.build_absolute_uri(getattr(settings, 'FORCE_SCRIPT_NAME', '/')).replace(request.path_info, '')
+			baseUrl = request.build_absolute_uri(getattr(settings, 'FORCE_SCRIPT_NAME', '/')).replace(request.path_info.replace(' ', '%20'), '')
 
 			paypal_dict = {
 				'amount': league.paypal_cost,
