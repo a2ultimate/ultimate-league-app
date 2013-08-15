@@ -67,6 +67,7 @@ class League(models.Model):
 	gender_note = models.TextField(help_text='gender or other notes for league, e.g. 50/50 league, showcase league notes')
 	baggage = models.IntegerField(help_text='max baggage group size')
 	times = models.TextField(help_text='start to end time, e.g. 6:00-8:00pm')
+	num_games_per_week = models.IntegerField(default=1, help_text='number of games per week, used to calculate number of games for a league')
 	reg_start_date = models.DateField(help_text='date that registration process is open (not currently automated)')
 	waitlist_start_date = models.DateField(help_text='date that waitlist is started (regardless of number of registrations)')
 	freeze_group_date = models.DateField(help_text='date of last day to form groups')
@@ -120,9 +121,15 @@ class League(models.Model):
 		return Game.objects.filter(league=self, gameteams__team__teammember__user=user).order_by('date')
 
 	def get_num_game_events(self):
-		# need to use multiply by weekly events count
 		diff = self.league_end_date - self.league_start_date
-		return (diff.days / 7) + 1
+		num_weeks = (diff.days / 7) + 1
+
+		if self.num_games_per_week > 1:
+			num_games = num_weeks * self.num_games_per_week
+		else:
+			num_games = num_weeks
+
+		return num_games
 
 	def get_league_captains(self):
 		return User.objects.filter(teammember__team__league=self, teammember__captain=1)
