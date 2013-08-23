@@ -16,4 +16,4 @@ Ultimate Frisbee League Web Application
  -- syncr
  	- http://code.google.com/p/django-syncr/
  	- A lot of it was ripped out (unneeded)
- 	- Really just wanted Flickr and Twitter
+ 	- Really just wanted Flickr
