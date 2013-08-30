@@ -45,12 +45,22 @@ def details(request, year, season, division):
 
 def players(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
+	user_registration = Registrations.objects.get(user=request.user, league=league)
 
-	registrations = league.get_completed_registrations()
-	waitlist = league.get_waitlisted_registrations()
+	complete_registrations = league.get_complete_registrations()
+	incomplete_registrations = league.get_incomplete_registrations()
+	waitlist_registrations = league.get_waitlist_registrations()
+	refunded_registrations = league.get_refunded_registrations()
 
 	return render_to_response('leagues/players.html',
-		{'league': league, 'registrations': registrations, 'waitlist': waitlist},
+		{
+			'league': league,
+			'user_registration': user_registration,
+			'complete_registrations': complete_registrations,
+			'incomplete_registrations': incomplete_registrations,
+			'waitlist_registrations': waitlist_registrations,
+			'refunded_registrations': refunded_registrations
+		},
 		context_instance=RequestContext(request))
 
 

@@ -106,13 +106,24 @@ class League(models.Model):
 	def get_teams(self):
 		return self.team_set.all()
 
-	def get_completed_registrations(self):
-		registrations = Registrations.objects.filter(league=self).order_by('registered')
-		return [r for r in registrations if not r.waitlist and not r.refunded and r.is_complete()]
+	def get_all_registrations(self):
+		return Registrations.objects.filter(league=self)
 
-	def get_waitlisted_registrations(self):
+	def get_complete_registrations(self):
 		registrations = Registrations.objects.filter(league=self).order_by('registered')
-		return [r for r in registrations if r.waitlist and not r.refunded and r.is_complete()]
+		return [r for r in registrations if r.is_complete() and not r.waitlist and not r.refunded]
+
+	def get_waitlist_registrations(self):
+		registrations = Registrations.objects.filter(league=self).order_by('registered')
+		return [r for r in registrations if r.is_complete() and r.waitlist and not r.refunded]
+
+	def get_incomplete_registrations(self):
+		registrations = Registrations.objects.filter(league=self).order_by('registered')
+		return [r for r in registrations if not r.is_complete() and not r.refunded]
+
+	def get_refunded_registrations(self):
+		registrations = Registrations.objects.filter(league=self).order_by('registered')
+		return [r for r in registrations if r.is_complete() and r.refunded]
 
 	def get_games(self):
 		return self.game_set.all().order_by('field_name__field__name', 'field_name__name')
