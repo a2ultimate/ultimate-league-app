@@ -307,6 +307,9 @@ class Registrations(models.Model):
 
 	@transaction.commit_on_success
 	def add_to_baggage_group(self, email):
+		if date.today() > self.league.freeze_group_date:
+			return 'You may not edit a baggage group after the group change deadline (' + self.league.freeze_group_date.strftime('%Y-%m-%d') + ').'
+
 		if self.user.email == email:
 			return 'You cannot form a baggage group with yourself.'
 
@@ -351,6 +354,9 @@ class Registrations(models.Model):
 
 	@transaction.commit_manually
 	def leave_baggage_group(self):
+		if date.today() > self.league.freeze_group_date:
+			return 'You may not edit a baggage group after the group change deadline (' + self.league.freeze_group_date.strftime('%Y-%m-%d') + ').'
+
 		try:
 			baggage = Baggage()
 			baggage.save()

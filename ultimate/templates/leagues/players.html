@@ -1,4 +1,6 @@
 {% extends "layout/layout_user.html" %}
+
+{% load leagues %}
 {% load utility %}
 
 {% block content %}
@@ -9,8 +11,10 @@
 
 	{% include "layout/league_tabs.html" with selected_tab="players" %}
 
-	<p>To add someone to your group, you need to know their email address.</p>
-	<p>If you know your friend's email address and would like to be in a group with them, <a href="{% url league_group year=league.year season=league.season division=league.night %}">click here</a> to add them.</p>
+	{% if registration.league.baggage > 1 and not registration.waitlist and not registration.league.freeze_group_date|is_past_deadline %}
+		<p>To add someone to your group, you need to know their email address.</p>
+		<p>You may <a href="{% url league_group year=league.year season=league.season division=league.night %}">form a baggage group here</a>.</p>
+	{% endif %}
 
 	<h4>Name not on the list?</h4>
 	<ol>
