@@ -155,8 +155,17 @@ def gamereport(request, teamid, gameid):
 			if re.match('user_', postParam):
 				attendance.append(int(re.split('user_', postParam)[1]))
 
-		if comment_form.is_valid() and score_formset.is_valid():
+		if date.today() < game.date:
+			score_us_form = score_formset.forms[0]
+			score_them_form = score_formset.forms[1]
+			messages.error(request, 'You cannot submit a game report before the game date.')
 
+		elif not comment_form.is_valid() or not score_formset.is_valid():
+			score_us_form = score_formset.forms[0]
+			score_them_form = score_formset.forms[1]
+			messages.error(request, 'There was an error on the form you submitted.')
+
+		else:
 			if game_report:
 				game_report.last_updated_by = request.user
 			else:
@@ -186,10 +195,6 @@ def gamereport(request, teamid, gameid):
 
 			messages.success(request, 'Your game report was updated successfully.')
 			return HttpResponseRedirect(reverse('gamereport', kwargs={'gameid':gameid, 'teamid':teamid}))
-		else:
-			score_us_form = score_formset.forms[0]
-			score_them_form = score_formset.forms[1]
-			messages.error(request, 'There was an error on the form you submitted.')
 
 	else:
 		comment_form = GameReportCommentForm(instance=game_report_comment)

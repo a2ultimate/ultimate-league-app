@@ -1,5 +1,7 @@
 {% extends "layout/layout_user.html" %}
 
+{% load leagues %}
+
 {% block content %}
 
 <h1>
@@ -15,7 +17,13 @@
 
 {% if registration.is_complete %}
 	<h3>
-		Your registration is <strong class="text_success">complete</strong>. You may <a href="{% url league_group year=league.year season=league.season division=league.night %}">form a baggage group here</a>.
+		Your registration is <strong class="text_success">complete</strong>.
+
+		{% if registration.waitlist %}
+			However, you are on the <strong class="text_warning">waitlist</strong>.
+		{% elif registration.league.baggage > 1 and not registration.league.freeze_group_date|is_past_deadline %}
+			You may <a href="{% url league_group year=league.year season=league.season division=league.night %}">form a baggage group here</a>.
+		{% endif %}
 	</h3>
 {% else %}
 	<h3>

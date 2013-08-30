@@ -91,7 +91,6 @@ INSTALLED_APPS = (
 	'django.contrib.webdesign',
 	'paypal.standard.ipn',
 	'syncr.flickr',
-	'syncr.twitter',
 	'ultimate',
 	'ultimate.captain',
 	'ultimate.index',
@@ -145,6 +144,3 @@ PYBB_TEMPLATE = 'layout/forum_base.html'
 FLICKR_KEY = ''
 FLICKR_SECRET = ''
 FLICKR_SEARCH = 'ultimate+frisbee'
-
-TWITTER_SEARCH = 'ultimate+frisbee'
-TWITTER_USERNAME = ''

@@ -24,15 +24,6 @@
 	<ul id="social_feed">
 		{% for update in updates %}
 			<li class="update">
-				{% if update.type == 'tweet' %}
-					<a style="background-image: url('{{ update.tweet.user.thumbnail_url }}');" href="http://twitter.com/{{ update.tweet.user.screen_name }}" title="{{ update.tweet.user.screen_name }} on Twitter"></a>
-					<div class="update_header">
-						<a class="update_user" href="http://twitter.com/{{ update.tweet.user.screen_name }}" target="_blank">@{{ update.tweet.user.screen_name }}</a>
-						<a class="update_datetime" href="http://twitter.com/{{ update.tweet.user.screen_name }}/status/{{ update.tweet.twitter_id }}" target="_blank">{{ update.tweet.pub_time|timesince }} ago</a>
-					</div>
-					{{ update.tweet.text }}
-				{% endif %}
-
 				{% if update.type == 'photo' %}
 					{% for photo in update.photoset %}
 						{% if forloop.first %}

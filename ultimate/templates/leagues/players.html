@@ -1,4 +1,6 @@
 {% extends "layout/layout_user.html" %}
+
+{% load leagues %}
 {% load utility %}
 
 {% block content %}
@@ -9,10 +11,12 @@
 
 	{% include "layout/league_tabs.html" with selected_tab="players" %}
 
-	<p>To add someone to your group, you need to know their email address.</p>
-	<p>If you know your friend's email address and would like to be in a group with them, <a href="{% url league_group year=league.year season=league.season division=league.night %}">click here</a> to add them.</p>
+	{% if user_registration.is_complete and user_registration.league.baggage > 1 and not user_registration.waitlist and not user_registration.league.freeze_group_date|is_past_deadline %}
+		<p>To add someone to your group, you need to know their email address.</p>
+		<p>You may <a href="{% url league_group year=league.year season=league.season division=league.night %}">form a baggage group here</a>.</p>
+	{% endif %}
 
-	<h4>Name not on the list?</h4>
+	<h3>Name not on the list?</h3>
 	<ol>
 		<li>Did you pay by check? If so, maybe we don't have your check yet.</li>
 		{% ifequal league.gender '50/50' %}
@@ -21,22 +25,22 @@
 		<li>Anything else? Email <span class="email">registration.at.annarborultimate.org</span></li>
 	</ol>
 
-	{% if waitlist|length %}
-		<h3>Waitlist</h3>
+	{% if waitlist_registrations|length %}
+		<h2>Waitlist</h2>
 
 		<ol>
-			{% for registration in waitlist %}
+			{% for registration in waitlist_registrations %}
 				<li>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.get_profile.nickname }}</em></li>
 			{% endfor %}
 		</ol>
 	{% endif %}
 
 	<div id="league_players">
-		<h4>Currently {{ registrations|length }} out of a maximum {{ league.max_players }} players registered</h4>
+		<h3>Currently {{ complete_registrations|length }} out of a maximum {{ league.max_players }} players registered</h3>
 
 		<table class="table table-striped">
 			<tbody>
-			{% regroup registrations|dictsort:"baggage.id" by baggage as baggage_group %}
+			{% regroup complete_registrations|dictsort:"baggage.id" by baggage as baggage_group %}
 			{% for baggage in baggage_group|groups_sort %}
 				{% if not forloop.counter|divisibleby:'2' %}
 					<tr>
@@ -55,4 +59,44 @@
 			</tbody>
 		</table>
 	</div>
+
+	{% if perms.junta %}
+		{% if incomplete_registrations|length %}
+			<hr />
+			<h2>Incomplete Registrations</h2>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Status</th>
+						<th>Last Updated</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for registration in incomplete_registrations|dictsort:"get_progress" %}
+						<tr>
+							<td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.get_profile.nickname }}</em></td>
+							<td>{{ registration.get_status }}</td>
+							<td>{{ registration.updated|date:"Y/m/d h:iA" }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% endif %}
+
+		{% if refunded_registrations|length %}
+			<hr />
+			<h2>Refunded Registrations</h2>
+			<table class="table table-striped">
+				<tbody>
+					{% for registration in refunded_registrations|dictsort:"updated" %}
+						<tr>
+							<td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.get_profile.nickname }}</em></td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% endif %}
+	{% endif %}
 {% endblock %}
+
