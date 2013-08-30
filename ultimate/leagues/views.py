@@ -45,7 +45,11 @@ def details(request, year, season, division):
 
 def players(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
-	user_registration = Registrations.objects.get(user=request.user, league=league)
+
+	if request.user.is_authenticated():
+		user_registration = Registrations.objects.get(user=request.user, league=league)
+	else:
+		user_registration = None
 
 	complete_registrations = league.get_complete_registrations()
 	incomplete_registrations = league.get_incomplete_registrations()
