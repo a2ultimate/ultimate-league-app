@@ -394,6 +394,7 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 
 .state_success {
 	background: #2ECC71;
+	color: #FFFFFF;
 }
 
 .text_success {
@@ -402,6 +403,7 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 
 .state_info {
 	background: #3498DB;
+	color: #FFFFFF;
 }
 
 .text_info {
@@ -410,6 +412,7 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 
 .state_warning {
 	background: #F1C40F;
+	color: #FFFFFF;
 }
 
 .text_warning {
@@ -418,6 +421,7 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 
 .state_error {
 	background: #E74C3C;
+	color: #FFFFFF;
 }
 
 .text_error {

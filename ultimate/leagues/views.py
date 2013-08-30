@@ -45,12 +45,22 @@ def details(request, year, season, division):
 
 def players(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
+	user_registration = Registrations.objects.get(user=request.user, league=league)
 
-	registrations = league.get_completed_registrations()
-	waitlist = league.get_waitlisted_registrations()
+	complete_registrations = league.get_complete_registrations()
+	incomplete_registrations = league.get_incomplete_registrations()
+	waitlist_registrations = league.get_waitlist_registrations()
+	refunded_registrations = league.get_refunded_registrations()
 
 	return render_to_response('leagues/players.html',
-		{'league': league, 'registrations': registrations, 'waitlist': waitlist},
+		{
+			'league': league,
+			'user_registration': user_registration,
+			'complete_registrations': complete_registrations,
+			'incomplete_registrations': incomplete_registrations,
+			'waitlist_registrations': waitlist_registrations,
+			'refunded_registrations': refunded_registrations
+		},
 		context_instance=RequestContext(request))
 
 
@@ -74,10 +84,14 @@ def group(request, year, season, division):
 
 	if request.method == 'POST':
 		if 'leave_group' in request.POST:
-			if (registration.leave_baggage_group()):
+			message = registration.leave_baggage_group()
+			if message == True:
 				messages.success(request, 'You were successfully removed from your baggage group.')
+			elif isinstance(message, str):
+				messages.error(request, message)
 			else:
 				messages.error(request, 'You could not be removed from your baggage group.')
+
 
 		elif 'add_group' in request.POST and 'email' in request.POST:
 			email = request.POST.get('email')

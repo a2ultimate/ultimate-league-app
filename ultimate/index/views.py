@@ -8,10 +8,6 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
-from syncr.app.tweet import TwitterSyncr
-from syncr.twitter.models import Tweet
-from twitter import TwitterError
-
 from syncr.app.flickr import FlickrSyncr
 from syncr.flickr.models import Photo
 from flickrapi import FlickrError
@@ -49,35 +45,13 @@ def index(request):
 			photoset = list()
 		counter += 1
 
-	tweets = Tweet.objects.order_by('-pub_time')[:10]
-	for tweet in tweets:
-		updates.append({'type': 'tweet', 'tweet': tweet, 'datetime': tweet.pub_time})
-
 	updates.sort(key=lambda x:x['datetime'], reverse=True)
 
 	return render_to_response('index/index.html',
-		{'announcements': announcements, 'updates': updates, 'tweets': tweets, 'photos': photos},
+		{'announcements': announcements, 'updates': updates, 'photos': photos},
 		context_instance=RequestContext(request))
 
 def update_feed(request):
-	# try:
-	#	twitterUsername = getattr(settings, 'TWITTER_SEARCH', None)
-	#	twitterSearchTerms = getattr(settings, 'TWITTER_SEARCH', 'ultimatefrisbee')
-	# 	twitterSyncr = TwitterSyncr(twitterUsername)
-	# 	twitterSearchFeed = feedparser.parse('http://search.twitter.com/search.atom?lang=en&q=ultimate+frisbee')
-
-	# 	for tweet in twitterSearchFeed.entries:
-	# 		twitterID = tweet.id[tweet.id.rindex(':')+1:]
-	# 		try:
-	# 			twitterSyncr.syncTweet(twitterID)
-	# 		except TwitterError:
-	# 			print 'twitter parse error'
-	# 		except:
-	# 			print 'twitter unknown error'
-	# except:
-	# 	print 'twitter unknown feed error'
-
-
 	flickrSearchTerms = getattr(settings, 'FLICKR_SEARCH', 'ultimatefrisbee')
 	flickrSyncr = FlickrSyncr(getattr(settings, 'FLICKR_KEY', None), getattr(settings, 'FLICKR_SECRET', None))
 	flickrSearchFeed = feedparser.parse('http://api.flickr.com/services/feeds/photos_public.gne?tags=' + flickrSearchTerms + '&format=atom')
