@@ -62,7 +62,7 @@ class RegistrationsAdmin(admin.ModelAdmin):
 
 	list_display = ('year', 'season', 'night', 'user_details', 'registered', 'attendance', 'captain', 'waitlist', 'get_status',)
 	list_filter = ('league__year', 'league__season', 'league__night', 'paypal_complete', 'check_complete', 'waitlist', 'refunded',)
-	search_fields = ['user__first_name', 'user__last_name', 'user__email',]
+	search_fields = ['user__first_name', 'user__last_name', 'user__email', 'paypal_invoice_id',]
 
 	def year(self, obj):
 		return u'%d' % (obj.league.year)
