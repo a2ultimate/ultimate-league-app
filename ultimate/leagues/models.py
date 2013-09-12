@@ -549,7 +549,7 @@ class TeamMember(models.Model):
 	id = models.AutoField(primary_key=True)
 	team = models.ForeignKey('leagues.Team')
 	user = models.ForeignKey(User)
-	captain = models.IntegerField()
+	captain = models.BooleanField()
 
 	class Meta:
 		db_table = u'team_member'

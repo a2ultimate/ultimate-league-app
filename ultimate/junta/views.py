@@ -159,7 +159,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
 	schedule = None
 	num_teams = 0
 
-	if (year and season and division):
+	if year and season and division:
 		league = get_object_or_404(League, year=year, season=season, night=division)
 		num_events = league.get_num_game_events()
 
@@ -179,7 +179,6 @@ def schedulegeneration(request, year=None, season=None, division=None):
 			games = zip(top, bottom)
 
 			field_shift = (event_num * 2) % (num_teams // 2)
-			print field_shift
 
 			games = games[-field_shift:] + games[:-field_shift]
 

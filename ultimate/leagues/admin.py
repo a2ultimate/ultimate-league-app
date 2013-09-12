@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin
 from ultimate.leagues.models import *
 
@@ -96,15 +97,30 @@ class SkillsAdmin(admin.ModelAdmin):
 	submitted_by_details.allow_tags = True
 
 
+class TeamMemberModelChoiceField(forms.ModelChoiceField):
+	def label_from_instance(self, team_member):
+		# Return a string of the format: "firstname lastname (username)"
+		return '%s, %s (%s)' % (team_member.last_name, team_member.first_name, team_member.username)
+
+	class Meta:
+		label = ''
+
+
 class TeamMemberInline(admin.TabularInline):
 	model = TeamMember
 
 	def formfield_for_foreignkey(self, db_field, request, **kwargs):
-		if db_field.name == 'user' and request._team_obj_:
-			request._registration_user_ids_ = Registrations.objects.filter(league__id=request._team_obj_.league.id).values_list('user', flat=True)
-			kwargs['queryset'] = User.objects.filter(id__in=request._registration_user_ids_)
-		else:
-			kwargs['queryset'] = User.objects.filter()
+		if db_field.name == 'user':
+			kwargs['form_class'] = TeamMemberModelChoiceField
+
+			if request._team_obj_:
+				request._registration_user_ids_ = Registrations.objects.filter(league__id=request._team_obj_.league.id).values_list('user', flat=True)
+				kwargs['queryset'] = User.objects.filter(id__in=request._registration_user_ids_).order_by('last_name', 'email')
+			else:
+				kwargs['queryset'] = User.objects.filter().order_by('last_name', 'email')
+
+			return db_field.formfield(**kwargs)
+
 		return super(TeamMemberInline, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
