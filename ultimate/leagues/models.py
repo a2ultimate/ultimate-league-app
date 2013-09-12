@@ -125,6 +125,11 @@ class League(models.Model):
 		registrations = Registrations.objects.filter(league=self).order_by('registered')
 		return [r for r in registrations if r.is_complete() and r.refunded]
 
+	def get_unassigned_registrations(self):
+		team_member_users = [t.user for t in TeamMember.objects.filter(team__league=self)]
+		registrations = Registrations.objects.filter(league=self).exclude(user__in=team_member_users)
+		return [r for r in registrations if r.is_complete() and not r.refunded]
+
 	def get_games(self):
 		return self.game_set.all().order_by('field_name__field__name', 'field_name__name')
 

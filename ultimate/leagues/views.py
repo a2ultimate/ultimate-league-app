@@ -57,6 +57,7 @@ def players(request, year, season, division):
 	incomplete_registrations = league.get_incomplete_registrations()
 	waitlist_registrations = league.get_waitlist_registrations()
 	refunded_registrations = league.get_refunded_registrations()
+	unassigned_registrations = league.get_unassigned_registrations()
 
 	return render_to_response('leagues/players.html',
 		{
@@ -65,7 +66,8 @@ def players(request, year, season, division):
 			'complete_registrations': complete_registrations,
 			'incomplete_registrations': incomplete_registrations,
 			'waitlist_registrations': waitlist_registrations,
-			'refunded_registrations': refunded_registrations
+			'refunded_registrations': refunded_registrations,
+			'unassigned_registrations': unassigned_registrations
 		},
 		context_instance=RequestContext(request))
 

@@ -61,9 +61,32 @@
 	</div>
 
 	{% if perms.junta %}
+		{% if unassigned_registrations|length %}
+			<hr />
+			<h2>Unassigned Registrations ({{ unassigned_registrations|length }})</h2>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Status</th>
+						<th>Last Updated</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for registration in unassigned_registrations|dictsort:"get_progress" %}
+						<tr>
+							<td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.get_profile.nickname }}</em></td>
+							<td>{{ registration.get_status }}</td>
+							<td>{{ registration.updated|date:"Y/m/d h:iA" }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% endif %}
+
 		{% if incomplete_registrations|length %}
 			<hr />
-			<h2>Incomplete Registrations</h2>
+			<h2>Incomplete Registrations ({{ incomplete_registrations|length }})</h2>
 			<table class="table table-striped">
 				<thead>
 					<tr>
@@ -86,7 +109,7 @@
 
 		{% if refunded_registrations|length %}
 			<hr />
-			<h2>Refunded Registrations</h2>
+			<h2>Refunded Registrations ({{ refunded_registrations|length }})</h2>
 			<table class="table table-striped">
 				<tbody>
 					{% for registration in refunded_registrations|dictsort:"updated" %}
