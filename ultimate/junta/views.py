@@ -17,7 +17,7 @@ from ultimate.leagues.models import *
 from ultimate.user.models import *
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='junta').exists())
 def index(request):
 
 	return render_to_response('junta/index.html',
@@ -26,6 +26,7 @@ def index(request):
 
 
 @login_required
+@user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='junta').exists())
 def captainstatus(request, year=None, season=None, division=None):
 	league = None
 	leagues = None
@@ -42,6 +43,7 @@ def captainstatus(request, year=None, season=None, division=None):
 
 
 @login_required
+@user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='junta').exists())
 def leagueresults(request, year=None, season=None, division=None):
 	league = None
 	field_names = None
@@ -72,7 +74,7 @@ def leagueresults(request, year=None, season=None, division=None):
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='junta').exists())
 def registrationexport(request, year=None, season=None, division=None):
 	leagues = League.objects.all().order_by('-league_start_date')
 
@@ -90,8 +92,6 @@ def registrationexport(request, year=None, season=None, division=None):
 
 		response = HttpResponse(content_type='text/csv')
 		response['Content-Disposition'] = 'attachment; filename="' + league.__unicode__() + '.txt"'
-
-		# response = HttpResponse()
 
 		t = loader.get_template('junta/registrationexport.txt')
 		c = Context({
@@ -152,6 +152,7 @@ def teamimport(request):
 
 @login_required
 @transaction.commit_on_success
+@user_passes_test(lambda u: u.is_superuser)
 def schedulegeneration(request, year=None, season=None, division=None):
 	league = None
 	leagues = None

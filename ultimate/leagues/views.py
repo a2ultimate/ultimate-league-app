@@ -19,7 +19,7 @@ from paypal.standard.forms import PayPalPaymentsForm
 def index(request, year, season):
 	if request.user.is_superuser:
 		leagues = League.objects.filter(year=year, season=season).order_by('league_start_date')
-	elif request.user.is_staff:
+	elif request.user.groups.filter(name='junta').exists():
 		leagues = League.objects.filter(year=year, season=season, state__in=['active', 'planning']).order_by('league_start_date')
 	else:
 		leagues = League.objects.filter(year=year, season=season, state__in=['active']).order_by('league_start_date')
@@ -120,7 +120,7 @@ def group(request, year, season, division):
 def registration(request, year, season, division, section=None):
 	league = get_object_or_404(League, year=year, season=season, night=division)
 
-	if league.state not in ['active'] and not request.user.is_staff and not request.user.is_superuser:
+	if league.state not in ['active'] and not request.user.is_superuser and not request.user.has_perm('junta'):
 		raise Http403
 
 	registration, created = Registrations.objects.get_or_create(user=request.user, league=league)

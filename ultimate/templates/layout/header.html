@@ -47,7 +47,9 @@
 				<li><a href="{% url user %}">My Account</a></li>
 				<li><a href="{% url pybb:index %}" target="_blank">Forum</a></li>
 				<li><a href="{% url contact %}">Contacts</a></li>
-				{% if user.is_superuser %}<li><a href="{% url home %}admin">Admin</a></li>{% endif %}
+				{% if user.is_superuser %}
+					<li><a href="{% url home %}admin">Admin</a></li>
+				{% endif %}
 			</ul>
 
 			<ul class="nav pull_right">

@@ -5,11 +5,9 @@ from ultimate.leagues.models import TeamMember
 
 @register.filter
 def in_group(user, groups):
-	# {% if user|in_group:"Friends,Enemies" %}
-
 	group_list = groups.split(',')
-	return bool(user.groups.filter(name__in=group_list).values('name'))
+	return user.is_superuser or user.groups.filter(name__in=group_list).exists()
 
 @register.filter
 def is_captain(user):
-	return bool(TeamMember.objects.filter(user=user, captain=1))
+	return TeamMember.objects.filter(user=user, captain=1).exists()

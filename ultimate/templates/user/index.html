@@ -2,6 +2,7 @@
 {% load leagues %}
 {% load league_registrations %}
 {% load teams %}
+{% load user_roles %}
 
 {% block content %}
 	<h1>My Account</h1>
@@ -73,7 +74,7 @@
 								{% endfor %}
 							</div>
 
-							{% if perms.junta %}
+							{% if request.user|in_group:"junta" %}
 								<div class="team_counts text_center">
 									<em>
 										{{ team.get_members|length }} Player{{ team.get_members|length|pluralize }},

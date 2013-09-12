@@ -78,7 +78,7 @@ class League(models.Model):
 	max_players = models.IntegerField(help_text='max players for league, extra registrations will be placed on waitlist')
 	state = models.CharField(max_length=96, choices=LEAGUE_STATE_CHOICES, help_text='''
 		Archived - not visible to anyone<br/>
-		Planning - only visibil to junta<br/>
+		Planning - only visible to junta<br/>
 		Active - visible to everyone''')
 	field = models.ManyToManyField(Field, db_table='field_league', help_text='''Select the fields these games will be played at, use
 		the green "+" icon if we're playing at a new field.''')

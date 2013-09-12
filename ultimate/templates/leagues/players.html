@@ -2,6 +2,7 @@
 
 {% load leagues %}
 {% load utility %}
+{% load user_roles %}
 
 {% block content %}
 	<h1>
@@ -60,7 +61,7 @@
 		</table>
 	</div>
 
-	{% if perms.junta %}
+	{% if request.user|in_group:"junta" %}
 		{% if unassigned_registrations|length %}
 			<hr />
 			<h2>Unassigned Registrations ({{ unassigned_registrations|length }})</h2>
