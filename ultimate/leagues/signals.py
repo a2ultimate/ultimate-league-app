@@ -16,7 +16,7 @@ def payment_success(sender, **kwargs):
 
 		num_registrations = len(registration.league.get_complete_registrations())
 
-		if num_registrations > registration.league.max_players:
+		if num_registrations >= registration.league.max_players:
 			registration.waitlist = 1
 
 		if registration.league.is_accepting_waitlist:
