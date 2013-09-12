@@ -114,8 +114,8 @@ class TeamMemberInline(admin.TabularInline):
 			kwargs['form_class'] = TeamMemberModelChoiceField
 
 			if request._team_obj_:
-				request._registration_user_ids_ = Registrations.objects.filter(league__id=request._team_obj_.league.id).values_list('user', flat=True)
-				kwargs['queryset'] = User.objects.filter(id__in=request._registration_user_ids_).order_by('last_name', 'email')
+				registration_user_ids = Registrations.objects.filter(league__id=request._team_obj_.league.id).values_list('user', flat=True)
+				kwargs['queryset'] = User.objects.filter(id__in=registration_user_ids).order_by('last_name', 'email')
 			else:
 				kwargs['queryset'] = User.objects.filter().order_by('last_name', 'email')
 
