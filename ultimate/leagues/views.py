@@ -128,6 +128,7 @@ def registration(request, year, season, division, section=None):
 	paypal_form = None
 
 	if request.method == 'POST':
+		success = True
 
 		# conduct response
 		if 'conduct_accept' in request.POST:
@@ -137,6 +138,9 @@ def registration(request, year, season, division, section=None):
 		elif 'conduct_decline' in request.POST:
 			registration.conduct_complete = 0
 			registration.save()
+
+			success = False
+			section = 'conduct'
 			messages.error(request, 'You must accept the code of conduct to continue.')
 
 		# waiver response
@@ -147,6 +151,9 @@ def registration(request, year, season, division, section=None):
 		elif 'waiver_decline' in request.POST:
 			registration.waiver_complete = 0
 			registration.save()
+
+			success = False
+			section = 'waiver'
 			messages.error(request, 'You must accept the waiver to continue.')
 
 		# attendance/captaining response
@@ -167,7 +174,9 @@ def registration(request, year, season, division, section=None):
 
 				messages.success(request, 'Attendance and captaining response saved.')
 			else:
-				messages.error(request, 'You must provide an attendance and captaining rating to continue.')
+				success = False
+				section = 'attendance'
+				messages.error(request, 'You must provide a valid attendance and captaining rating to continue.')
 
 		# payment type response
 		if 'pay_type' in request.POST:
@@ -182,9 +191,12 @@ def registration(request, year, season, division, section=None):
 				messages.success(request, 'Payment type set to PayPal.')
 
 			else:
+				success = False
+				section = 'pay_type'
 				messages.error(request, 'You must select a valid payment type to continue.')
 
-		return HttpResponseRedirect(reverse('league_registration', kwargs={'year': year, 'season': season, 'division': division}))
+		if success:
+			return HttpResponseRedirect(reverse('league_registration', kwargs={'year': year, 'season': season, 'division': division}))
 
 	if section == 'conduct' or not registration.conduct_complete:
 		return render_to_response('leagues/registration/conduct.html',
@@ -197,7 +209,9 @@ def registration(request, year, season, division, section=None):
 			context_instance=RequestContext(request))
 
 	if section == 'attendance' or registration.attendance == None or registration.captain == None:
-		attendance_form = RegistrationAttendanceForm(instance=registration)
+		if not attendance_form:
+			attendance_form = RegistrationAttendanceForm(instance=registration)
+
 		return render_to_response('leagues/registration/attendance.html',
 			{'attendance_form': attendance_form, 'league': league, 'registration': registration},
 			context_instance=RequestContext(request))
