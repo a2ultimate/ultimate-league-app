@@ -61,7 +61,7 @@ class RegistrationsAdmin(admin.ModelAdmin):
 	save_as = True
 	save_on_top = True
 
-	list_display = ('year', 'season', 'night', 'user_details', 'registered', 'attendance', 'captain', 'waitlist', 'get_status',)
+	list_display = ('year', 'season', 'night', 'user_details', 'registered', 'attendance', 'captain_value', 'waitlist', 'get_status',)
 	list_filter = ('league__year', 'league__season', 'league__night', 'paypal_complete', 'check_complete', 'waitlist', 'refunded',)
 	search_fields = ['user__first_name', 'user__last_name', 'user__email', 'paypal_invoice_id',]
 
@@ -80,6 +80,10 @@ class RegistrationsAdmin(admin.ModelAdmin):
 	def user_details(self, obj):
 		return u'%s <br /> %s' % (obj.user.get_full_name(), obj.user.email)
 	user_details.allow_tags = True
+
+	def captain_value(self, obj):
+		return u'%d' % (obj.captain)
+	captain_value.admin_order_field = 'captain'
 
 
 class SkillsAdmin(admin.ModelAdmin):

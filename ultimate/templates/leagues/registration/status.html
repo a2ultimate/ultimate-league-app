@@ -38,7 +38,11 @@
 </p>
 
 <p>
-	Your captaining rating is <strong>{{ registration.captain }}</strong> out of <strong>10</strong>.
+	{% if registration.captain >= 0 %}
+		Your captaining response is <strong>"{{ registration.get_captain_display }}"</strong>
+	{% else %}
+		You have not submitted a captain response.
+	{% endif %}
 </p>
 
 <p>

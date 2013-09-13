@@ -234,6 +234,14 @@ class Registrations(models.Model):
 		('paypal',	'PayPal'),
 	)
 
+	REGISTRATION_CAPTAIN_CHOICES = (
+		(0, u'I refuse to captain.'),
+		(1, u'I will captain if absolutely necessary.'),
+		(2, u'I am willing to captain.'),
+		(3, u'I would like to captain.'),
+		(4, u'I will be very sad if I don\'t get to captain.'),
+	)
+
 	id = models.AutoField(primary_key=True)
 	user = models.ForeignKey(User)
 	league = models.ForeignKey('leagues.League')
@@ -250,7 +258,7 @@ class Registrations(models.Model):
 	refunded = models.BooleanField()
 	waitlist = models.BooleanField()
 	attendance = models.IntegerField(null=True, blank=True)
-	captain = models.IntegerField(null=True, blank=True)
+	captain = models.IntegerField(null=True, blank=True, choices=REGISTRATION_CAPTAIN_CHOICES)
 
 	class Meta:
 		db_table = u'registrations'
@@ -318,8 +326,7 @@ class Registrations(models.Model):
 	def baggage_size(self):
 		if self.baggage:
 			return self.baggage.num_registrations
-		else:
-			return 0
+		return 0
 
 	@transaction.commit_on_success
 	def add_to_baggage_group(self, email):

@@ -7,6 +7,7 @@ from ultimate.captain.models import *
 from ultimate.leagues.models import *
 from ultimate.user.models import *
 
+
 class SignupForm(forms.ModelForm):
 	username = forms.CharField(widget=forms.HiddenInput, required=False)
 	email = forms.EmailField(label=_('Email Address'), max_length=75)
@@ -51,6 +52,7 @@ class SignupForm(forms.ModelForm):
 			user.save()
 		return user
 
+
 class EditProfileForm(forms.ModelForm):
 	username = forms.CharField(widget=forms.HiddenInput, required=False)
 	email = forms.EmailField(label=_('Email Address'), max_length=75)
@@ -87,6 +89,7 @@ class EditProfileForm(forms.ModelForm):
 			user.save()
 		return user
 
+
 class EditPlayerForm(forms.ModelForm):
 	nickname = forms.CharField(max_length=30, required=False)
 	phone = forms.CharField(max_length=15, required=False)
@@ -101,6 +104,7 @@ class EditPlayerForm(forms.ModelForm):
 
 SKILL_CHOICES = [ (i,i) for i in range(0,11) ]
 
+
 class EditSkillsForm(forms.ModelForm):
 	athletic = forms.IntegerField(min_value=1, max_value=10, initial=1)
 	experience = forms.IntegerField(min_value=1, max_value=10, initial=1)
@@ -112,6 +116,7 @@ class EditSkillsForm(forms.ModelForm):
 	class Meta:
 		model = Skills
 		exclude = ('id', 'skills_report', 'skills_type', 'user', 'submitted_by', 'updated', 'spirit',)
+
 
 class PlayerSurveyForm(forms.ModelForm):
 	user_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
@@ -167,6 +172,7 @@ class EditTeamInformationForm(forms.ModelForm):
 		model = Team
 		fields = ('name', 'color',)
 
+
 class GameReportCommentForm(forms.ModelForm):
 	spirit = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SPIRIT_CHOICES))
 	comment = forms.CharField(required=False, widget=forms.Textarea(attrs={'placeholder': 'Praise, pickups, spririt issues, stoppages, field issues, etc...'}),)
@@ -174,6 +180,7 @@ class GameReportCommentForm(forms.ModelForm):
 	class Meta:
 		model = GameReportComment
 		fields = ('spirit', 'comment',)
+
 
 class GameReportScoreForm(forms.ModelForm):
 	id = forms.IntegerField(widget=forms.HiddenInput, required=False)
@@ -189,11 +196,12 @@ class GameReportScoreForm(forms.ModelForm):
 class RegistrationAttendanceForm(forms.ModelForm):
 	id = forms.IntegerField(widget=forms.HiddenInput, required=True)
 	attendance = forms.IntegerField(min_value=0, initial=0)
-	captain = forms.IntegerField(min_value=1, max_value=10, initial=1)
+	captain = forms.IntegerField(min_value=0, max_value=4, initial=0)
 
 	class Meta:
 		model = Registrations
 		fields = ('id', 'attendance', 'captain',)
+
 
 class ScheduleGenerationForm(forms.Form):
 	field_names = forms.ModelMultipleChoiceField(FieldNames.objects.all(), required=True, label=_('Fields'), help_text=_('You must pick enough fields to cover the number of games for an event. (Hold CTRL or Command to select more than one.)'))

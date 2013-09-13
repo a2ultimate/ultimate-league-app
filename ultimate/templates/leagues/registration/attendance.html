@@ -17,7 +17,7 @@
 	{{ attendance_form.id }}
 
 	<div id="attendance" class="slide_selector" data-slider-max="{{ league.get_num_game_events }}">
-		<label for="id_attendance">There {{ league.get_num_game_events|pluralize:"is,are" }} {{ league.get_num_game_events }} game{{ league.get_num_game_events|pluralize }}. How many games will you <strong>miss</strong>?</label>
+		<label for="id_attendance"><h3>There {{ league.get_num_game_events|pluralize:"is,are" }} {{ league.get_num_game_events }} game{{ league.get_num_game_events|pluralize }}. How many games will you miss?</h3></label>
 		{{ attendance_form.attendance }}
 		<div class="slider_errors">{{ attendance_form.attendance.errors }}</div>
 		<div class="slider"></div>
@@ -27,29 +27,24 @@
 		</div>
 	</div>
 
-	<p>
-		The Ann Arbor Ultimate captains' committee uses the following value to determine captains
-		for league. In general, the higher your value, the more willing you are to captain.
-	</p>
-
-	<ul>
-		<li>&nbsp;1 - I refuse to captain</li>
-		<li>&nbsp;3 - I will captain if absolutely necessary</li>
-		<li>&nbsp;5 - I am willing to captain</li>
-		<li>&nbsp;7 - I would like to captain</li>
-		<li>10 - I will be very sad if I don't get to captain</li>
-	</ul>
-
-	<div id="captain" class="slide_selector" data-slider-min="1">
-		<label for="id_captain">Would you like to captain a team?</label>
+	<div id="captain" class="slide_selector" data-slider-min="0" data-slider-max="4">
+		<label for="id_captain"><h3>Would you like to captain a team?</h3></label>
+		<p>
+			The Ann Arbor Ultimate captains' committee uses the following value to determine captains
+			for league. In general, the higher your value, the more willing you are to captain.
+		</p>
 		{{ attendance_form.captain }}
 		<div class="slider_errors">{{ attendance_form.captain.errors }}</div>
 		<div class="slider"></div>
-		<div class="slider_description">
-			<div class="left">I do not wish to captain a team.</div>
-			<div class="right">I definitely want to captain a team.</div>
-		</div>
 	</div>
+
+	<ul>
+		<li>0 - I refuse to captain.</li>
+		<li>1 - I will captain if absolutely necessary.</li>
+		<li>2 - I am willing to captain.</li>
+		<li>3 - I would like to captain.</li>
+		<li>4 - I will be very sad if I don't get to captain.</li>
+	</ul>
 
 	<p>
 		<input class="button button_success" type="submit" value="Submit" name="submit">
