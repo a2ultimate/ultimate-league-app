@@ -82,7 +82,7 @@ class RegistrationsAdmin(admin.ModelAdmin):
 	user_details.allow_tags = True
 
 	def captain_value(self, obj):
-		return u'%d' % (obj.captain)
+		return obj.captain
 	captain_value.admin_order_field = 'captain'
 
 
