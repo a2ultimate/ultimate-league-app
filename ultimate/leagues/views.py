@@ -74,6 +74,17 @@ def players(request, year, season, division):
 
 def teams(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
+	games = league.get_games()
+	sorted_games = sorted(games, key=lambda game: game.date)
+	next_game_date = None
+	today = date.today()
+
+	if today > league.reg_start_date:
+		for game in sorted_games:
+			next_game_date = game.date
+
+			if game.date > date.today():
+				break
 
 	if request.user.is_authenticated():
 		user_games = league.get_user_games(request.user)
@@ -81,7 +92,14 @@ def teams(request, year, season, division):
 		user_games = None
 
 	return render_to_response('leagues/teams.html',
-	{'league': league, 'field_names': league.get_field_names(), 'teams': Team.objects.filter(league=league), 'user_games': user_games},
+	{
+		'league': league,
+		'field_names': league.get_field_names(),
+		'games': games,
+		'next_game_date': next_game_date,
+		'teams': Team.objects.filter(league=league),
+		'user_games': user_games
+	},
 	context_instance=RequestContext(request))
 
 

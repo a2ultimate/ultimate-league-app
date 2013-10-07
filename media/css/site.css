@@ -1399,6 +1399,7 @@ ul.captain_division_team_links li {
 #schedule_table tbody tr.active td {
 	background-color: #BDC3C7;
 	color: #FFFFFF;
+	font-weight: 400;
 }
 
 #schedule_table td > a {

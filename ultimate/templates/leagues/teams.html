@@ -11,7 +11,7 @@
 
 	{% include "layout/league_tabs.html" with selected_tab="teams" %}
 
-	{% if league.get_games|length %}
+	{% if games|length %}
 		<table id="schedule_table" class="table table-striped">
 			<thead>
 				<tr>
@@ -34,9 +34,9 @@
 			</thead>
 
 			<tbody>
-				{% regroup league.get_games|dictsort:"field_name.field"|dictsort:"field_name.name"|dictsort:"date" by date as games_list %}
+				{% regroup games|dictsort:"field_name.field"|dictsort:"field_name.name"|dictsort:"date" by date as games_list %}
 				{% for date in games_list %}
-					<tr class="{% if date.grouper|time_until_days < 7 and date.grouper|time_until_days >= 0 %}active{% endif %}">
+					<tr class="{% if date.grouper == next_game_date %}active{% endif %}">
 						<th class="text_right">
 							<div>{{ date.grouper|date:"M" }}</div>
 							<div>{{ date.grouper|date:"jS" }}</div>
