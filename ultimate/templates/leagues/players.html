@@ -12,7 +12,7 @@
 
 	{% include "layout/league_tabs.html" with selected_tab="players" %}
 
-	{% if user_registration.is_complete and user_registration.league.baggage > 1 and not user_registration.waitlist and not user_registration.league.freeze_group_date|is_past_deadline %}
+	{% if user_registration.is_complete and user_registration.league.baggage > 1 and not user_registration.waitlist and not user_registration.league.waitlist_start_date|is_past_deadline %}
 		<p>To add someone to your group, you need to know their email address.</p>
 		<p>You may <a href="{% url league_group year=league.year season=league.season division=league.night %}">form a baggage group here</a>.</p>
 	{% endif %}

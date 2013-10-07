@@ -69,7 +69,6 @@ class League(models.Model):
 	num_games_per_week = models.IntegerField(default=1, help_text='number of games per week, used to calculate number of games for a league')
 	reg_start_date = models.DateField(help_text='date that registration process is open (not currently automated)')
 	waitlist_start_date = models.DateField(help_text='date that waitlist is started (regardless of number of registrations)')
-	freeze_group_date = models.DateField(help_text='date of last day to form groups')
 	league_start_date = models.DateField(help_text='date of first game')
 	league_end_date = models.DateField(help_text='date of last game')
 	paypal_cost = models.IntegerField()
@@ -333,8 +332,8 @@ class Registrations(models.Model):
 
 	@transaction.commit_on_success
 	def add_to_baggage_group(self, email):
-		if date.today() > self.league.freeze_group_date:
-			return 'You may not edit a baggage group after the group change deadline (' + self.league.freeze_group_date.strftime('%Y-%m-%d') + ').'
+		if date.today() > self.league.waitlist_start_date:
+			return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
 
 		if self.user.email == email:
 			return 'You cannot form a baggage group with yourself.'
@@ -380,8 +379,8 @@ class Registrations(models.Model):
 
 	@transaction.commit_manually
 	def leave_baggage_group(self):
-		if date.today() > self.league.freeze_group_date:
-			return 'You may not edit a baggage group after the group change deadline (' + self.league.freeze_group_date.strftime('%Y-%m-%d') + ').'
+		if date.today() > self.league.waitlist_start_date:
+			return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
 
 		try:
 			baggage = Baggage()
