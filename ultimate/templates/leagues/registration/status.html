@@ -49,10 +49,10 @@
 
 	<hr />
 
-	{% if not registration.is_complete and registration.league.paypal_cost > 0 and registration.league.check_cost > 0 %}
+	{% if not registration.is_complete and registration.league.paypal_price > 0 and registration.league.check_price > 0 %}
 		{% if registration.pay_type = 'check' %}
 			<p>
-				You're currently set to pay by check. You may send a check for <strong>${{ league.check_cost }}</strong> to:
+				You're currently set to pay by check. You may send a check for <strong>${{ league.check_price }}</strong> to:
 			</p>
 
 			{{ league.mail_check_address|safe }}
@@ -65,7 +65,7 @@
 		{% if registration.pay_type = 'paypal' %}
 			{% if not registration.paypal_complete %}
 				<p>
-					Click the "Checkout using PayPal" button to pay <strong>${{ league.paypal_cost }}</strong>.
+					Click the "Checkout using PayPal" button to pay <strong>${{ league.paypal_price }}</strong>.
 				</p>
 
 				<p>

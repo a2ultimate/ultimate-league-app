@@ -1,7 +1,7 @@
 {% load league_registrations %}
 {% load math %}
 
-{% if league.check_cost == 0 and league.paypal_cost == 0 %}
+{% if league.check_price == 0 and league.paypal_price == 0 %}
 
 	<div class="progress_bar progress_bar_labeled">
 		<div class="progress success" style="width: {{ registration.get_progress|add:"25"|limit_ceil:"100" }}%;"></div>

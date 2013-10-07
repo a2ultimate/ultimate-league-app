@@ -186,7 +186,7 @@ def registration(request, year, season, division, section=None):
 					registration.baggage_id = baggage.id
 					registration.save()
 
-				if league.check_cost == 0 or league.paypal_cost == 0:
+				if league.check_price == 0 or league.paypal_price == 0:
 					registration.registered = datetime.now()
 					registration.save()
 
@@ -234,7 +234,7 @@ def registration(request, year, season, division, section=None):
 			{'attendance_form': attendance_form, 'league': league, 'registration': registration},
 			context_instance=RequestContext(request))
 
-	if league.check_cost > 0 or league.paypal_cost > 0:
+	if league.check_price > 0 or league.paypal_price > 0:
 
 		if section == 'pay_type' or not registration.pay_type or (registration.pay_type != 'check' and registration.pay_type != 'paypal'):
 			return render_to_response('leagues/registration/payment.html',
@@ -249,7 +249,7 @@ def registration(request, year, season, division, section=None):
 			baseUrl = request.build_absolute_uri(getattr(settings, 'FORCE_SCRIPT_NAME', '/')).replace(request.path_info.replace(' ', '%20'), '')
 
 			paypal_dict = {
-				'amount': league.paypal_cost,
+				'amount': league.paypal_price,
 				'cancel_return': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration/',
 				'invoice': registration.paypal_invoice_id,
 				'item_name': str(league.season).capitalize() + ' League ' + str(league.year) + ' - ' + str(league.night).capitalize(),

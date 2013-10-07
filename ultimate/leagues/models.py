@@ -69,11 +69,14 @@ class League(models.Model):
 	times = models.TextField(help_text='start to end time, e.g. 6:00-8:00pm')
 	num_games_per_week = models.IntegerField(default=1, help_text='number of games per week, used to calculate number of games for a league')
 	reg_start_date = models.DateField(help_text='date that registration process is open (not currently automated)')
+	price_increase_start_date = models.DateField(help_text='date when cost increases for league')
 	waitlist_start_date = models.DateField(help_text='date that waitlist is started (regardless of number of registrations)')
 	league_start_date = models.DateField(help_text='date of first game')
 	league_end_date = models.DateField(help_text='date of last game')
+	checks_accepted = models.BooleanField()
 	paypal_cost = models.IntegerField()
-	check_cost = models.IntegerField()
+	check_cost_increase = models.IntegerField()
+	late_cost_increase = models.IntegerField()
 	max_players = models.IntegerField(help_text='max players for league, extra registrations will be placed on waitlist')
 	state = models.CharField(max_length=32, choices=LEAGUE_STATE_CHOICES, help_text='''
 		Archived - not visible to anyone<br/>
@@ -105,6 +108,20 @@ class League(models.Model):
 	@property
 	def gender_title(self):
 		return ('%s' % (self.gender)).replace('_', ' ')
+
+	@property
+	def paypal_price(self):
+		if date.today() >= self.price_increase_start_date:
+			return self.paypal_cost + self.late_cost_increase
+
+		return self.paypal_cost
+
+	@property
+	def check_price(self):
+		if date.today() >= self.price_increase_start_date:
+			return self.paypal_cost + self.check_cost_increase + self.late_cost_increase
+
+		return self.paypal_cost + self.check_cost_increase
 
 	def get_fields(self):
 		return FieldLeague.objects.filter(league=self)
@@ -290,7 +307,7 @@ class Registrations(models.Model):
 				if self.attendance != None and self.captain != None:
 					status = 'Attendance Completed'
 
-					if self.league.check_cost == 0 and self.league.paypal_cost == 0:
+					if self.league.check_price == 0 and self.league.paypal_price == 0:
 						status = 'Registration Completed'
 
 					else:
@@ -308,7 +325,7 @@ class Registrations(models.Model):
 		percentage = 0
 		interval = 20
 
-		if self.league.check_cost == 0 and self.league.paypal_cost == 0:
+		if self.league.check_price == 0 and self.league.paypal_price == 0:
 			interval = 25
 
 		if self.conduct_complete:
@@ -318,7 +335,7 @@ class Registrations(models.Model):
 				if self.attendance != None and self.captain != None:
 					percentage += interval
 
-					if self.league.check_cost == 0 and self.league.paypal_cost == 0:
+					if self.league.check_price == 0 and self.league.paypal_price == 0:
 						percentage += interval
 
 					elif self.pay_type:
@@ -333,7 +350,7 @@ class Registrations(models.Model):
 			self.waiver_complete and \
 			self.attendance != None and \
 			self.captain != None and \
-			((self.league.check_cost == 0 and self.league.paypal_cost == 0) or \
+			((self.league.check_price == 0 and self.league.paypal_price == 0) or \
 			(self.pay_type and 	(self.check_complete or self.paypal_complete))) and \
 			not self.refunded)
 
