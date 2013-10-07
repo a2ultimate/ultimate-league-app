@@ -168,7 +168,7 @@ class League(models.Model):
 		return self.state in ['active', 'planning'] and date.today() >= self.waitlist_start_date
 
 	def __unicode__(self):
-		return '%s %d %s' % (self.season, self.year, self.night)
+		return ('%s %d %s' % (self.season, self.year, self.night)).replace('_', ' ')
 
 
 class FieldLeague(models.Model):
