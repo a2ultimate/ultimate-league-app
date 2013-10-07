@@ -1,4 +1,5 @@
 {% extends "layout/layout_user.html" %}
+
 {% load games %}
 {% load leagues %}
 {% load math %}
@@ -10,28 +11,30 @@
 	{% if leagues %}
 		<h1>League Results</h1>
 
-		<ul class="league_list">
-			{% regroup leagues by year as league_years %}
+		<ul>
+			{% regroup leagues by season_year as season_years %}
 
-			{% for league_list in league_years %}
-				{% regroup league_list.list by season as league_seasons %}
+			{% for season_year in season_years %}
+				<li>
+					{% with league=season_year.list|first %}
+						<h3>{{ season_year.grouper|smart_title }}</h3>
+					{% endwith %}
 
-				{% for league in league_seasons %}
-					<li>
-						<h3>{{ league.grouper|capfirst }} {{ league_list.grouper }}</h3>
-						<ul>
-							{% for night in league.list|dictsort:'league_start_date' %}
-								<li>
-									<a href="{% url leagueresults_league year=league_list.grouper season=league.grouper division=night.night %}">{{ night.night|capfirst }}</a>
-								</li>
-							{% endfor %}
-						</ul>
-					</li>
-				{% endfor %}
+					<ul>
+						{% for league in season_year.list|dictsort:'league_start_date' %}
+							<li>
+								<a href="{% url leagueresults_league year=league.year season=league.season division=league.night %}">
+									{{ league.night|smart_title }}
+								</a>
+							</li>
+						{% endfor %}
+					</ul>
+				</li>
 			{% endfor %}
 		</ul>
 	{% else %}
-		<h1>{{ league.season|capfirst }} League {{ league.year }} {{ league.night|capfirst }} Results</h1>
+
+		{% include "layout/league_header.html" with league=league header="Results" only %}
 
 		{% if league.get_games|length %}
 			<table id="schedule_table" class="table table-striped">

@@ -1,25 +1,24 @@
 {% extends "layout/layout_user.html" %}
 
+{% load utility %}
+
 {% block content %}
 
-<h1>
-	{{ league.season|title }} League {{ league.year }} {{ league.night|title }} Division ({{ league.gender|title }})
-	{% if league.state != 'active' %}<em>({{ league.state|capfirst }})</em>{% endif %}
-</h1>
+	{% include "layout/league_header.html" with league=league only %}
 
-{% include "layout/league_tabs.html" with selected_tab="registration" %}
+	{% include "layout/league_tabs.html" with selected_tab="registration" %}
 
-{% include "leagues/registration/_progress.html" %}
+	{% include "leagues/registration/_progress.html" %}
 
-<h2>Waiver / Release</h2>
+	<h2>Waiver / Release</h2>
 
-<p>I understand that Ultimate and other flying disc sports are strenuous physical activities which may put me at risk of bodily injury or harm.</p>
-<p>I hearby release the Ann Arbor Ultimate Summer League and its members and officers from any and all liability for any injury I may sustain while participating in or observing any AAUSL event or activity.</p>
-<p>If I am under 18 years of age, I certify that my parent/legal guardian has read and accepted this waiver.</p>
+	<p>I understand that Ultimate and other flying disc sports are strenuous physical activities which may put me at risk of bodily injury or harm.</p>
+	<p>I hearby release the Ann Arbor Ultimate Summer League and its members and officers from any and all liability for any injury I may sustain while participating in or observing any AAUSL event or activity.</p>
+	<p>If I am under 18 years of age, I certify that my parent/legal guardian has read and accepted this waiver.</p>
 
-<form method="post">{% csrf_token %}
-	<input class="button button_success" type="submit" value="Accept" name="waiver_accept" />
-	<input class="button button_error" type="submit" value="Decline" name="waiver_decline" />
-</form>
+	<form method="post">{% csrf_token %}
+		<input class="button button_success" type="submit" value="Accept" name="waiver_accept" />
+		<input class="button button_error" type="submit" value="Decline" name="waiver_decline" />
+	</form>
 
 {% endblock %}

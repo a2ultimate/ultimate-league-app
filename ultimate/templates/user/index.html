@@ -1,8 +1,10 @@
 {% extends "layout/layout_user.html" %}
+
 {% load leagues %}
 {% load league_registrations %}
 {% load teams %}
 {% load user_roles %}
+{% load utility %}
 
 {% block content %}
 	<h1>My Account</h1>
@@ -128,9 +130,9 @@
 						<tr>
 							<td>
 								<a href="{% url league_registration year=registration.league.year season=registration.league.season division=registration.league.night %}">
-									{{ registration.league.season|capfirst }}
+									{{ registration.league.season_title|smart_title }}
 									{{ registration.league.year }}
-									{{ registration.league.night|capfirst }}
+									{{ registration.league.night|smart_title }}
 								</a>
 							</td>
 							<td>{{ registration.get_progress }}%</td>

@@ -1,4 +1,5 @@
 {% load utility %}
+
 {% include "layout/header.html" %}
 <div id="content_container">
 	<div id="sidebar">
@@ -34,7 +35,7 @@
 								<li>
 									{% with league=season_year.list|first %}
 										<a class="league_name" href="{% url league_index year=league.year season=league.season %}">
-											{{ season_year.grouper|title }}
+											{{ season_year.grouper|smart_title }}
 										</a>
 									{% endwith %}
 

@@ -1,19 +1,23 @@
 {% extends "layout/layout_user.html" %}
 
+{% load utility %}
+
 {% block content %}
 	<h1>
-		{{ season|capfirst }} League {{ year }}
+		{{ season_title|smart_title }} League {{ year }}
 	</h1>
 
 	<p>
-		Ann Arbor Ultimate is very excited to present {{ season|capfirst }} League {{ year }}.
+		Ann Arbor Ultimate is very excited to present {{ season_title|smart_title }} League {{ year }}.
 		There are <strong>{{ leagues|length }}</strong> divisions.
 	</p>
 
 	{% for league in leagues %}
 		<h2 class="division_title">
-			{{ league.night|title }} Division ({{ league.gender|capfirst }})
-			{% if league.state != 'active' %}<em>({{ league.state|capfirst }})</em>{% endif %}
+			{{ league.night_title|smart_title }} Division ({{ league.gender_title|smart_title }})
+			{% if league.state != 'active' %}
+				<em>({{ league.state|capfirst }})</em>
+			{% endif %}
 		</h2>
 		{% if league.gender_note %}
 			{{ league.gender_note|safe }}

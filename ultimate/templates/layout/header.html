@@ -1,3 +1,5 @@
+{% load utility %}
+
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -61,7 +63,7 @@
 						{% with league=season_year.list|first %}
 							<li>
 								<a href="{% url league_index year=league.year season=league.season %}">
-									{{ season_year.grouper|title }}
+									{{ season_year.grouper|smart_title }}
 								</a>
 							</li>
 						{% endwith %}

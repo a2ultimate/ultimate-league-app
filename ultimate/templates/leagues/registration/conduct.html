@@ -1,30 +1,29 @@
 {% extends "layout/layout_user.html" %}
 
+{% load utility %}
+
 {% block content %}
 
-<h1>
-	{{ league.season|title }} League {{ league.year }} {{ league.night|title }} Division ({{ league.gender|title }})
-	{% if league.state != 'active' %}<em>({{ league.state|capfirst }})</em>{% endif %}
-</h1>
+	{% include "layout/league_header.html" with league=league only %}
 
-{% include "layout/league_tabs.html" with selected_tab="registration" %}
+	{% include "layout/league_tabs.html" with selected_tab="registration" %}
 
-{% include "leagues/registration/_progress.html" %}
+	{% include "leagues/registration/_progress.html" %}
 
-<h2>Player Code of Conduct</h2>
-<p>As a player I agree:
-	<ul class="text_information">
-		<li>To uphold the spirit of the game and to treat other players with respect.</li>
-		<li>To never engage in physical violence against another player in any form for any reason (including in retaliation for the same).</li>
-		<li>To never enact verbal abuse against another player, in any form, for any reason.</li>
-	</ul>
-</p>
+	<h2>Player Code of Conduct</h2>
+	<p>As a player I agree:
+		<ul class="text_information">
+			<li>To uphold the spirit of the game and to treat other players with respect.</li>
+			<li>To never engage in physical violence against another player in any form for any reason (including in retaliation for the same).</li>
+			<li>To never enact verbal abuse against another player, in any form, for any reason.</li>
+		</ul>
+	</p>
 
-<p>I acknowledge that any violation of this agreement will result in my suspension from the league, possibly permanently, per the jurisdiction of the spirit committee.</p>
+	<p>I acknowledge that any violation of this agreement will result in my suspension from the league, possibly permanently, per the jurisdiction of the spirit committee.</p>
 
-<form method="post">{% csrf_token %}
-	<input class="button button_success"type="submit" value="Accept" name="conduct_accept">
-	<input class="button button_error" type="submit" value="Decline" name="conduct_decline">
-</form>
+	<form method="post">{% csrf_token %}
+		<input class="button button_success"type="submit" value="Accept" name="conduct_accept">
+		<input class="button button_error" type="submit" value="Decline" name="conduct_decline">
+	</form>
 
 {% endblock %}
