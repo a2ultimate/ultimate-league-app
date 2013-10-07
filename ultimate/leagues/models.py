@@ -7,7 +7,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from pybb.models import *
 
 from datetime import date, datetime
-import re
 
 
 class Field(models.Model):
@@ -423,29 +422,29 @@ class Team(models.Model):
 
 	@property
 	def css_background_color(self):
-		if (re.search(r'black', self.color, re.I)):
+		if 'black' in self.color.lower():
 			return '#2C3E50'
-		if (re.search(r'blue', self.color, re.I)):
+		if 'blue' in self.color.lower():
 			return '#3498DB'
-		if (re.search(r'green', self.color, re.I)):
+		if 'green' in self.color.lower():
 			return '#2ECC71'
-		if (re.search(r'orange', self.color, re.I)):
+		if 'orange' in self.color.lower():
 			return '#E67E22'
-		if (re.search(r'pink', self.color, re.I)):
+		if 'pink' in self.color.lower():
 			return '#EE6FA0'
-		if (re.search(r'purple', self.color, re.I)):
+		if 'purple' in self.color.lower():
 			return '#9B59B6'
-		if (re.search(r'red', self.color, re.I)):
+		if 'red' in self.color.lower():
 			return '#E74C3C'
-		if (re.search(r'white', self.color, re.I)):
+		if 'white' in self.color.lower():
 			return '#FFFFFF'
-		if (re.search(r'yellow', self.color, re.I)):
+		if 'yellow' in self.color.lower():
 			return '#F1C40F'
 		return '#95A5A6'
 
 	@property
 	def css_text_color(self):
-		if (re.search(r'white', self.color, re.I)):
+		if 'white' in self.color.lower():
 			return '#2C3E50'
 		return '#FFFFFF'
 
