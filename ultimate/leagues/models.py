@@ -91,8 +91,20 @@ class League(models.Model):
 		db_table = u'league'
 
 	@property
+	def night_title(self):
+		return ('%s' % (self.night)).replace('_', ' ')
+
+	@property
+	def season_title(self):
+		return ('%s' % (self.season)).replace('_', ' ')
+
+	@property
 	def season_year(self):
 		return ('%s %d' % (self.season, self.year)).replace('_', ' ')
+
+	@property
+	def gender_title(self):
+		return ('%s' % (self.gender)).replace('_', ' ')
 
 	def get_fields(self):
 		return FieldLeague.objects.filter(league=self)
