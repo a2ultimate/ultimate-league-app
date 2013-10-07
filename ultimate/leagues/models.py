@@ -16,6 +16,7 @@ class Field(models.Model):
 	address = models.TextField()
 	driving_link = models.TextField()
 	note = models.TextField()
+
 	class Meta:
 		db_table = u'field'
 		ordering = ['name']
@@ -59,10 +60,10 @@ class League(models.Model):
 	)
 
 	id = models.AutoField(primary_key=True)
-	night = models.CharField(max_length=96, help_text='lower case, no special characters, e.g. "sunday", "tuesday and thursday", "end of season tournament"')
-	season = models.CharField(max_length=96, help_text='lower case, no special characters, e.g. "late fall", "winter"')
+	night = models.CharField(max_length=32, help_text='lower case, no special characters, e.g. "sunday", "tuesday and thursday", "end of season tournament"')
+	season = models.CharField(max_length=32, help_text='lower case, no special characters, e.g. "late fall", "winter"')
 	year = models.IntegerField(help_text='four digit year, e.g. 2013')
-	gender = models.CharField(max_length=96, choices=LEAGUE_GENDER_CHOICES)
+	gender = models.CharField(max_length=32, choices=LEAGUE_GENDER_CHOICES)
 	gender_note = models.TextField(help_text='gender or other notes for league, e.g. 50/50 league, showcase league notes')
 	baggage = models.IntegerField(help_text='max baggage group size')
 	times = models.TextField(help_text='start to end time, e.g. 6:00-8:00pm')
@@ -74,16 +75,16 @@ class League(models.Model):
 	paypal_cost = models.IntegerField()
 	check_cost = models.IntegerField()
 	max_players = models.IntegerField(help_text='max players for league, extra registrations will be placed on waitlist')
-	state = models.CharField(max_length=96, choices=LEAGUE_STATE_CHOICES, help_text='''
+	state = models.CharField(max_length=32, choices=LEAGUE_STATE_CHOICES, help_text='''
 		Archived - not visible to anyone<br/>
 		Planning - only visible to junta<br/>
 		Active - visible to everyone''')
 	field = models.ManyToManyField(Field, db_table='field_league', help_text='''Select the fields these games will be played at, use
 		the green "+" icon if we're playing at a new field.''')
 	details = models.TextField(help_text='details page text, use HTML')
-	league_email = models.CharField(max_length=192, blank=True, help_text='email address for entire season')
-	league_captains_email = models.CharField(max_length=192, blank=True, help_text='email address for league captains')
-	division_email = models.CharField(max_length=192, blank=True, help_text='email address for just this league')
+	league_email = models.CharField(max_length=64, blank=True, help_text='email address for entire season')
+	league_captains_email = models.CharField(max_length=64, blank=True, help_text='email address for league captains')
+	division_email = models.CharField(max_length=64, blank=True, help_text='email address for just this league')
 	mail_check_address = models.TextField(help_text='treasurer mailing address')
 
 	class Meta:
@@ -94,7 +95,7 @@ class League(models.Model):
 		return ('%s %d' % (self.season, self.year)).replace('_', ' ')
 
 	def get_fields(self):
-		return self.fieldleague_set.all()
+		return FieldLeague.objects.filter(league=self)
 
 	def get_field_names(self):
 		return FieldNames.objects.filter(field__fieldleague__league=self, game__league=self).distinct().order_by('field__name', 'name')
@@ -106,7 +107,7 @@ class League(models.Model):
 		return Registrations.objects.filter(league=self).order_by('registered')
 
 	def get_teams(self):
-		return self.team_set.all()
+		return Team.objects.filter(league=self)
 
 	def get_all_registrations(self):
 		return Registrations.objects.filter(league=self)
@@ -133,7 +134,7 @@ class League(models.Model):
 		return [r for r in registrations if r.is_complete() and not r.refunded]
 
 	def get_games(self):
-		return self.game_set.all().order_by('field_name__field__name', 'field_name__name')
+		return Game.objects.filter(league=self).order_by('field_name__field__name', 'field_name__name', 'date')
 
 	def get_user_games(self, user):
 		return Game.objects.filter(league=self, gameteams__team__teammember__user=user).order_by('date')
