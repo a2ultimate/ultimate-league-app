@@ -135,6 +135,12 @@ REGISTER_URL = '/a2ultimate/accounts/register/'
 # Paypal Info
 PAYPAL_RECEIVER_EMAIL = ''
 PAYPAL_TEST = True			# Testing mode on
+PAYPAL_IMAGE = MEDIA_URL + 'images/paypal_checkout.png'
+PAYPAL_SUBSCRIPTION_IMAGE = MEDIA_URL + 'images/paypal_checkout.png'
+PAYPAL_DONATION_IMAGE = MEDIA_URL + 'images/paypal_checkout.png'
+PAYPAL_SANDBOX_IMAGE = MEDIA_URL + 'images/paypal_checkout.png'
+PAYPAL_SUBSCRIPTION_SANDBOX_IMAGE = MEDIA_URL + 'images/paypal_checkout.png'
+PAYPAL_DONATION_SANDBOX_IMAGE = MEDIA_URL + 'images/paypal_checkout.png'
 
 # PYBB - http://www.pybbm.org/
 PYBB_DEFAULT_TITLE = 'A2Ultimate Forums'
