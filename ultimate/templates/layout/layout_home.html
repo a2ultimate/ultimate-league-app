@@ -1,3 +1,4 @@
+{% load utility %}
 {% include "layout/header.html" %}
 <div id="content_container">
 	<div id="sidebar">
@@ -26,26 +27,31 @@
 				<li>
 					Active Leagues
 					<ul class="league_list">
-						{% regroup menu_leagues by year as league_years %}
+						{% regroup menu_leagues by season_year as season_years %}
 
-						{% for league_list in league_years %}
-							{% regroup league_list.list by season as league_seasons %}
+						{% for season_year in season_years %}
 
-							{% for league in league_seasons %}
 								<li>
-									<a class="league_name" href="{% url league_index year=league_list.grouper season=league.grouper %}">{{ league.grouper|capfirst }} {{ league_list.grouper }}</a>
+									{% with league=season_year.list|first %}
+										<a class="league_name" href="{% url league_index year=league.year season=league.season %}">
+											{{ season_year.grouper|title }}
+										</a>
+									{% endwith %}
+
 									<ul>
-										{% for night in league.list %}
+										{% for league in season_year.list %}
 											<li>
-												<a href="{% url league_summary year=league_list.grouper season=league.grouper division=night.night %}">
-													{{ night.night|capfirst }}
-													{% if night.state != 'active' %}<em>({{ night.state|capfirst }})</em>{% endif %}
+												<a href="{% url league_summary year=league.year season=league.season division=league.night %}">
+													{{ league.night|smart_title }}
+
+													{% if league.state != 'active' %}
+														<em>({{ league.state|capfirst }})</em>
+													{% endif %}
 												</a>
 											</li>
 										{% endfor %}
 									</ul>
 								</li>
-							{% endfor %}
 						{% endfor %}
 					</ul>
 				</li>

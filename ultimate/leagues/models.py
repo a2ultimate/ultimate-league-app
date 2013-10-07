@@ -91,6 +91,10 @@ class League(models.Model):
 	class Meta:
 		db_table = u'league'
 
+	@property
+	def season_year(self):
+		return ('%s %d' % (self.season, self.year)).replace('_', ' ')
+
 	def get_fields(self):
 		return self.fieldleague_set.all()
 
