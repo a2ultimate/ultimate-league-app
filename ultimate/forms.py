@@ -102,7 +102,8 @@ class EditPlayerForm(forms.ModelForm):
 		model = Player
 		exclude = ('id', 'groups', 'user', 'highest_level', 'post_count',)
 
-SKILL_CHOICES = [ (i,i) for i in range(0,11) ]
+
+
 
 
 class EditSkillsForm(forms.ModelForm):
@@ -119,6 +120,8 @@ class EditSkillsForm(forms.ModelForm):
 
 
 class PlayerSurveyForm(forms.ModelForm):
+	SKILL_CHOICES = [ (i,i) for i in range(0,11) ]
+
 	user_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
 	athletic = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
 	forehand = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))

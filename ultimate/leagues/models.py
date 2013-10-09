@@ -129,38 +129,8 @@ class League(models.Model):
 	def get_field_names(self):
 		return FieldNames.objects.filter(field__fieldleague__league=self, game__league=self).distinct().order_by('field__name', 'name')
 
-	def get_league_registrations_for_user(self, user):
-		return self.registrations_set.filter(user=user)
-
-	def get_registrations(self):
-		return Registrations.objects.filter(league=self).order_by('registered')
-
 	def get_teams(self):
 		return Team.objects.filter(league=self)
-
-	def get_all_registrations(self):
-		return Registrations.objects.filter(league=self)
-
-	def get_complete_registrations(self):
-		registrations = Registrations.objects.filter(league=self).order_by('registered')
-		return [r for r in registrations if r.is_complete() and not r.waitlist and not r.refunded]
-
-	def get_waitlist_registrations(self):
-		registrations = Registrations.objects.filter(league=self).order_by('registered')
-		return [r for r in registrations if r.is_complete() and r.waitlist and not r.refunded]
-
-	def get_incomplete_registrations(self):
-		registrations = Registrations.objects.filter(league=self).order_by('registered')
-		return [r for r in registrations if not r.is_complete() and not r.refunded]
-
-	def get_refunded_registrations(self):
-		registrations = Registrations.objects.filter(league=self).order_by('registered')
-		return [r for r in registrations if r.is_complete() and r.refunded]
-
-	def get_unassigned_registrations(self):
-		team_member_users = [t.user for t in TeamMember.objects.filter(team__league=self)]
-		registrations = Registrations.objects.filter(league=self).exclude(user__in=team_member_users)
-		return [r for r in registrations if r.is_complete() and not r.refunded]
 
 	def get_games(self):
 		return Game.objects.filter(league=self).order_by('field_name__field__name', 'field_name__name', 'date')
@@ -186,7 +156,34 @@ class League(models.Model):
 		return TeamMember.objects.filter(team__league=self, captain=1).order_by('team')
 
 	def player_survey_complete_for_user(self, user):
-		return bool(self.team_set.get(teammember__user=user).player_survey_complete(user))
+		return bool(Team.objects.get(league=self, teammember__user=user).player_survey_complete(user))
+
+	def get_registrations(self):
+		return Registrations.objects.filter(league=self).order_by('registered')
+
+	def get_registrations_for_user(self, user):
+		return Registrations.objects.filter(league=self, user=user)
+
+	def get_complete_registrations(self):
+		registrations = Registrations.objects.filter(league=self).order_by('registered')
+		return [r for r in registrations if r.is_complete() and not r.waitlist and not r.refunded]
+
+	def get_waitlist_registrations(self):
+		registrations = Registrations.objects.filter(league=self).order_by('registered')
+		return [r for r in registrations if r.is_complete() and r.waitlist and not r.refunded]
+
+	def get_incomplete_registrations(self):
+		registrations = Registrations.objects.filter(league=self).order_by('registered')
+		return [r for r in registrations if not r.is_complete() and not r.refunded]
+
+	def get_refunded_registrations(self):
+		registrations = Registrations.objects.filter(league=self).order_by('registered')
+		return [r for r in registrations if r.is_complete() and r.refunded]
+
+	def get_unassigned_registrations(self):
+		team_member_users = [t.user for t in TeamMember.objects.filter(team__league=self)]
+		registrations = Registrations.objects.filter(league=self).exclude(user__in=team_member_users)
+		return [r for r in registrations if r.is_complete() and not r.refunded]
 
 	@property
 	def is_accepting_registrations(self):
@@ -194,7 +191,24 @@ class League(models.Model):
 
 	@property
 	def is_accepting_waitlist(self):
+		# max players?
 		return self.state in ['active', 'planning'] and date.today() >= self.waitlist_start_date
+
+	def registration_is_active(self, user=None):
+		if user and (user.is_superuser or user.groups.filter(name='junta').exists()) and self.state not in ['active', 'planning']:
+			return False
+		elif self.state not in ['active']:
+			return False
+
+		return True
+
+	def waitlist_is_active(self, user=None):
+		if user and (user.is_superuser or user.groups.filter(name='junta').exists()) and self.state not in ['active', 'planning']:
+			return False
+		elif self.state not in ['active']:
+			return False
+
+		return (date.today() >= self.waitlist_start_date) or (len(self.get_complete_registrations()) >= self.max_players)
 
 	def __unicode__(self):
 		return ('%s %d %s' % (self.season, self.year, self.night)).replace('_', ' ')
@@ -654,10 +668,6 @@ class GameTeams(models.Model):
 
 	class Meta:
 		db_table = u'game_teams'
-
-SKILL_CHOICES = [
-	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-]
 
 
 class SkillsType(models.Model):

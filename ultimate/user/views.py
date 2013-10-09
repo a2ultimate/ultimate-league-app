@@ -34,7 +34,7 @@ def index(request):
 
 	registrations = []
 	for league in current_leagues:
-		for registration in league.get_league_registrations_for_user(request.user):
+		for registration in league.get_registrations_for_user(request.user):
 			registrations.append(registration)
 
 	return render_to_response('user/index.html',

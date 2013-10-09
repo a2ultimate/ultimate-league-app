@@ -5,7 +5,7 @@ register = template.Library()
 
 @register.filter
 def league_registrations(league, user):
-	return league.get_league_registrations_for_user(user)
+	return league.get_registrations_for_user(user)
 
 
 @register.filter
