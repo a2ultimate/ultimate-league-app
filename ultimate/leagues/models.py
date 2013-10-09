@@ -73,10 +73,10 @@ class League(models.Model):
 	waitlist_start_date = models.DateField(help_text='date that waitlist is started (regardless of number of registrations)')
 	league_start_date = models.DateField(help_text='date of first game')
 	league_end_date = models.DateField(help_text='date of last game')
-	checks_accepted = models.BooleanField()
-	paypal_cost = models.IntegerField()
-	check_cost_increase = models.IntegerField()
-	late_cost_increase = models.IntegerField()
+	checks_accepted = models.BooleanField(default=True)
+	paypal_cost = models.IntegerField(help_text='base cost of league if paying by PayPal')
+	check_cost_increase = models.IntegerField(help_text='amount to be added to paypal_cost if paying by check')
+	late_cost_increase = models.IntegerField(help_text='amount to be added to paypal_cost if paying after price_increase_start_date')
 	max_players = models.IntegerField(help_text='max players for league, extra registrations will be placed on waitlist')
 	state = models.CharField(max_length=32, choices=LEAGUE_STATE_CHOICES, help_text='''
 		Archived - not visible to anyone<br/>
