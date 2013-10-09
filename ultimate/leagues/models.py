@@ -46,17 +46,14 @@ class League(models.Model):
 	)
 
 	LEAGUE_GENDER_CHOICES = (
-		('coed',			'Normal co-ed gender matched'),
-		('50/50',			'50/50 league'),
-		('hat',				'Hat tourney'),
-		('hat_free',		'Hat tourney (no pay, just add to registration list)'),
-		('hat_nocap',		'Hat tourney (no captains)'),
-		('bonanza_free',	'Clinics and pickup (no pay)'),
-		('competitive',		'Competitive league'),
-		('showcase',		'Showcase league'),
-		('party',			'No group-limits party night'),
-		('open',			'Open, no gender match'),
-		('women',			'Women only'),
+		('50/50',		'50/50 League'),
+		('coed',		'Normal Co-Ed Gender Matched'),
+		('competitive',	'Competitive League'),
+		('event',		'Special Event'),
+		('hat',			'Hat Tourney'),
+		('open',		'Open, No Gender Match'),
+		('showcase',	'Showcase League'),
+		('women',		'Women Only'),
 	)
 
 	id = models.AutoField(primary_key=True)
