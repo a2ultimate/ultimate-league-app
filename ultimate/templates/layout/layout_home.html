@@ -45,7 +45,7 @@
 												<a href="{% url league_summary year=league.year season=league.season division=league.night %}">
 													{{ league.night|smart_title }}
 
-													{% if league.state != 'active' %}
+													{% if league.state == 'preview' %}
 														<em>({{ league.state|capfirst }})</em>
 													{% endif %}
 												</a>

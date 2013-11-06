@@ -1,5 +1,6 @@
 {% extends "layout/layout_user.html" %}
 
+{% load leagues %}
 {% load utility %}
 
 {% block content %}
@@ -85,10 +86,10 @@
 			</td>
 		</tr>
 
-		{% if league.is_accepting_registrations %}
+		{% if league|is_open:user %}
 			<tr>
 				<td colspan="3">
-					{% if league.is_accepting_waitlist %}
+					{% if league|is_waitlist:user %}
 						<a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register for the Waitlist</a>
 					{% else %}
 						<a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register Now!</a>

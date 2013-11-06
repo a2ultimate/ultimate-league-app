@@ -1,5 +1,7 @@
+{% load leagues %}
+
 <ul class="nav_tabs">
-	{% if league.is_accepting_registrations or selected_tab == 'registration' %}
+	{% if league|is_open:user or selected_tab == 'registration' %}
 		<li class="{% if selected_tab == 'registration' %}selected{% endif %}"><a href="{% url league_registration year=league.year season=league.season division=league.night %}">Registration</a></li>
 	{% endif %}
 

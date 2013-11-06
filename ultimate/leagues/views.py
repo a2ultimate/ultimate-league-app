@@ -3,10 +3,10 @@ from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.views.decorators.csrf import csrf_exempt
 
 from ultimate.leagues.models import *
 
@@ -20,9 +20,9 @@ def index(request, year, season):
 	if request.user.is_superuser:
 		leagues = League.objects.filter(year=year, season=season).order_by('league_start_date')
 	elif request.user.groups.filter(name='junta').exists():
-		leagues = League.objects.filter(year=year, season=season, state__in=['active', 'planning']).order_by('league_start_date')
+		leagues = League.objects.filter(year=year, season=season, state__in=['closed', 'open', 'preview']).order_by('league_start_date')
 	else:
-		leagues = League.objects.filter(year=year, season=season, state__in=['active']).order_by('league_start_date')
+		leagues = League.objects.filter(year=year, season=season, state__in=['closed', 'open']).order_by('league_start_date')
 
 	return render_to_response('leagues/index.html',
 		{'leagues': leagues, 'year': year, 'season': season},
@@ -138,7 +138,7 @@ def group(request, year, season, division):
 def registration(request, year, season, division, section=None):
 	league = get_object_or_404(League, year=year, season=season, night=division)
 
-	if league.state not in ['active'] and not request.user.is_superuser and not request.user.has_perm('junta'):
+	if not league.is_open(request.user):
 		raise Http403
 
 	registration, created = Registrations.objects.get_or_create(user=request.user, league=league)

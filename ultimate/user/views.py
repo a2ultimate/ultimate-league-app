@@ -1,15 +1,11 @@
 from datetime import date, datetime
 
-from django import forms
-from django.contrib import auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.forms.models import inlineformset_factory
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import get_object_or_404, render_to_response
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 from ultimate.leagues.models import *
@@ -18,7 +14,8 @@ from ultimate.forms import *
 
 @login_required
 def index(request):
-	current_leagues = League.objects.filter(state='active').order_by('-league_start_date')
+	leagues = League.objects.filter(state__in=['closed', 'open', 'preview']).order_by('league_start_date')
+	leagues = [r for r in leagues if r.is_visible(request.user)]
 
 	# date.today() OR something like date(2010, 4, 13)
 	next_games = Game.objects.filter(Q(date__gte=date.today()) & Q(Q(gameteams__team__teammember__user=request.user) | Q(gameteams__team__teammember__user=request.user))).order_by('date')[0:2]
@@ -33,21 +30,25 @@ def index(request):
 		following_game = None
 
 	registrations = []
-	for league in current_leagues:
+	for league in leagues:
 		for registration in league.get_registrations_for_user(request.user):
 			registrations.append(registration)
 
 	return render_to_response('user/index.html',
-		{'next_game': next_game, 'following_game': following_game, 'current_leagues': current_leagues, 'registrations': registrations},
+		{
+			'current_leagues': leagues,
+			'following_game': following_game,
+			'next_game': next_game,
+			'registrations': registrations
+		},
 		context_instance=RequestContext(request))
 
 def signup(request):
 	if request.method == 'POST':
 		form = SignupForm(request.POST)
 		if form.is_valid():
-			new_user = form.save()
-			# player = Player(user=new_user)
-			# player.save()
+			form.save()
+
 			messages.success(request, 'Your account was created. You may now log in.')
 			return HttpResponseRedirect(reverse('user'))
 		else:

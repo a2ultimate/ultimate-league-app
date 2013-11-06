@@ -1,3 +1,4 @@
+{% load leagues %}
 {% load utility %}
 
 {% include "layout/header.html" %}
@@ -25,13 +26,13 @@
 									<div class="league_name">
 										{{ league.night|smart_title }}
 
-										{% if league.state != 'active' %}
+										{% if league.state == 'preview' %}
 											<em>({{ league.state|capfirst }})</em>
 										{% endif %}
 									</div>
 									<ul>
-										{% if league.is_accepting_registrations %}
-											{% if league.is_accepting_waitlist %}
+										{% if league|is_open:user %}
+											{% if league|is_waitlist:user %}
 												<li><a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register for Waitlist</a></li>
 											{% else %}
 												<li><a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register</a></li>

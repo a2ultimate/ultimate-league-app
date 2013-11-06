@@ -1,4 +1,3 @@
-from django import forms
 from django.db import models, transaction
 from django.db.models import Count
 from django.contrib.auth.models import User
@@ -6,7 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from pybb.models import *
 
-from datetime import date, datetime
+from datetime import date
 
 
 class Field(models.Model):
@@ -40,9 +39,10 @@ class FieldNames(models.Model):
 
 class League(models.Model):
 	LEAGUE_STATE_CHOICES = (
-		('archived',	'Archived'),
-		('planning',	'Planning'),
-		('active',		'Active'),
+		('closed',	'Closed - visible to all, registration closed'),
+		('hidden',	'Hidden - hidden to all, registration closed'),
+		('open',	'Open - visible to all, registration conditionally open'),
+		('preview',	'Preview - visible to admins, registration conditionally open only to admins'),
 	)
 
 	LEAGUE_GENDER_CHOICES = (
@@ -75,12 +75,8 @@ class League(models.Model):
 	check_cost_increase = models.IntegerField(help_text='amount to be added to paypal_cost if paying by check')
 	late_cost_increase = models.IntegerField(help_text='amount to be added to paypal_cost if paying after price_increase_start_date')
 	max_players = models.IntegerField(help_text='max players for league, extra registrations will be placed on waitlist')
-	state = models.CharField(max_length=32, choices=LEAGUE_STATE_CHOICES, help_text='''
-		Archived - not visible to anyone<br/>
-		Planning - only visible to junta<br/>
-		Active - visible to everyone''')
-	field = models.ManyToManyField(Field, db_table='field_league', help_text='''Select the fields these games will be played at, use
-		the green "+" icon if we're playing at a new field.''')
+	state = models.CharField(max_length=32, choices=LEAGUE_STATE_CHOICES, help_text='state of league, changes whether registration is open or league is visible')
+	field = models.ManyToManyField(Field, db_table='field_league', help_text='Select the fields these games will be played at, use the green "+" icon if we\'re playing at a new field.')
 	details = models.TextField(help_text='details page text, use HTML')
 	league_email = models.CharField(max_length=64, blank=True, help_text='email address for entire season')
 	league_captains_email = models.CharField(max_length=64, blank=True, help_text='email address for league captains')
@@ -182,30 +178,23 @@ class League(models.Model):
 		registrations = Registrations.objects.filter(league=self).exclude(user__in=team_member_users)
 		return [r for r in registrations if r.is_complete() and not r.refunded]
 
-	@property
-	def is_accepting_registrations(self):
-		return self.state in ['active', 'planning'] and self.league_end_date > date.today()
+	def is_visible(self, user=None):
+		if user and (user.is_superuser or user.groups.filter(name='junta').exists()):
+			return self.state in ['closed', 'open', 'preview']
 
-	@property
-	def is_accepting_waitlist(self):
-		# max players?
-		return self.state in ['active', 'planning'] and date.today() >= self.waitlist_start_date
+		return self.state in ['closed', 'open']
 
-	def registration_is_active(self, user=None):
-		if user and (user.is_superuser or user.groups.filter(name='junta').exists()) and self.state not in ['active', 'planning']:
-			return False
-		elif self.state not in ['active']:
-			return False
+	def is_open(self, user=None):
+		is_open = None
+		if user and (user.is_superuser or user.groups.filter(name='junta').exists()):
+			is_open = self.state in ['open', 'preview']
+		else:
+			is_open = self.state in ['open']
 
-		return True
+		return is_open and (date.today() >= self.reg_start_date) and (date.today() <= self.league_end_date)
 
-	def waitlist_is_active(self, user=None):
-		if user and (user.is_superuser or user.groups.filter(name='junta').exists()) and self.state not in ['active', 'planning']:
-			return False
-		elif self.state not in ['active']:
-			return False
-
-		return (date.today() >= self.waitlist_start_date) or (len(self.get_complete_registrations()) >= self.max_players)
+	def is_waitlist(self, user=None):
+		return self.is_open(user) and ((date.today() >= self.waitlist_start_date) or (len(self.get_complete_registrations()) >= self.max_players))
 
 	def __unicode__(self):
 		return ('%s %d %s' % (self.season, self.year, self.night)).replace('_', ' ')

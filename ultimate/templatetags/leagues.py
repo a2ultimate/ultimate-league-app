@@ -5,6 +5,21 @@ register = template.Library()
 
 
 @register.filter
+def is_visible(league, user):
+	return league.is_visible(user)
+
+
+@register.filter
+def is_open(league, user):
+	return league.is_open(user)
+
+
+@register.filter
+def is_waitlist(league, user):
+	return league.is_waitlist(user)
+
+
+@register.filter
 def is_past_deadline(league_date):
 	return bool(date.today() > league_date)
 
