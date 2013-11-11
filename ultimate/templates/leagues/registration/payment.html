@@ -8,7 +8,7 @@
 
 	{% include "layout/league_tabs.html" with selected_tab="registration" %}
 
-	{% include "leagues/registration/_progress.html" %}
+	{% include "leagues/registration/_progress.html" with league=league registration=registration section=section only %}
 
 	<h2>How would you like to pay?</h2>
 
