@@ -11,10 +11,10 @@ from datetime import date
 class Field(models.Model):
 	id = models.AutoField(primary_key=True)
 	name = models.TextField()
-	layout_link = models.TextField()
-	address = models.TextField()
-	driving_link = models.TextField()
-	note = models.TextField()
+	layout_link = models.TextField(blank=True)
+	address = models.TextField(blank=True)
+	driving_link = models.TextField(blank=True)
+	note = models.TextField(blank=True)
 
 	class Meta:
 		db_table = u'field'
