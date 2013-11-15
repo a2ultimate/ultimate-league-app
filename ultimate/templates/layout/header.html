@@ -21,6 +21,21 @@
 </head>
 
 <body>
+	<div id="alerts_container">
+		{% if messages %}
+			<ul>
+				{% regroup messages|dictsortreversed:"level" by tags as message_groups %}
+				{% for message_group in message_groups %}
+					{% for message in message_group.list %}
+						<li class="alert state_{{ message_group.grouper }}">
+							{{ message }}
+						</li>
+					{% endfor %}
+				{% endfor %}
+			</ul>
+		{% endif %}
+	</div>
+
 	<div id="header_container">
 		<div id="header">
 			<div id="banner">
@@ -42,6 +57,7 @@
 			</ul>
 		</div>
 	</div>
+
 	<div class="navbar_container">
 		<div class="navbar">
 			<ul class="nav">

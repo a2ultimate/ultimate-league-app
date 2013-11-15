@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
-from django.utils.http import int_to_base36
 
 from ultimate.captain.models import *
 from ultimate.leagues.models import *
@@ -55,9 +54,9 @@ class SignupForm(forms.ModelForm):
 
 class EditProfileForm(forms.ModelForm):
 	username = forms.CharField(widget=forms.HiddenInput, required=False)
-	email = forms.EmailField(label=_('Email Address'), max_length=75)
-	first_name = forms.CharField(label=_('First Name'), max_length=30)
-	last_name = forms.CharField(label=_('Last Name'), max_length=30)
+	email = forms.EmailField(label=_('Email Address*'), max_length=75)
+	first_name = forms.CharField(label=_('First Name*'), max_length=30)
+	last_name = forms.CharField(label=_('Last Name*'), max_length=30)
 
 	class Meta:
 		model = User
@@ -91,19 +90,20 @@ class EditProfileForm(forms.ModelForm):
 
 
 class EditPlayerForm(forms.ModelForm):
-	nickname = forms.CharField(max_length=30, required=False)
-	phone = forms.CharField(max_length=15, required=False)
-	street_address = forms.CharField(max_length=255, required=False)
-	city = forms.CharField(max_length=127, required=False)
-	state = forms.CharField(max_length=6, required=False)
-	zipcode = forms.CharField(max_length=15, required=False)
+	nickname = forms.CharField(required=False)
+	phone = forms.CharField(required=False)
+	street_address = forms.CharField(required=False)
+	city = forms.CharField(required=False)
+	state = forms.CharField(required=False)
+	zipcode = forms.CharField(required=False)
+	gender = forms.CharField(label='Gender*', widget=forms.Select(choices=(('', '----------'),) + Player.GENDER_CHOICES))
+	height_inches = forms.IntegerField(label='Height Inches*')
+	birthdate = forms.DateField(label='Birthdate*')
+	jersey_size = forms.CharField(label='Jersey Size*')
 
 	class Meta:
 		model = Player
 		exclude = ('id', 'groups', 'user', 'highest_level', 'post_count',)
-
-
-
 
 
 class EditSkillsForm(forms.ModelForm):
@@ -146,7 +146,7 @@ class PlayerSurveyForm(forms.ModelForm):
 			and not self.cleaned_data.get('strategy')
 			and not self.cleaned_data.get('spirit')):
 			self.removeErrorsFromSkills()
-			raise forms.ValidationError, 'You must fill in values greater than 1 or mark "Not Sure"'
+			raise forms.ValidationError(_('You must fill in values greater than 1 or mark "Not Sure"'))
 
 		return self.cleaned_data
 

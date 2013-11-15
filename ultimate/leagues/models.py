@@ -217,9 +217,9 @@ class Player(PybbProfile):
 
 	user = models.ForeignKey(User, db_column='id')
 	groups = models.TextField()
-	nickname = models.CharField(max_length=90)
-	phone = models.CharField(max_length=45)
-	street_address = models.CharField(max_length=765)
+	nickname = models.CharField(max_length=30)
+	phone = models.CharField(max_length=15)
+	street_address = models.CharField(max_length=255)
 	city = models.CharField(max_length=127)
 	state = models.CharField(max_length=6)
 	zipcode = models.CharField(max_length=15)
@@ -238,9 +238,14 @@ class Player(PybbProfile):
 	def get_age(self, now=None):
 		if not self.birthdate:
 			return 0
+
 		if now is None:
 			now = date.today()
+
 		return (now.year - self.birthdate.year) - int((now.month, now.day) < (self.birthdate.month, self.birthdate.day))
+
+	def is_complete_for_user(self):
+		return bool(self.gender and self.height_inches and self.birthdate and self.jersey_size)
 
 
 class Baggage(models.Model):

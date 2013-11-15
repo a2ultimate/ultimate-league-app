@@ -1,23 +1,23 @@
 $(function() {
-	var $messages = $('#messages');
-	$messages.on('click', function () {
-		$messages.slideUp('slow');
+	var $alerts = $('#alerts_container');
+	$alerts.on('click', function () {
+		$alerts.slideUp('slow');
 	});
 
-	if ($messages.length) {
+	if ($alerts.length) {
 		setTimeout(function () {
-			$messages.slideUp('slow');
-		}, 6000);
+			$alerts.slideUp('slow');
+		}, 10000);
 	}
 
 	$('.slide_selector').each(function () {
-		var $this = $(this)
+		var $this = $(this),
 			$input = $('input[type=text]', $this),
-			$slider = $('.slider', $this)
+			$slider = $('.slider', $this),
 			sliderMax = $this.data('slider-max') || 10,
 			sliderMin = $this.data('slider-min') || 0;
 
-		if ($input.val() == '') {
+		if (!$input.val()) {
 			$input.val(sliderMin);
 		}
 
@@ -44,8 +44,8 @@ $(function() {
 
 		$input.keyup(function(e) {
 			var value = this.value;
-			if (parseFloat(value) != parseInt(value) || isNaN(value) || value < 1) {
-				value = 1
+			if (parseFloat(value) != parseInt(value, 10) || isNaN(value) || value < 1) {
+				value = 1;
 			}
 
 			if (value > 10) {

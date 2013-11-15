@@ -5,3 +5,9 @@ def menu_leagues(request):
 	leagues = [r for r in leagues if r.is_visible(request.user)]
 
 	return {'menu_leagues': leagues}
+
+
+def user_profile_is_complete(request):
+	return {
+		'user_profile_is_complete': request.user.get_profile().is_complete_for_user()
+	}
