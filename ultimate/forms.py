@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
-from django.utils.http import int_to_base36
 
 from ultimate.captain.models import *
 from ultimate.leagues.models import *
@@ -103,9 +102,6 @@ class EditPlayerForm(forms.ModelForm):
 		exclude = ('id', 'groups', 'user', 'highest_level', 'post_count',)
 
 
-
-
-
 class EditSkillsForm(forms.ModelForm):
 	athletic = forms.IntegerField(min_value=1, max_value=10, initial=1)
 	experience = forms.IntegerField(min_value=1, max_value=10, initial=1)
@@ -117,6 +113,18 @@ class EditSkillsForm(forms.ModelForm):
 	class Meta:
 		model = Skills
 		exclude = ('id', 'skills_report', 'skills_type', 'user', 'submitted_by', 'updated', 'spirit',)
+
+
+class EditPlayerRatingsForm(forms.ModelForm):
+	experience = forms.TypedChoiceField(coerce=int, choices=PlayerRatings.RATING_EXPERIENCE_CHOICES, widget=forms.RadioSelect, label='1. How much experience do you have playing ultimate?')
+	strategy = forms.TypedChoiceField(coerce=int, choices=PlayerRatings.RATING_STRATEGY_CHOICES, widget=forms.RadioSelect, label='2. How would you rate your knowledge of ultimate rules, strategies, and gameplay?')
+	throwing = forms.TypedChoiceField(coerce=int, choices=PlayerRatings.RATING_THROWING_CHOICES, widget=forms.RadioSelect, label='3. How would you rate your throwing ability?')
+	athleticism = forms.TypedChoiceField(coerce=int, choices=PlayerRatings.RATING_ATHLETICISM_CHOICES, widget=forms.RadioSelect, label='4. How would you rate your endurance and speed?')
+	competitiveness = forms.TypedChoiceField(coerce=int, choices=PlayerRatings.RATING_COMPETITIVENESS_CHOICES, widget=forms.RadioSelect, label='5. How competitively do you like to play?')
+
+	class Meta:
+		model = PlayerRatings
+		exclude = ('id', 'spirit', 'user', 'submitted_by', 'ratings_type', 'ratings_report', 'updated',)
 
 
 class PlayerSurveyForm(forms.ModelForm):
@@ -146,7 +154,7 @@ class PlayerSurveyForm(forms.ModelForm):
 			and not self.cleaned_data.get('strategy')
 			and not self.cleaned_data.get('spirit')):
 			self.removeErrorsFromSkills()
-			raise forms.ValidationError, 'You must fill in values greater than 1 or mark "Not Sure"'
+			raise forms.ValidationError(_('You must fill in values greater than 1 or mark "Not Sure"'))
 
 		return self.cleaned_data
 
@@ -208,6 +216,3 @@ class RegistrationAttendanceForm(forms.ModelForm):
 
 class ScheduleGenerationForm(forms.Form):
 	field_names = forms.ModelMultipleChoiceField(FieldNames.objects.all(), required=True, label=_('Fields'), help_text=_('You must pick enough fields to cover the number of games for an event. (Hold CTRL or Command to select more than one.)'))
-
-
-

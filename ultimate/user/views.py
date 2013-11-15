@@ -112,3 +112,29 @@ def editskills(request):
 	return render_to_response('user/editskills.html',
 		{'form': form},
 		context_instance=RequestContext(request))
+
+
+@login_required
+def editratings(request):
+	ratings, created = PlayerRatings.objects.get_or_create(
+		user=request.user, submitted_by=request.user, ratings_type=PlayerRatings.RATING_TYPE_USER,
+		defaults={'user': request.user, 'submitted_by': request.user, 'ratings_type': PlayerRatings.RATING_TYPE_USER, 'updated': datetime.now()}
+	)
+
+	if request.method == 'POST':
+		form = EditPlayerRatingsForm(request.POST, instance=ratings)
+		if form.is_valid():
+			form.save()
+			messages.success(request, 'Your ratings were updated successfully.')
+			return HttpResponseRedirect(reverse('editratings'))
+		else:
+			messages.error(request, 'There was an error on the form you submitted.')
+	else:
+		form = EditPlayerRatingsForm(instance=ratings)
+
+	return render_to_response('user/editratings.html',
+		{
+			'form': form
+		},
+		context_instance=RequestContext(request)
+	)

@@ -13,6 +13,8 @@ urlpatterns = patterns('ultimate.user.views',
 	(r'^password/done/$', password_reset_complete, {'template_name': 'user/registration/password_reset_complete.html'}, 'password_reset_confirm'),
 
 	(r'^signup/$', 'signup', {}, 'registration_register'),
-	(r'^editprofile/$', 'editprofile', {}, 'editprofile'),
-	(r'^editskills/$', 'editskills', {}, 'editskills'),
+
+	(r'^edit/profile/$', 'editprofile', {}, 'editprofile'),
+	(r'^edit/skills/$', 'editskills', {}, 'editskills'),
+	(r'^edit/ratings/$', 'editratings', {}, 'editratings'),
 )

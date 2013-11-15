@@ -27,7 +27,7 @@ html {
 body {
 	background: #F5F5F5;
 	border-top: 4px solid #3498DB;
-	color: #555555;
+	color: #2C3E50;
 	font: normal 300 15px 'Lato', 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
 	margin: 0;
 	padding: 0;
@@ -51,7 +51,7 @@ a:hover {
 	transition: color .15s ease-in-out;
 }
 
-h1, h2, h3, h4, h5, h6, th, strong, .strong {
+h1, h2, h3, h4, h5, h6, th, strong, .strong, legend {
 	font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
 	font-weight: bold;
 	margin: 10px 0;
@@ -110,6 +110,28 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 	font-weight: 300;
 }
 
+hr {
+	border-top: 1px solid #BDC3C7;
+}
+
+fieldset {
+	border-top: 1px solid #BDC3C7;
+	margin: 12px 8px 18px;
+}
+
+fieldset + fieldset {
+
+}
+
+legend {
+	font-size: 18px;
+	line-height: 36px;
+}
+
+fieldset > legend {
+	padding-right: 12px;
+}
+
 .center_margin {
 	margin: 0 auto;
 }
@@ -129,6 +151,45 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 .pull_right {
 	float: right;
 }
+
+.form_group {
+	margin: 12px 8px 18px;
+}
+
+.form_group > input + a {
+	font-weight: 400;
+	margin-left: 6px;
+}
+
+.radio,
+.checkbox {
+	display: block;
+/*	margin-bottom: 10px;
+	margin-top: 10px;*/
+	min-height: 20px;
+	padding-left: 20px;
+	vertical-align: middle;
+}
+
+.radio label,
+.checkbox label {
+	cursor: pointer;
+	display: inline;
+	font-weight: normal;
+	margin-bottom: 0;
+}
+
+.radio input[type="radio"],
+.checkbox input[type="checkbox"] {
+	float: left;
+	margin-left: -20px;
+}
+
+.radio + .radio,
+.checkbox + .checkbox {
+  margin-top: 8px;
+}
+
 
 /* HEADER */
 
@@ -443,6 +504,10 @@ form {
 .errorlist {
 	color: #E74C3C;
 	margin: 0 0 8px;
+}
+
+legend + .errorlist {
+	margin-top: -10px;
 }
 
 .form_table {
