@@ -82,7 +82,7 @@
 							</div>
 
 							{% if request.user|in_group:"junta" %}
-								<div class="team_counts text_center">
+								<div class="team_notes text_center">
 									<em>
 										{{ team.get_members|length }} Player{{ team.get_members|length|pluralize }},
 										{{ team.get_male_members|length }} Male{{ team.get_male_members|length|pluralize }},
@@ -160,9 +160,11 @@
 		</table>
 
 		<p id="user_registrations_note">
-			It can sometimes take a while for PayPal to confirm a payment. Try clicking reload after a few minutes have passed.<br />
-			If you used the echeck feature of paypal it may take up to a week to clear.<br />
-			If paying by check, the status will remain unconfirmed until your check is received and processed.<br />
+			PayPaly payments occasionally take some time to clear. Try reloading after a few minutes have passed.
+			<br />
+			If you used the echeck feature of paypal it may take up to a week to clear.
+			<br />
+			If paying by check, the status will remain unconfirmed until your check is received and processed.
 		</p>
 	{% else %}
 		<p class="none_found">No registrations found</p>

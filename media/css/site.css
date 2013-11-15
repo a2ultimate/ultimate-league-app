@@ -696,8 +696,9 @@ input[type="submit"] {
 	color: white;
 	cursor: pointer;
 	display: inline-block;
-	font-size: 16px;
-	line-height: 20px;
+	font-size: 17px;
+	letter-spacing: 1px;
+	line-height: 22px;
 	margin-bottom: 0;
 	padding: 6px 12px;
 	text-align: center;
@@ -988,7 +989,6 @@ input[type="submit"] {
 
 .nav_tabs {
 	border-bottom: 3px solid #2ECC71;
-	font-size: 14px;
 	font-weight: 400;
 	letter-spacing: 1px;
 	list-style: none;
@@ -1037,7 +1037,6 @@ input[type="submit"] {
 
 #breadcrumbs {
 	display: inline;
-	font-size: 14px;
 	letter-spacing: 1px;
 	list-style: none;
 	margin: 0;
@@ -1224,7 +1223,6 @@ span.status {
 .announcement {
 	background: #ECF0F1;
 	border-radius: 2px;
-	font-size: 14px;
 	margin: 8px 0;
 	padding: 12px 6px;
 }
@@ -1282,45 +1280,6 @@ span.status {
 
 /* CAPTAIN / INDEX */
 
-.captain_division_content ul {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-
-.captain_division_content span.status {
-	border-radius: 50%;
-	display: block;
-	height: 12px;
-	left: 0;
-	margin-top: -6px;
-	position: absolute;
-	top: 50%;
-	width: 12px;
-}
-
-ul.captain_division_team_links li {
-	margin: 4px 0;
-	padding-left: 16px;
-	position: relative;
-}
-
-.captain_division_game {
-	font-size: 12px;
-	line-height: 22px;
-	list-style: none;
-	margin: 0;
-	padding: 0 0 0 14px;
-	position: relative;
-}
-
-.captain_division_game span.ui-icon {
-	margin-top: 2px;
-}
-
-.captain_division_game a {
-	margin-left: 4px;
-}
 
 /* CAPTAIN / GAME REPORT */
 
@@ -1545,7 +1504,7 @@ ul.captain_division_team_links li {
 	font-weight: bold;
 }
 
-.team_counts {
+.team_notes {
 	font-size: 13px;
 	letter-spacing: 1px;
 	padding: 8px 0 4px;
@@ -1563,7 +1522,6 @@ ul.captain_division_team_links li {
 }
 
 #next_game_time {
-	font-size: 14px;
 	margin-bottom: 8px;
 }
 
@@ -1579,7 +1537,6 @@ ul.captain_division_team_links li {
 
 #user_registrations_note {
 	color: #999999;
-	font-size: 14px;
 }
 
 .wide_form input[type=text],
