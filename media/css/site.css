@@ -744,6 +744,10 @@ input[type="submit"] {
 	color: white;
 }
 
+.button + .button {
+	margin-left: 4px;
+}
+
 .button_large {
 	padding-bottom: 12px;
 	padding-top: 14px;
