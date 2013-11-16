@@ -142,6 +142,12 @@ def registration(request, year, season, division, section=None):
 		raise Http403
 
 	registration, created = Registrations.objects.get_or_create(user=request.user, league=league)
+
+	if not registration.is_complete() and \
+		not request.user.get_profile().is_complete_for_user():
+
+		raise Http403
+
 	attendance_form = None
 	paypal_form = None
 
@@ -268,5 +274,4 @@ def registration(request, year, season, division, section=None):
 @csrf_exempt
 def registrationcomplete(request, year, season, division):
 	return redirect('league_registration', year=year, season=season, division=division)
-
 

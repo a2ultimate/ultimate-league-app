@@ -55,13 +55,11 @@
 	</div>
 
 	<div id="content">
-		{% if not user_profile_is_complete %}
+		{% if user and user.is_authenticated and not user_profile_is_complete %}
 			<div class="message state_warning">
-				Your profile is currently incomplete. You must fill out all
-				required information to register for a league.
-				<hr />
-				You may fill in your missing information at the
-				<a href="{% url editprofile %}">Edit Profile</a> page.
+				Your are currently missing information required to
+				register for a league. Please
+				<a href="{% url editprofile %}">update your profile</a>.
 			</div>
 		{% endif %}
 

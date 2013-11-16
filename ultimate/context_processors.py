@@ -8,6 +8,12 @@ def menu_leagues(request):
 
 
 def user_profile_is_complete(request):
-	return {
-		'user_profile_is_complete': request.user.get_profile().is_complete_for_user()
-	}
+	if request.user and request.user.is_authenticated():
+		try:
+			return {
+				'user_profile_is_complete': request.user.get_profile().is_complete_for_user()
+			}
+		except:
+			return {'user_profile_is_complete': False}
+
+	return {'user_profile_is_complete': False}
