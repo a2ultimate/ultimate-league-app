@@ -156,6 +156,7 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 
 .state_success a {
 	color: #008025;
+	color: rgba(0, 0, 0, 0.4);
 }
 
 .state_success hr {
@@ -174,6 +175,7 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 
 .state_info a {
 	color: #004C8F;
+	color: rgba(0, 0, 0, 0.4);
 }
 
 .state_info hr {
@@ -192,6 +194,7 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 
 .state_warning a {
 	color: #9A3200;
+	color: rgba(0, 0, 0, 0.4);
 }
 
 .state_warning hr {
@@ -210,6 +213,7 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 
 .state_error a {
 	color: #9B0000;
+	color: rgba(0, 0, 0, 0.4);
 }
 
 .state_error hr {
