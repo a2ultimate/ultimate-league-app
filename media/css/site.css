@@ -152,15 +152,6 @@ fieldset > legend {
 	float: right;
 }
 
-.form_group {
-	margin: 12px 8px 18px;
-}
-
-.form_group > input + a {
-	font-weight: 400;
-	margin-left: 6px;
-}
-
 .radio,
 .checkbox {
 	display: block;
@@ -641,7 +632,12 @@ select[multiple="multiple"] {
 }
 
 .control_group {
-	margin-bottom: 10px;
+	margin: 12px 8px 18px;
+}
+
+.control_group > .button + a {
+	font-weight: 400;
+	margin-left: 6px;
 }
 
 legend + .control_group {
