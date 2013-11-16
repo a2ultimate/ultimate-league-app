@@ -356,7 +356,7 @@ class Registrations(models.Model):
 			self.attendance != None and \
 			self.captain != None and \
 			((self.league.check_price == 0 and self.league.paypal_price == 0) or \
-			(self.pay_type and 	(self.check_complete or self.paypal_complete))) and \
+			(self.pay_type and (self.check_complete or self.paypal_complete))) and \
 			not self.refunded)
 
 	@property
