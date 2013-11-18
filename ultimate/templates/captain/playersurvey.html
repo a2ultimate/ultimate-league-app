@@ -15,7 +15,7 @@
 	<form method="post" action="{% url playersurvey teamid=team.id %}">{% csrf_token %}
 		{{ formset.management_form }}
 
-		<table id="player_survey_table">
+		<table id="player_survey_table" class="table table-striped">
 			<tr>
 				<td></td>
 				<th>Strategy</th>
@@ -25,19 +25,23 @@
 				<th>Not Sure</th>
 			</tr>
 			{% for row in survey %}
-				<tr class="{% cycle 'even' 'odd' %}{% if row.form.non_field_errors %} error{% endif %}">
-					<td class="name left">
-						{{ row.user.get_full_name }}
-						{% for hidden in row.form.hidden_fields %}
-						    {{ hidden }}
-						{% endfor %}
+				<tr>
+					<td class="name">
+						<div class="{% if row.form.non_field_errors %}strong text_error{% endif %}">
+							{{ row.user.get_full_name }}
+							{% for hidden in row.form.hidden_fields %}
+								{{ hidden }}
+							{% endfor %}
+						</div>
 					</td>
 					{% for field in row.form.visible_fields %}
-						<td class="{% if forloop.last %}right{% endif %}{% if field.errors %} state_error{% endif %}">
-							{{ field }}
-							{% if not forloop.last %}
-								<div>{{ row.user|get_average:field.label }}</div>
-							{% endif %}
+						<td>
+							<div class="{% if field.errors %}state_error{% endif %}">
+								{{ field }}
+								{% if not forloop.last %}
+									<div>{{ row.user|get_average:field.label }}</div>
+								{% endif %}
+							</div>
 						</td>
 					{% endfor %}
 				</tr>

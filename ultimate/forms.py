@@ -121,10 +121,10 @@ class EditPlayerRatingsForm(forms.ModelForm):
 class PlayerSurveyForm(forms.ModelForm):
 	user_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
 	# TODO should captains rate experience?
-	strategy = forms.IntegerField(min_value=0, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(7) ]))
-	throwing = forms.IntegerField(min_value=0, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(7) ]))
-	athleticism = forms.IntegerField(min_value=0, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(7) ]))
-	spirit = forms.IntegerField(min_value=0, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(11) ]))
+	strategy = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(7) ]))
+	throwing = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(7) ]))
+	athleticism = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(7) ]))
+	spirit = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(11) ]))
 	not_sure = forms.BooleanField(required=False)
 
 	class Meta:

@@ -70,6 +70,7 @@ class PlayerRatings(models.Model):
 	submitted_by = models.ForeignKey(User, related_name='ratings_submitted_by_set')
 	ratings_type = models.CharField(default=None, choices=RATING_TYPE, blank=True, null=True)
 	ratings_report = models.ForeignKey('user.PlayerRatingsReport')
+	not_sure = models.BooleanField(default=False)
 	updated = models.DateTimeField(auto_now=True, auto_now_add=True)
 
 	class Meta:

@@ -1222,18 +1222,18 @@ input[type="submit"] {
 
 .slide_selector .ui-slider-handle {
 	cursor: hand;
-	cursor: grab !important;
+	cursor: grab;
 	cursor: -moz-grab;
-	cursor: url('../images/cursors/openhand.cur'), pointer !important;
+	cursor: url('../images/cursors/openhand.cur'), pointer;
 	cursor: -webkit-grab;
 }
 
 .slide_selector .ui-slider-handle:active {
 	cursor: hand;
-	cursor: grabbing !important;
+	cursor: grabbing;
 	cursor: -moz-grabbing;
 	cursor: -webkit-grabbing;
-	cursor: url('../images/cursors/closedhand.cur'), pointer !important;
+	cursor: url('../images/cursors/closedhand.cur'), pointer;
 }
 
 .slide_selector .slider_description {
@@ -1433,20 +1433,13 @@ span.status {
 /* CAPTAIN / PLAYERSURVEY */
 
 #player_survey_table {
-	border-spacing: 0 3px;
 	margin-bottom: 6px;
 	width: 100%;
 }
 
 #player_survey_table th,
 #player_survey_table td {
-	padding: 6px 8px;
 	text-align: center;
-	vertical-align: middle;
-}
-
-#player_survey_table .even td {
-	background: #ECEFF1;
 }
 
 #player_survey_table .name {

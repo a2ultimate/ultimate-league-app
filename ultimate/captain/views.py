@@ -79,8 +79,12 @@ def playersurvey(request, teamid):
 					'user': team_member_users.get(id=rating_data['user_id'])
 				}
 
-				data = dict(rating_data.items() + user_data.items())
-				del data['user_id']
+				if rating_data['not_sure']:
+					data = {'not_sure': True}
+					data =  dict(data.items() + user_data.items())
+				else:
+					data = dict(rating_data.items() + user_data.items())
+					del data['user_id']
 
 				ratings_row, created = PlayerRatings.objects.get_or_create(ratings_report=ratings_report, user=data['user'], defaults=data)
 				if not created:
