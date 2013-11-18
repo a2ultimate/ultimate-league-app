@@ -106,22 +106,12 @@ class EditPlayerForm(forms.ModelForm):
 		exclude = ('id', 'groups', 'user', 'highest_level', 'post_count',)
 
 
-<<<<<<< HEAD
-class EditSkillsForm(forms.ModelForm):
-	athletic = forms.IntegerField(min_value=1, max_value=10, initial=1)
-	experience = forms.IntegerField(min_value=1, max_value=10, initial=1)
-	forehand = forms.IntegerField(min_value=1, max_value=10, initial=1)
-	backhand = forms.IntegerField(min_value=1, max_value=10, initial=1)
-	receive = forms.IntegerField(min_value=1, max_value=10, initial=1)
-	strategy = forms.IntegerField(min_value=1, max_value=10, initial=1)
-=======
 class EditPlayerRatingsForm(forms.ModelForm):
 	experience = forms.TypedChoiceField(coerce=int, choices=PlayerRatings.RATING_EXPERIENCE_CHOICES, widget=forms.RadioSelect, label='1. How much experience do you have playing ultimate?')
 	strategy = forms.TypedChoiceField(coerce=int, choices=PlayerRatings.RATING_STRATEGY_CHOICES, widget=forms.RadioSelect, label='2. How would you rate your knowledge of ultimate rules, strategies, and gameplay?')
 	throwing = forms.TypedChoiceField(coerce=int, choices=PlayerRatings.RATING_THROWING_CHOICES, widget=forms.RadioSelect, label='3. How would you rate your throwing ability?')
 	athleticism = forms.TypedChoiceField(coerce=int, choices=PlayerRatings.RATING_ATHLETICISM_CHOICES, widget=forms.RadioSelect, label='4. How would you rate your endurance and speed?')
 	competitiveness = forms.TypedChoiceField(coerce=int, choices=PlayerRatings.RATING_COMPETITIVENESS_CHOICES, widget=forms.RadioSelect, label='5. How competitively do you like to play?')
->>>>>>> feature-player-ratings
 
 	class Meta:
 		model = PlayerRatings
@@ -148,11 +138,8 @@ class PlayerSurveyForm(forms.ModelForm):
 			and not self.cleaned_data.get('throwing')
 			and not self.cleaned_data.get('athleticism')
 			and not self.cleaned_data.get('spirit')):
-<<<<<<< HEAD
-			self.removeErrorsFromSkills()
-=======
+
 			self.removeErrorsFromRatings()
->>>>>>> feature-player-ratings
 			raise forms.ValidationError(_('You must fill in values greater than 1 or mark "Not Sure"'))
 
 		return self.cleaned_data
