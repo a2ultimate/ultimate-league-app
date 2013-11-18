@@ -15,6 +15,5 @@ urlpatterns = patterns('ultimate.user.views',
 	(r'^signup/$', 'signup', {}, 'registration_register'),
 
 	(r'^edit/profile/$', 'editprofile', {}, 'editprofile'),
-	(r'^edit/skills/$', 'editskills', {}, 'editskills'),
 	(r'^edit/ratings/$', 'editratings', {}, 'editratings'),
 )

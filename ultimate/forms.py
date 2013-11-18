@@ -102,19 +102,6 @@ class EditPlayerForm(forms.ModelForm):
 		exclude = ('id', 'groups', 'user', 'highest_level', 'post_count',)
 
 
-class EditSkillsForm(forms.ModelForm):
-	athletic = forms.IntegerField(min_value=1, max_value=10, initial=1)
-	experience = forms.IntegerField(min_value=1, max_value=10, initial=1)
-	forehand = forms.IntegerField(min_value=1, max_value=10, initial=1)
-	backhand = forms.IntegerField(min_value=1, max_value=10, initial=1)
-	receive = forms.IntegerField(min_value=1, max_value=10, initial=1)
-	strategy = forms.IntegerField(min_value=1, max_value=10, initial=1)
-
-	class Meta:
-		model = Skills
-		exclude = ('id', 'skills_report', 'skills_type', 'user', 'submitted_by', 'updated', 'spirit',)
-
-
 class EditPlayerRatingsForm(forms.ModelForm):
 	experience = forms.TypedChoiceField(coerce=int, choices=PlayerRatings.RATING_EXPERIENCE_CHOICES, widget=forms.RadioSelect, label='1. How much experience do you have playing ultimate?')
 	strategy = forms.TypedChoiceField(coerce=int, choices=PlayerRatings.RATING_STRATEGY_CHOICES, widget=forms.RadioSelect, label='2. How would you rate your knowledge of ultimate rules, strategies, and gameplay?')
@@ -128,51 +115,39 @@ class EditPlayerRatingsForm(forms.ModelForm):
 
 
 class PlayerSurveyForm(forms.ModelForm):
-	SKILL_CHOICES = [ (i,i) for i in range(0,11) ]
-
 	user_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
-	athletic = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
-	forehand = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
-	backhand = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
-	receive = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
-	strategy = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
-	spirit = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
+	# TODO should captains rate experience?
+	strategy = forms.IntegerField(min_value=0, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(7) ]))
+	throwing = forms.IntegerField(min_value=0, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(7) ]))
+	athleticism = forms.IntegerField(min_value=0, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(7) ]))
+	spirit = forms.IntegerField(min_value=0, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(11) ]))
 	not_sure = forms.BooleanField(required=False)
 
 	class Meta:
-		model = Skills
-		exclude = ('id', 'skills_report', 'highest_level', 'experience', 'position', 'skills_type', 'user', 'submitted_by', 'updated',)
+		model = PlayerRatings
+		exclude = ('id', 'experience', 'competitiveness', 'user', 'submitted_by', 'ratings_type', 'ratings_report', 'updated',)
 
 	def clean(self):
 		if self.cleaned_data.get('not_sure'):
-			self.removeErrorsFromSkills()
-		elif (not self.cleaned_data.get('athletic')
-			and not self.cleaned_data.get('forehand')
-			and not self.cleaned_data.get('backhand')
-			and not self.cleaned_data.get('receive')
-			and not self.cleaned_data.get('handle')
-			and not self.cleaned_data.get('strategy')
+			self.removeErrorsFromRatings()
+		elif (not self.cleaned_data.get('strategy')
+			and not self.cleaned_data.get('throwing')
+			and not self.cleaned_data.get('athleticism')
 			and not self.cleaned_data.get('spirit')):
-			self.removeErrorsFromSkills()
+			self.removeErrorsFromRatings()
 			raise forms.ValidationError(_('You must fill in values greater than 1 or mark "Not Sure"'))
 
 		return self.cleaned_data
 
-	def removeErrorsFromSkills(self):
-		if ('athletic' in self._errors):
-			del self._errors['athletic']
-
-		if ('forehand' in self._errors):
-			del self._errors['forehand']
-
-		if ('backhand' in self._errors):
-			del self._errors['backhand']
-
-		if ('receive' in self._errors):
-			del self._errors['receive']
-
+	def removeErrorsFromRatings(self):
 		if ('strategy' in self._errors):
 			del self._errors['strategy']
+
+		if ('throwing' in self._errors):
+			del self._errors['throwing']
+
+		if ('athleticism' in self._errors):
+			del self._errors['athleticism']
 
 		if ('spirit' in self._errors):
 			del self._errors['spirit']

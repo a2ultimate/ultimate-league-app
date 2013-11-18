@@ -18,11 +18,9 @@
 		<table id="player_survey_table">
 			<tr>
 				<td></td>
-				<th>Athleticism</th>
-				<th>Forehand</th>
-				<th>Backhand</th>
-				<th>Receiving</th>
 				<th>Strategy</th>
+				<th>Throwing</th>
+				<th>Athleticism</th>
 				<th>Spirit</th>
 				<th>Not Sure</th>
 			</tr>
@@ -35,9 +33,11 @@
 						{% endfor %}
 					</td>
 					{% for field in row.form.visible_fields %}
-						<td class="{% if forloop.last %}right{% endif %}{% if field.errors %} error{% endif %}">
+						<td class="{% if forloop.last %}right{% endif %}{% if field.errors %} state_error{% endif %}">
 							{{ field }}
-							{% if not forloop.last %}<div class="skill_average">{{ row.user|get_average:field.label }}</div>{% endif %}
+							{% if not forloop.last %}
+								<div>{{ row.user|get_average:field.label }}</div>
+							{% endif %}
 						</td>
 					{% endfor %}
 				</tr>

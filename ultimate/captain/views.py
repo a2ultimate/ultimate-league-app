@@ -4,10 +4,9 @@ import re
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.db.models import Avg, Q
 from django.forms.formsets import formset_factory
 from django.forms.models import model_to_dict, modelformset_factory
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
@@ -55,68 +54,69 @@ def playersurvey(request, teamid):
 		raise Http403
 
 	team_member_users = User.objects.filter(teammember__team=team).exclude(id=request.user.id) \
-		.extra(select={'average_athletic':'select AVG(skills.athletic) FROM skills WHERE skills.user_id = auth_user.id AND skills.athletic != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-		.extra(select={'average_forehand':'select AVG(skills.forehand) FROM skills WHERE skills.user_id = auth_user.id AND skills.forehand != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-		.extra(select={'average_backhand':'select AVG(skills.backhand) FROM skills WHERE skills.user_id = auth_user.id AND skills.backhand != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-		.extra(select={'average_receive':'select AVG(skills.receive) FROM skills WHERE skills.user_id = auth_user.id AND skills.receive != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-		.extra(select={'average_strategy':'select AVG(skills.strategy) FROM skills WHERE skills.user_id = auth_user.id AND skills.strategy != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-		.extra(select={'average_spirit':'select AVG(skills.spirit) FROM skills WHERE skills.user_id = auth_user.id AND skills.spirit != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
+		.extra(select={'average_experience':'SELECT COALESCE(AVG(player_ratings.experience), 0) FROM player_ratings WHERE player_ratings.user_id = auth_user.id AND player_ratings.experience != 0'}) \
+		.extra(select={'average_strategy':'SELECT COALESCE(AVG(player_ratings.strategy), 0) FROM player_ratings WHERE player_ratings.user_id = auth_user.id AND player_ratings.strategy != 0'}) \
+		.extra(select={'average_throwing':'SELECT COALESCE(AVG(player_ratings.throwing), 0) FROM player_ratings WHERE player_ratings.user_id = auth_user.id AND player_ratings.throwing != 0'}) \
+		.extra(select={'average_athleticism':'SELECT COALESCE(AVG(player_ratings.athleticism), 0) FROM player_ratings WHERE player_ratings.user_id = auth_user.id AND player_ratings.athleticism != 0'}) \
+		.extra(select={'average_spirit':'SELECT COALESCE(AVG(player_ratings.spirit), 0) FROM player_ratings WHERE player_ratings.user_id = auth_user.id AND player_ratings.spirit != 0'}) \
 		.distinct()
 
-	skills_report, created = SkillsReport.objects.get_or_create(submitted_by=request.user, team=team,
-		defaults={'updated': datetime.now()})
-	skills_type = SkillsType.objects.get(id=3)
+	ratings_report, created = PlayerRatingsReport.objects.get_or_create(submitted_by=request.user, team=team,
+		defaults={'submitted_by': request.user, 'team': team, 'updated': datetime.now()})
 
-	SkillFormSet = formset_factory(PlayerSurveyForm, extra=0)
+	RatingsFormSet = formset_factory(PlayerSurveyForm, extra=0)
 
 	if request.method == 'POST':
-		formset = SkillFormSet(request.POST)
+		formset = RatingsFormSet(request.POST)
 
 		if formset.is_valid():
-			for skill_data in formset.cleaned_data:
-				skill_user = team_member_users.get(id=skill_data['user_id'])
-				user_data = {'user': skill_user, 'skills_report': skills_report, 'submitted_by': request.user, 'skills_type': skills_type, 'updated': datetime.now()}
+			for rating_data in formset.cleaned_data:
+				user_data = {
+					'ratings_report': ratings_report,
+					'ratings_type': PlayerRatings.RATING_TYPE_CAPTAIN,
+					'submitted_by': request.user,
+					'updated': datetime.now(),
+					'user': team_member_users.get(id=rating_data['user_id'])
+				}
 
-				if not skill_data['not_sure']:
-					data = dict(skill_data.items() + user_data.items())
-					del data['user_id']
+				data = dict(rating_data.items() + user_data.items())
+				del data['user_id']
 
-					skills_row, created = Skills.objects.get_or_create(skills_report=skills_report, user=skill_user, defaults=data)
-					if not created:
-						skills_row.__dict__.update(data)
-						skills_row.save()
-				else:
-					data = {'not_sure': True}
-					data =  dict(data.items() + user_data.items())
-					skills_row, created = Skills.objects.get_or_create(skills_report=skills_report, user=skill_user, defaults=data)
-					if not created:
-						skills_row.__dict__.update(data)
-						skills_row.save()
+				ratings_row, created = PlayerRatings.objects.get_or_create(ratings_report=ratings_report, user=data['user'], defaults=data)
+				if not created:
+					ratings_row.__dict__.update(data)
+					ratings_row.save()
 
 			messages.success(request, 'Your player survey was updated successfully.')
-			return HttpResponseRedirect(reverse('playersurvey', kwargs={'teamid':teamid}))
+			return HttpResponseRedirect(reverse('playersurvey', kwargs={'teamid': teamid}))
 		else:
 			messages.error(request, 'There was an error on the form you submitted.')
 
 	else:
-		skills = []
+		ratings = []
 		for team_member_user in team_member_users:
 			try:
-				last_skill = model_to_dict(team_member_user.skills_set.filter(submitted_by=request.user).order_by('-updated')[0:1].get())
-				last_skill['user_id'] = last_skill['user']
-			except Skills.DoesNotExist:
-				last_skill = {'user_id': team_member_user.id}
-			skills.append(last_skill)
-		formset = SkillFormSet(initial=skills)
+				last_rating = model_to_dict(team_member_user.playerratings_set.filter(submitted_by=request.user).order_by('-updated')[0:1].get())
+				last_rating['user_id'] = last_rating['user']
+			except PlayerRatings.DoesNotExist:
+				last_rating = {'user_id': team_member_user.id}
+			ratings.append(last_rating)
+
+		formset = RatingsFormSet(initial=ratings)
 
 	survey = []
 	for (i, form) in enumerate(formset.forms):
 		survey.append({
 			'user': team_member_users[i],
-			'form': form})
+			'form': form
+		})
 
 	return render_to_response('captain/playersurvey.html',
-		{'team': team, 'formset': formset, 'survey': survey},
+		{
+			'formset': formset,
+			'survey': survey,
+			'team': team
+		},
 		context_instance=RequestContext(request))
 
 @login_required

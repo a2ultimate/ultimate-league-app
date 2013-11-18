@@ -80,15 +80,14 @@ def registrationexport(request, year=None, season=None, division=None):
 
 	if (year and season and division):
 		league = get_object_or_404(League, year=year, season=season, night=division)
+		# TODO need to use better "complete" registration query
 		registrations = Registrations.objects.filter(Q(check_complete=1) | Q(paypal_complete=1), league=league, waitlist=0, refunded=0) \
-			.extra(select={'average_athletic':'select COALESCE(AVG(skills.athletic), 0) FROM skills WHERE skills.user_id = registrations.user_id AND skills.athletic != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-			.extra(select={'average_forehand':'select COALESCE(AVG(skills.forehand), 0) FROM skills WHERE skills.user_id = registrations.user_id AND skills.forehand != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-			.extra(select={'average_backhand':'select COALESCE(AVG(skills.backhand), 0) FROM skills WHERE skills.user_id = registrations.user_id AND skills.backhand != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-			.extra(select={'average_receive':'select COALESCE(AVG(skills.receive), 0) FROM skills WHERE skills.user_id = registrations.user_id AND skills.receive != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-			.extra(select={'experience':'select COALESCE(MAX(skills.experience), 0) FROM skills WHERE skills.user_id = registrations.user_id AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-			.extra(select={'average_strategy':'select COALESCE(AVG(skills.strategy), 0) FROM skills WHERE skills.user_id = registrations.user_id AND skills.strategy != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-			.extra(select={'average_spirit':'select COALESCE(AVG(skills.spirit), 7) FROM skills WHERE skills.user_id = registrations.user_id AND skills.spirit != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-			.extra(select={'highest_level':'select highest_level FROM skills WHERE skills.user_id = registrations.user_id AND skills.user_id = skills.submitted_by_id'})
+			.extra(select={'average_experience':'SELECT COALESCE(AVG(player_ratings.experience), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.experience != 0'}) \
+			.extra(select={'average_strategy':'SELECT COALESCE(AVG(player_ratings.strategy), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.strategy != 0'}) \
+			.extra(select={'average_throwing':'SELECT COALESCE(AVG(player_ratings.throwing), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.throwing != 0'}) \
+			.extra(select={'average_athleticism':'SELECT COALESCE(AVG(player_ratings.athleticism), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.athleticism != 0'}) \
+			.extra(select={'average_competitiveness':'SELECT COALESCE(AVG(player_ratings.competitiveness), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.competitiveness != 0'}) \
+			.extra(select={'average_spirit':'SELECT COALESCE(AVG(player_ratings.spirit), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.spirit != 0'})
 
 		response = HttpResponse(content_type='text/csv')
 		response['Content-Disposition'] = 'attachment; filename="' + league.__unicode__() + '.txt"'
@@ -171,7 +170,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
 		teams = teams[0::2] + list(reversed(teams[1::2]))
 		teams = teams[:1] + teams[2:] + teams[1:2]
 
-		shift = 0
+		field_shift = 0
 		for event_num in range(0, num_events):
 			teams = teams[:1] + teams[-1:] + teams[1:-1]
 

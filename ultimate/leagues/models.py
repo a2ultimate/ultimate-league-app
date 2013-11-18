@@ -232,9 +232,6 @@ class Player(PybbProfile):
 	class Meta:
 		db_table = u'player'
 
-	def get_spirit(self):
-		return self.user.skills.exclude(spirit=0)
-
 	def get_age(self, now=None):
 		if not self.birthdate:
 			return 0
@@ -580,10 +577,10 @@ class Team(models.Model):
 
 
 	def player_survey_complete(self, user):
-		skill_reports = self.skillsreport_set.annotate(num_skills=Count('skills')).filter(submitted_by=user)
-		# since you don't rate yourself, looking for a skill report and teamsize - 1 skill entries
-		return bool(skill_reports.count() > 0) and \
-			bool(skill_reports.filter(num_skills__gte=self.size - 1).count() > 0)
+		ratings_reports = self.playerratingsreport_set.annotate(num_ratings=Count('playerratings')).filter(submitted_by=user)
+		# since you don't rate yourself, looking for a rating report and teamsize - 1 rating entries
+		return bool(ratings_reports.count() > 0) and \
+			bool(ratings_reports.filter(num_ratings__gte=self.size - 1).count() > 0)
 
 	def __unicode__(self):
 		return '%s (%s)' % (self.name, self.color)
@@ -654,50 +651,3 @@ class GameTeams(models.Model):
 
 	class Meta:
 		db_table = u'game_teams'
-
-
-class SkillsType(models.Model):
-	id = models.AutoField(primary_key=True)
-	description = models.TextField()
-	weight = models.FloatField()
-
-	class Meta:
-		db_table = u'skills_type'
-
-
-class SkillsReport(models.Model):
-	id = models.AutoField(primary_key=True)
-	submitted_by = models.ForeignKey(User, related_name='skills_report_submitted_by_set')
-	team = models.ForeignKey('leagues.Team')
-	updated = models.DateTimeField()
-
-	class Meta:
-		db_table = u'skills_report'
-
-	def __unicode__(self):
-		return '%s, %s, %s' % (self.team, self.team.league, self.submitted_by)
-
-
-class Skills(models.Model):
-	id = models.AutoField(primary_key=True)
-	skills_report = models.ForeignKey('leagues.SkillsReport')
-	highest_level = models.TextField()
-	athletic = models.PositiveIntegerField(default=0)
-	experience = models.PositiveIntegerField(default=0)
-	forehand = models.PositiveIntegerField(default=0)
-	backhand = models.PositiveIntegerField(default=0)
-	receive = models.PositiveIntegerField(default=0)
-	strategy = models.PositiveIntegerField(default=0)
-	skills_type = models.ForeignKey('leagues.SkillsType')
-	user = models.ForeignKey(User)
-	submitted_by = models.ForeignKey(User, related_name='skills_submitted_by_set')
-	updated = models.DateField()
-	spirit = models.PositiveIntegerField(default=0)
-	not_sure = models.BooleanField()
-
-	class Meta:
-		db_table = u'skills'
-		verbose_name_plural = 'skills'
-
-	def __unicode__(self):
-		return '%s %s <- %s' % (str(self.updated), self.user, self.submitted_by)

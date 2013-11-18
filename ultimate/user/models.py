@@ -67,13 +67,27 @@ class PlayerRatings(models.Model):
 	competitiveness = models.PositiveIntegerField(default=0, choices=RATING_COMPETITIVENESS_CHOICES)
 	spirit = models.PositiveIntegerField(default=0)
 	user = models.ForeignKey(User)
-	submitted_by = models.ForeignKey(User, related_name='skills_submitted_by_set')
+	submitted_by = models.ForeignKey(User, related_name='ratings_submitted_by_set')
 	ratings_type = models.CharField(default=None, choices=RATING_TYPE, blank=True, null=True)
-	ratings_report = models.ForeignKey('leagues.SkillsReport')
+	ratings_report = models.ForeignKey('user.PlayerRatingsReport')
 	updated = models.DateTimeField(auto_now=True, auto_now_add=True)
 
 	class Meta:
 		db_table = u'player_ratings'
+		verbose_name_plural = 'player ratings'
 
 	def __unicode__(self):
 		return '%s %s <- %s' % (str(self.updated), self.user, self.submitted_by)
+
+
+class PlayerRatingsReport(models.Model):
+	id = models.AutoField(primary_key=True)
+	submitted_by = models.ForeignKey(User, related_name='ratings_report_submitted_by_set')
+	team = models.ForeignKey('leagues.Team')
+	updated = models.DateTimeField()
+
+	class Meta:
+		db_table = u'player_ratings_report'
+
+	def __unicode__(self):
+		return '%s, %s, %s' % (self.team, self.team.league, self.submitted_by)

@@ -1418,16 +1418,10 @@ ul.captain_division_team_links li {
 	text-align: left;
 }
 
-#player_survey_table .skill_average {
+#player_survey_table select + div {
 	font-size: 13px;
 	font-weight: bold;
 	letter-spacing: 1px;
-}
-
-#player_survey_table tr.error td,
-#player_survey_table td.error {
-	background: #E74C3C;
-	color: #FFFFFF;
 }
 
 /* LEAGUE / INDEX */
