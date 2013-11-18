@@ -1,0 +1,62 @@
+{% extends "layout/layout_user.html" %}
+
+{% block content %}
+
+<h1>Edit Profile and Ratings</h1>
+
+<ul class="nav_tabs">
+	<li><a href="{% url editprofile %}">Edit Profile</a></li>
+	<li class="selected"><a href="{% url editratings %}">Edit Ratings</a></li>
+</ul>
+
+<p>
+	Please complete the following form to the best of your ability.
+	The team formation process relies heavily on the accuracy of
+	these answers, as they will be used to help balance teams.
+</p>
+
+<p>
+	Below you will find the answers to each question arranged in
+	ascending order. If you are unsure or think you fit in
+	between two different choices, it is better to be
+	conservative and choose an option closer to the top.
+</p>
+
+<p>
+	<strong>Note:</strong> This information is only used by league
+	administrators. Your answers will never be shared with others or
+	made public.
+</p>
+
+<hr />
+
+<form method="post">{% csrf_token %}
+	{{ form.non_field_errors }}
+
+	{% for field in form %}
+		<fieldset>
+			<legend>{{ field.label }}</legend>
+
+			{% if field.errors %}
+				<div class="errorlist">
+					{% for error in field.errors %}
+						<div><strong>{{ error }}</strong></div>
+					{% endfor %}
+				</div>
+			{% endif %}
+
+			{% for radio in field %}
+				<div class="radio">
+					{{ radio }}
+				</div>
+			{% endfor %}
+		</fieldset>
+	{% endfor %}
+
+	<div class="control_group">
+		<input class="button button_success" type="submit" value="Update Ratings">
+		<a href="{% url user %}">Cancel</a>
+	</div>
+</form>
+
+{% endblock %}

@@ -86,21 +86,6 @@ class RegistrationsAdmin(admin.ModelAdmin):
 	captain_value.admin_order_field = 'captain'
 
 
-class SkillsAdmin(admin.ModelAdmin):
-	save_as = True
-	save_on_top = True
-
-	list_display = ('updated', 'skills_report', 'user_details', 'submitted_by_details',)
-
-	def user_details(self, obj):
-		return u'%s <br /> %s' % (obj.user.get_full_name(), obj.user.email)
-	user_details.allow_tags = True
-
-	def submitted_by_details(self, obj):
-		return u'%s <br /> %s' % (obj.submitted_by.get_full_name(), obj.submitted_by.email)
-	submitted_by_details.allow_tags = True
-
-
 class TeamMemberModelChoiceField(forms.ModelChoiceField):
 	def label_from_instance(self, team_member):
 		# Return a string of the format: "firstname lastname (username)"
@@ -148,6 +133,5 @@ admin.site.register(FieldNames)
 admin.site.register(Game, GameAdmin)
 admin.site.register(League, LeagueAdmin)
 admin.site.register(Registrations, RegistrationsAdmin)
-admin.site.register(Skills, SkillsAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(TeamMember)

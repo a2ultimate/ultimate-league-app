@@ -88,27 +88,28 @@ def editprofile(request):
 		{'form': form, 'player_form': player_form},
 		context_instance=RequestContext(request))
 
-@login_required
-def editskills(request):
-#	try:
-#		skills = Skills.objects.get(user=request.user, submitted_by=request.user)
-#	except Skills.DoesNotExist:
-#		skills = None
 
-	skills, created = Skills.objects.get_or_create(user=request.user, submitted_by=request.user,
-		defaults={'skills_type': SkillsType.objects.get(id=1), 'updated': datetime.now(), 'user':request.user})
+@login_required
+def editratings(request):
+	ratings, created = PlayerRatings.objects.get_or_create(
+		user=request.user, submitted_by=request.user, ratings_type=PlayerRatings.RATING_TYPE_USER,
+		defaults={'user': request.user, 'submitted_by': request.user, 'ratings_type': PlayerRatings.RATING_TYPE_USER, 'updated': datetime.now()}
+	)
 
 	if request.method == 'POST':
-		form = EditSkillsForm(request.POST, instance=skills)
+		form = EditPlayerRatingsForm(request.POST, instance=ratings)
 		if form.is_valid():
 			form.save()
-			messages.success(request, 'Your skills were updated successfully.')
-			return HttpResponseRedirect(reverse('editskills'))
+			messages.success(request, 'Your ratings were updated successfully.')
+			return HttpResponseRedirect(reverse('editratings'))
 		else:
 			messages.error(request, 'There was an error on the form you submitted.')
 	else:
-		form = EditSkillsForm(instance=skills)
+		form = EditPlayerRatingsForm(instance=ratings)
 
-	return render_to_response('user/editskills.html',
-		{'form': form},
-		context_instance=RequestContext(request))
+	return render_to_response('user/editratings.html',
+		{
+			'form': form
+		},
+		context_instance=RequestContext(request)
+	)

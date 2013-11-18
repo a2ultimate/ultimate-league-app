@@ -10,6 +10,7 @@ def get_team_name_font_size(name):
 	else:
 		return 20
 
+
 @register.filter
 def get_game_opponent(game, user):
 	try:
@@ -19,12 +20,8 @@ def get_game_opponent(game, user):
 
 	return team_name
 
-#returns whether a user has filled out a player survey for a league
-@register.filter
-def player_survey_complete(game, user):
-	return league_games['list'][0].get_user_team(user).player_survey_complete(user)
 
-# returns average for a skill
+# returns average of a column, given a lable and an object/row
 @register.filter
 def get_average(row, label):
 	if row.__dict__['average_' + label.lower()]:
