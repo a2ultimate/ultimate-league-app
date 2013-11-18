@@ -8,12 +8,22 @@ def menu_leagues(request):
 
 
 def user_profile_is_complete(request):
+	result = {'user_profile_is_complete': False}
 	if request.user and request.user.is_authenticated():
 		try:
-			return {
-				'user_profile_is_complete': request.user.get_profile().is_complete_for_user()
-			}
+			result['user_profile_is_complete'] = request.user.get_profile().is_complete_for_user()
 		except:
-			return {'user_profile_is_complete': False}
+			return result
 
-	return {'user_profile_is_complete': False}
+	return result
+
+
+def user_rating_is_complete(request):
+	result = {'user_rating_is_complete': False}
+	if request.user and request.user.is_authenticated():
+		try:
+			result['user_rating_is_complete'] = bool(not request.user.playerrattings_set.filter(submitted_by=request.user, user=request.user))
+		except:
+			return result
+
+	return result

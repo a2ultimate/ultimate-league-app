@@ -111,6 +111,7 @@ AUTH_PROFILE_MODULE = 'leagues.player'
 TEMPLATE_CONTEXT_PROCESSORS = (
 	'ultimate.context_processors.menu_leagues',
 	'ultimate.context_processors.user_profile_is_complete',
+	'ultimate.context_processors.user_rating_is_complete',
 	'django.contrib.auth.context_processors.auth',
 	'django.contrib.messages.context_processors.messages',
 	'django.core.context_processors.debug',

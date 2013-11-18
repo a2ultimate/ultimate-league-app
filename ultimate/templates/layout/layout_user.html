@@ -57,9 +57,17 @@
 	<div id="content">
 		{% if user and user.is_authenticated and not user_profile_is_complete %}
 			<div class="message state_warning">
-				Your are currently missing information required to
+				You are missing profile information required to
 				register for a league. Please
-				<a href="{% url editprofile %}">update your profile</a>.
+				<a href="{% url editprofile %}">complete your profile</a>.
+			</div>
+		{% endif %}
+
+		{% if user and user.is_authenticated and not user_rating_is_complete %}
+			<div class="message state_warning">
+				You are missing player ratings required to
+				register for a league. Please
+				<a href="{% url editratings %}">complete your ratings</a>
 			</div>
 		{% endif %}
 

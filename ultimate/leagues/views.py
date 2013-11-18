@@ -144,7 +144,10 @@ def registration(request, year, season, division, section=None):
 	registration, created = Registrations.objects.get_or_create(user=request.user, league=league)
 
 	if not registration.is_complete() and \
-		not request.user.get_profile().is_complete_for_user():
+		( \
+			not request.user.get_profile().is_complete_for_user() or \
+			not request.user.playerrattings_set.filter(submitted_by=request.user, user=request.user)
+		):
 
 		raise Http403
 
