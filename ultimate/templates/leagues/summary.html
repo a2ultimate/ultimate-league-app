@@ -42,7 +42,16 @@
 		</tr>
 		{% for field in league.get_fields %}
 			<tr>
-				<td colspan="3">{{ field.field.name }}</td>
+				<td colspan="3">
+					{{ field.field.name }}
+					{% if field.field.layout_link %}
+						<small>
+							<a href="{{ MEDIA_URL }}{{ field.field.layout_link }}">
+								Field Layout
+							</a>
+						</small>
+					{% endif %}
+				</td>
 			</tr>
 		{% endfor %}
 		<tr>
