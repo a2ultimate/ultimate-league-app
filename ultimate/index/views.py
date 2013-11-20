@@ -1,24 +1,16 @@
-from django import forms
 from django.conf import settings
-from django.contrib import auth
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
 from syncr.app.flickr import FlickrSyncr
 from syncr.flickr.models import Photo
 from flickrapi import FlickrError
-import datetime
-import pytz
-import traceback
 
 from ultimate.index.models import *
-from pybb.models import Forum, Topic
-
-from paypal.standard.forms import PayPalPaymentsForm
+from pybb.models import Topic
 
 import feedparser
 
@@ -62,7 +54,7 @@ def update_feed(request):
 		try:
 			flickrSyncr.syncPhoto(photoID)
 		except FlickrError:
-			print 'flickr parse error'
+			print('flickr parse error')
 
 
 
