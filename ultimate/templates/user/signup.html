@@ -13,7 +13,7 @@
 
 	<table class="form_table">
 		{% for field in form.visible_fields %}
-			<tr{% ifequal field.name "honeypot" %} style="display:none;"{% endifequal %}>
+			<tr{% if field.name in 'honeypot,blank' %} style="display:none;"{% endif %}>
 				<td>{{ field.label_tag }}</td>
 				<td>
 					<div>

@@ -16,6 +16,7 @@ class SignupForm(forms.ModelForm):
 	first_name = forms.CharField(label=_('First Name'), max_length=30)
 	last_name = forms.CharField(label=_('Last Name'), max_length=30)
 	honeypot = forms.CharField(required=False, label=_('If you enter anything in this field your form submission will be treated as spam'))
+	blank = forms.CharField(required=False, label=_('If you enter anything in this field your form submission will be treated as spam'))
 
 	class Meta:
 		model = User
@@ -42,8 +43,15 @@ class SignupForm(forms.ModelForm):
 	def clean_honeypot(self):
 		value = self.cleaned_data['honeypot']
 		if not value == '':
-			print('Honeypot!')
+			print('honeypot!')
 			raise forms.ValidationError(self.fields['honeypot'].label)
+		return value
+
+	def clean_blank(self):
+		value = self.cleaned_data['blank']
+		if not value == '':
+			print('blank!')
+			raise forms.ValidationError(self.fields['blank'].label)
 		return value
 
 	def clean(self):
@@ -123,7 +131,7 @@ class EditPlayerRatingsForm(forms.ModelForm):
 
 	class Meta:
 		model = PlayerRatings
-		exclude = ('id', 'spirit', 'user', 'submitted_by', 'ratings_type', 'ratings_report', 'updated',)
+		exclude = ('id', 'spirit', 'user', 'submitted_by', 'ratings_type', 'ratings_report', 'not_sure', 'updated',)
 
 
 class PlayerSurveyForm(forms.ModelForm):
