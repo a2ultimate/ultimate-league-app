@@ -15,6 +15,7 @@ class SignupForm(forms.ModelForm):
 		help_text = _('Enter the same password as above, for verification.'))
 	first_name = forms.CharField(label=_('First Name'), max_length=30)
 	last_name = forms.CharField(label=_('Last Name'), max_length=30)
+	honeypot = forms.CharField(required=False, label=_('If you enter anything in this field your form submission will be treated as spam'))
 
 	class Meta:
 		model = User
@@ -35,8 +36,15 @@ class SignupForm(forms.ModelForm):
 		password1 = self.cleaned_data.get('password1', '')
 		password2 = self.cleaned_data['password2']
 		if password1 != password2:
-			raise forms.ValidationError(_('The two password fields didn\'t match.'))
+			raise forms.ValidationError(_('The two password fields did not match.'))
 		return password2
+
+	def clean_honeypot(self):
+		value = self.cleaned_data['honeypot']
+		if not value == '':
+			print('Honeypot!')
+			raise forms.ValidationError(self.fields['honeypot'].label)
+		return value
 
 	def clean(self):
 		if not self.errors:

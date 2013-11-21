@@ -13,18 +13,20 @@
 
 	<table class="form_table">
 		{% for field in form.visible_fields %}
-			<tr>
+			<tr{% ifequal field.name "honeypot" %} style="display:none;"{% endifequal %}>
 				<td>{{ field.label_tag }}</td>
-				<td>{{ field }}</td>
+				<td>
+					<div>
+						{{ field }}
+						{{ field.errors }}
+					</div>
+				</td>
 				<td>{{ field.help_text }}</td>
 			</tr>
-			{% if field.errors %}
-				<tr>
-					<td colspan="3">{{ field.errors }}</td>
-				</tr>
-			{% endif %}
+
 		{% endfor %}
 	</table>
+
 	<input class="button button_success" type="submit" value="Create Account">
 </form>
 
