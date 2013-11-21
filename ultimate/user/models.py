@@ -7,12 +7,12 @@ from ultimate.leagues.models import *
 class PlayerRatings(models.Model):
 
 	RATING_EXPERIENCE_CHOICES = (
-		(1,	'I am new to ultimate.'),
-		(2,	'I have played pickup, but for less than 3 years.'),
-		(3,	'I have played in an organized league for 1-2 seasons, or pickup for 3+ years.'),
-		(4,	'I have played in an organized league for 3+ seasons.'),
-		(5,	'I have played on a college or club team in the last 3 years.'),
-		(6,	'I have played on a regionals or nationals-level college or club team for 2 of the last 3 years.'),
+		(1,	'I am new to ultimate or have played less than 2 years of pickup.'),
+		(2,	'I have played in an organized league or on a high school team for 1-2 seasons, or pickup for 3+ years.'),
+		(3,	'I have played in an organized league or on a high school team for 3+ seasons.'),
+		(4, 'I have played on a college or club team in the last 6 years.'),
+		(5,	'I have played multiple seasons on a college or club team in the last 4 years.'),
+		(6,	'I have played multiple seasons on a regionals or nationals-level college or club team in the last 4 years.'),
 	)
 
 	RATING_STRATEGY_CHOICES = (
