@@ -11,9 +11,10 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
 from ultimate.captain.models import *
-from ultimate.user.models import *
 from ultimate.forms import *
 from ultimate.middleware.http import Http403
+from ultimate.user.models import *
+
 
 @login_required
 def index(request):
@@ -22,6 +23,7 @@ def index(request):
 	return render_to_response('captain/index.html',
 		{'captain_teams': captain_teams},
 		context_instance=RequestContext(request))
+
 
 @login_required
 def editteam(request, teamid):
@@ -44,6 +46,7 @@ def editteam(request, teamid):
 	return render_to_response('captain/editteam.html',
 		{'team': team, 'form': form},
 		context_instance=RequestContext(request))
+
 
 @login_required
 @transaction.commit_on_success
@@ -118,10 +121,16 @@ def playersurvey(request, teamid):
 	return render_to_response('captain/playersurvey.html',
 		{
 			'formset': formset,
+			'ratings_choices': {
+				'strategy': PlayerRatings.RATING_STRATEGY_CHOICES,
+				'throwing': PlayerRatings.RATING_THROWING_CHOICES,
+				'athleticism': PlayerRatings.RATING_ATHLETICISM_CHOICES,
+			},
 			'survey': survey,
 			'team': team
 		},
 		context_instance=RequestContext(request))
+
 
 @login_required
 @transaction.commit_on_success

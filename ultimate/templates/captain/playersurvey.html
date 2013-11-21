@@ -12,6 +12,49 @@
 
 	<h1>Player Survey</h1>
 
+	<p>
+		Please complete the following form to the best of your ability.
+		The team formation process relies heavily on the accuracy of
+		these answers, as they will be used to help balance teams.
+	</p>
+
+	<p>
+		If you do not feel that you are able to rate a player (e.g.
+		you were unable to evaluate them due to absences), please
+		check the "Not Sure" box.
+	</p>
+
+	<p>
+		<strong>Note:</strong> This information is only used by league
+		administrators. Your answers will never be shared or
+		made public.
+	</p>
+
+	<hr />
+
+	<h2>Player Rating Values</h2>
+
+	<h3>Strategy</h3>
+	<ul>
+		{% for value, text in ratings_choices.strategy %}
+			<li>{{ value }} - {{ text }}</li>
+		{% endfor %}
+	</ul>
+
+	<h3>Throwing</h3>
+	<ul>
+		{% for value, text in ratings_choices.throwing %}
+			<li>{{ value }} - {{ text }}</li>
+		{% endfor %}
+	</ul>
+
+	<h3>Athleticism</h3>
+	<ul>
+		{% for value, text in ratings_choices.athleticism %}
+			<li>{{ value }} - {{ text }}</li>
+		{% endfor %}
+	</ul>
+
 	<form method="post" action="{% url playersurvey teamid=team.id %}">{% csrf_token %}
 		{{ formset.management_form }}
 

@@ -112,6 +112,7 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 
 hr {
 	border-top: 1px solid #BDC3C7;
+	border-top: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 fieldset {

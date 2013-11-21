@@ -12,6 +12,7 @@ from ultimate.leagues.models import *
 from ultimate.user.models import *
 from ultimate.forms import *
 
+
 @login_required
 def index(request):
 	leagues = League.objects.filter(state__in=['closed', 'open', 'preview']).order_by('league_start_date')
@@ -43,6 +44,7 @@ def index(request):
 		},
 		context_instance=RequestContext(request))
 
+
 def signup(request):
 	if request.method == 'POST':
 		form = SignupForm(request.POST)
@@ -58,6 +60,7 @@ def signup(request):
 	return render_to_response('user/signup.html',
 		{'form': form},
 		context_instance=RequestContext(request))
+
 
 @login_required
 def editprofile(request):
