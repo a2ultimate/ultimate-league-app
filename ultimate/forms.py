@@ -115,7 +115,7 @@ class EditPlayerForm(forms.ModelForm):
 	gender = forms.CharField(label='Gender*', widget=forms.Select(choices=(('', '----------'),) + Player.GENDER_CHOICES))
 	height_inches = forms.IntegerField(label='Height Inches*')
 	birthdate = forms.DateField(label='Birthdate*', help_text='e.g. ' + date.today().strftime('%Y-%m-%d'))
-	jersey_size = forms.CharField(label='Jersey Size*', help_text='XS, S, M, L, XL, XXL')
+	jersey_size = forms.CharField(label='Jersey Size*', widget=forms.Select(choices=(('', '----------'),) + Player.JERSEY_SIZE_CHOICES))
 
 	class Meta:
 		model = Player

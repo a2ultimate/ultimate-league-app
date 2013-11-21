@@ -215,6 +215,15 @@ class Player(PybbProfile):
 		('F',	'Female'),
 	)
 
+	JERSEY_SIZE_CHOICES = (
+		('XS',	'XS - Extra Small'),
+		('S',	'S - Small'),
+		('M',	'M - Medium'),
+		('L',	'L - Large'),
+		('XL',	'XL -Extra Large'),
+		('XXL',	'XXL - Extra Extra Large'),
+	)
+
 	user = models.ForeignKey(User, db_column='id')
 	groups = models.TextField()
 	nickname = models.CharField(max_length=30)
@@ -227,7 +236,7 @@ class Player(PybbProfile):
 	height_inches = models.IntegerField()
 	highest_level = models.TextField()
 	birthdate = models.DateField(help_text='e.g. ' + date.today().strftime('%Y-%m-%d'))
-	jersey_size = models.CharField(max_length=45, help_text='XS, S, M, L, XL, XXL')
+	jersey_size = models.CharField(max_length=45, choices=GENDER_CHOICES)
 
 	class Meta:
 		db_table = u'player'
