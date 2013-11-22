@@ -1,0 +1,9 @@
+{% load utility %}
+
+<h1>
+	{{ league.season_title|smart_title }} League {{ league.year }} {{ league.night_title|smart_title }} Division ({{ league.gender_title|smart_title }})
+	{% if header %}{{ header }}{% endif %}
+	{% if league.state == 'preview' %}
+		<em>({{ league.state|capfirst }})</em>
+	{% endif %}
+</h1>

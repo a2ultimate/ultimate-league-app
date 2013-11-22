@@ -14,12 +14,7 @@ def payment_success(sender, **kwargs):
 	try:
 		registration = Registrations.objects.get(paypal_invoice_id=ipn_obj.invoice)
 
-		num_registrations = len(registration.league.get_complete_registrations())
-
-		if num_registrations > registration.league.max_players:
-			registration.waitlist = 1
-
-		if registration.league.is_accepting_waitlist:
+		if registration.league.is_waitlist(registration.user):
 			registration.waitlist = 1
 
 		registration.paypal_complete = 1

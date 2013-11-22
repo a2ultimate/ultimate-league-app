@@ -5,7 +5,8 @@
 	{% if user|is_captain %}
 		<li class="{% if selected_tab == 'captain' %}selected{% endif %}"><a href="{% url captain %}">Captain Resources</a></li>
 	{% endif %}
-	{% if user.is_staff %}
+
+	{% if request.user|in_group:"junta" %}
 		<li class="{% if selected_tab == 'junta' %}selected{% endif %}"><a href="{% url junta %}">Junta Resources</a></li>
 	{% endif %}
 </ul>

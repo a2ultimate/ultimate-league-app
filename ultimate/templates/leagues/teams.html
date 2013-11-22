@@ -1,16 +1,16 @@
 {% extends "layout/layout_user.html" %}
+
 {% load teams %}
+{% load user_roles %}
 {% load utility %}
 
 {% block content %}
-	<h1>
-		{{ league.season|title }} League {{ league.year }} {{ league.night|title }} Division ({{ league.gender|title }})
-		{% if league.state != 'active' %}<em>({{ league.state|capfirst }})</em>{% endif %}
-	</h1>
+
+	{% include "layout/league_header.html" with league=league only %}
 
 	{% include "layout/league_tabs.html" with selected_tab="teams" %}
 
-	{% if league.get_games|length %}
+	{% if games|length %}
 		<table id="schedule_table" class="table table-striped">
 			<thead>
 				<tr>
@@ -19,7 +19,15 @@
 					{% for field in fields %}
 						<th class="text_center" colspan="{{ field.list|length }}">
 							<div>{{ field.grouper }}</div>
-							<div><a href="{{ MEDIA_URL }}{{ field.grouper.layout_link }}">Field Layout</a></div>
+							{% if field.grouper.layout_link %}
+								<div>
+									<small>
+										<a href="{{ MEDIA_URL }}{{ field.grouper.layout_link }}" target="_blank">
+											Field Layout
+										</a>
+									</small>
+								</div>
+							{% endif %}
 						</th>
 					{% endfor %}
 				</tr>
@@ -33,9 +41,9 @@
 			</thead>
 
 			<tbody>
-				{% regroup league.get_games|dictsort:"field_name.field"|dictsort:"field_name.name"|dictsort:"date" by date as games_list %}
+				{% regroup games|dictsort:"field_name.field"|dictsort:"field_name.name"|dictsort:"date" by date as games_list %}
 				{% for date in games_list %}
-					<tr class="{% if date.grouper|time_until_days < 7 and date.grouper|time_until_days >= 0 %}active{% endif %}">
+					<tr class="{% if date.grouper == next_game_date %}active{% endif %}">
 						<th class="text_right">
 							<div>{{ date.grouper|date:"M" }}</div>
 							<div>{{ date.grouper|date:"jS" }}</div>
@@ -122,8 +130,8 @@
 							{% endfor %}
 						</div>
 
-						{% if perms.junta %}
-							<div class="team_counts text_center">
+						{% if request.user|in_group:"junta" %}
+							<div class="team_notes text_center">
 								<em>
 									{{ team.get_members|length }} Player{{ team.get_members|length|pluralize }},
 									{{ team.get_male_members|length }} Male{{ team.get_male_members|length|pluralize }},

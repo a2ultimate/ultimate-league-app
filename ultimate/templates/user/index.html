@@ -1,12 +1,14 @@
 {% extends "layout/layout_user.html" %}
+
 {% load leagues %}
 {% load league_registrations %}
 {% load teams %}
+{% load user_roles %}
+{% load utility %}
 
 {% block content %}
 	<h1>My Account</h1>
 	{% include "layout/account_tabs.html" with selected_tab="user" %}
-
 
 	<h2>Upcoming Games</h2>
 	{% if next_game %}
@@ -17,7 +19,13 @@
 				<div id="next_game_time">{{ next_game.league.times }}</div>
 				<div id="next_game_field">
 					@ {{ next_game.field_name.field.name }} {{ next_game.field_name.name }}
-					<a href="{{ MEDIA_URL }}{{ next_game.field_name.field.layout_link }}">Field Layout</a>
+					{% if next_game.field_name.field.layout_link %}
+						<small>
+							<a href="{{ MEDIA_URL }}{{ next_game.field_name.field.layout_link }}">
+								Field Layout
+							</a>
+						</small>
+					{% endif %}
 				</div>
 			</div>
 
@@ -73,8 +81,8 @@
 								{% endfor %}
 							</div>
 
-							{% if perms.junta %}
-								<div class="team_counts text_center">
+							{% if request.user|in_group:"junta" %}
+								<div class="team_notes text_center">
 									<em>
 										{{ team.get_members|length }} Player{{ team.get_members|length|pluralize }},
 										{{ team.get_male_members|length }} Male{{ team.get_male_members|length|pluralize }},
@@ -107,7 +115,7 @@
 		<a href="{% url editprofile %}">Edit Profile</a>
 	</p>
 	<p>
-		<a href="{% url editskills %}">Edit Skills</a>
+		<a href="{% url editratings %}">Edit Ratings</a>
 	</p>
 
 
@@ -127,9 +135,9 @@
 						<tr>
 							<td>
 								<a href="{% url league_registration year=registration.league.year season=registration.league.season division=registration.league.night %}">
-									{{ registration.league.season|capfirst }}
+									{{ registration.league.season_title|smart_title }}
 									{{ registration.league.year }}
-									{{ registration.league.night|capfirst }}
+									{{ registration.league.night|smart_title }}
 								</a>
 							</td>
 							<td>{{ registration.get_progress }}%</td>
@@ -141,7 +149,7 @@
 									No group
 								{% endfor %}
 
-								{% if registration.is_complete and registration.league.baggage > 1 and not registration.waitlist and not registration.league.freeze_group_date|is_past_deadline %}
+								{% if registration.is_complete and registration.league.baggage > 1 and not registration.waitlist and not registration.league.waitlist_start_date|is_past_deadline %}
 									<div><a href="{% url league_group year=league.year season=league.season division=league.night %}">Edit Group</a></div>
 								{% endif %}
 							</td>
@@ -152,9 +160,11 @@
 		</table>
 
 		<p id="user_registrations_note">
-			It can sometimes take a while for PayPal to confirm a payment. Try clicking reload after a few minutes have passed.<br />
-			If you used the echeck feature of paypal it may take up to a week to clear.<br />
-			If paying by check, the status will remain unconfirmed until your check is received and processed.<br />
+			PayPaly payments occasionally take some time to clear. Try reloading after a few minutes have passed.
+			<br />
+			If you used the echeck feature of paypal it may take up to a week to clear.
+			<br />
+			If paying by check, the status will remain unconfirmed until your check is received and processed.
 		</p>
 	{% else %}
 		<p class="none_found">No registrations found</p>

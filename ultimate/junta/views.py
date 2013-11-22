@@ -17,7 +17,7 @@ from ultimate.leagues.models import *
 from ultimate.user.models import *
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='junta').exists())
 def index(request):
 
 	return render_to_response('junta/index.html',
@@ -26,6 +26,7 @@ def index(request):
 
 
 @login_required
+@user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='junta').exists())
 def captainstatus(request, year=None, season=None, division=None):
 	league = None
 	leagues = None
@@ -42,6 +43,7 @@ def captainstatus(request, year=None, season=None, division=None):
 
 
 @login_required
+@user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='junta').exists())
 def leagueresults(request, year=None, season=None, division=None):
 	league = None
 	field_names = None
@@ -72,26 +74,23 @@ def leagueresults(request, year=None, season=None, division=None):
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
+@user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='junta').exists())
 def registrationexport(request, year=None, season=None, division=None):
 	leagues = League.objects.all().order_by('-league_start_date')
 
 	if (year and season and division):
 		league = get_object_or_404(League, year=year, season=season, night=division)
+		# TODO need to use better "complete" registration query
 		registrations = Registrations.objects.filter(Q(check_complete=1) | Q(paypal_complete=1), league=league, waitlist=0, refunded=0) \
-			.extra(select={'average_athletic':'select COALESCE(AVG(skills.athletic), 0) FROM skills WHERE skills.user_id = registrations.user_id AND skills.athletic != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-			.extra(select={'average_forehand':'select COALESCE(AVG(skills.forehand), 0) FROM skills WHERE skills.user_id = registrations.user_id AND skills.forehand != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-			.extra(select={'average_backhand':'select COALESCE(AVG(skills.backhand), 0) FROM skills WHERE skills.user_id = registrations.user_id AND skills.backhand != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-			.extra(select={'average_receive':'select COALESCE(AVG(skills.receive), 0) FROM skills WHERE skills.user_id = registrations.user_id AND skills.receive != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-			.extra(select={'experience':'select COALESCE(MAX(skills.experience), 0) FROM skills WHERE skills.user_id = registrations.user_id AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-			.extra(select={'average_strategy':'select COALESCE(AVG(skills.strategy), 0) FROM skills WHERE skills.user_id = registrations.user_id AND skills.strategy != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-			.extra(select={'average_spirit':'select COALESCE(AVG(skills.spirit), 7) FROM skills WHERE skills.user_id = registrations.user_id AND skills.spirit != 0 AND (skills.not_sure = 0 OR skills.not_sure IS NULL)'}) \
-			.extra(select={'highest_level':'select highest_level FROM skills WHERE skills.user_id = registrations.user_id AND skills.user_id = skills.submitted_by_id'})
+			.extra(select={'average_experience':'SELECT COALESCE(AVG(player_ratings.experience), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.experience != 0'}) \
+			.extra(select={'average_strategy':'SELECT COALESCE(AVG(player_ratings.strategy), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.strategy != 0'}) \
+			.extra(select={'average_throwing':'SELECT COALESCE(AVG(player_ratings.throwing), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.throwing != 0'}) \
+			.extra(select={'average_athleticism':'SELECT COALESCE(AVG(player_ratings.athleticism), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.athleticism != 0'}) \
+			.extra(select={'average_competitiveness':'SELECT COALESCE(AVG(player_ratings.competitiveness), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.competitiveness != 0'}) \
+			.extra(select={'average_spirit':'SELECT COALESCE(AVG(player_ratings.spirit), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.spirit != 0'})
 
 		response = HttpResponse(content_type='text/csv')
 		response['Content-Disposition'] = 'attachment; filename="' + league.__unicode__() + '.txt"'
-
-		# response = HttpResponse()
 
 		t = loader.get_template('junta/registrationexport.txt')
 		c = Context({
@@ -152,6 +151,7 @@ def teamimport(request):
 
 @login_required
 @transaction.commit_on_success
+@user_passes_test(lambda u: u.is_superuser)
 def schedulegeneration(request, year=None, season=None, division=None):
 	league = None
 	leagues = None
@@ -159,7 +159,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
 	schedule = None
 	num_teams = 0
 
-	if (year and season and division):
+	if year and season and division:
 		league = get_object_or_404(League, year=year, season=season, night=division)
 		num_events = league.get_num_game_events()
 
@@ -170,7 +170,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
 		teams = teams[0::2] + list(reversed(teams[1::2]))
 		teams = teams[:1] + teams[2:] + teams[1:2]
 
-		shift = 0
+		field_shift = 0
 		for event_num in range(0, num_events):
 			teams = teams[:1] + teams[-1:] + teams[1:-1]
 
@@ -179,7 +179,6 @@ def schedulegeneration(request, year=None, season=None, division=None):
 			games = zip(top, bottom)
 
 			field_shift = (event_num * 2) % (num_teams // 2)
-			print field_shift
 
 			games = games[-field_shift:] + games[:-field_shift]
 

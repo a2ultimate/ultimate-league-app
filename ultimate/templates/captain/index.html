@@ -1,43 +1,20 @@
 {% extends "layout/layout_user.html" %}
+
 {% load leagues %}
 {% load games %}
 {% load teams %}
+{% load utility %}
 
 {% block content %}
 	{% include "layout/account_tabs.html" with selected_tab="captain" %}
 
 	<h1>Captain Resources</h1>
 
-	<style>
-		.team_list {
-			list-style: none;
-			margin: 0;
-			padding: 0;
-		}
-
-		.team_list_header {
-			background: #ECF0F1;
-			border-radius: 2px;
-			margin: 0;
-			padding: 8px 6px;
-		}
-
-		.team_list > li > ul {
-			list-style: none;
-			margin: 18px 0;
-			padding: 0;
-		}
-
-		.team_list > li > ul > li {
-			padding: 2px;
-		}
-	</style>
-
 	<ul class="team_list">
 		{% for team in captain_teams %}
 			<li>
 				<div class="team_list_header">
-					<div class="pull_right">{{ team.league.year|title }} {{ team.league.season|title }} {{ team.league.night|title }}</div>
+					<div class="pull_right">{{ team.league.year }} {{ team.league.season_title|smart_title }} {{ team.league.night_title|smart_title }}</div>
 					<div>{{ team.name }}</div>
 				</div>
 

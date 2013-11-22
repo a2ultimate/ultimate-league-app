@@ -1,94 +1,96 @@
 {% extends "layout/layout_user.html" %}
 
 {% load leagues %}
+{% load utility %}
 
 {% block content %}
 
-<h1>
-	{{ league.season|title }} League {{ league.year }} {{ league.night|title }} Division ({{ league.gender|title }})
-	{% if league.state != 'active' %}<em>({{ league.state|capfirst }})</em>{% endif %}
-</h1>
+	{% include "layout/league_header.html" with league=league only %}
 
-{% include "layout/league_tabs.html" with selected_tab="registration" %}
+	{% include "layout/league_tabs.html" with selected_tab="registration" %}
 
-{% include "leagues/registration/_progress.html" %}
+	{% include "leagues/registration/_progress.html" with league=league registration=registration section=section only %}
 
-<h2>Registration Status</h2>
+	<h2>Registration Status</h2>
 
-{% if registration.is_complete %}
-	<h3>
-		Your registration is <strong class="text_success">complete</strong>.
+	{% if registration.is_complete %}
+		<h3>
+			Your registration is <strong class="text_success">complete</strong>.
 
-		{% if registration.waitlist %}
-			However, you are on the <strong class="text_warning">waitlist</strong>.
-		{% elif registration.league.baggage > 1 and not registration.league.freeze_group_date|is_past_deadline %}
-			You may <a href="{% url league_group year=league.year season=league.season division=league.night %}">form a baggage group here</a>.
-		{% endif %}
-	</h3>
-{% else %}
-	<h3>
-		Your registration is <strong class="text_error">not complete</strong>.
-	</h3>
-{% endif %}
-
-<hr />
-
-<p>
-	Your attendance indicates you will miss <strong>{{ registration.attendance }}</strong> out of <strong>{{ league.get_num_game_events }}</strong> games.
-</p>
-
-<p>
-	Your captaining rating is <strong>{{ registration.captain }}</strong> out of <strong>10</strong>.
-</p>
-
-<p>
-	If you would like to change your attendance or captaining rating, <a href="{% url league_registration_section year=league.year season=league.season division=league.night section='attendance' %}">click here</a>.
-</p>
-
-<hr />
-
-{% if not registration.is_complete and registration.league.paypal_cost > 0 and registration.league.check_cost > 0 %}
-	{% if registration.pay_type = 'check' %}
-		<p>
-			You're currently set to pay by check. You may send a check for <strong>${{ league.check_cost }}</strong> to:
-		</p>
-
-		{{ league.mail_check_address|safe }}
-
-		<form method="post">{% csrf_token %}
-			<input class="hidden" type="hidden" name="pay_type" value="paypal" />
-			<input class="button button_info" type="submit" value="Switch Payment Type to PayPal" />
-		</form>
+			{% if registration.waitlist %}
+				However, you are on the <strong class="text_warning">waitlist</strong>.
+			{% elif registration.league.baggage > 1 and not registration.league.waitlist_start_date|is_past_deadline %}
+				You may <a href="{% url league_group year=league.year season=league.season division=league.night %}">form a baggage group here</a>.
+			{% endif %}
+		</h3>
+	{% else %}
+		<h3>
+			Your registration is <strong class="text_error">not complete</strong>.
+		</h3>
 	{% endif %}
-	{% if registration.pay_type = 'paypal' %}
-		{% if not registration.paypal_complete %}
-			<p>
-				Click the 'Buy Now' button to pay <strong>${{ league.paypal_cost }}</strong>.
-			</p>
 
-			<p>
-				You will be redirected to PayPal's website to pay and redirected back to the A2Ultimate site afterward.
-			</p>
+	<hr />
 
-			<p>
-				{{ paypal_form.render }}
-			</p>
+	<p>
+		Your attendance indicates you will miss <strong>{{ registration.attendance }}</strong> out of <strong>{{ league.get_num_game_events }}</strong> games.
+	</p>
+
+	<p>
+		{% if registration.captain >= 0 %}
+			Your captaining response is <strong>"{{ registration.get_captain_display }}"</strong>
+		{% else %}
+			You have not submitted a captain response.
 		{% endif %}
+	</p>
 
-		<p>
-			If you've already submitted a payment via PayPal, please be patient.<br />
-			It could take up to 24 hours to show as completed.
-		</p>
+	<p>
+		If you would like to change your attendance or captaining rating, <a href="{% url league_registration_section year=league.year season=league.season division=league.night section='attendance' %}">click here</a>.
+	</p>
 
-		<p>
-			If has already been 24 hours, please email <a href="mailto:registration@annarborultimate.org">registration@annarborultimate.org</a>
-		</p>
+	<hr />
 
-		<form method="post">{% csrf_token %}
-			<input class="hidden" type="hidden" name="pay_type" value="check" />
-			<input class="button button_info" type="submit" value="Switch Payment Type to Check" />
-		</form>
+	{% if not registration.is_complete and registration.league.paypal_price > 0 and registration.league.check_price > 0 %}
+		{% if registration.pay_type = 'check' %}
+			<p>
+				You're currently set to pay by check. You may send a check for <strong>${{ league.check_price }}</strong> to:
+			</p>
+
+			{{ league.mail_check_address|safe }}
+
+			<form method="post">{% csrf_token %}
+				<input class="hidden" type="hidden" name="pay_type" value="paypal" />
+				<input class="button button_info" type="submit" value="Switch Payment Type to PayPal" />
+			</form>
+		{% endif %}
+		{% if registration.pay_type = 'paypal' %}
+			{% if not registration.paypal_complete %}
+				<p>
+					Click the "Checkout using PayPal" button to pay <strong>${{ league.paypal_price }}</strong>.
+				</p>
+
+				<p>
+					You will be redirected to PayPal's website to pay and redirected back to the A2Ultimate site afterward.
+				</p>
+
+				<p>
+					{{ paypal_form.render }}
+				</p>
+			{% endif %}
+
+			<p>
+				If you've already submitted a payment via PayPal, please be patient.<br />
+				It could take up to 24 hours to show as completed.
+			</p>
+
+			<p>
+				If has already been 24 hours, please email <a href="mailto:registration@annarborultimate.org">registration@annarborultimate.org</a>
+			</p>
+
+			<form method="post">{% csrf_token %}
+				<input class="hidden" type="hidden" name="pay_type" value="check" />
+				<input class="button button_info" type="submit" value="Switch Payment Type to Check" />
+			</form>
+		{% endif %}
 	{% endif %}
-{% endif %}
 
 {% endblock %}

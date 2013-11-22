@@ -1,3 +1,6 @@
+{% load leagues %}
+{% load utility %}
+
 {% include "layout/header.html" %}
 <div id="content_container">
 	<div id="sidebar">
@@ -12,39 +15,38 @@
 
 		{% if menu_leagues %}
 			<ul>
-				{% regroup menu_leagues by year as league_years %}
+				{% regroup menu_leagues by season_year as season_years %}
 
-				{% for league_list in league_years %}
-					{% regroup league_list.list by season as league_seasons %}
+				{% for season_year in season_years %}
+					<li>
+						{{ season_year.grouper|smart_title }}
+						<ul class="league_list">
+							{% for league in season_year.list %}
+								<li>
+									<div class="league_name">
+										{{ league.night|smart_title }}
 
-					{% for league in league_seasons %}
-						<li>
-							{{ league.grouper|capfirst }} {{ league_list.grouper }}
-							<ul class="league_list">
-								{% for night in league.list %}
-									<li>
-										<div class="league_name">
-											{{ night.night|title }}
-											{% if night.state != 'active' %}<em>({{ night.state|capfirst }})</em>{% endif %}
-										</div>
-										<ul>
-											{% if night.is_accepting_registrations %}
-												{% if night.is_accepting_waitlist %}
-													<li><a href="{% url league_registration year=league_list.grouper season=league.grouper division=night.night %}">Register for Waitlist</a></li>
-												{% else %}
-													<li><a href="{% url league_registration year=league_list.grouper season=league.grouper division=night.night %}">Register</a></li>
-												{% endif %}
+										{% if league.state == 'preview' %}
+											<em>({{ league.state|capfirst }})</em>
+										{% endif %}
+									</div>
+									<ul>
+										{% if league|is_open:user %}
+											{% if league|is_waitlist:user %}
+												<li><a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register for Waitlist</a></li>
+											{% else %}
+												<li><a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register</a></li>
 											{% endif %}
-											<li><a href="{% url league_summary year=league_list.grouper season=league.grouper division=night.night %}">Summary</a></li>
-											<li><a href="{% url league_details year=league_list.grouper season=league.grouper division=night.night %}">Detailed Info</a></li>
-											<li><a href="{% url league_players year=league_list.grouper season=league.grouper division=night.night %}">Players</a></li>
-											<li><a href="{% url league_teams year=league_list.grouper season=league.grouper division=night.night %}">Teams & Schedules</a></li>
-										</ul>
-									</li>
-								{% endfor %}
-							</ul>
-						</li>
-					{% endfor %}
+										{% endif %}
+										<li><a href="{% url league_summary year=league.year season=league.season division=league.night %}">Summary</a></li>
+										<li><a href="{% url league_details year=league.year season=league.season division=league.night %}">Detailed Info</a></li>
+										<li><a href="{% url league_players year=league.year season=league.season division=league.night %}">Players</a></li>
+										<li><a href="{% url league_teams year=league.year season=league.season division=league.night %}">Teams & Schedules</a></li>
+									</ul>
+								</li>
+							{% endfor %}
+						</ul>
+					</li>
 				{% endfor %}
 			</ul>
 		{% else %}
@@ -53,16 +55,21 @@
 	</div>
 
 	<div id="content">
-		<div id="messages">
-			{% regroup messages|dictsortreversed:"level" by tags as message_groups %}
-			{% for message_group in message_groups %}
-				{% for message in message_group.list %}
-					<p class="{{ message_group.grouper }}">
-						{{ message }}
-					</p>
-				{% endfor %}
-			{% endfor %}
-		</div>
+		{% if user and user.is_authenticated and not user_profile_is_complete %}
+			<div class="message state_warning">
+				You are missing profile information required to
+				register for a league. Please
+				<a href="{% url editprofile %}">complete your profile</a>.
+			</div>
+		{% endif %}
+
+		{% if user and user.is_authenticated and not user_rating_is_complete %}
+			<div class="message state_warning">
+				You are missing player ratings required to
+				register for a league. Please
+				<a href="{% url editratings %}">complete your ratings</a>
+			</div>
+		{% endif %}
 
 		{% block content %}
 		{% endblock %}

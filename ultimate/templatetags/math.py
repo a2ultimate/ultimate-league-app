@@ -17,3 +17,11 @@ def divide(value, arg):
 @register.filter
 def divide_by_count(value, arg):
 	return int(value) / int(len(arg))
+
+@register.filter
+def limit_ceil(value, arg):
+	return min(int(value), int(arg))
+
+@register.filter
+def limit_floor(value, arg):
+	return max(int(value), int(arg))

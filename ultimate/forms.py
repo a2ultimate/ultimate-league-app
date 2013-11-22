@@ -1,11 +1,11 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
-from django.utils.http import int_to_base36
 
 from ultimate.captain.models import *
 from ultimate.leagues.models import *
 from ultimate.user.models import *
+
 
 class SignupForm(forms.ModelForm):
 	username = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -15,6 +15,8 @@ class SignupForm(forms.ModelForm):
 		help_text = _('Enter the same password as above, for verification.'))
 	first_name = forms.CharField(label=_('First Name'), max_length=30)
 	last_name = forms.CharField(label=_('Last Name'), max_length=30)
+	honeypot = forms.CharField(required=False, label=_('If you enter anything in this field your form submission will be treated as spam'))
+	blank = forms.CharField(required=False, label=_('If you enter anything in this field your form submission will be treated as spam'))
 
 	class Meta:
 		model = User
@@ -35,8 +37,22 @@ class SignupForm(forms.ModelForm):
 		password1 = self.cleaned_data.get('password1', '')
 		password2 = self.cleaned_data['password2']
 		if password1 != password2:
-			raise forms.ValidationError(_('The two password fields didn\'t match.'))
+			raise forms.ValidationError(_('The two password fields did not match.'))
 		return password2
+
+	def clean_honeypot(self):
+		value = self.cleaned_data['honeypot']
+		if not value == '':
+			print('honeypot!')
+			raise forms.ValidationError(self.fields['honeypot'].label)
+		return value
+
+	def clean_blank(self):
+		value = self.cleaned_data['blank']
+		if not value == '':
+			print('blank!')
+			raise forms.ValidationError(self.fields['blank'].label)
+		return value
 
 	def clean(self):
 		if not self.errors:
@@ -51,11 +67,12 @@ class SignupForm(forms.ModelForm):
 			user.save()
 		return user
 
+
 class EditProfileForm(forms.ModelForm):
 	username = forms.CharField(widget=forms.HiddenInput, required=False)
-	email = forms.EmailField(label=_('Email Address'), max_length=75)
-	first_name = forms.CharField(label=_('First Name'), max_length=30)
-	last_name = forms.CharField(label=_('Last Name'), max_length=30)
+	email = forms.EmailField(label=_('Email Address*'), max_length=75)
+	first_name = forms.CharField(label=_('First Name*'), max_length=30)
+	last_name = forms.CharField(label=_('Last Name*'), max_length=30)
 
 	class Meta:
 		model = User
@@ -87,76 +104,71 @@ class EditProfileForm(forms.ModelForm):
 			user.save()
 		return user
 
+
 class EditPlayerForm(forms.ModelForm):
-	nickname = forms.CharField(max_length=30, required=False)
-	phone = forms.CharField(max_length=15, required=False)
-	street_address = forms.CharField(max_length=255, required=False)
-	city = forms.CharField(max_length=127, required=False)
-	state = forms.CharField(max_length=6, required=False)
-	zipcode = forms.CharField(max_length=15, required=False)
+	nickname = forms.CharField(required=False)
+	phone = forms.CharField(required=False)
+	street_address = forms.CharField(required=False)
+	city = forms.CharField(required=False)
+	state = forms.CharField(required=False)
+	zipcode = forms.CharField(required=False)
+	gender = forms.CharField(label='Gender*', widget=forms.Select(choices=(('', '----------'),) + Player.GENDER_CHOICES))
+	height_inches = forms.IntegerField(label='Height Inches*')
+	birthdate = forms.DateField(label='Birthdate*', help_text='e.g. ' + date.today().strftime('%Y-%m-%d'))
+	jersey_size = forms.CharField(label='Jersey Size*', widget=forms.Select(choices=(('', '----------'),) + Player.JERSEY_SIZE_CHOICES))
 
 	class Meta:
 		model = Player
 		exclude = ('id', 'groups', 'user', 'highest_level', 'post_count',)
 
-SKILL_CHOICES = [ (i,i) for i in range(0,11) ]
 
-class EditSkillsForm(forms.ModelForm):
-	athletic = forms.IntegerField(min_value=1, max_value=10, initial=1)
-	experience = forms.IntegerField(min_value=1, max_value=10, initial=1)
-	forehand = forms.IntegerField(min_value=1, max_value=10, initial=1)
-	backhand = forms.IntegerField(min_value=1, max_value=10, initial=1)
-	receive = forms.IntegerField(min_value=1, max_value=10, initial=1)
-	strategy = forms.IntegerField(min_value=1, max_value=10, initial=1)
+class EditPlayerRatingsForm(forms.ModelForm):
+	experience = forms.TypedChoiceField(coerce=int, choices=PlayerRatings.RATING_EXPERIENCE_CHOICES, widget=forms.RadioSelect, label='1. How much experience do you have playing ultimate?')
+	strategy = forms.TypedChoiceField(coerce=int, choices=PlayerRatings.RATING_STRATEGY_CHOICES, widget=forms.RadioSelect, label='2. How would you rate your knowledge of ultimate rules, strategies, and gameplay?')
+	throwing = forms.TypedChoiceField(coerce=int, choices=PlayerRatings.RATING_THROWING_CHOICES, widget=forms.RadioSelect, label='3. How would you rate your throwing ability?')
+	athleticism = forms.TypedChoiceField(coerce=int, choices=PlayerRatings.RATING_ATHLETICISM_CHOICES, widget=forms.RadioSelect, label='4. How would you rate your endurance and speed?')
+	competitiveness = forms.TypedChoiceField(coerce=int, choices=PlayerRatings.RATING_COMPETITIVENESS_CHOICES, widget=forms.RadioSelect, label='5. How competitively do you like to play?')
 
 	class Meta:
-		model = Skills
-		exclude = ('id', 'skills_report', 'skills_type', 'user', 'submitted_by', 'updated', 'spirit',)
+		model = PlayerRatings
+		exclude = ('id', 'spirit', 'user', 'submitted_by', 'ratings_type', 'ratings_report', 'not_sure', 'updated',)
+
 
 class PlayerSurveyForm(forms.ModelForm):
 	user_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
-	athletic = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
-	forehand = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
-	backhand = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
-	receive = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
-	strategy = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
-	spirit = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SKILL_CHOICES))
+	# TODO should captains rate experience?
+	strategy = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(7) ]))
+	throwing = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(7) ]))
+	athleticism = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(7) ]))
+	spirit = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(11) ]))
 	not_sure = forms.BooleanField(required=False)
 
 	class Meta:
-		model = Skills
-		exclude = ('id', 'skills_report', 'highest_level', 'experience', 'position', 'skills_type', 'user', 'submitted_by', 'updated',)
+		model = PlayerRatings
+		exclude = ('id', 'experience', 'competitiveness', 'user', 'submitted_by', 'ratings_type', 'ratings_report', 'updated',)
 
 	def clean(self):
 		if self.cleaned_data.get('not_sure'):
-			self.removeErrorsFromSkills()
-		elif (not self.cleaned_data.get('athletic')
-			and not self.cleaned_data.get('forehand')
-			and not self.cleaned_data.get('backhand')
-			and not self.cleaned_data.get('receive')
-			and not self.cleaned_data.get('handle')
-			and not self.cleaned_data.get('strategy')
+			self.removeErrorsFromRatings()
+		elif (not self.cleaned_data.get('strategy')
+			and not self.cleaned_data.get('throwing')
+			and not self.cleaned_data.get('athleticism')
 			and not self.cleaned_data.get('spirit')):
-			self.removeErrorsFromSkills()
-			raise forms.ValidationError, 'You must fill in values greater than 1 or mark "Not Sure"'
+
+			self.removeErrorsFromRatings()
+			raise forms.ValidationError(_('You must fill in values greater than 1 or mark "Not Sure"'))
 
 		return self.cleaned_data
 
-	def removeErrorsFromSkills(self):
-		if ('athletic' in self._errors):
-			del self._errors['athletic']
-
-		if ('forehand' in self._errors):
-			del self._errors['forehand']
-
-		if ('backhand' in self._errors):
-			del self._errors['backhand']
-
-		if ('receive' in self._errors):
-			del self._errors['receive']
-
+	def removeErrorsFromRatings(self):
 		if ('strategy' in self._errors):
 			del self._errors['strategy']
+
+		if ('throwing' in self._errors):
+			del self._errors['throwing']
+
+		if ('athleticism' in self._errors):
+			del self._errors['athleticism']
 
 		if ('spirit' in self._errors):
 			del self._errors['spirit']
@@ -167,6 +179,7 @@ class EditTeamInformationForm(forms.ModelForm):
 		model = Team
 		fields = ('name', 'color',)
 
+
 class GameReportCommentForm(forms.ModelForm):
 	spirit = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SPIRIT_CHOICES))
 	comment = forms.CharField(required=False, widget=forms.Textarea(attrs={'placeholder': 'Praise, pickups, spririt issues, stoppages, field issues, etc...'}),)
@@ -174,6 +187,7 @@ class GameReportCommentForm(forms.ModelForm):
 	class Meta:
 		model = GameReportComment
 		fields = ('spirit', 'comment',)
+
 
 class GameReportScoreForm(forms.ModelForm):
 	id = forms.IntegerField(widget=forms.HiddenInput, required=False)
@@ -189,14 +203,12 @@ class GameReportScoreForm(forms.ModelForm):
 class RegistrationAttendanceForm(forms.ModelForm):
 	id = forms.IntegerField(widget=forms.HiddenInput, required=True)
 	attendance = forms.IntegerField(min_value=0, initial=0)
-	captain = forms.IntegerField(min_value=1, max_value=10, initial=1)
+	captain = forms.IntegerField(min_value=0, max_value=4, initial=0)
 
 	class Meta:
 		model = Registrations
 		fields = ('id', 'attendance', 'captain',)
 
+
 class ScheduleGenerationForm(forms.Form):
 	field_names = forms.ModelMultipleChoiceField(FieldNames.objects.all(), required=True, label=_('Fields'), help_text=_('You must pick enough fields to cover the number of games for an event. (Hold CTRL or Command to select more than one.)'))
-
-
-

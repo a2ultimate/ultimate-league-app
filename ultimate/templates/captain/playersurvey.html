@@ -12,32 +12,79 @@
 
 	<h1>Player Survey</h1>
 
+	<p>
+		Please complete the following form to the best of your ability.
+		The team formation process relies heavily on the accuracy of
+		these answers, as they will be used to help balance teams.
+	</p>
+
+	<p>
+		If you do not feel that you are able to rate a player (e.g.
+		you were unable to evaluate them due to absences), please
+		check the "Not Sure" box.
+	</p>
+
+	<p>
+		<strong>Note:</strong> This information is only used by league
+		administrators. Your answers will never be shared or
+		made public.
+	</p>
+
+	<hr />
+
+	<h2>Player Rating Values</h2>
+
+	<h3>Strategy</h3>
+	<ul>
+		{% for value, text in ratings_choices.strategy %}
+			<li>{{ value }} - {{ text }}</li>
+		{% endfor %}
+	</ul>
+
+	<h3>Throwing</h3>
+	<ul>
+		{% for value, text in ratings_choices.throwing %}
+			<li>{{ value }} - {{ text }}</li>
+		{% endfor %}
+	</ul>
+
+	<h3>Athleticism</h3>
+	<ul>
+		{% for value, text in ratings_choices.athleticism %}
+			<li>{{ value }} - {{ text }}</li>
+		{% endfor %}
+	</ul>
+
 	<form method="post" action="{% url playersurvey teamid=team.id %}">{% csrf_token %}
 		{{ formset.management_form }}
 
-		<table id="player_survey_table">
+		<table id="player_survey_table" class="table table-striped">
 			<tr>
 				<td></td>
-				<th>Athleticism</th>
-				<th>Forehand</th>
-				<th>Backhand</th>
-				<th>Receiving</th>
 				<th>Strategy</th>
+				<th>Throwing</th>
+				<th>Athleticism</th>
 				<th>Spirit</th>
 				<th>Not Sure</th>
 			</tr>
 			{% for row in survey %}
-				<tr class="{% cycle 'even' 'odd' %}{% if row.form.non_field_errors %} error{% endif %}">
-					<td class="name left">
-						{{ row.user.get_full_name }}
-						{% for hidden in row.form.hidden_fields %}
-						    {{ hidden }}
-						{% endfor %}
+				<tr>
+					<td class="name">
+						<div class="{% if row.form.non_field_errors %}strong text_error{% endif %}">
+							{{ row.user.get_full_name }}
+							{% for hidden in row.form.hidden_fields %}
+								{{ hidden }}
+							{% endfor %}
+						</div>
 					</td>
 					{% for field in row.form.visible_fields %}
-						<td class="{% if forloop.last %}right{% endif %}{% if field.errors %} error{% endif %}">
-							{{ field }}
-							{% if not forloop.last %}<div class="skill_average">{{ row.user|get_average:field.label }}</div>{% endif %}
+						<td>
+							<div class="{% if field.errors %}state_error{% endif %}">
+								{{ field }}
+								{% if not forloop.last %}
+									<div>{{ row.user|get_average:field.label }}</div>
+								{% endif %}
+							</div>
 						</td>
 					{% endfor %}
 				</tr>

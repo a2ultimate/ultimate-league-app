@@ -3,10 +3,10 @@ from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.views.decorators.csrf import csrf_exempt
 
 from ultimate.leagues.models import *
 
@@ -19,10 +19,10 @@ from paypal.standard.forms import PayPalPaymentsForm
 def index(request, year, season):
 	if request.user.is_superuser:
 		leagues = League.objects.filter(year=year, season=season).order_by('league_start_date')
-	elif request.user.is_staff:
-		leagues = League.objects.filter(year=year, season=season, state__in=['active', 'planning']).order_by('league_start_date')
+	elif request.user.groups.filter(name='junta').exists():
+		leagues = League.objects.filter(year=year, season=season, state__in=['closed', 'open', 'preview']).order_by('league_start_date')
 	else:
-		leagues = League.objects.filter(year=year, season=season, state__in=['active']).order_by('league_start_date')
+		leagues = League.objects.filter(year=year, season=season, state__in=['closed', 'open']).order_by('league_start_date')
 
 	return render_to_response('leagues/index.html',
 		{'leagues': leagues, 'year': year, 'season': season},
@@ -57,6 +57,7 @@ def players(request, year, season, division):
 	incomplete_registrations = league.get_incomplete_registrations()
 	waitlist_registrations = league.get_waitlist_registrations()
 	refunded_registrations = league.get_refunded_registrations()
+	unassigned_registrations = league.get_unassigned_registrations()
 
 	return render_to_response('leagues/players.html',
 		{
@@ -65,13 +66,25 @@ def players(request, year, season, division):
 			'complete_registrations': complete_registrations,
 			'incomplete_registrations': incomplete_registrations,
 			'waitlist_registrations': waitlist_registrations,
-			'refunded_registrations': refunded_registrations
+			'refunded_registrations': refunded_registrations,
+			'unassigned_registrations': unassigned_registrations
 		},
 		context_instance=RequestContext(request))
 
 
 def teams(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
+	games = league.get_games()
+	sorted_games = sorted(games, key=lambda game: game.date)
+	next_game_date = None
+	today = date.today()
+
+	if today > league.reg_start_date:
+		for game in sorted_games:
+			next_game_date = game.date
+
+			if game.date > date.today():
+				break
 
 	if request.user.is_authenticated():
 		user_games = league.get_user_games(request.user)
@@ -79,7 +92,14 @@ def teams(request, year, season, division):
 		user_games = None
 
 	return render_to_response('leagues/teams.html',
-	{'league': league, 'field_names': league.get_field_names(), 'teams': Team.objects.filter(league=league), 'user_games': user_games},
+	{
+		'league': league,
+		'field_names': league.get_field_names(),
+		'games': games,
+		'next_game_date': next_game_date,
+		'teams': Team.objects.filter(league=league),
+		'user_games': user_games
+	},
 	context_instance=RequestContext(request))
 
 
@@ -118,14 +138,26 @@ def group(request, year, season, division):
 def registration(request, year, season, division, section=None):
 	league = get_object_or_404(League, year=year, season=season, night=division)
 
-	if league.state not in ['active'] and not request.user.is_staff and not request.user.is_superuser:
+	if not league.is_open(request.user):
 		raise Http403
 
 	registration, created = Registrations.objects.get_or_create(user=request.user, league=league)
+
+	try:
+		if ((not registration.is_complete()) and
+			(not request.user.get_profile()) or
+			(not request.user.get_profile().is_complete_for_user()) or
+			(not request.user.playerratings_set.filter(submitted_by=request.user, user=request.user))):
+
+			raise Http403
+	except ObjectDoesNotExist:
+		raise Http403
+
 	attendance_form = None
 	paypal_form = None
 
 	if request.method == 'POST':
+		success = True
 
 		# conduct response
 		if 'conduct_accept' in request.POST:
@@ -135,6 +167,9 @@ def registration(request, year, season, division, section=None):
 		elif 'conduct_decline' in request.POST:
 			registration.conduct_complete = 0
 			registration.save()
+
+			success = False
+			section = 'conduct'
 			messages.error(request, 'You must accept the code of conduct to continue.')
 
 		# waiver response
@@ -145,6 +180,9 @@ def registration(request, year, season, division, section=None):
 		elif 'waiver_decline' in request.POST:
 			registration.waiver_complete = 0
 			registration.save()
+
+			success = False
+			section = 'waiver'
 			messages.error(request, 'You must accept the waiver to continue.')
 
 		# attendance/captaining response
@@ -159,13 +197,15 @@ def registration(request, year, season, division, section=None):
 					registration.baggage_id = baggage.id
 					registration.save()
 
-				if league.check_cost == 0 or league.paypal_cost == 0:
+				if league.check_price == 0 or league.paypal_price == 0:
 					registration.registered = datetime.now()
 					registration.save()
 
 				messages.success(request, 'Attendance and captaining response saved.')
 			else:
-				messages.error(request, 'You must provide an attendance and captaining rating to continue.')
+				success = False
+				section = 'attendance'
+				messages.error(request, 'You must provide a valid attendance and captaining rating to continue.')
 
 		# payment type response
 		if 'pay_type' in request.POST:
@@ -180,9 +220,12 @@ def registration(request, year, season, division, section=None):
 				messages.success(request, 'Payment type set to PayPal.')
 
 			else:
+				success = False
+				section = 'pay_type'
 				messages.error(request, 'You must select a valid payment type to continue.')
 
-		return HttpResponseRedirect(reverse('league_registration', kwargs={'year': year, 'season': season, 'division': division}))
+		if success:
+			return HttpResponseRedirect(reverse('league_registration', kwargs={'year': year, 'season': season, 'division': division}))
 
 	if section == 'conduct' or not registration.conduct_complete:
 		return render_to_response('leagues/registration/conduct.html',
@@ -195,12 +238,14 @@ def registration(request, year, season, division, section=None):
 			context_instance=RequestContext(request))
 
 	if section == 'attendance' or registration.attendance == None or registration.captain == None:
-		attendance_form = RegistrationAttendanceForm(instance=registration)
+		if not attendance_form:
+			attendance_form = RegistrationAttendanceForm(instance=registration)
+
 		return render_to_response('leagues/registration/attendance.html',
 			{'attendance_form': attendance_form, 'league': league, 'registration': registration},
 			context_instance=RequestContext(request))
 
-	if league.check_cost > 0 or league.paypal_cost > 0:
+	if league.check_price > 0 or league.paypal_price > 0:
 
 		if section == 'pay_type' or not registration.pay_type or (registration.pay_type != 'check' and registration.pay_type != 'paypal'):
 			return render_to_response('leagues/registration/payment.html',
@@ -215,7 +260,7 @@ def registration(request, year, season, division, section=None):
 			baseUrl = request.build_absolute_uri(getattr(settings, 'FORCE_SCRIPT_NAME', '/')).replace(request.path_info.replace(' ', '%20'), '')
 
 			paypal_dict = {
-				'amount': league.paypal_cost,
+				'amount': league.paypal_price,
 				'cancel_return': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration/',
 				'invoice': registration.paypal_invoice_id,
 				'item_name': str(league.season).capitalize() + ' League ' + str(league.year) + ' - ' + str(league.night).capitalize(),
@@ -234,5 +279,4 @@ def registration(request, year, season, division, section=None):
 @csrf_exempt
 def registrationcomplete(request, year, season, division):
 	return redirect('league_registration', year=year, season=season, division=division)
-
 

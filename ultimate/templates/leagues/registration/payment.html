@@ -1,32 +1,31 @@
 {% extends "layout/layout_user.html" %}
 
+{% load utility %}
+
 {% block content %}
 
-<h1>
-	{{ league.season|title }} League {{ league.year }} {{ league.night|title }} Division ({{ league.gender|title }})
-	{% if league.state != 'active' %}<em>({{ league.state|capfirst }})</em>{% endif %}
-</h1>
+	{% include "layout/league_header.html" with league=league only %}
 
-{% include "layout/league_tabs.html" with selected_tab="registration" %}
+	{% include "layout/league_tabs.html" with selected_tab="registration" %}
 
-{% include "leagues/registration/_progress.html" %}
+	{% include "leagues/registration/_progress.html" with league=league registration=registration section=section only %}
 
-<h2>How would you like to pay?</h2>
+	<h2>How would you like to pay?</h2>
 
-<p>
-	The cost of this league varies depending on payment type. PayPal is preferred, but check is also acceptable.
-</p>
+	<p>
+		The cost of this league varies depending on payment type. PayPal is preferred, but check is also acceptable.
+	</p>
 
-<p>
-	<ul>
-		<li>${{ league.paypal_cost }} via PayPal</li>
-		<li>${{ league.check_cost }} via Check</li>
-	</ul>
-</p>
+	<p>
+		<ul>
+			<li>${{ league.paypal_price }} via PayPal</li>
+			<li>${{ league.check_price }} via Check</li>
+		</ul>
+	</p>
 
-<form method="post">{% csrf_token %}
-	<input class="button button_success" type="submit" value="Paypal" name="pay_type" />
-	<input class="button button_success" type="submit" value="Check" name="pay_type" />
-</form>
+	<form method="post">{% csrf_token %}
+		<input class="button button_success" type="submit" value="Paypal" name="pay_type" />
+		<input class="button button_success" type="submit" value="Check" name="pay_type" />
+	</form>
 
 {% endblock %}

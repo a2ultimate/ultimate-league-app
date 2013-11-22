@@ -1,17 +1,16 @@
 {% extends "layout/layout_user.html" %}
 
 {% load leagues %}
+{% load user_roles %}
 {% load utility %}
 
 {% block content %}
-	<h1>
-		{{ league.season|title }} League {{ league.year }} {{ league.night|title }} Division ({{ league.gender|title }})
-		{% if league.state != 'active' %}<em>({{ league.state|capfirst }})</em>{% endif %}
-	</h1>
+
+	{% include "layout/league_header.html" with league=league only %}
 
 	{% include "layout/league_tabs.html" with selected_tab="players" %}
 
-	{% if user_registration.is_complete and user_registration.league.baggage > 1 and not user_registration.waitlist and not user_registration.league.freeze_group_date|is_past_deadline %}
+	{% if user_registration.is_complete and user_registration.league.baggage > 1 and not user_registration.waitlist and not user_registration.league.waitlist_start_date|is_past_deadline %}
 		<p>To add someone to your group, you need to know their email address.</p>
 		<p>You may <a href="{% url league_group year=league.year season=league.season division=league.night %}">form a baggage group here</a>.</p>
 	{% endif %}
@@ -60,10 +59,33 @@
 		</table>
 	</div>
 
-	{% if perms.junta %}
+	{% if request.user|in_group:"junta" %}
+		{% if unassigned_registrations|length %}
+			<hr />
+			<h2>Unassigned Registrations ({{ unassigned_registrations|length }})</h2>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Status</th>
+						<th>Last Updated</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for registration in unassigned_registrations|dictsort:"get_progress" %}
+						<tr>
+							<td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.get_profile.nickname }}</em></td>
+							<td>{{ registration.get_status }}</td>
+							<td>{{ registration.updated|date:"Y/m/d h:iA" }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% endif %}
+
 		{% if incomplete_registrations|length %}
 			<hr />
-			<h2>Incomplete Registrations</h2>
+			<h2>Incomplete Registrations ({{ incomplete_registrations|length }})</h2>
 			<table class="table table-striped">
 				<thead>
 					<tr>
@@ -86,7 +108,7 @@
 
 		{% if refunded_registrations|length %}
 			<hr />
-			<h2>Refunded Registrations</h2>
+			<h2>Refunded Registrations ({{ refunded_registrations|length }})</h2>
 			<table class="table table-striped">
 				<tbody>
 					{% for registration in refunded_registrations|dictsort:"updated" %}

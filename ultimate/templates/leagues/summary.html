@@ -1,10 +1,11 @@
 {% extends "layout/layout_user.html" %}
 
+{% load leagues %}
+{% load utility %}
+
 {% block content %}
-	<h1>
-		{{ league.season|title }} League {{ league.year }} {{ league.night|title }} Division ({{ league.gender|title }})
-		{% if league.state != 'active' %}<em>({{ league.state|capfirst }})</em>{% endif %}
-	</h1>
+
+	{% include "layout/league_header.html" with league=league only %}
 
 	{% include "layout/league_tabs.html" with selected_tab="summary" %}
 
@@ -41,7 +42,16 @@
 		</tr>
 		{% for field in league.get_fields %}
 			<tr>
-				<td colspan="3">{{ field.field.name }}</td>
+				<td colspan="3">
+					{{ field.field.name }}
+					{% if field.field.layout_link %}
+						<small>
+							<a href="{{ MEDIA_URL }}{{ field.field.layout_link }}" target="_blank">
+								Field Layout
+							</a>
+						</small>
+					{% endif %}
+				</td>
 			</tr>
 		{% endfor %}
 		<tr>
@@ -54,10 +64,10 @@
 		</tr>
 		<tr>
 			<td>
-				PayPal ${{ league.paypal_cost|floatformat:2 }}
+				PayPal ${{ league.paypal_price|floatformat:2 }}
 			</td>
 			<td>
-				Check ${{ league.check_cost|floatformat:2 }}
+				Check ${{ league.check_price|floatformat:2 }}
 			</td>
 			<td>
 				{{ league.baggage }}
@@ -81,14 +91,14 @@
 				Group Change Deadline
 			</td>
 			<td colspan="2">
-				{{ league.freeze_group_date|date:'F d, Y' }}
+				{{ league.waitlist_start_date|date:'F d, Y' }}
 			</td>
 		</tr>
 
-		{% if league.is_accepting_registrations %}
+		{% if league|is_open:user %}
 			<tr>
 				<td colspan="3">
-					{% if league.is_accepting_waitlist %}
+					{% if league|is_waitlist:user %}
 						<a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register for the Waitlist</a>
 					{% else %}
 						<a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register Now!</a>

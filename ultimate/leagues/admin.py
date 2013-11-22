@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin
 from ultimate.leagues.models import *
 
@@ -60,7 +61,7 @@ class RegistrationsAdmin(admin.ModelAdmin):
 	save_as = True
 	save_on_top = True
 
-	list_display = ('year', 'season', 'night', 'user_details', 'registered', 'attendance', 'captain', 'waitlist', 'get_status',)
+	list_display = ('year', 'season', 'night', 'user_details', 'registered', 'attendance', 'captain_value', 'waitlist', 'get_status',)
 	list_filter = ('league__year', 'league__season', 'league__night', 'paypal_complete', 'check_complete', 'waitlist', 'refunded',)
 	search_fields = ['user__first_name', 'user__last_name', 'user__email', 'paypal_invoice_id',]
 
@@ -80,31 +81,35 @@ class RegistrationsAdmin(admin.ModelAdmin):
 		return u'%s <br /> %s' % (obj.user.get_full_name(), obj.user.email)
 	user_details.allow_tags = True
 
+	def captain_value(self, obj):
+		return obj.captain
+	captain_value.admin_order_field = 'captain'
 
-class SkillsAdmin(admin.ModelAdmin):
-	save_as = True
-	save_on_top = True
 
-	list_display = ('updated', 'skills_report', 'user_details', 'submitted_by_details',)
+class TeamMemberModelChoiceField(forms.ModelChoiceField):
+	def label_from_instance(self, team_member):
+		# Return a string of the format: "firstname lastname (username)"
+		return '%s, %s (%s)' % (team_member.last_name, team_member.first_name, team_member.username)
 
-	def user_details(self, obj):
-		return u'%s <br /> %s' % (obj.user.get_full_name(), obj.user.email)
-	user_details.allow_tags = True
-
-	def submitted_by_details(self, obj):
-		return u'%s <br /> %s' % (obj.submitted_by.get_full_name(), obj.submitted_by.email)
-	submitted_by_details.allow_tags = True
+	class Meta:
+		label = ''
 
 
 class TeamMemberInline(admin.TabularInline):
 	model = TeamMember
 
 	def formfield_for_foreignkey(self, db_field, request, **kwargs):
-		if db_field.name == 'user' and request._team_obj_:
-			request._registration_user_ids_ = Registrations.objects.filter(league__id=request._team_obj_.league.id).values_list('user', flat=True)
-			kwargs['queryset'] = User.objects.filter(id__in=request._registration_user_ids_)
-		else:
-			kwargs['queryset'] = User.objects.filter()
+		if db_field.name == 'user':
+			kwargs['form_class'] = TeamMemberModelChoiceField
+
+			if request._team_obj_:
+				registration_user_ids = Registrations.objects.filter(league__id=request._team_obj_.league.id).values_list('user', flat=True)
+				kwargs['queryset'] = User.objects.filter(id__in=registration_user_ids).order_by('last_name', 'email')
+			else:
+				kwargs['queryset'] = User.objects.filter().order_by('last_name', 'email')
+
+			return db_field.formfield(**kwargs)
+
 		return super(TeamMemberInline, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
@@ -128,6 +133,5 @@ admin.site.register(FieldNames)
 admin.site.register(Game, GameAdmin)
 admin.site.register(League, LeagueAdmin)
 admin.site.register(Registrations, RegistrationsAdmin)
-admin.site.register(Skills, SkillsAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(TeamMember)
