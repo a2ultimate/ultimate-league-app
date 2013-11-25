@@ -448,9 +448,9 @@ class Registrations(models.Model):
 
 class Team(models.Model):
 	id = models.AutoField(primary_key=True)
-	name = models.CharField(max_length=128)
-	color = models.CharField(max_length=96)
-	email = models.CharField(max_length=128)
+	name = models.CharField(max_length=128, blank=True)
+	color = models.CharField(max_length=96, blank=True)
+	email = models.CharField(max_length=128, blank=True)
 	league = models.ForeignKey('leagues.League')
 
 	class Meta:
