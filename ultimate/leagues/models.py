@@ -39,10 +39,10 @@ class FieldNames(models.Model):
 
 class League(models.Model):
 	LEAGUE_STATE_CHOICES = (
-		('closed',	'Closed - visible to all, registration closed'),
-		('hidden',	'Hidden - hidden to all, registration closed'),
-		('open',	'Open - visible to all, registration conditionally open'),
-		('preview',	'Preview - visible to admins, registration conditionally open only to admins'),
+		('closed',	'Closed - visible to all, registration closed to all'),
+		('hidden',	'Hidden - hidden to all, registration closed to all'),
+		('open',	'Open - visible to all, registration conditionally open to all'),
+		('preview',	'Preview - visible only to admins, registration conditionally open only to admins'),
 	)
 
 	LEAGUE_GENDER_CHOICES = (
@@ -185,16 +185,25 @@ class League(models.Model):
 		return self.state in ['closed', 'open']
 
 	def is_open(self, user=None):
-		is_open = None
-		if user and (user.is_superuser or user.groups.filter(name='junta').exists()):
-			is_open = self.state in ['open', 'preview']
-		else:
-			is_open = self.state in ['open']
+		# if the user is a league admin and the league is "open" or "preview"
+		if user and \
+			(user.is_superuser or user.groups.filter(name='junta').exists()) and \
+			self.state in ['preview', 'open']:
 
-		return is_open and (datetime.now() >= self.reg_start_date) and (datetime.now() <= self.league_end_date)
+			return True
+
+		# if the user is not a league admin and the league is "open" and falls between valid dates
+		return self.state in ['open'] and \
+			(datetime.now() >= self.reg_start_date) and \
+			(datetime.now() <= self.league_end_date)
 
 	def is_waitlist(self, user=None):
-		return self.is_open(user) and ((datetime.now() >= self.waitlist_start_date) or (len(self.get_complete_registrations()) >= self.max_players))
+		# if the league is open and its after the waitlist date or league is full
+		return self.is_open(user) and \
+			( \
+				(datetime.now() >= self.waitlist_start_date) or \
+				(len(self.get_complete_registrations()) >= self.max_players) \
+			)
 
 	def __unicode__(self):
 		return ('%s %d %s' % (self.season, self.year, self.night)).replace('_', ' ')
