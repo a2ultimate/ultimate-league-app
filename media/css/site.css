@@ -101,12 +101,12 @@ h5 {
 
 h6 {
 	font-size: 11px;
-	color: #999999;
+	color: #95A5A6;
 	text-transform: uppercase;
 }
 
 h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
-	color: #999999;
+	color: #95A5A6;
 	font-weight: 300;
 }
 
@@ -269,8 +269,6 @@ fieldset > legend {
 .radio,
 .checkbox {
 	display: block;
-/*	margin-bottom: 10px;
-	margin-top: 10px;*/
 	min-height: 20px;
 	padding-left: 20px;
 	vertical-align: middle;
@@ -750,7 +748,7 @@ input[type="submit"] {
 	-webkit-box-shadow: none;
 	-webkit-transition: 0.15s;
 
-	background: #34495e;
+	background: #34495E;
 	border-radius: 4px;
 	border: none;
 	box-shadow: none;
@@ -797,7 +795,7 @@ input[type="submit"] {
 
 .button.disabled,
 .button[disabled] {
-	background-color: #95a5a6;
+	background-color: #95A5A6;
 	color: white;
 }
 
@@ -1129,7 +1127,7 @@ input[type="submit"] {
 }
 
 .progress_bar > .progress {
-	background-color: #999999;
+	background-color: #95A5A6;
 	border-radius: 6px;
 	display: block;
 	height: 14px;
@@ -1140,7 +1138,7 @@ input[type="submit"] {
 }
 
 .progress_bar > .tick {
-	background-color: #999999;
+	background-color: #95A5A6;
 	border: 4px solid #F5F5F5;
 	border-radius: 50%;
 	display: block;
@@ -1161,7 +1159,7 @@ input[type="submit"] {
 	margin-left: -10%;
 	position: absolute;
 	text-align: center;
-	top: 20px;
+	top: 26px;
 	width: 20%;
 	z-index: 1;
 }
@@ -1509,7 +1507,7 @@ span.status {
 }
 
 #schedule_table hr {
-	background-color: #999999;
+	background-color: #95A5A6;
 	border: 0;
 	height: 2px;
 	margin: 2px 0;
@@ -1610,7 +1608,7 @@ span.status {
 }
 
 #user_registrations_note {
-	color: #999999;
+	color: #95A5A6;
 }
 
 .wide_form input[type=text],
