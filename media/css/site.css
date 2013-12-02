@@ -872,7 +872,7 @@ input[type="submit"] {
 
 .table th,
 .table td {
-	border-top: 1px solid #DDDDDD;
+	border-top: 1px solid #ECF0F1;
 	line-height: 20px;
 	padding: 8px;
 	text-align: left;
@@ -903,7 +903,7 @@ input[type="submit"] {
 }
 
 .table tbody + tbody {
-	border-top: 2px solid #DDDDDD;
+	border-top: 2px solid #ECF0F1;
 }
 
 .table .table {
@@ -916,14 +916,14 @@ input[type="submit"] {
 }
 
 .table-bordered {
-	border: 1px solid #DDDDDD;
+	border: 1px solid #ECF0F1;
 	border-collapse: separate;
 	border-left: 0;
 }
 
 .table-bordered th,
 .table-bordered td {
-	border-left: 1px solid #DDDDDD;
+	border-left: 1px solid #ECF0F1;
 }
 
 .table-bordered caption + thead tr:first-child th,
@@ -1113,7 +1113,7 @@ input[type="submit"] {
 }
 
 .progress_bar {
-	background: #DDDDDD;
+	background: #BDC3C7;
 	border-radius: 6px;
 	margin: 36px 26px 18px 2px;
 	padding: 0;
@@ -1152,6 +1152,7 @@ input[type="submit"] {
 }
 
 .progress_bar > .tick_label {
+	cursor: default;
 	display: block;
 	font-size: 13px;
 	font-weight: bold;
@@ -1182,6 +1183,10 @@ input[type="submit"] {
 .progress_bar > .progress.warning,
 .progress_bar > .tick.warning {
 	background-color: #F1C40F;
+}
+
+.progress_bar > .tick.active {
+	background-color: #3498DB;
 }
 
 .slide_selector {
@@ -1468,7 +1473,7 @@ span.status {
 }
 
 #schedule_table thead th {
-	border-right: 2px solid #DDDDDD;
+	border-right: 2px solid #ECF0F1;
 }
 
 #schedule_table thead th:last-child {
@@ -1482,7 +1487,7 @@ span.status {
 
 #schedule_table tbody tr.active th,
 #schedule_table tbody tr.active td {
-	background-color: #BDC3C7;
+	background-color: #ECF0F1;
 	color: #FFFFFF;
 	font-weight: 400;
 }
