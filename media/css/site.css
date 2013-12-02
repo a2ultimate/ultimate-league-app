@@ -1487,7 +1487,7 @@ span.status {
 
 #schedule_table tbody tr.active th,
 #schedule_table tbody tr.active td {
-	background-color: #ECF0F1;
+	background-color: #BDC1C5;
 	color: #FFFFFF;
 	font-weight: 400;
 }
@@ -1582,9 +1582,11 @@ span.status {
 }
 
 .team_notes {
+	color: #BDC1C5;
 	font-size: 13px;
 	letter-spacing: 1px;
 	padding: 8px 0 4px;
+	text-transform: uppercase;
 }
 
 /* USER PAGE */

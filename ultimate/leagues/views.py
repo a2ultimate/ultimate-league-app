@@ -79,12 +79,11 @@ def teams(request, year, season, division):
 	next_game_date = None
 	today = date.today()
 
-	if today > league.reg_start_date:
-		for game in sorted_games:
-			next_game_date = game.date
+	for game in sorted_games:
+		next_game_date = game.date
 
-			if game.date > date.today():
-				break
+		if game.date > today:
+			break
 
 	if request.user.is_authenticated():
 		user_games = league.get_user_games(request.user)

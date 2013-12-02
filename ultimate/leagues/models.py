@@ -65,11 +65,11 @@ class League(models.Model):
 	baggage = models.IntegerField(help_text='max baggage group size')
 	times = models.TextField(help_text='start to end time, e.g. 6:00-8:00pm')
 	num_games_per_week = models.IntegerField(default=1, help_text='number of games per week, used to calculate number of games for a league')
-	reg_start_date = models.DateTimeField(help_text='date that registration process is open (not currently automated)')
-	price_increase_start_date = models.DateTimeField(help_text='date when cost increases for league')
-	waitlist_start_date = models.DateTimeField(help_text='date that waitlist is started (regardless of number of registrations)')
-	league_start_date = models.DateTimeField(help_text='date of first game')
-	league_end_date = models.DateTimeField(help_text='date of last game')
+	reg_start_date = models.DateTimeField(help_text='date and time that registration process is open (not currently automated)')
+	price_increase_start_date = models.DateTimeField(help_text='date and time when cost increases for league')
+	waitlist_start_date = models.DateTimeField(help_text='date and time that waitlist is started (regardless of number of registrations)')
+	league_start_date = models.DateField(help_text='date of first game')
+	league_end_date = models.DateField(help_text='date of last game')
 	checks_accepted = models.BooleanField(default=True)
 	paypal_cost = models.IntegerField(help_text='base cost of league if paying by PayPal')
 	check_cost_increase = models.IntegerField(help_text='amount to be added to paypal_cost if paying by check')
@@ -195,7 +195,7 @@ class League(models.Model):
 		# if the user is not a league admin and the league is "open" and falls between valid dates
 		return self.state in ['open'] and \
 			(datetime.now() >= self.reg_start_date) and \
-			(datetime.now() <= self.league_end_date)
+			(date.today() <= self.league_end_date)
 
 	def is_waitlist(self, user=None):
 		# if the league is open and its after the waitlist date or league is full
