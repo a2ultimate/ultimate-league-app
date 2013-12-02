@@ -68,8 +68,8 @@ class PlayerRatings(models.Model):
 	spirit = models.PositiveIntegerField(default=0)
 	user = models.ForeignKey(User)
 	submitted_by = models.ForeignKey(User, related_name='ratings_submitted_by_set')
-	ratings_type = models.CharField(default=None, choices=RATING_TYPE, blank=True, null=True)
-	ratings_report = models.ForeignKey('user.PlayerRatingsReport')
+	ratings_type = models.PositiveIntegerField(choices=RATING_TYPE)
+	ratings_report = models.ForeignKey('user.PlayerRatingsReport', blank=True, null=True)
 	not_sure = models.BooleanField(default=False)
 	updated = models.DateTimeField(auto_now=True, auto_now_add=True)
 

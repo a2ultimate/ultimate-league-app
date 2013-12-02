@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 from django import template
 
 register = template.Library()
@@ -21,7 +21,7 @@ def is_waitlist(league, user):
 
 @register.filter
 def is_past_deadline(league_date):
-	return bool(date.today() > league_date)
+	return bool(datetime.now() > league_date)
 
 
 @register.filter

@@ -5,7 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from pybb.models import *
 
-from datetime import date
+from datetime import date, datetime
 
 
 class Field(models.Model):
@@ -39,10 +39,10 @@ class FieldNames(models.Model):
 
 class League(models.Model):
 	LEAGUE_STATE_CHOICES = (
-		('closed',	'Closed - visible to all, registration closed'),
-		('hidden',	'Hidden - hidden to all, registration closed'),
-		('open',	'Open - visible to all, registration conditionally open'),
-		('preview',	'Preview - visible to admins, registration conditionally open only to admins'),
+		('closed',	'Closed - visible to all, registration closed to all'),
+		('hidden',	'Hidden - hidden to all, registration closed to all'),
+		('open',	'Open - visible to all, registration conditionally open to all'),
+		('preview',	'Preview - visible only to admins, registration conditionally open only to admins'),
 	)
 
 	LEAGUE_GENDER_CHOICES = (
@@ -65,9 +65,9 @@ class League(models.Model):
 	baggage = models.IntegerField(help_text='max baggage group size')
 	times = models.TextField(help_text='start to end time, e.g. 6:00-8:00pm')
 	num_games_per_week = models.IntegerField(default=1, help_text='number of games per week, used to calculate number of games for a league')
-	reg_start_date = models.DateField(help_text='date that registration process is open (not currently automated)')
-	price_increase_start_date = models.DateField(help_text='date when cost increases for league')
-	waitlist_start_date = models.DateField(help_text='date that waitlist is started (regardless of number of registrations)')
+	reg_start_date = models.DateTimeField(help_text='date and time that registration process is open (not currently automated)')
+	price_increase_start_date = models.DateTimeField(help_text='date and time when cost increases for league')
+	waitlist_start_date = models.DateTimeField(help_text='date and time that waitlist is started (regardless of number of registrations)')
 	league_start_date = models.DateField(help_text='date of first game')
 	league_end_date = models.DateField(help_text='date of last game')
 	checks_accepted = models.BooleanField(default=True)
@@ -104,14 +104,14 @@ class League(models.Model):
 
 	@property
 	def paypal_price(self):
-		if date.today() >= self.price_increase_start_date:
+		if datetime.now() >= self.price_increase_start_date:
 			return self.paypal_cost + self.late_cost_increase
 
 		return self.paypal_cost
 
 	@property
 	def check_price(self):
-		if date.today() >= self.price_increase_start_date:
+		if datetime.now() >= self.price_increase_start_date:
 			return self.paypal_cost + self.check_cost_increase + self.late_cost_increase
 
 		return self.paypal_cost + self.check_cost_increase
@@ -185,16 +185,25 @@ class League(models.Model):
 		return self.state in ['closed', 'open']
 
 	def is_open(self, user=None):
-		is_open = None
-		if user and (user.is_superuser or user.groups.filter(name='junta').exists()):
-			is_open = self.state in ['open', 'preview']
-		else:
-			is_open = self.state in ['open']
+		# if the user is a league admin and the league is "open" or "preview"
+		if user and \
+			(user.is_superuser or user.groups.filter(name='junta').exists()) and \
+			self.state in ['preview', 'open']:
 
-		return is_open and (date.today() >= self.reg_start_date) and (date.today() <= self.league_end_date)
+			return True
+
+		# if the user is not a league admin and the league is "open" and falls between valid dates
+		return self.state in ['open'] and \
+			(datetime.now() >= self.reg_start_date) and \
+			(date.today() <= self.league_end_date)
 
 	def is_waitlist(self, user=None):
-		return self.is_open(user) and ((date.today() >= self.waitlist_start_date) or (len(self.get_complete_registrations()) >= self.max_players))
+		# if the league is open and its after the waitlist date or league is full
+		return self.is_open(user) and \
+			( \
+				(datetime.now() >= self.waitlist_start_date) or \
+				(len(self.get_complete_registrations()) >= self.max_players) \
+			)
 
 	def __unicode__(self):
 		return ('%s %d %s' % (self.season, self.year, self.night)).replace('_', ' ')
@@ -236,7 +245,7 @@ class Player(PybbProfile):
 	height_inches = models.IntegerField()
 	highest_level = models.TextField()
 	birthdate = models.DateField(help_text='e.g. ' + date.today().strftime('%Y-%m-%d'))
-	jersey_size = models.CharField(max_length=45, choices=GENDER_CHOICES)
+	jersey_size = models.CharField(max_length=45, choices=JERSEY_SIZE_CHOICES)
 
 	class Meta:
 		db_table = u'player'
@@ -373,7 +382,7 @@ class Registrations(models.Model):
 
 	@transaction.commit_on_success
 	def add_to_baggage_group(self, email):
-		if date.today() > self.league.waitlist_start_date:
+		if datetime.now() > self.league.waitlist_start_date:
 			return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
 
 		if self.user.email == email:
@@ -420,7 +429,7 @@ class Registrations(models.Model):
 
 	@transaction.commit_manually
 	def leave_baggage_group(self):
-		if date.today() > self.league.waitlist_start_date:
+		if datetime.now() > self.league.waitlist_start_date:
 			return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
 
 		try:
@@ -448,9 +457,9 @@ class Registrations(models.Model):
 
 class Team(models.Model):
 	id = models.AutoField(primary_key=True)
-	name = models.CharField(max_length=128)
-	color = models.CharField(max_length=96)
-	email = models.CharField(max_length=128)
+	name = models.CharField(max_length=128, blank=True)
+	color = models.CharField(max_length=96, blank=True)
+	email = models.CharField(max_length=128, blank=True)
 	league = models.ForeignKey('leagues.League')
 
 	class Meta:
