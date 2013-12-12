@@ -94,15 +94,21 @@ def editprofile(request):
 
 @login_required
 def editratings(request):
-	ratings, created = PlayerRatings.objects.get_or_create(
-		user=request.user, submitted_by=request.user, ratings_type=PlayerRatings.RATING_TYPE_USER,
-		defaults={'user': request.user, 'submitted_by': request.user, 'ratings_type': PlayerRatings.RATING_TYPE_USER, 'updated': datetime.now()}
-	)
+	try:
+		ratings = PlayerRatings.objects.get(user=request.user, submitted_by=request.user, ratings_type=PlayerRatings.RATING_TYPE_USER)
+	except PlayerRatings.DoesNotExist:
+		ratings = None
 
 	if request.method == 'POST':
 		form = EditPlayerRatingsForm(request.POST, instance=ratings)
 		if form.is_valid():
-			form.save()
+			instance = form.save(commit=False)
+			instance.ratings_type = PlayerRatings.RATING_TYPE_USER
+			instance.submitted_by = request.user
+			instance.updated = datetime.now()
+			instance.user = request.user
+			instance.save()
+
 			messages.success(request, 'Your ratings were updated successfully.')
 			return HttpResponseRedirect(reverse('editratings'))
 		else:
