@@ -7,10 +7,8 @@
 {% load utility %}
 
 {% block content %}
-	<h1>My Account</h1>
 	{% include "layout/account_tabs.html" with selected_tab="user" %}
 
-	<h2>Upcoming Games</h2>
 	{% if next_game %}
 		<div id="next_game">
 			<div class="next_game_info">
@@ -115,7 +113,6 @@
 	<p>
 		<a href="{% url editratings %}">Edit Ratings</a>
 	</p>
-
 
 	<h2>Registrations</h2>
 	{% if registrations %}

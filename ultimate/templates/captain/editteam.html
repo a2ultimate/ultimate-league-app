@@ -4,9 +4,8 @@
 {% block content %}
 	{% include "layout/account_tabs.html" with selected_tab="captain" %}
 
-	<ul id="breadcrumbs">
-		<li><a href="{% url user %}">My Account</a></li>&raquo;
-		<li><a href="{% url captain %}">Captain Resources</a></li>&raquo;
+	<ul class="breadcrumbs">
+		<li><a href="{% url captain %}">Captain Resources</a></li>
 		<li><a href="{% url captaineditteam teamid=team.id %}">Edit Team Information</a></li>
 	</ul>
 
