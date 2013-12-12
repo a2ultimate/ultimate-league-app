@@ -12,7 +12,17 @@ def get_team_name_font_size(name):
 
 
 @register.filter
-def get_game_opponent(game, user):
+def get_game_opponent_team(game, user):
+	try:
+		return game.get_user_opponent(user)
+	except AttributeError:
+		return None
+
+	return None
+
+
+@register.filter
+def get_game_opponent_team_name(game, user):
 	try:
 		team_name = game.get_user_opponent(user).name
 	except AttributeError:

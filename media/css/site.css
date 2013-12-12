@@ -296,7 +296,7 @@ fieldset > legend {
 
 #header_container {
 	background: #FFFFFF;
-	padding: 10px 0 14px;
+	padding: 12px 0;
 }
 
 #header {
@@ -306,7 +306,7 @@ fieldset > legend {
 }
 
 #banner {
-	padding: 12px 8px 8px;
+	padding: 8px;
 }
 
 #banner a:active {
@@ -318,10 +318,10 @@ fieldset > legend {
 	font-weight: bold;
 	line-height: 32px;
 	list-style: none;
-	margin: -12px 0 0;
+	margin: -16px 0 0;
 	padding: 0;
 	position: absolute;
-	right: 8px;
+	right: 0;
 	top: 50%;
 	vertical-align: middle;
 }
@@ -1390,61 +1390,15 @@ input[type="submit"] {
 
 /* CAPTAIN / GAME REPORT */
 
-#game_report_form {
-	float: left;
-}
-
-#game_report_form .team_score {
-	margin: 8px 0 12px;
-}
-
-#game_report_form .team_score .name {
-	font-size: 18px;
-	font-weight: bold;
-	margin-bottom: 8px;
-}
-
-#game_report_form .team_score .name.good_guys {
-	color: #2288BB;
-}
-
-#game_report_form .team_score .name.bad_guys {
-	color: #AA4444;
-}
-
-#game_report_form .score_input {
-	margin-left: 8px;
-}
-
 #game_report_form .score_input input {
-	font-weight: bold;
+	padding: 8px 8px 9px;
 	text-align: center;
-	width: 36px;
-}
-
-#game_report_form .score_input select {
-	font-size: 18px;
-}
-
-#game_report_score {
-	float: left;
-}
-
-#game_report_attendance {
-	float: left;
-	margin-left: 36px;
-}
-
-#game_report_comment {
-	clear: both;
-	margin-bottom: 30px;
-	padding-top: 20px;
-	width: 100%;
+	width: 54px;
 }
 
 #game_report_comment textarea {
 	height: 80px;
-	width: 80%;
+	width: 100%;
 }
 
 /* CAPTAIN / PLAYERSURVEY */
