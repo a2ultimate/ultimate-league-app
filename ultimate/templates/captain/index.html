@@ -8,8 +8,6 @@
 {% block content %}
 	{% include "layout/account_tabs.html" with selected_tab="captain" %}
 
-	<h1>Captain Resources</h1>
-
 	<ul class="team_list">
 		{% for team in captain_teams %}
 			<li>
@@ -45,7 +43,7 @@
 							{% else %}
 								<span class="status state_error pull_left"></span>
 							{% endif %}
-							<a href="{% url gamereport teamid=team.id gameid=game.id %}">On {{ game.date|date:"m/d" }} vs. {{ game|get_game_opponent:user}}</a>
+							<a href="{% url gamereport teamid=team.id gameid=game.id %}">On {{ game.date|date:"m/d" }} vs. {{ game|get_game_opponent_team_name:user}}</a>
 						</li>
 					{% empty %}
 						<div class="text_center">No games found</div>
