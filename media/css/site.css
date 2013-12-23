@@ -54,8 +54,11 @@ a:hover {
 h1, h2, h3, h4, h5, h6, th, strong, .strong, legend {
 	font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
 	font-weight: bold;
-	margin: 10px 0;
 	text-rendering: optimizelegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin: 10px 0;
 }
 
 h1,
@@ -109,6 +112,11 @@ h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 	font-weight: 300;
 }
 
+small,
+.small {
+	font-size: 85%
+}
+
 hr {
 	border-top: 1px solid #BDC3C7;
 	border-top: 1px solid rgba(0, 0, 0, 0.2);
@@ -138,6 +146,10 @@ fieldset > legend {
 
 .text_right {
 	text-align: right;
+}
+
+.text_middle {
+	vertical-align: center;
 }
 
 .pull_left {
@@ -993,6 +1005,10 @@ input[type="submit"] {
 .table-bordered colgroup + thead tr:first-child th:last-child,
 .table-bordered colgroup + tbody tr:first-child td:last-child {
 	border-top-right-radius: 4px;
+}
+
+.table-fixed {
+	table-layout: fixed;
 }
 
 .table-striped > tbody > tr:nth-child(odd) > td,
