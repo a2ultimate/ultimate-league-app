@@ -149,7 +149,7 @@ class League(models.Model):
 		return TeamMember.objects.filter(team__league=self, captain=1).order_by('team')
 
 	def player_survey_complete_for_user(self, user):
-		return bool(Team.objects.get(league=self, teammember__user=user).player_survey_complete(user))
+		return bool(user.teammember_set.get(team__league=self).team.player_survey_complete(user))
 
 	def get_registrations(self):
 		return Registrations.objects.filter(league=self).order_by('registered')
