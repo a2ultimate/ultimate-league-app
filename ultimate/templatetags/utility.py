@@ -15,7 +15,6 @@ def groups_sort(groups):
 
 @register.filter
 def time_until_days(value):
-
 	try:
 		difference = value - date.today
 	except:
