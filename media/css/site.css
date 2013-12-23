@@ -1228,6 +1228,14 @@ input[type="submit"] {
 	background-color: #3498DB;
 }
 
+/* SORTABLE PLUGIN */
+
+li.sortable-placeholder,
+tr.sortable-placeholder td {
+	background: #1ABC9C;
+	height: 32px;
+}
+
 .slide_selector {
 	margin: 16px 0;
 }

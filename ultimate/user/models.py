@@ -4,6 +4,29 @@ from django.contrib.auth.models import User
 from ultimate.leagues.models import *
 
 
+@property
+def rating_total(self):
+	rating_dict = {'athleticism': [], 'experience': [], 'strategy': [], 'throwing': []}
+
+	# date cap for old ratings?
+	ratings = self.playerratings_set.all()
+	for rating in ratings:
+		if rating.athleticism:
+			rating_dict['athleticism'].append(rating.athleticism)
+		if rating.experience:
+			rating_dict['experience'].append(rating.experience)
+		if rating.strategy:
+			rating_dict['strategy'].append(rating.strategy)
+		if rating.throwing:
+			rating_dict['throwing'].append(rating.throwing)
+
+	# determine the total rating of a user
+	rating_dict = dict([(key, float(sum([int(i) for i in values])) / (len(filter(lambda k: k > 0, values)) or 1)) for key, values in rating_dict.items()])
+	return sum(rating_dict.itervalues())
+
+User.add_to_class('rating_total', rating_total)
+
+
 class PlayerRatings(models.Model):
 
 	RATING_EXPERIENCE_CHOICES = (

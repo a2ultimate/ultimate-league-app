@@ -10,6 +10,7 @@
 		{% if request.user.is_superuser %}
 			<li><a href="{% url teamimport %}">Team Import</a></li>
 			<li><a href="{% url schedulegeneration %}">Schedule Generation</a></li>
+			<li><a href="{% url teamgeneration %}">Team Generation</a></li>
 		{% endif %}
 	</ul>
 {% endblock %}

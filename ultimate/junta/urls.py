@@ -16,4 +16,7 @@ urlpatterns = patterns('ultimate.junta.views',
 
 	(r'^schedulegeneration/$', 'schedulegeneration', {}, 'schedulegeneration'),
 	(r'^schedulegeneration/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', 'schedulegeneration', {}, 'schedulegeneration_league'),
+
+	(r'^teamgeneration/$', 'teamgeneration', {}, 'teamgeneration'),
+	(r'^teamgeneration/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', 'teamgeneration', {}, 'teamgeneration_league'),
 )
