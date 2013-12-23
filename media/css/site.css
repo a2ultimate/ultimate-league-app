@@ -1401,28 +1401,6 @@ input[type="submit"] {
 	width: 100%;
 }
 
-/* CAPTAIN / PLAYERSURVEY */
-
-#player_survey_table {
-	margin-bottom: 6px;
-	width: 100%;
-}
-
-#player_survey_table th,
-#player_survey_table td {
-	text-align: center;
-}
-
-#player_survey_table .name {
-	text-align: left;
-}
-
-#player_survey_table select + div {
-	font-size: 13px;
-	font-weight: bold;
-	letter-spacing: 1px;
-}
-
 /* LEAGUE / INDEX */
 
 .league_info_table th {
