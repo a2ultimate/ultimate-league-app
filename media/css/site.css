@@ -1438,7 +1438,7 @@ tr.sortable-placeholder td {
 /*  LEAGUE / TEAMS */
 
 #schedule_table {
-	table-layout: fixed;
+	letter-spacing: 1px;
 }
 
 #schedule_table thead th {
@@ -1493,31 +1493,27 @@ tr.sortable-placeholder td {
 }
 
 .teams_table td {
-	max-width: 50%;
+	padding: 0 16px 12px 0;
 	vertical-align: top;
-	width: 50%;
 }
 
-.teams_table_game .team_container {
-	max-width: 45%;
-	width: 45%;
+.teams_table td:last-child {
+	padding-right: 0;
 }
 
-.teams_table_game .divider {
-	max-width: 10%;
-	text-align: center;
+.teams_table .divider {
+	max-width: 8%;
 	vertical-align: middle;
-	width: 10%;
+	width: 8%;
 }
 
 .team {
 	background: #ECF0F1;
-	margin: 8px;
-	padding-bottom: 4px;
+	padding: 0 0 8px;
 }
 
 .team_info {
-	padding: 12px 8px;
+	padding: 12px;
 }
 
 .team_info a:hover {
@@ -1527,10 +1523,7 @@ tr.sortable-placeholder td {
 .team_name {
 	font-size: 24px;
 	font-weight: bold;
-	line-height: 18px;
-	min-height: 38px;
-	padding: 4px 0;
-	text-align: center;
+	padding: 0 0 4px;
 }
 
 .team_info_left {
@@ -1541,19 +1534,27 @@ tr.sortable-placeholder td {
 	float: right;
 }
 
-.team_members {
-	padding: 8px 0 4px;
-	text-align: center;
+.team_group {
+	list-style: none;
+	margin: 0;
+	padding: 4px 0;
 }
 
-.team_member .strong {
-	font-weight: bold;
+.team_group:last-child {
+	border-bottom: 0;
+}
+
+.team_members {
+	list-style: none;
+	margin: 0;
+	padding: 12px;
 }
 
 .team_notes {
 	color: #BDC1C5;
 	font-size: 13px;
 	letter-spacing: 1px;
+	list-style: none;
 	padding: 8px 0 4px;
 	text-transform: uppercase;
 }

@@ -16,7 +16,7 @@
 	<form id="game_report_form" method="post">{% csrf_token %}
 		{{ score_formset.management_form }}
 
-		<table class="teams_table teams_table_game">
+		<table class="teams_table table-fixed">
 			<tr>
 				<td class="team_container">
 					<div class="team">
@@ -26,8 +26,7 @@
 							</div>
 
 							<div>
-								<div class="pull_right">{{ team.color }}</div>
-								<div>Team {{ team.id }}</div>
+								<div>Team {{ team.id }} - {{ team.color }}</div>
 							</div>
 						</div>
 
@@ -48,7 +47,7 @@
 					</div>
 				</td>
 
-				<td class="divider">
+				<td class="divider text_center">
 					<h1>vs</h1>
 				</td>
 
@@ -61,8 +60,7 @@
 								</div>
 
 								<div>
-									<div class="pull_right">{{ team.color }}</div>
-									<div>Team {{ team.id }}</div>
+									<div>Team {{ team.id }} - {{ team.color }}</div>
 								</div>
 							</div>
 
@@ -123,7 +121,7 @@
 
 		<div id="game_report_comment" class="control_group">
 			<h2 title="This will remain private and will not be shared with your co-captain">
-				Game Comments <a href="{% url comments %}" target="_blank">[?]</a>
+				Anything else? <a class="small" href="{% url comments %}" target="_blank">(help)</a>
 			</h2>
 			{{ comment_form.comment.errors }}
 			{{ comment_form.comment }}
