@@ -11,7 +11,7 @@
 	{% include "layout/league_tabs.html" with selected_tab="teams" %}
 
 	{% if games|length %}
-		<table id="schedule_table" class="table table-striped">
+		<table id="schedule_table" class="table table-fixed table-striped">
 			<thead>
 				<tr>
 					<td></td>
@@ -81,69 +81,62 @@
 	{% endif %}
 
 	{% if teams %}
-		<table class="teams_table">
-			{% for team in teams %}
-				{% if forloop.counter0|divisibleby:"2" %}
-					<tr>
-				{% endif %}
+		<table class="teams_table table-fixed">
+			<tr>
+				{% for team in teams %}
+					<td id="team_roster_{{ team.id }}">
+						<div class="team">
+							<div class="team_info" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
+								<div class="team_name" style="font-size: {{ team.name|get_team_name_font_size }}px;">
+									{{ team.name }}
+								</div>
 
-				<td id="team_roster_{{ team.id }}">
-					<div class="team">
-						<div class="team_info" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
-							<div class="team_name" style="font-size: {{ team.name|get_team_name_font_size }}px;">
-								{{ team.name }}
+								<div>
+									{% if user.is_authenticated and team.email %}
+										<a class="pull_right" style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}" title="Email Team List">Email</a>
+									{% endif %}
+
+									<div>Team {{ team.id }} - {{ team.color }}</div>
+								</div>
 							</div>
 
-							<div>
-								<div class="pull_right">{{ team.color }}</div>
-								{% if user.is_authenticated and team.email %}
-									<div><a style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}" title="Email team list">Team {{ team.id }} (email)</a></div>
-								{% else %}
-									<div>Team {{ team.id }}</div>
-								{% endif %}
-							</div>
-						</div>
-
-						<div class="team_members">
-							{% for team_member in team.get_members %}
-								<div class="team_member">
-									{% if team_member.captain %}
-										{% if user.is_authenticated %}
-											<a href="mailto:{{ team_member.user.email }}">
+							<ul class="team_members">
+								{% for team_member in team.get_members %}
+									<li class="team_member">
+										{% if team_member.captain and user.is_authenticated and team_member.user.email %}
+											<a class="pull_right" href="mailto:{{ team_member.user.email }}">Email</a>
 										{% endif %}
 
-										<span class="strong">
-									{% endif %}
+										{% if team_member.captain %}
+											<span class="strong">
+										{% endif %}
 
-									{{ team_member.user.get_full_name }}
+										{{ team_member.user.get_full_name }}
 
-									{% if team_member.captain %}
-										</span>
-									{% endif %}
+										{% if team_member.captain %}
+											</span>
+										{% endif %}
 
-									<em>{{ team_member.user.get_profile.nickname }}</em>
+										<em>{{ team_member.user.get_profile.nickname }}</em>
+									</li>
+								{% endfor %}
+							</ul>
 
-									{% if team_member.captain %}
-										</a>
-									{% endif %}
+							{% if request.user|in_group:"junta" %}
+								<div class="team_notes text_center">
+									{{ team.get_members|length }} Player{{ team.get_members|length|pluralize }},
+									{{ team.get_male_members|length }} Male{{ team.get_male_members|length|pluralize }},
+									{{ team.get_female_members|length }} Female{{ team.get_female_members|length|pluralize }}
 								</div>
-							{% endfor %}
+							{% endif %}
 						</div>
+					</td>
 
-						{% if request.user|in_group:"junta" %}
-							<div class="team_notes text_center">
-								{{ team.get_members|length }} Player{{ team.get_members|length|pluralize }},
-								{{ team.get_male_members|length }} Male{{ team.get_male_members|length|pluralize }},
-								{{ team.get_female_members|length }} Female{{ team.get_female_members|length|pluralize }}
-							</div>
-						{% endif %}
-					</div>
-				</td>
-
-				{% if not forloop.counter0|divisibleby:"2" %}
-					</tr>
-				{% endif %}
-			{% endfor %}
+					{% if forloop.counter|divisibleby:2 %}
+						</tr><tr>
+					{% endif %}
+				{% endfor %}
+			</tr>
 		</table>
 	{% else %}
 		<div class="text_center">Teams for this league have not yet been formed.</div>

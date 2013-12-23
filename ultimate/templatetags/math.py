@@ -25,3 +25,10 @@ def limit_ceil(value, arg):
 @register.filter
 def limit_floor(value, arg):
 	return max(int(value), int(arg))
+
+@register.filter
+def get_range(value, end=False):
+	if end != False:
+		return range(value, end)
+
+	return range(value)

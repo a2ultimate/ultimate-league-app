@@ -85,6 +85,9 @@ def teams(request, year, season, division):
 		if game.date > today:
 			break
 
+	if game.date < today:
+		next_game_date = None
+
 	if request.user.is_authenticated():
 		user_games = league.get_user_games(request.user)
 	else:

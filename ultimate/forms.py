@@ -136,10 +136,9 @@ class EditPlayerRatingsForm(forms.ModelForm):
 
 class PlayerSurveyForm(forms.ModelForm):
 	user_id = forms.IntegerField(widget=forms.HiddenInput, required=True)
-	# TODO should captains rate experience?
-	strategy = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(7) ]))
-	throwing = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(7) ]))
-	athleticism = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(7) ]))
+	strategy = forms.IntegerField(min_value=1, max_value=6, widget=forms.Select(choices=[ (i,i) for i in range(7) ]))
+	throwing = forms.IntegerField(min_value=1, max_value=6, widget=forms.Select(choices=[ (i,i) for i in range(7) ]))
+	athleticism = forms.IntegerField(min_value=1, max_value=6, widget=forms.Select(choices=[ (i,i) for i in range(7) ]))
 	spirit = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=[ (i,i) for i in range(11) ]))
 	not_sure = forms.BooleanField(required=False)
 
@@ -148,15 +147,15 @@ class PlayerSurveyForm(forms.ModelForm):
 		exclude = ('id', 'experience', 'competitiveness', 'user', 'submitted_by', 'ratings_type', 'ratings_report', 'updated',)
 
 	def clean(self):
-		if self.cleaned_data.get('not_sure'):
-			self.removeErrorsFromRatings()
-		elif (not self.cleaned_data.get('strategy')
-			and not self.cleaned_data.get('throwing')
-			and not self.cleaned_data.get('athleticism')
-			and not self.cleaned_data.get('spirit')):
+		if not self.cleaned_data.get('strategy') or \
+			not self.cleaned_data.get('throwing') or \
+			not self.cleaned_data.get('athleticism') or \
+			not self.cleaned_data.get('spirit'):
 
-			self.removeErrorsFromRatings()
-			raise forms.ValidationError(_('You must fill in values greater than 1 or mark "Not Sure"'))
+			if self.cleaned_data.get('not_sure'):
+				self.removeErrorsFromRatings()
+			else:
+				raise forms.ValidationError(_('You must fill in values greater than 1 or mark "Not Sure"'))
 
 		return self.cleaned_data
 

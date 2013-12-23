@@ -149,7 +149,7 @@ class League(models.Model):
 		return TeamMember.objects.filter(team__league=self, captain=1).order_by('team')
 
 	def player_survey_complete_for_user(self, user):
-		return bool(Team.objects.get(league=self, teammember__user=user).player_survey_complete(user))
+		return bool(user.teammember_set.get(team__league=self).team.player_survey_complete(user))
 
 	def get_registrations(self):
 		return Registrations.objects.filter(league=self).order_by('registered')
@@ -450,6 +450,11 @@ class Registrations(models.Model):
 
 		return True
 
+	def get_team_id(self):
+		try:
+			return self.user.teammember_set.get(team__league=self.league).team.id
+		except ObjectDoesNotExist:
+			return None
 
 	def __unicode__(self):
 		return '%d %s %s - %s %s' % (self.league.year, self.league.season, self.league.night, self.user, self.get_status())
@@ -464,6 +469,22 @@ class Team(models.Model):
 
 	class Meta:
 		db_table = u'team'
+
+	@property
+	def attendance_total(self):
+		return sum(registration.attendance for registration in Registrations.objects.filter(league=self.league, user__id__in=self.teammember_set.all().values_list('user', flat=True)))
+
+	@property
+	def attendance_average(self):
+		return self.attendance_total / float(self.size)
+
+	@property
+	def rating_total(self):
+		return sum(team_member.user.rating_total for team_member in self.teammember_set.all())
+
+	@property
+	def rating_average(self):
+		return self.rating_total / float(self.size)
 
 	@property
 	def size(self):
@@ -499,6 +520,9 @@ class Team(models.Model):
 
 	def get_members(self):
 		return self.teammember_set.all()
+
+	def get_members_with_baggage(self):
+		return self.teammember_set.extra(select={'baggage_id':'SELECT baggage_id FROM registrations JOIN team ON team.league_id = registrations.league_id WHERE registrations.user_id = team_member.user_id AND team.id = team_member.team_id'}).order_by('baggage_id')
 
 	def get_male_members(self):
 		return self.get_members().filter(user__player__gender__iexact='M')
@@ -618,6 +642,10 @@ class TeamMember(models.Model):
 	class Meta:
 		db_table = u'team_member'
 		ordering = ['-captain', 'user__last_name']
+
+	@property
+	def attendance_total(self):
+		return Registrations.objects.get(league=self.team.league, user=self.user).attendance
 
 	def __unicode__(self):
 		return '%s %s' % (self.user.first_name, self.user.last_name)

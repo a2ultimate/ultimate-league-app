@@ -27,6 +27,14 @@
 		<h3>
 			Your registration is <strong class="text_error">not complete</strong>.
 		</h3>
+
+		{% if league.is_waitlist %}
+			<p>
+				<strong>Note:</strong>
+				This league is currently either at capacity the waitlist deadline has passed.
+				By completing your registration, you will be placed on the waitlist.
+			</p>
+		{% endif %}
 	{% endif %}
 
 	<hr />
@@ -69,7 +77,7 @@
 				</p>
 
 				<p>
-					You will be redirected to PayPal's website to pay and redirected back to the A2Ultimate site afterward.
+					You will be redirected to PayPal's website to pay and redirected back to the Ann Arbor Ultimate site afterward.
 				</p>
 
 				<p>

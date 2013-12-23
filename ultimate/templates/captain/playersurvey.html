@@ -57,31 +57,31 @@
 	<form method="post" action="{% url playersurvey teamid=team.id %}">{% csrf_token %}
 		{{ formset.management_form }}
 
-		<table id="player_survey_table" class="table table-striped">
+		<table class="table table-striped">
 			<tr>
 				<td></td>
-				<th>Strategy</th>
-				<th>Throwing</th>
-				<th>Athleticism</th>
-				<th>Spirit</th>
-				<th>Not Sure</th>
+				<th class="text_center">Strategy</th>
+				<th class="text_center">Throwing</th>
+				<th class="text_center">Athleticism</th>
+				<th class="text_center">Spirit</th>
+				<th class="text_center">Not Sure</th>
 			</tr>
 			{% for row in survey %}
 				<tr>
-					<td class="name">
-						<div class="{% if row.form.non_field_errors %}strong text_error{% endif %}">
+					<th>
+						<div>
 							{{ row.user.get_full_name }}
 							{% for hidden in row.form.hidden_fields %}
 								{{ hidden }}
 							{% endfor %}
 						</div>
-					</td>
+					</th>
 					{% for field in row.form.visible_fields %}
-						<td>
+						<td class="text_center">
 							<div class="{% if field.errors %}state_error{% endif %}">
 								{{ field }}
 								{% if not forloop.last %}
-									<div>{{ row.user|get_average:field.label }}</div>
+									<div class="small strong">{{ row.user|get_average:field.label }}</div>
 								{% endif %}
 							</div>
 						</td>
@@ -90,7 +90,9 @@
 			{% endfor %}
 		</table>
 
-		<input class="button button_success" type="submit" value="Update" />
-		<a class="form_cancel" href="{% url playersurvey teamid=team.id %}">cancel</a>
+		<div class="control_group">
+			<input class="button button_success" type="submit" value="Update" />
+			<a class="form_cancel" href="{% url playersurvey teamid=team.id %}">Cancel</a>
+		</div>
 	</form>
 {% endblock %}

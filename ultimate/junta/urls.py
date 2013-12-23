@@ -12,8 +12,9 @@ urlpatterns = patterns('ultimate.junta.views',
 	(r'^registrationexport/$', 'registrationexport', {}, 'registrationexport'),
 	(r'^registrationexport/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', 'registrationexport', {}, 'registrationexport_league'),
 
-	(r'^teamimport/$', 'teamimport', {}, 'teamimport'),
-
 	(r'^schedulegeneration/$', 'schedulegeneration', {}, 'schedulegeneration'),
 	(r'^schedulegeneration/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', 'schedulegeneration', {}, 'schedulegeneration_league'),
+
+	(r'^teamgeneration/$', 'teamgeneration', {}, 'teamgeneration'),
+	(r'^teamgeneration/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', 'teamgeneration', {}, 'teamgeneration_league'),
 )

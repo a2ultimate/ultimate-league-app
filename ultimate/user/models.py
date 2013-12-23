@@ -4,6 +4,29 @@ from django.contrib.auth.models import User
 from ultimate.leagues.models import *
 
 
+@property
+def rating_total(self):
+	rating_dict = {'athleticism': [], 'experience': [], 'strategy': [], 'throwing': []}
+
+	# date cap for old ratings?
+	ratings = self.playerratings_set.all()
+	for rating in ratings:
+		if rating.athleticism:
+			rating_dict['athleticism'].append(rating.athleticism)
+		if rating.experience:
+			rating_dict['experience'].append(rating.experience)
+		if rating.strategy:
+			rating_dict['strategy'].append(rating.strategy)
+		if rating.throwing:
+			rating_dict['throwing'].append(rating.throwing)
+
+	# determine the total rating of a user
+	rating_dict = dict([(key, float(sum([int(i) for i in values])) / (len(filter(lambda k: k > 0, values)) or 1)) for key, values in rating_dict.items()])
+	return sum(rating_dict.itervalues())
+
+User.add_to_class('rating_total', rating_total)
+
+
 class PlayerRatings(models.Model):
 
 	RATING_EXPERIENCE_CHOICES = (
@@ -60,12 +83,12 @@ class PlayerRatings(models.Model):
 
 	id = models.AutoField(primary_key=True)
 
-	experience = models.PositiveIntegerField(default=0, choices=RATING_EXPERIENCE_CHOICES)
-	strategy = models.PositiveIntegerField(default=0, choices=RATING_STRATEGY_CHOICES)
-	throwing = models.PositiveIntegerField(default=0, choices=RATING_THROWING_CHOICES)
-	athleticism = models.PositiveIntegerField(default=0, choices=RATING_ATHLETICISM_CHOICES)
-	competitiveness = models.PositiveIntegerField(default=0, choices=RATING_COMPETITIVENESS_CHOICES)
-	spirit = models.PositiveIntegerField(default=0)
+	experience = models.PositiveIntegerField(default=None, choices=RATING_EXPERIENCE_CHOICES, blank=True, null=True)
+	strategy = models.PositiveIntegerField(default=None, choices=RATING_STRATEGY_CHOICES, blank=True, null=True)
+	throwing = models.PositiveIntegerField(default=None, choices=RATING_THROWING_CHOICES, blank=True, null=True)
+	athleticism = models.PositiveIntegerField(default=None, choices=RATING_ATHLETICISM_CHOICES, blank=True, null=True)
+	competitiveness = models.PositiveIntegerField(default=None, choices=RATING_COMPETITIVENESS_CHOICES, blank=True, null=True)
+	spirit = models.PositiveIntegerField(default=None, blank=True, null=True)
 	user = models.ForeignKey(User)
 	submitted_by = models.ForeignKey(User, related_name='ratings_submitted_by_set')
 	ratings_type = models.PositiveIntegerField(choices=RATING_TYPE)
@@ -76,6 +99,21 @@ class PlayerRatings(models.Model):
 	class Meta:
 		db_table = u'player_ratings'
 		verbose_name_plural = 'player ratings'
+
+	def save(self, *args, **kwargs):
+		if not self.experience:
+			self.experience = None
+		if not self.strategy:
+			self.strategy = None
+		if not self.throwing:
+			self.throwing = None
+		if not self.athleticism:
+			self.athleticism = None
+		if not self.competitiveness:
+			self.competitiveness = None
+		if not self.spirit:
+			self.spirit = None
+		super(PlayerRatings, self).save(*args, **kwargs)
 
 	def __unicode__(self):
 		return '%s %s <- %s' % (str(self.updated), self.user, self.submitted_by)
