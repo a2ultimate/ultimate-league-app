@@ -21,6 +21,7 @@ class GameAdmin(admin.ModelAdmin):
 	save_on_top = True
 
 	list_display = ('date', 'league', 'field_name', 'game_teams',)
+	list_filter = ('league__year', 'league__season', 'league__night', 'league__gender', 'league__state', )
 
 	def get_form(self, request, obj=None, **kwargs):
 		# just save obj reference for future processing in Inline
@@ -125,6 +126,7 @@ class TeamAdmin(admin.ModelAdmin):
 
 	list_display = ('id', 'name', 'color', 'email', 'league',)
 	list_editable = ('name', 'color', 'email',)
+	list_filter = ('league__year', 'league__season', 'league__night', 'league__gender', 'league__state', )
 
 
 admin.site.register(Baggage)
