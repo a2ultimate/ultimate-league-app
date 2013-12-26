@@ -85,7 +85,7 @@ def teams(request, year, season, division):
 		if game.date > today:
 			break
 
-	if game.date < today:
+	if next_game_date and next_game_date < today:
 		next_game_date = None
 
 	if request.user.is_authenticated():
@@ -99,7 +99,7 @@ def teams(request, year, season, division):
 		'field_names': league.get_field_names(),
 		'games': games,
 		'next_game_date': next_game_date,
-		'teams': Team.objects.filter(league=league),
+		'teams': Team.objects.filter(league=league, hidden=False),
 		'user_games': user_games
 	},
 	context_instance=RequestContext(request))

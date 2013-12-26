@@ -123,7 +123,7 @@ class League(models.Model):
 		return FieldNames.objects.filter(field__fieldleague__league=self, game__league=self).distinct().order_by('field__name', 'name')
 
 	def get_teams(self):
-		return Team.objects.filter(league=self)
+		return Team.objects.filter(league=self, hidden=False)
 
 	def get_games(self):
 		return Game.objects.filter(league=self).order_by('field_name__field__name', 'field_name__name', 'date')
@@ -466,6 +466,7 @@ class Team(models.Model):
 	color = models.CharField(max_length=96, blank=True)
 	email = models.CharField(max_length=128, blank=True)
 	league = models.ForeignKey('leagues.League')
+	hidden = models.BooleanField(default=False)
 
 	class Meta:
 		db_table = u'team'
