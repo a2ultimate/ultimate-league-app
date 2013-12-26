@@ -384,7 +384,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
 
 			games = games[-field_shift:] + games[:-field_shift]
 
-			schedule_teams = [team for game in games for team in sorted(game, key=operator.attrgetter('id'))]
+			schedule_teams = [team for game in games for team in sorted(game, key=lambda k: k.id)]
 			schedule.append(schedule_teams)
 
 		if request.method == 'POST':
