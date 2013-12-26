@@ -124,9 +124,9 @@ class TeamAdmin(admin.ModelAdmin):
 		request._team_obj_ = obj
 		return super(TeamAdmin, self).get_form(request, obj, **kwargs)
 
-	list_display = ('id', 'name', 'color', 'email', 'league',)
+	list_display = ('id', 'name', 'color', 'email', 'league', 'hidden',)
 	list_editable = ('name', 'color', 'email',)
-	list_filter = ('league__year', 'league__season', 'league__night', 'league__gender', 'league__state', )
+	list_filter = ('league__year', 'league__season', 'league__night', 'league__gender', 'league__state', 'hidden',)
 
 
 admin.site.register(Baggage)

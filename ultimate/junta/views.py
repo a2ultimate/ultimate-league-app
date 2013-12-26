@@ -293,7 +293,18 @@ def teamgeneration(request, year=None, season=None, division=None):
 								'users': []
 							})
 
-			if 'delete_teams' in request.POST:
+			if 'publish_teams' in request.POST:
+				teams.update(hidden=False)
+
+				messages.success(request, 'Teams were successfully published.')
+				return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
+
+			elif 'hide_teams' in request.POST:
+				teams.update(hidden=True)
+
+				messages.success(request, 'Teams were successfully hidden.')
+				return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
+			elif 'delete_teams' in request.POST:
 				teams.delete()
 
 				messages.success(request, 'Teams were successfully deleted.')
@@ -306,6 +317,7 @@ def teamgeneration(request, year=None, season=None, division=None):
 					else:
 						team = Team()
 						team.league = league
+						team.hidden = True
 						team.save()
 
 					if team:
