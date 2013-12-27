@@ -1,5 +1,16 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
+
 from ultimate.user.models import *
+
+class MyUserAdmin(UserAdmin):
+	list_filter = UserAdmin.list_filter + ('groups__name',)
+
+
+admin.site.unregister(User)
+admin.site.register(User, MyUserAdmin)
+
 
 class PlayerRatingsAdmin(admin.ModelAdmin):
 	save_as = True
@@ -16,5 +27,6 @@ class PlayerRatingsAdmin(admin.ModelAdmin):
 	def submitted_by_details(self, obj):
 		return u'%s <br /> %s' % (obj.submitted_by.get_full_name(), obj.submitted_by.email)
 	submitted_by_details.allow_tags = True
+
 
 admin.site.register(PlayerRatings, PlayerRatingsAdmin)
