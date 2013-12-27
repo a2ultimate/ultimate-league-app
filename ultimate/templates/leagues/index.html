@@ -4,14 +4,16 @@
 {% load utility %}
 
 {% block content %}
-	<h1>
-		{{ season_title|smart_title }} League {{ year }}
-	</h1>
+	{% with league=leagues|first %}
+		<h1>
+			{{ league.season_title|smart_title }} League {{ year }}
+		</h1>
 
-	<p>
-		Ann Arbor Ultimate is very excited to present {{ season_title|smart_title }} League {{ year }}.
-		There are <strong>{{ leagues|length }}</strong> divisions.
-	</p>
+		<p>
+			Ann Arbor Ultimate is very excited to present {{ league.season_title|smart_title }} League {{ year }}.
+			There {{ leagues|pluralize:'is,are' }} <strong>{{ leagues|length }}</strong> division{{ leagues|pluralize }}.
+		</p>
+	{% endwith %}
 
 	{% for league in leagues %}
 		<h2>
