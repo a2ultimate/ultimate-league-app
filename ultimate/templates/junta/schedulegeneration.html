@@ -11,27 +11,7 @@
 	{% if leagues %}
 		<h1>Schedule Generation</h1>
 
-		<ul>
-			{% regroup leagues by season_year as season_years %}
-
-			{% for season_year in season_years %}
-				<li>
-					{% with league=season_year.list|first %}
-						<h3>{{ season_year.grouper|smart_title }}</h3>
-					{% endwith %}
-
-					<ul>
-						{% for league in season_year.list|dictsort:'league_start_date' %}
-							<li>
-								<a href="{% url schedulegeneration_league year=league.year season=league.season division=league.night %}">
-									{{ league.night|smart_title }}
-								</a>
-							</li>
-						{% endfor %}
-					</ul>
-				</li>
-			{% endfor %}
-		</ul>
+		{% include "_partials/league_list.html" with leagues=leagues link_view="schedulegeneration_league" only %}
 	{% else %}
 		{% include "layout/league_header.html" with league=league header="Schedule Generation" only %}
 
