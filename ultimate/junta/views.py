@@ -369,23 +369,24 @@ def schedulegeneration(request, year=None, season=None, division=None):
 		teams = list(Team.objects.filter(league=league))
 		num_teams = len(teams)
 
-		teams = teams[0::2] + list(reversed(teams[1::2]))
-		teams = teams[:1] + teams[2:] + teams[1:2]
+		if num_teams:
+			teams = teams[0::2] + list(reversed(teams[1::2]))
+			teams = teams[:1] + teams[2:] + teams[1:2]
 
-		field_shift = 0
-		for event_num in range(0, num_events):
-			teams = teams[:1] + teams[-1:] + teams[1:-1]
+			field_shift = 0
+			for event_num in range(0, num_events):
+				teams = teams[:1] + teams[-1:] + teams[1:-1]
 
-			top = teams[:num_teams // 2]
-			bottom = list(reversed(teams[num_teams // 2:]))
-			games = zip(top, bottom)
+				top = teams[:num_teams // 2]
+				bottom = list(reversed(teams[num_teams // 2:]))
+				games = zip(top, bottom)
 
-			field_shift = (event_num * 2) % (num_teams // 2)
+				field_shift = (event_num * 2) % (num_teams // 2)
 
-			games = games[-field_shift:] + games[:-field_shift]
+				games = games[-field_shift:] + games[:-field_shift]
 
-			schedule_teams = [team for game in games for team in sorted(game, key=operator.attrgetter('id'))]
-			schedule.append(schedule_teams)
+				schedule_teams = [team for game in games for team in sorted(game, key=lambda k: k.id)]
+				schedule.append(schedule_teams)
 
 		if request.method == 'POST':
 			form = ScheduleGenerationForm(request.POST)
