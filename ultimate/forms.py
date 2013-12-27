@@ -182,7 +182,7 @@ class EditTeamInformationForm(forms.ModelForm):
 
 
 class GameReportCommentForm(forms.ModelForm):
-	spirit = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SPIRIT_CHOICES))
+	spirit = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=GameReportComment.SPIRIT_CHOICES))
 	comment = forms.CharField(required=False, widget=forms.Textarea(attrs={'placeholder': 'Praise, pickups, spririt issues, stoppages, field issues, etc...'}),)
 
 	class Meta:

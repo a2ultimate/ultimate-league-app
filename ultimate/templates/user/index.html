@@ -129,8 +129,8 @@
 									{{ registration.league.night|smart_title }}
 								</a>
 							</td>
-							<td>{{ registration.get_progress }}%</td>
-							<td>{{ registration.get_status }}</td>
+							<td>{{ registration.progress }}%</td>
+							<td>{{ registration.status }}</td>
 							<td>
 								{% for baggage_reg in registration.baggage.get_registrations %}
 									<div>{{ baggage_reg.user.get_full_name }}</div>

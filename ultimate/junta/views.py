@@ -122,7 +122,7 @@ def registrationexport(request, year=None, season=None, division=None):
 		])
 
 		for registration in registrations:
-			if registration.is_complete() and not registration.waitlist and not registration.refunded:
+			if registration.is_complete and not registration.waitlist and not registration.refunded:
 				writer.writerow([
 					registration.get_team_id(),
 					registration.baggage,
@@ -140,11 +140,11 @@ def registrationexport(request, year=None, season=None, division=None):
 					registration.average_competitiveness,
 					registration.average_spirit,
 					registration.attendance,
-					registration.user.get_profile().get_age(),
+					registration.user.get_profile().age,
 					registration.user.get_profile().height_inches,
 					registration.user.get_profile().jersey_size,
 					registration.captain,
-					registration.get_status()
+					registration.status
 				])
 
 		return response
