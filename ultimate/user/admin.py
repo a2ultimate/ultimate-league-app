@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from ultimate.user.models import *
 
 class MyUserAdmin(UserAdmin):
+	list_display = ('username', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'date_joined')
 	list_filter = UserAdmin.list_filter + ('groups__name',)
 
 
