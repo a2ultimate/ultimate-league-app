@@ -25,9 +25,7 @@
 								{{ team.name }}
 							</div>
 
-							<div>
-								<div>Team {{ team.id }} - {{ team.color }}</div>
-							</div>
+							<div>Team {{ team.id }}{% if team.color %} - {{ team.color }}{% endif %}</div>
 						</div>
 
 						<div class="team_members">

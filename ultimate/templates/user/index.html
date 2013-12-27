@@ -42,7 +42,7 @@
 											<a class="pull_right" style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}" title="Email Team List">Email</a>
 										{% endif %}
 
-										<div>Team {{ team.id }} - {{ team.color }}</div>
+										<div>Team {{ team.id }}{% if team.color %} - {{ team.color }}{% endif %}</div>
 									</div>
 								</div>
 
