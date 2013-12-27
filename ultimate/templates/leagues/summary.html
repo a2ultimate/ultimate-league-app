@@ -13,7 +13,7 @@
 		{{ league.gender_note|safe }}
 	{% endif %}
 
-	<table class="table league_info_table">
+	<table class="table table-striped-header">
 		<tr>
 			<td><a href="{% url league_details year=league.year season=league.season division=league.night %}">Detailed Info</a></td>
 			<td><a href="{% url league_players year=league.year season=league.season division=league.night %}">Players</a></td>

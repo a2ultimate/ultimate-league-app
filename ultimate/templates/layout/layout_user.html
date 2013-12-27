@@ -2,16 +2,18 @@
 {% load utility %}
 
 {% include "layout/header.html" %}
+
 <div id="content_container">
 	<div id="sidebar">
-		<div id="logo">
+		<p class="text_center">
 			<img src="{{ MEDIA_URL }}images/logo_small.png" width="200" height="166" />
-		</div>
-		<div class="text_center">
-			<a class="social_icon social_icon_twitter" href="http://twitter.com/aaultimate" target="_blank">Twitter</a>
-			<a class="social_icon social_icon_facebook" href="http://www.facebook.com/group.php?gid=14353251178" target="_blank">Facebook</a>
-			<a class="social_icon social_icon_flickr" href="http://www.flickr.com/search/?q=annarborultimate" target="_blank">Flickr</a>
-		</div>
+		</p>
+
+		<ul class="social_icons text_center">
+			<li><a class="social_icon social_icon_twitter" href="http://twitter.com/aaultimate" target="_blank">Twitter</a></li>
+			<li><a class="social_icon social_icon_facebook" href="http://www.facebook.com/group.php?gid=14353251178" target="_blank">Facebook</a></li>
+			<li><a class="social_icon social_icon_flickr" href="http://www.flickr.com/search/?q=annarborultimate" target="_blank">Flickr</a></li>
+		</ul>
 
 		{% if menu_leagues %}
 			<ul>
@@ -19,17 +21,17 @@
 
 				{% for season_year in season_years %}
 					<li>
-						{{ season_year.grouper|smart_title }}
-						<ul class="league_list">
+						<h3>{{ season_year.grouper|smart_title }}</h3>
+						<ul>
 							{% for league in season_year.list %}
 								<li>
-									<div class="league_name">
+									<h4>
 										{{ league.night|smart_title }}
 
 										{% if league.state == 'preview' %}
 											<em>({{ league.state|capfirst }})</em>
 										{% endif %}
-									</div>
+									</h4>
 									<ul>
 										{% if league|is_open:user %}
 											{% if league|is_waitlist:user %}
@@ -71,8 +73,8 @@
 			</div>
 		{% endif %}
 
-		{% block content %}
-		{% endblock %}
+		{% block content %}{% endblock %}
 	</div>
+</div>
 
 {% include "layout/footer.html" %}

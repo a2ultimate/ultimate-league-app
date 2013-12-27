@@ -57,63 +57,84 @@ h1, h2, h3, h4, h5, h6, th, strong, .strong, legend {
 	text-rendering: optimizelegibility;
 }
 
-h1, h2, h3, h4, h5, h6 {
-	margin: 10px 0;
-}
-
-h1,
-h2,
-h3 {
-	line-height: 40px;
-}
-
-h1 {
-	font-size: 24px;
-}
-
-h1 small {
-	font-size: 18px;
-}
-
-h2 {
-	font-size: 18px;
-}
-
-h2 small {
-	font-size: 14px;
-}
-
-h3 {
-	font-size: 14px;
-}
-
-h3 small {
-	font-size: 12px;
-}
-
-h4 {
-	font-size: 12px;
-}
-
-h5 {
-	font-size: 12px;
-	font-weight: bold;
-	letter-spacing: 1px;
-}
-
-h6 {
-	font-size: 11px;
-	color: #95A5A6;
-	text-transform: uppercase;
-}
-
 h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 	color: #95A5A6;
 	font-weight: 300;
 }
 
-small,
-.small {
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+	color: inherit;
+	font-family: inherit;
+	line-height: 1.1;
+}
+
+h1 small, h2 small, h3 small, h4 small, h5 small, h6 small,
+.h1 small, .h2 small, .h3 small, .h4 small, .h5 small, .h6 small,
+h1 .small, h2 .small, h3 .small, h4 .small, h5 .small, h6 .small,
+.h1 .small, .h2 .small, .h3 .small, .h4 .small, .h5 .small, .h6 .small {
+	color: #95A5A6;
+	font-weight: 300;
+	font-weight: normal;
+	line-height: 1;
+}
+
+h1, .h1,
+h2, .h2 {
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
+h1 small, .h1 small,
+h2 small, .h2 small,
+h1 .small, .h1 .small,
+h2 .small, .h2 .small {
+	font-size: 65%;
+}
+
+h3, .h3,
+h4, .h4,
+h5, .h5,
+h6, .h6 {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+h3 small, .h3 small,
+h4 small, .h4 small,
+h5 small, .h5 small,
+h6 small, .h6 small,
+h4 .small, .h4 .small,
+h5 .small, .h5 .small,
+h6 .small, .h6 .small {
+	font-size: 75%;
+}
+
+h1, .h1 {
+	font-size: 30px;
+}
+
+h2, .h2 {
+	font-size: 24px;
+}
+
+h3, .h3 {
+	font-size: 18px;
+}
+
+h4, .h4 {
+	font-size: 14px;
+}
+
+h5, .h5 {
+	font-size: 12px;
+}
+
+h6, .h6 {
+	font-size: 10px;
+}
+
+small, .small {
 	font-size: 85%
 }
 
@@ -457,18 +478,25 @@ fieldset > legend {
 #sidebar {
 	border-right: 2px solid #3498DB;
 	float: left;
+	font-size: 16px;
 	margin-bottom: 12px;
-	padding: 10px 12px 10px;
+	padding: 0 12px 10px;
 	width: 220px;
 }
 
-#sidebar #logo {
-	margin: 0 auto 16px;
-	text-align: center;
-	width: 190px;
+.social_icons {
+	list-style: none;
+	margin: 0;
+	padding: 0;
 }
 
-.social_icon {
+.social_icons > li {
+	display: inline-block;
+	margin: 0;
+	padding: 0;
+}
+
+.social_icons > li > .social_icon {
 	background: transparent url('../images/social_sprite.png') 0 0 no-repeat;
 	background-size: 96px 32px;
 	direction: ltr;
@@ -480,20 +508,20 @@ fieldset > legend {
 	width: 32px;
 }
 
-.social_icon:active {
+.social_icons > li > .social_icon:active {
 	position: relative;
 	top: 1px;
 }
 
-.social_icon.social_icon_facebook {
+.social_icons > li > .social_icon.social_icon_facebook {
 	background-position: 0 0;
 }
 
-.social_icon.social_icon_flickr {
+.social_icons > li > .social_icon.social_icon_flickr {
 	background-position: -64px 0;
 }
 
-.social_icon.social_icon_twitter {
+.social_icons > li > .social_icon.social_icon_twitter {
 	background-position: -32px 0;
 }
 
@@ -501,7 +529,7 @@ fieldset > legend {
 	   only screen and (min-resolution: 144dpi),
 	   only screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
 
-	.social_icon {
+	.social_icons > li > .social_icon {
 		background-image: url('../images/social_sprite@2x.png');
 	}
 }
@@ -512,25 +540,24 @@ fieldset > legend {
 	padding: 0;
 }
 
-#sidebar > ul > li {
-	font-size: 18px;
-	font-weight: bold;
-	margin: 12px 0 0;
+#sidebar ul li {
+	margin: 0;
 	padding: 0;
 }
 
-#sidebar > ul > li > ul {
-	margin: 6px 0 4px 2px;
+#sidebar ul li ul {
+	margin: 0 0 8px 4px;
 }
 
-#sidebar > ul > li > ul > li {
-	font-size: 16px;
-	font-weight: 300;
-	margin: 6px 0;
-	padding: 0;
+#sidebar ul li ul li {
+	margin: 4px 0;
 }
 
-#sidebar ul.league_list > li {
+#sidebar ul li ul li ul {
+	margin: 0 0 0 16px;
+}
+
+/*#sidebar ul.league_list > li {
 	margin: 12px 0;
 }
 
@@ -540,7 +567,7 @@ fieldset > legend {
 
 #sidebar .league_name {
 	font-size: 17px;
-}
+}*/
 
 #content {
 	float: left;
@@ -1016,6 +1043,10 @@ input[type="submit"] {
 	background-color: #ECEFF1;
 }
 
+.table-striped-header th {
+	background: #ECEFF1;
+}
+
 .table-hover > tbody > tr:hover > td,
 .table-hover > tbody > tr:hover > th {
 	background-color: #ECF0F1;
@@ -1423,12 +1454,6 @@ tr.sortable-placeholder td {
 #game_report_comment textarea {
 	height: 80px;
 	width: 100%;
-}
-
-/* LEAGUE / INDEX */
-
-.league_info_table th {
-	background: #ECEFF1;
 }
 
 /* LEAGUE / DETAILS */
