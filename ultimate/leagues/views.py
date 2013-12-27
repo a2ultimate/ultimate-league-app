@@ -143,7 +143,10 @@ def registration(request, year, season, division, section=None):
 	if not league.is_open(request.user):
 		raise Http403
 
-	registration, created = Registrations.objects.get_or_create(user=request.user, league=league)
+	try:
+		registration, created = Registrations.objects.get_or_create(user=request.user, league=league)
+	except IntegrityError:
+		registration = Registrations.objects.get(user=request.user, league=league)
 
 	try:
 		if ((not registration.is_complete()) and

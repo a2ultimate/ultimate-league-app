@@ -64,8 +64,11 @@ def playersurvey(request, teamid):
 		.extra(select={'average_spirit':'SELECT COALESCE(AVG(player_ratings.spirit), 0) FROM player_ratings WHERE player_ratings.user_id = auth_user.id AND player_ratings.spirit != 0'}) \
 		.distinct()
 
-	ratings_report, created = PlayerRatingsReport.objects.get_or_create(submitted_by=request.user, team=team,
-		defaults={'submitted_by': request.user, 'team': team, 'updated': datetime.now()})
+	try:
+		ratings_report, created = PlayerRatingsReport.objects.get_or_create(submitted_by=request.user, team=team,
+			defaults={'submitted_by': request.user, 'team': team, 'updated': datetime.now()})
+	except IntegrityError:
+		ratings_report = PlayerRatingsReport.objects.get(submitted_by=request.user, team=team)
 
 	RatingsFormSet = formset_factory(PlayerSurveyForm, extra=0)
 
