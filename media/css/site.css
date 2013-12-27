@@ -565,10 +565,7 @@ fieldset > legend {
 }
 
 .none_found {
-	color: #BDC3C7;
-	font-size: 17px;
-	font-weight: bold;
-	margin: 8px 0;
+	color: #95A5A6;
 }
 
 form {
