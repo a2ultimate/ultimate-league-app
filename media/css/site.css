@@ -1247,6 +1247,7 @@ input[type="submit"] {
 	background-color: #3498DB;
 }
 
+
 /* SORTABLE PLUGIN */
 
 li.sortable-placeholder,
@@ -1431,6 +1432,7 @@ ul.flat_list > li > ul > li {
 	letter-spacing: 1px;
 }
 
+
 /* CAPTAIN / INDEX */
 
 .team_list {
@@ -1456,6 +1458,7 @@ ul.flat_list > li > ul > li {
 	padding: 2px;
 }
 
+
 /* CAPTAIN / GAME REPORT */
 
 #game_report_form .score_input input {
@@ -1468,9 +1471,6 @@ ul.flat_list > li > ul > li {
 	height: 80px;
 	width: 100%;
 }
-
-/* LEAGUE / DETAILS */
-
 
 
 /*  LEAGUE / TEAMS */
@@ -1562,24 +1562,6 @@ ul.flat_list > li > ul > li {
 	font-size: 24px;
 	font-weight: bold;
 	padding: 0 0 4px;
-}
-
-.team_info_left {
-	float: left;
-}
-
-.team_info_right {
-	float: right;
-}
-
-.team_group {
-	list-style: none;
-	margin: 0;
-	padding: 4px 0;
-}
-
-.team_group:last-child {
-	border-bottom: 0;
 }
 
 .team_members {
