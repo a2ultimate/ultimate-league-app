@@ -18,16 +18,17 @@
 					{% regroup field_names by field as fields %}
 					{% for field in fields %}
 						<th class="text_center" colspan="{{ field.list|length }}">
-							<div>{{ field.grouper }}</div>
-							{% if field.grouper.layout_link %}
-								<div>
+							<h4>
+								{{ field.grouper }}
+
+								{% if field.grouper.layout_link %}
 									<small>
 										<a href="{{ MEDIA_URL }}{{ field.grouper.layout_link }}" target="_blank">
 											Field Layout
 										</a>
 									</small>
-								</div>
-							{% endif %}
+								{% endif %}
+							</h4>
 						</th>
 					{% endfor %}
 				</tr>
