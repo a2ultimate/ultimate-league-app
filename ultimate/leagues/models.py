@@ -631,7 +631,14 @@ class Team(models.Model):
 			bool(ratings_reports.filter(num_ratings__gte=self.size - 1).count() > 0)
 
 	def __unicode__(self):
-		return '%s (%s)' % (self.name, self.color)
+		name = 'Team %d' % (self.id)
+
+		if self.name:
+			name = self.name
+		if self.color:
+			return name + (' (%s)' % (self.color))
+
+		return name
 
 
 class TeamMember(models.Model):
