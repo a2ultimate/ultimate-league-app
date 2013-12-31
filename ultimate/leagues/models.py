@@ -480,7 +480,10 @@ class Team(models.Model):
 
 	@property
 	def attendance_average(self):
-		return self.attendance_total / float(self.size)
+		if self.size > 0:
+			return self.attendance_total / float(self.size)
+
+		return 0
 
 	@property
 	def rating_total(self):
@@ -488,7 +491,10 @@ class Team(models.Model):
 
 	@property
 	def rating_average(self):
-		return self.rating_total / float(self.size)
+		if self.size > 0:
+			return self.rating_total / float(self.size)
+
+		return 0
 
 	@property
 	def size(self):
