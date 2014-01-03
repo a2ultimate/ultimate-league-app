@@ -3,13 +3,23 @@
 {% block content %}
 	{% include "layout/account_tabs.html" with selected_tab="junta" %}
 
-	<ul>
-		<li><a href="{% url captainstatus %}">Captain Status</a></li>
-		<li><a href="{% url leagueresults %}">League Results</a></li>
-		<li><a href="{% url registrationexport %}">Registration Export</a></li>
+	<ul class="flat_list">
+		<li>
+			<a href="{% url captainstatus %}"><h3>Captain Status</h3></a>
+		</li>
+		<li>
+			<a href="{% url leagueresults %}"><h3>League Results</h3></a>
+		</li>
+		<li>
+			<a href="{% url registrationexport %}"><h3>Registration Export</h3></a>
+		</li>
 		{% if request.user.is_superuser %}
-			<li><a href="{% url teamgeneration %}">Team Generation</a></li>
-			<li><a href="{% url schedulegeneration %}">Schedule Generation</a></li>
+			<li>
+				<a href="{% url teamgeneration %}"><h3>Team Generation</h3></a>
+			</li>
+			<li>
+				<a href="{% url schedulegeneration %}"><h3>Schedule Generation</h3></a>
+			</li>
 		{% endif %}
 	</ul>
 {% endblock %}

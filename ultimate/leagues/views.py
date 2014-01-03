@@ -16,30 +16,43 @@ from ultimate.middleware.http import Http403
 from paypal.standard.forms import PayPalPaymentsForm
 
 
-def index(request, year, season):
-	if request.user.is_superuser:
+def index(request, year=None, season=None):
+	if year and season:
 		leagues = League.objects.filter(year=year, season=season).order_by('league_start_date')
-	elif request.user.groups.filter(name='junta').exists():
-		leagues = League.objects.filter(year=year, season=season, state__in=['closed', 'open', 'preview']).order_by('league_start_date')
+	elif year:
+		leagues = League.objects.filter(year=year).order_by('-league_start_date')
 	else:
-		leagues = League.objects.filter(year=year, season=season, state__in=['closed', 'open']).order_by('league_start_date')
+		leagues = League.objects.all().order_by('-league_start_date')
+
+	if not request.user.is_superuser and not request.user.groups.filter(name='junta').exists():
+		leagues = leagues.filter(state__in=['closed', 'open'])
+	elif not request.user.is_superuser:
+		leagues = leagues.filter(state__in=['closed', 'open', 'preview'])
 
 	return render_to_response('leagues/index.html',
-		{'leagues': leagues, 'year': year, 'season': season},
+		{
+			'leagues': leagues,
+			'year': year,
+			'season': season
+		},
 		context_instance=RequestContext(request))
 
 
 def summary(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
 	return render_to_response('leagues/summary.html',
-		{'league': league},
+		{
+			'league': league
+		},
 		context_instance=RequestContext(request))
 
 
 def details(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
 	return render_to_response('leagues/details.html',
-		{'league': league},
+		{
+			'league': league
+		},
 		context_instance=RequestContext(request))
 
 
@@ -132,7 +145,10 @@ def group(request, year, season, division):
 		return HttpResponseRedirect(reverse('league_group', kwargs={'year': year, 'season': season, 'division': division}))
 
 	return render_to_response('leagues/group.html',
-		{'league': league, 'registration': registration},
+		{
+			'league': league,
+			'registration': registration
+		},
 		context_instance=RequestContext(request))
 
 
@@ -149,9 +165,9 @@ def registration(request, year, season, division, section=None):
 		registration = Registrations.objects.get(user=request.user, league=league)
 
 	try:
-		if ((not registration.is_complete()) and
+		if ((not registration.is_complete) and
 			(not request.user.get_profile()) or
-			(not request.user.get_profile().is_complete_for_user()) or
+			(not request.user.get_profile().is_complete_for_user) or
 			(not request.user.playerratings_set.filter(submitted_by=request.user, user=request.user))):
 
 			raise Http403
@@ -234,12 +250,20 @@ def registration(request, year, season, division, section=None):
 
 	if section == 'conduct' or not registration.conduct_complete:
 		return render_to_response('leagues/registration/conduct.html',
-			{'league': league, 'registration': registration, 'section': 'conduct'},
+			{
+				'league': league,
+				'registration': registration,
+				'section': 'conduct'
+			},
 			context_instance=RequestContext(request))
 
 	if section == 'waiver' or not registration.waiver_complete:
 		return render_to_response('leagues/registration/waiver.html',
-			{'league': league, 'registration': registration, 'section': 'waiver'},
+			{
+				'league': league,
+				'registration': registration,
+				'section': 'waiver'
+			},
 			context_instance=RequestContext(request))
 
 	if section == 'attendance' or registration.attendance == None or registration.captain == None:
@@ -247,14 +271,23 @@ def registration(request, year, season, division, section=None):
 			attendance_form = RegistrationAttendanceForm(instance=registration)
 
 		return render_to_response('leagues/registration/attendance.html',
-			{'attendance_form': attendance_form, 'league': league, 'registration': registration, 'section': 'attendance'},
+			{
+				'league': league,
+				'registration': registration,
+				'attendance_form': attendance_form,
+				'section': 'attendance'
+			},
 			context_instance=RequestContext(request))
 
 	if league.check_price > 0 or league.paypal_price > 0:
 
 		if section == 'pay_type' or not registration.pay_type or (registration.pay_type != 'check' and registration.pay_type != 'paypal'):
 			return render_to_response('leagues/registration/payment.html',
-				{'league': league, 'registration': registration, 'section': 'pay_type'},
+				{
+					'league': league,
+					'registration': registration,
+					'section': 'pay_type'
+				},
 				context_instance=RequestContext(request))
 
 		if not registration.paypal_invoice_id:
@@ -277,7 +310,12 @@ def registration(request, year, season, division, section=None):
 			# https://ppmts.custhelp.com/app/answers/detail/a_id/165
 
 	return render_to_response('leagues/registration/status.html',
-		{'paypal_form': paypal_form, 'league': league, 'registration': registration, 'section': 'status'},
+		{
+			'paypal_form': paypal_form,
+			'league': league,
+			'registration': registration,
+			'section': 'status'
+		},
 		context_instance=RequestContext(request))
 
 

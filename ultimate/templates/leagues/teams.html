@@ -18,16 +18,17 @@
 					{% regroup field_names by field as fields %}
 					{% for field in fields %}
 						<th class="text_center" colspan="{{ field.list|length }}">
-							<div>{{ field.grouper }}</div>
-							{% if field.grouper.layout_link %}
-								<div>
+							<h4>
+								{{ field.grouper }}
+
+								{% if field.grouper.layout_link %}
 									<small>
 										<a href="{{ MEDIA_URL }}{{ field.grouper.layout_link }}" target="_blank">
 											Field Layout
 										</a>
 									</small>
-								</div>
-							{% endif %}
+								{% endif %}
+							</h4>
 						</th>
 					{% endfor %}
 				</tr>
@@ -58,6 +59,8 @@
 												<a href="#team_roster_{{ team.id }}" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
 													{{ team.id }}
 												</a>
+											{% empty %}
+												TBA
 											{% endfor %}
 										{% else %}
 											{% for team in game.get_teams %}
@@ -77,7 +80,9 @@
 			</tbody>
 		</table>
 	{% else %}
-		<div class="text_center">The schedule for this league has not yet been completed.</div>
+		<h3 class="none_found text_center">
+			Schedules are not yet available
+		</h3>
 	{% endif %}
 
 	{% if teams %}
@@ -139,6 +144,8 @@
 			</tr>
 		</table>
 	{% else %}
-		<div class="text_center">Teams for this league have not yet been formed.</div>
+		<h3 class="none_found text_center">
+			Teams are not yet available
+		</h3>
 	{% endif %}
 {% endblock %}

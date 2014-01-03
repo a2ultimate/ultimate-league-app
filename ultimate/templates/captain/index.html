@@ -8,13 +8,13 @@
 {% block content %}
 	{% include "layout/account_tabs.html" with selected_tab="captain" %}
 
-	<ul class="team_list">
+	<ul class="flat_list">
 		{% for team in captain_teams %}
 			<li>
-				<div class="team_list_header">
-					<div class="pull_right">{{ team.league.year }} {{ team.league.season_title|smart_title }} {{ team.league.night_title|smart_title }}</div>
-					<div>{{ team.name }}</div>
-				</div>
+				<h3>
+					<div class="pull_right">{{ team.name }}</div>
+					<div>{{ team.league.year }} {{ team.league.season_title|smart_title }} {{ team.league.night_title|smart_title }}</div>
+				</h3>
 
 				<ul>
 					<li>

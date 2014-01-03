@@ -9,7 +9,7 @@
 {% block content %}
 	{% include "layout/account_tabs.html" with selected_tab="user" %}
 
-	{% if next_game %}
+	{% if next_game and next_game.get_teams|length %}
 		<div id="next_game">
 			<div class="next_game_info">
 				<p>Your Next Game Is On:</p>
@@ -42,7 +42,7 @@
 											<a class="pull_right" style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}" title="Email Team List">Email</a>
 										{% endif %}
 
-										<div>Team {{ team.id }} - {{ team.color }}</div>
+										<div>Team {{ team.id }}{% if team.color %} - {{ team.color }}{% endif %}</div>
 									</div>
 								</div>
 
@@ -90,10 +90,10 @@
 			</table>
 		</div>
 	{% else %}
-		<p class="none_found">No upcoming games found</p>
+		<h3 class="none_found">You have no upcoming games.</h3>
 	{% endif %}
 
-	{% if following_game %}
+	{% if following_game and following_game.get_teams|length %}
 		<p id="following_game">
 			The following game is on <strong>{{ following_game.date|date:"l F dS, Y" }}</strong> from <strong>{{ following_game.league.times }}</strong><br />
 			@ <strong>{{ following_game.field_name.field.name }} {{ following_game.field_name.name }}</strong>
@@ -129,8 +129,8 @@
 									{{ registration.league.night|smart_title }}
 								</a>
 							</td>
-							<td>{{ registration.get_progress }}%</td>
-							<td>{{ registration.get_status }}</td>
+							<td>{{ registration.progress }}%</td>
+							<td>{{ registration.status }}</td>
 							<td>
 								{% for baggage_reg in registration.baggage.get_registrations %}
 									<div>{{ baggage_reg.user.get_full_name }}</div>

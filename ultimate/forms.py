@@ -12,11 +12,13 @@ class SignupForm(forms.ModelForm):
 	email = forms.EmailField(label=_('Email Address'), max_length=75)
 	password1 = forms.CharField(label=_('Password'), widget=forms.PasswordInput)
 	password2 = forms.CharField(label=_('Confirm Password'), widget=forms.PasswordInput,
-		help_text = _('Enter the same password as above, for verification.'))
+		help_text=_('Enter the same password as above, for verification.'))
 	first_name = forms.CharField(label=_('First Name'), max_length=30)
 	last_name = forms.CharField(label=_('Last Name'), max_length=30)
-	honeypot = forms.CharField(required=False, label=_('If you enter anything in this field your form submission will be treated as spam'))
-	blank = forms.CharField(required=False, label=_('If you enter anything in this field your form submission will be treated as spam'))
+	honeypot = forms.CharField(required=False, label=_('Honeypot'),
+		help_text=_('If you enter anything in this field your form submission will be treated as spam'))
+	blank = forms.CharField(required=False, label=_('Blank'),
+		help_text=_('If you enter anything in this field your form submission will be treated as spam'))
 
 	class Meta:
 		model = User
@@ -180,7 +182,7 @@ class EditTeamInformationForm(forms.ModelForm):
 
 
 class GameReportCommentForm(forms.ModelForm):
-	spirit = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=SPIRIT_CHOICES))
+	spirit = forms.IntegerField(min_value=1, max_value=10, widget=forms.Select(choices=GameReportComment.SPIRIT_CHOICES))
 	comment = forms.CharField(required=False, widget=forms.Textarea(attrs={'placeholder': 'Praise, pickups, spririt issues, stoppages, field issues, etc...'}),)
 
 	class Meta:

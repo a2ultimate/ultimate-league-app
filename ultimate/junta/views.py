@@ -122,7 +122,7 @@ def registrationexport(request, year=None, season=None, division=None):
 		])
 
 		for registration in registrations:
-			if registration.is_complete() and not registration.waitlist and not registration.refunded:
+			if registration.is_complete and not registration.waitlist and not registration.refunded:
 				writer.writerow([
 					registration.get_team_id(),
 					registration.baggage,
@@ -140,15 +140,14 @@ def registrationexport(request, year=None, season=None, division=None):
 					registration.average_competitiveness,
 					registration.average_spirit,
 					registration.attendance,
-					registration.user.get_profile().get_age(),
+					registration.user.get_profile().age,
 					registration.user.get_profile().height_inches,
 					registration.user.get_profile().jersey_size,
 					registration.captain,
-					registration.get_status()
+					registration.status
 				])
 
 		return response
-
 
 	return render_to_response('junta/registrationexport.html',
 		{
@@ -180,6 +179,10 @@ def teamgeneration(request, year=None, season=None, division=None):
 		if request.method == 'POST':
 			new_teams = []
 			if 'generate_teams' in request.POST:
+				if teams:
+					messages.error(request, 'Teams were not generated. Teams already exist for this league.')
+					return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
+
 				captain_users = {}
 				for key in request.POST:
 					if key.startswith('player_captain_') and not int(request.POST[key]) == 0:

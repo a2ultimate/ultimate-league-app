@@ -28,6 +28,7 @@ class FieldNames(models.Model):
 	id = models.AutoField(primary_key=True)
 	name = models.TextField()
 	field = models.ForeignKey('leagues.Field')
+
 	class Meta:
 		db_table = u'field_names'
 		verbose_name_plural = 'field names'
@@ -151,32 +152,29 @@ class League(models.Model):
 	def player_survey_complete_for_user(self, user):
 		return bool(user.teammember_set.get(team__league=self).team.player_survey_complete(user))
 
-	def get_registrations(self):
-		return Registrations.objects.filter(league=self).order_by('registered')
-
 	def get_registrations_for_user(self, user):
 		return Registrations.objects.filter(league=self, user=user)
 
 	def get_complete_registrations(self):
 		registrations = Registrations.objects.filter(league=self).order_by('registered')
-		return [r for r in registrations if r.is_complete() and not r.waitlist and not r.refunded]
+		return [r for r in registrations if r.is_complete and not r.waitlist and not r.refunded]
 
 	def get_waitlist_registrations(self):
 		registrations = Registrations.objects.filter(league=self).order_by('registered')
-		return [r for r in registrations if r.is_complete() and r.waitlist and not r.refunded]
+		return [r for r in registrations if r.is_complete and r.waitlist and not r.refunded]
 
 	def get_incomplete_registrations(self):
 		registrations = Registrations.objects.filter(league=self).order_by('registered')
-		return [r for r in registrations if not r.is_complete() and not r.refunded]
+		return [r for r in registrations if not r.is_complete and not r.refunded]
 
 	def get_refunded_registrations(self):
 		registrations = Registrations.objects.filter(league=self).order_by('registered')
-		return [r for r in registrations if r.is_complete() and r.refunded]
+		return [r for r in registrations if r.is_complete and r.refunded]
 
 	def get_unassigned_registrations(self):
 		team_member_users = [t.user for t in TeamMember.objects.filter(team__league=self)]
 		registrations = Registrations.objects.filter(league=self).exclude(user__in=team_member_users)
-		return [r for r in registrations if r.is_complete() and not r.refunded]
+		return [r for r in registrations if r.is_complete and not r.refunded]
 
 	def is_visible(self, user=None):
 		if user and (user.is_superuser or user.groups.filter(name='junta').exists()):
@@ -250,7 +248,8 @@ class Player(PybbProfile):
 	class Meta:
 		db_table = u'player'
 
-	def get_age(self, now=None):
+	@property
+	def age(self, now=None):
 		if not self.birthdate:
 			return 0
 
@@ -259,6 +258,7 @@ class Player(PybbProfile):
 
 		return (now.year - self.birthdate.year) - int((now.month, now.day) < (self.birthdate.month, self.birthdate.day))
 
+	@property
 	def is_complete_for_user(self):
 		return bool(self.gender and self.height_inches and self.birthdate and self.jersey_size)
 
@@ -269,12 +269,12 @@ class Baggage(models.Model):
 	class Meta:
 		db_table = u'baggage'
 
-	def get_registrations(self):
-		return self.registrations_set.all()
-
 	@property
 	def num_registrations(self):
 		return self.registrations_set.all().count()
+
+	def get_registrations(self):
+		return self.registrations_set.all()
 
 	def __unicode__(self):
 		return '%d' % (self.id)
@@ -316,7 +316,8 @@ class Registrations(models.Model):
 		db_table = u'registrations'
 		verbose_name_plural = 'registrations'
 
-	def get_status(self):
+	@property
+	def status(self):
 		status = 'New'
 		if self.refunded:
 			status = 'Refunded'
@@ -341,7 +342,8 @@ class Registrations(models.Model):
 							status = 'Paypal Completed'
 		return status
 
-	def get_progress(self):
+	@property
+	def progress(self):
 		percentage = 0
 		interval = 20
 
@@ -365,6 +367,7 @@ class Registrations(models.Model):
 
 		return percentage
 
+	@property
 	def is_complete(self):
 		return bool(self.conduct_complete and \
 			self.waiver_complete and \
@@ -388,7 +391,7 @@ class Registrations(models.Model):
 		if self.user.email == email:
 			return 'You cannot form a baggage group with yourself.'
 
-		if not self.is_complete():
+		if not self.is_complete:
 			return 'Your registration is currently incomplete and is ineligible to form baggage groups.'
 
 		if self.waitlist:
@@ -399,7 +402,7 @@ class Registrations(models.Model):
 		except ObjectDoesNotExist:
 			return 'No registration found for ' + email + '.'
 
-		if not registration.is_complete():
+		if not registration.is_complete:
 			return email + ' has an incomplete registration and is ineligible to form baggage groups.'
 
 		if registration.waitlist:
@@ -457,7 +460,7 @@ class Registrations(models.Model):
 			return None
 
 	def __unicode__(self):
-		return '%d %s %s - %s %s' % (self.league.year, self.league.season, self.league.night, self.user, self.get_status())
+		return '%d %s %s - %s %s' % (self.league.year, self.league.season, self.league.night, self.user, self.status)
 
 
 class Team(models.Model):
@@ -477,7 +480,10 @@ class Team(models.Model):
 
 	@property
 	def attendance_average(self):
-		return self.attendance_total / float(self.size)
+		if self.size > 0:
+			return self.attendance_total / float(self.size)
+
+		return 0
 
 	@property
 	def rating_total(self):
@@ -485,7 +491,10 @@ class Team(models.Model):
 
 	@property
 	def rating_average(self):
-		return self.rating_total / float(self.size)
+		if self.size > 0:
+			return self.rating_total / float(self.size)
+
+		return 0
 
 	@property
 	def size(self):
@@ -530,9 +539,6 @@ class Team(models.Model):
 
 	def get_female_members(self):
 		return self.get_members().filter(user__player__gender__iexact='F')
-
-	def on_team(self, user):
-		return bool(self.teammember_set.filter(user=user))
 
 	def get_games(self):
 		return Game.objects.filter(gameteams__team=self)
@@ -631,7 +637,14 @@ class Team(models.Model):
 			bool(ratings_reports.filter(num_ratings__gte=self.size - 1).count() > 0)
 
 	def __unicode__(self):
-		return '%s (%s)' % (self.name, self.color)
+		name = 'Team %d' % (self.id)
+
+		if self.name:
+			name = self.name
+		if self.color:
+			return name + (' (%s)' % (self.color))
+
+		return name
 
 
 class TeamMember(models.Model):
@@ -663,34 +676,22 @@ class Game(models.Model):
 		ordering = ['-date', 'field_name']
 
 	def get_teams(self):
-		return Team.objects.filter(gameteams__game=self).all()
-
-	def get_user_team(self, user):
-		return self.gameteams_set.filter(team__teammember__user=user)[0:1].get().team
+		return Team.objects.filter(gameteams__game=self, hidden=False)
 
 	def get_user_opponent(self, user):
 		try:
-			return self.gameteams_set.exclude(team__teammember__user=user)[0:1].get().team
+			return Team.objects.filter(gameteams__game=self).exclude(teammember__user=user)[0:1].get()
 		except ObjectDoesNotExist:
 			return None
-
-	def get_reports(self):
-		return self.gamereport_set.all()
 
 	def get_report_for_team(self, team):
 		return self.gamereport_set.filter(team=team)
 
 	def report_complete_for_team(self, user):
-		for report in self.gamereport_set.filter(team__teammember__user=user, team__teammember__captain=1):
-			if (report.is_complete):
-				return True
-		return False
+		return any(report.is_complete for report in self.gamereport_set.filter(team__teammember__user=user, team__teammember__captain=1))
 
 	def report_complete_for_user(self, user):
-		for report in self.gamereport_set.filter(last_updated_by=user, team__teammember__user=user, team__teammember__captain=1):
-			if (report.is_complete):
-				return report.game.id
-		return False
+		return any(report.is_complete for report in self.gamereport_set.filter(last_updated_by=user, team__teammember__user=user, team__teammember__captain=1))
 
 	def __unicode__(self):
 		return '%s - %s' % (self.date, self.league)

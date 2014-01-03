@@ -4,42 +4,42 @@
 {% if league.check_price == 0 and league.paypal_price == 0 %}
 
 	<div class="progress_bar progress_bar_labeled">
-		<div class="progress success" style="width: {{ registration.get_progress|add:"25"|limit_ceil:"100" }}%;"></div>
+		<div class="progress success" style="width: {{ registration.progress|add:"25"|limit_ceil:"100" }}%;"></div>
 
 		<div class="tick {{ registration|get_registration_tick_color:25 }}" style="left: 25%;"></div>
 		<div class="tick {{ registration|get_registration_tick_color:50 }}" style="left: 50%;"></div>
 		<div class="tick {{ registration|get_registration_tick_color:75 }}" style="left: 75%;"></div>
 		<div class="tick {{ registration|get_registration_tick_color:100 }}" style="left: 100%;"></div>
 
-		{% if registration.get_progress >= 0 %}
+		{% if registration.progress >= 0 %}
 			<a class="tick_label" style="left: 25%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='conduct' %}">Code of Conduct</a>
 		{% else %}
 			<span class="tick_label" style="left: 25%">Code of Conduct</span>
 		{% endif %}
 
-		{% if registration.get_progress >= 25 %}
+		{% if registration.progress >= 25 %}
 			<a class="tick_label" style="left: 50%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='waiver' %}">Waiver</a>
 		{% else %}
 			<span class="tick_label" style="left: 50%">Waiver</span>
 		{% endif %}
 
-		{% if registration.get_progress >= 50 %}
+		{% if registration.progress >= 50 %}
 			<a class="tick_label" style="left: 75%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='attendance' %}">Attendance</a>
 		{% else %}
 			<span class="tick_label" style="left: 75%">Attendance</span>
 		{% endif %}
 
-		{% if registration.get_progress >= 75 %}
-			<a class="tick_label" style="left: 100%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='status' %}">Status {{ registration.get_progress }}%</a>
+		{% if registration.progress >= 75 %}
+			<a class="tick_label" style="left: 100%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='status' %}">Status {{ registration.progress }}%</a>
 		{% else %}
-			<span class="tick_label" style="left: 100%">Status {{ registration.get_progress }}%</span>
+			<span class="tick_label" style="left: 100%">Status {{ registration.progress }}%</span>
 		{% endif %}
 	</div>
 
 {% else %}
 
 	<div class="progress_bar progress_bar_labeled">
-		<div class="progress success" style="width: {{ registration.get_progress|add:"20"|limit_ceil:"100" }}%;"></div>
+		<div class="progress success" style="width: {{ registration.progress|add:"20"|limit_ceil:"100" }}%;"></div>
 
 		<div class="tick {{ registration|get_registration_tick_color:20 }} {% if section == 'conduct' %}active{% endif %}" style="left: 20%;"></div>
 		<div class="tick {{ registration|get_registration_tick_color:40 }} {% if section == 'waiver' %}active{% endif %}" style="left: 40%;"></div>
@@ -47,34 +47,34 @@
 		<div class="tick {{ registration|get_registration_tick_color:80 }} {% if section == 'pay_type' %}active{% endif %}" style="left: 80%;"></div>
 		<div class="tick {{ registration|get_registration_tick_color:100 }} {% if section == 'status' %}active{% endif %}" style="left: 100%;"></div>
 
-		{% if registration.get_progress >= 0 %}
+		{% if registration.progress >= 0 %}
 			<a class="tick_label" style="left: 20%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='conduct' %}">Code of Conduct</a>
 		{% else %}
 			<span class="tick_label" style="left: 20%">Code of Conduct</span>
 		{% endif %}
 
-		{% if registration.get_progress >= 20 %}
+		{% if registration.progress >= 20 %}
 			<a class="tick_label" style="left: 40%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='waiver' %}">Waiver</a>
 		{% else %}
 			<span class="tick_label" style="left: 40%">Waiver</span>
 		{% endif %}
 
-		{% if registration.get_progress >= 40 %}
+		{% if registration.progress >= 40 %}
 			<a class="tick_label" style="left: 60%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='attendance' %}">Attendance</a>
 		{% else %}
 			<span class="tick_label" style="left: 60%">Attendance</span>
 		{% endif %}
 
-		{% if registration.get_progress >= 60 %}
+		{% if registration.progress >= 60 %}
 			<a class="tick_label" style="left: 80%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='pay_type' %}">Payment Type</a>
 		{% else %}
 			<span class="tick_label" style="left: 80%">Payment Type</span>
 		{% endif %}
 
-		{% if registration.get_progress >= 80 %}
-			<a class="tick_label" style="left: 100%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='status' %}">Status {{ registration.get_progress }}%</a>
+		{% if registration.progress >= 80 %}
+			<a class="tick_label" style="left: 100%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='status' %}">Status {{ registration.progress }}%</a>
 		{% else %}
-			<span class="tick_label" style="left: 100%">Status {{ registration.get_progress }}%</span>
+			<span class="tick_label" style="left: 100%">Status {{ registration.progress }}%</span>
 		{% endif %}
 	</div>
 
