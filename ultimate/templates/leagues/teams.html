@@ -59,6 +59,8 @@
 												<a href="#team_roster_{{ team.id }}" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
 													{{ team.id }}
 												</a>
+											{% empty %}
+												TBA
 											{% endfor %}
 										{% else %}
 											{% for team in game.get_teams %}
