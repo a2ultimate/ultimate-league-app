@@ -149,7 +149,6 @@ def registrationexport(request, year=None, season=None, division=None):
 
 		return response
 
-
 	return render_to_response('junta/registrationexport.html',
 		{
 			'leagues': leagues
@@ -180,6 +179,10 @@ def teamgeneration(request, year=None, season=None, division=None):
 		if request.method == 'POST':
 			new_teams = []
 			if 'generate_teams' in request.POST:
+				if teams:
+					messages.error(request, 'Teams were not generated. Teams already exist for this league.')
+					return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
+
 				captain_users = {}
 				for key in request.POST:
 					if key.startswith('player_captain_') and not int(request.POST[key]) == 0:
