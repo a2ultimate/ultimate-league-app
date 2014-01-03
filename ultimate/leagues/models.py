@@ -676,7 +676,7 @@ class Game(models.Model):
 		ordering = ['-date', 'field_name']
 
 	def get_teams(self):
-		return Team.objects.filter(gameteams__game=self).all()
+		return Team.objects.filter(gameteams__game=self, hidden=False)
 
 	def get_user_opponent(self, user):
 		try:
