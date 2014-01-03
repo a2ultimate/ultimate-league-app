@@ -9,7 +9,7 @@
 {% block content %}
 	{% include "layout/account_tabs.html" with selected_tab="user" %}
 
-	{% if next_game %}
+	{% if next_game and next_game.get_teams|length %}
 		<div id="next_game">
 			<div class="next_game_info">
 				<p>Your Next Game Is On:</p>
@@ -90,10 +90,10 @@
 			</table>
 		</div>
 	{% else %}
-		<h3 class="none_found">No upcoming games found</h3>
+		<h3 class="none_found">You have no upcoming games.</h3>
 	{% endif %}
 
-	{% if following_game %}
+	{% if following_game and following_game.get_teams|length %}
 		<p id="following_game">
 			The following game is on <strong>{{ following_game.date|date:"l F dS, Y" }}</strong> from <strong>{{ following_game.league.times }}</strong><br />
 			@ <strong>{{ following_game.field_name.field.name }} {{ following_game.field_name.name }}</strong>
