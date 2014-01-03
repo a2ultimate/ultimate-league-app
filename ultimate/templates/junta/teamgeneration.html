@@ -32,8 +32,8 @@
 						<th>Players</th>
 						<th>Females</th>
 						<th>Males</th>
-						<th>Attendance Total</th>
-						<th>Attendance Average</th>
+						<th>Absence Total</th>
+						<th>Absence Average</th>
 					</thead>
 					<tbody>
 						{% for team in teams %}
@@ -61,8 +61,8 @@
 								<th>Players</th>
 								<th>Females</th>
 								<th>Males</th>
-								<th>Attendance Total</th>
-								<th>Attendance Average</th>
+								<th>Absence Total</th>
+								<th>Absence Average</th>
 							</tr>
 							<tr class="team_stats_{{ team.id }}">
 								<td class="team_rating_average">{{ team.rating_average|floatformat:2 }}</td>
