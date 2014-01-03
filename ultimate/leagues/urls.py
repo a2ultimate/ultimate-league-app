@@ -3,7 +3,9 @@ from django.conf.urls.defaults import *
 from ultimate.leagues.signals import *
 
 urlpatterns = patterns('ultimate.leagues.views',
-	(r'^(?P<year>\d{4})/(?P<season>[^/]+)/$', 'index', {}, 'league_index'),
+	(r'^(?P<year>\d{4})/$', 'index', {}, 'league_index_year'),
+	(r'^(?P<year>\d{4})/(?P<season>[^/]+)/$', 'index', {}, 'league_index_season'),
+
 	(r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', 'summary', {}, 'league_summary'),
 	(r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/details/$', 'details', {}, 'league_details'),
 	(r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/players/$', 'players', {}, 'league_players'),

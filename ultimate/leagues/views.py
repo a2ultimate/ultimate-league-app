@@ -16,13 +16,18 @@ from ultimate.middleware.http import Http403
 from paypal.standard.forms import PayPalPaymentsForm
 
 
-def index(request, year, season):
-	if request.user.is_superuser:
+def index(request, year=None, season=None):
+	if year and season:
 		leagues = League.objects.filter(year=year, season=season).order_by('league_start_date')
-	elif request.user.groups.filter(name='junta').exists():
-		leagues = League.objects.filter(year=year, season=season, state__in=['closed', 'open', 'preview']).order_by('league_start_date')
+	elif year:
+		leagues = League.objects.filter(year=year).order_by('-league_start_date')
 	else:
-		leagues = League.objects.filter(year=year, season=season, state__in=['closed', 'open']).order_by('league_start_date')
+		leagues = League.objects.all().order_by('-league_start_date')
+
+	if not request.user.is_superuser and not request.user.groups.filter(name='junta').exists():
+		leagues = leagues.filter(state__in=['closed', 'open'])
+	elif not request.user.is_superuser:
+		leagues = leagues.filter(state__in=['closed', 'open', 'preview'])
 
 	return render_to_response('leagues/index.html',
 		{

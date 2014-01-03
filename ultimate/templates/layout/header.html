@@ -76,7 +76,7 @@
 					{% for season_year in season_years %}
 						{% with league=season_year.list|first %}
 							<li>
-								<a href="{% url league_index year=league.year season=league.season %}">
+								<a href="{% url league_index_season year=league.year season=league.season %}">
 									{{ season_year.grouper|smart_title }}
 								</a>
 							</li>
