@@ -22,7 +22,11 @@
 					<div class="team">
 						<div class="team_info" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
 							<div class="team_name" style="font-size: {{ team.name|get_team_name_font_size }}px;">
-								{{ team.name }}
+								{% if team.name %}
+									{{ team.name }}
+								{% else %}
+									Team {{ team.id }}
+								{% endif %}
 							</div>
 
 							<div>Team {{ team.id }}{% if team.color %} - {{ team.color }}{% endif %}</div>
@@ -54,11 +58,26 @@
 						<div class="team">
 							<div class="team_info" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
 								<div class="team_name" style="font-size: {{ team.name|get_team_name_font_size }}px;">
-									{{ team.name }}
+									{% if team.name %}
+										{{ team.name }}
+									{% else %}
+										Team {{ team.id }}
+									{% endif %}
 								</div>
 
 								<div>
-									<div>Team {{ team.id }} - {{ team.color }}</div>
+									{% if team.name %}
+										Team {{ team.id }}
+										{% if team.color %}
+											-
+										{% endif %}
+									{% endif %}
+
+									{{ team.color }}
+
+									{% if not team.name and not team.color %}
+										&nbsp;
+									{% endif %}
 								</div>
 							</div>
 
