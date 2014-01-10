@@ -424,6 +424,7 @@ fieldset > legend {
 .nav li {
 	margin: 0;
 	padding: 0;
+	position: relative;
 }
 
 .nav li a,
@@ -433,7 +434,6 @@ fieldset > legend {
 
 .nav > li {
 	float: left;
-	position: relative;
 }
 
 .nav > li > a {
@@ -461,16 +461,25 @@ fieldset > legend {
 	opacity: 0;
 	padding: 0;
 	position: absolute;
-	right: auto;
 	top: 100%;
 	transition: opacity .15s ease-in-out;
 	width: 180px;
 	visibility: hidden;
 }
 
-.nav li:last-child .dropdown {
+.nav > li:last-child > .dropdown {
 	left: auto;
 	right: 0;
+}
+
+.nav .dropdown .dropdown {
+	left: 100%;
+	top: 0;
+}
+
+.nav > li:last-child > .dropdown .dropdown {
+	left: auto;
+	right: 100%;
 }
 
 .nav .dropdown > li > a {
@@ -482,7 +491,7 @@ fieldset > legend {
 	background-color: #2C3E50;
 }
 
-.nav > li:hover > .dropdown {
+.nav li:hover > .dropdown {
 	-webkit-transition: opacity .15s ease-in-out;
 	opacity: 100;
 	transition: opacity .15s ease-in-out;
