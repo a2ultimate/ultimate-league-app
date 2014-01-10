@@ -27,10 +27,20 @@
 								<h4>
 									{{ field.grouper }}
 
+									{% if field.grouper.driving_link %}
+										<small>
+											&middot;
+											<a href="{{ field.grouper.driving_link }}" target="_blank">
+												Directions
+											</a>
+										</small>
+									{% endif %}
+
 									{% if field.grouper.layout_link %}
 										<small>
+											&middot;
 											<a href="{{ MEDIA_URL }}{{ field.grouper.layout_link }}" target="_blank">
-												Field Layout
+												Layout
 											</a>
 										</small>
 									{% endif %}

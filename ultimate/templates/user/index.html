@@ -17,10 +17,21 @@
 				<div id="next_game_time">{{ next_game.league.times }}</div>
 				<div id="next_game_field">
 					@ {{ next_game.field_name.field.name }} {{ next_game.field_name.name }}
+
+					{% if next_game.field_name.field.driving_link %}
+						<small>
+							&middot;
+							<a href="{{ next_game.field_name.field.driving_link }}" target="_blank">
+								Directions
+							</a>
+						</small>
+					{% endif %}
+
 					{% if next_game.field_name.field.layout_link %}
 						<small>
+							&middot;
 							<a href="{{ MEDIA_URL }}{{ next_game.field_name.field.layout_link }}">
-								Field Layout
+								Layout
 							</a>
 						</small>
 					{% endif %}
