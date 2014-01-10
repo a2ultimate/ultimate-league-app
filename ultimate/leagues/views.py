@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -93,13 +93,9 @@ def teams(request, year, season, division):
 	today = date.today()
 
 	for game in sorted_games:
-		next_game_date = game.date
-
-		if game.date > today:
+		if game.date >= today and game.date <= today + timedelta(days=7):
+			next_game_date = game.date
 			break
-
-	if next_game_date and next_game_date < today:
-		next_game_date = None
 
 	if request.user.is_authenticated():
 		user_games = league.get_user_games(request.user)

@@ -211,7 +211,7 @@ class PostEditMixin(object):
                 pollformset.save()
             return super(ModelFormMixin, self).form_valid(form)
         else:
-            return self.render_to_response(self.get_context_data(form=form, aformset=aformset, pollformset=pollformset))
+            return self.render_to_response(self.get_context_data(form=form, pollformset=pollformset))
 
 
 class AddPostView(PostEditMixin, generic.CreateView):

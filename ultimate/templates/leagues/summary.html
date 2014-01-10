@@ -44,10 +44,21 @@
 			<tr>
 				<td colspan="3">
 					{{ field.field.name }}
+
+					{% if field.field.driving_link %}
+						<small>
+							&middot;
+							<a href="{{ field.field.driving_link }}" target="_blank">
+								Directions
+							</a>
+						</small>
+					{% endif %}
+
 					{% if field.field.layout_link %}
 						<small>
+							&middot;
 							<a href="{{ MEDIA_URL }}{{ field.field.layout_link }}" target="_blank">
-								Field Layout
+								Layout
 							</a>
 						</small>
 					{% endif %}
