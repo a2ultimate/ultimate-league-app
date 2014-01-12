@@ -502,31 +502,33 @@ class Team(models.Model):
 
 	@property
 	def css_background_color(self):
+		color = '#95A5A6'
 		if 'black' in self.color.lower():
-			return '#2C3E50'
+			color = '#2C3E50'
 		if 'blue' in self.color.lower():
-			return '#3498DB'
+			color = '#3498DB'
 		if 'green' in self.color.lower():
-			return '#2ECC71'
+			color = '#2ECC71'
 		if 'orange' in self.color.lower():
-			return '#E67E22'
+			color = '#E67E22'
 		if 'pink' in self.color.lower():
-			return '#EE6FA0'
+			color = '#EE6FA0'
 		if 'purple' in self.color.lower():
-			return '#9B59B6'
+			color = '#9B59B6'
 		if 'red' in self.color.lower():
-			return '#E74C3C'
-		if 'white' in self.color.lower():
-			return '#FFFFFF'
+			color = '#E74C3C'
 		if 'yellow' in self.color.lower():
-			return '#F1C40F'
-		return '#95A5A6'
+			color = '#F1C40F'
+		if 'white' in self.color.lower():
+			color = '#FFFFFF'
+		return color
 
 	@property
 	def css_text_color(self):
+		color = '#FFFFFF'
 		if 'white' in self.color.lower():
-			return '#2C3E50'
-		return '#FFFFFF'
+			color = '#2C3E50'
+		return color
 
 	def get_members(self):
 		return self.teammember_set.all()
