@@ -16,7 +16,7 @@ def get_game_opponent_team(game, user):
 	try:
 		return game.get_user_opponent(user)
 	except AttributeError:
-		return None
+		pass
 
 	return None
 
@@ -24,11 +24,14 @@ def get_game_opponent_team(game, user):
 @register.filter
 def get_game_opponent_team_name(game, user):
 	try:
-		team_name = game.get_user_opponent(user).name
+		if game.get_user_opponent(user).name:
+			return game.get_user_opponent(user).name
+		else:
+			return 'Team %d' % (game.get_user_opponent(user).id)
 	except AttributeError:
-		team_name = 'No Opponent'
+		pass
 
-	return team_name
+	return 'No Opponent'
 
 
 # returns average of a column, given a lable and an object/row
