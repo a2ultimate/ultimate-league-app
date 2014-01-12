@@ -2,7 +2,9 @@ def menu_leagues(request):
 	from ultimate.leagues.models import League
 
 	leagues = League.objects.filter(state__in=['closed', 'open', 'preview']).order_by('league_start_date')
-	leagues = [r for r in leagues if r.is_visible(request.user)]
+	leagues = [league for league in leagues if league.is_visible(request.user)]
+
+	leagues.sort(key=lambda k: k.league_start_date.weekday())
 
 	return {'menu_leagues': leagues}
 
