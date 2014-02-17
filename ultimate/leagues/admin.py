@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib import admin
+
+from paypal.standard.ipn.models import PayPalIPN
 from ultimate.leagues.models import *
 
 
@@ -53,12 +55,12 @@ class RegistrationsAdmin(admin.ModelAdmin):
 		(None, {
 			'fields': ('user', 'league', 'registered', 'paypal_complete', 'check_complete', 'waitlist', 'refunded', 'attendance', 'captain',)
 		}),
-		('Advanced options', {
+		('Advanced Options', {
 			'classes': ('collapse',),
-			'fields': ('created', 'updated', 'conduct_complete', 'waiver_complete', 'pay_type', 'paypal_invoice_id', 'baggage',)
+			'fields': ('created', 'updated', 'conduct_complete', 'waiver_complete', 'pay_type', 'paypal_invoice_id', 'paypal_details', 'baggage',)
 		}),
 	)
-	readonly_fields = ('created', 'updated',)
+	readonly_fields = ('created', 'updated', 'paypal_details',)
 	save_as = True
 	save_on_top = True
 
@@ -85,6 +87,13 @@ class RegistrationsAdmin(admin.ModelAdmin):
 	def captain_value(self, obj):
 		return obj.captain
 	captain_value.admin_order_field = 'captain'
+
+	def paypal_details(self, obj):
+		paypal_row = PayPalIPN.objects.get(invoice=obj.paypal_invoice_id)
+		if not paypal_row:
+			return None
+		return u'Name: %s %s <br />Email: %s' % (paypal_row.first_name, paypal_row.last_name, paypal_row.payer_email)
+	paypal_details.allow_tags = True
 
 
 class TeamMemberModelChoiceField(forms.ModelChoiceField):
