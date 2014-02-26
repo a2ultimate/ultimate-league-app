@@ -602,7 +602,7 @@ fieldset > legend {
 }
 
 #sidebar ul li ul {
-	margin: 0 0 8px 4px;
+	margin: 0 0 8px 0;
 }
 
 #sidebar ul li ul li {
