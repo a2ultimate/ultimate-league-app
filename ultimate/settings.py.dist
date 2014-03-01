@@ -110,9 +110,6 @@ AUTHENTICATION_BACKENDS = (
 AUTH_PROFILE_MODULE = 'leagues.player'
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-	'ultimate.context_processors.menu_leagues',
-	'ultimate.context_processors.user_profile_is_complete',
-	'ultimate.context_processors.user_rating_is_complete',
 	'django.contrib.auth.context_processors.auth',
 	'django.contrib.messages.context_processors.messages',
 	'django.core.context_processors.debug',
@@ -121,6 +118,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 	'django.core.context_processors.request',
 	'django.core.context_processors.static',
 	'pybb.context_processors.processor',
+	'ultimate.context_processors.google_analytics',
+	'ultimate.context_processors.menu_leagues',
+	'ultimate.context_processors.user_profile_is_complete',
+	'ultimate.context_processors.user_rating_is_complete',
 )
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
@@ -134,6 +135,10 @@ LOGIN_REDIRECT_URL = '/a2ultimate/user/'
 LOGOUT_URL = '/a2ultimate/user/logout/'
 LOGOUT_REDIRECT_URL = '/a2ultimate/'
 REGISTER_URL = '/a2ultimate/accounts/register/'
+
+# GOOGLE ANALYTICS
+GOOGLE_ANALYTICS_PROPERTY_ID = ''
+GOOGLE_ANALYTICS_DOMAIN = ''
 
 # Paypal Info
 PAYPAL_RECEIVER_EMAIL = ''

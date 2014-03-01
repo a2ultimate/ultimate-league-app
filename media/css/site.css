@@ -467,7 +467,7 @@ fieldset > legend {
 	visibility: hidden;
 }
 
-.nav > li:last-child > .dropdown {
+.nav.pull_right > li > .dropdown {
 	left: auto;
 	right: 0;
 }
@@ -477,7 +477,7 @@ fieldset > legend {
 	top: 0;
 }
 
-.nav > li:last-child > .dropdown .dropdown {
+.nav.pull_right > li > .dropdown .dropdown {
 	left: auto;
 	right: 100%;
 }
@@ -602,7 +602,7 @@ fieldset > legend {
 }
 
 #sidebar ul li ul {
-	margin: 0 0 8px 4px;
+	margin: 0 0 8px 0;
 }
 
 #sidebar ul li ul li {
