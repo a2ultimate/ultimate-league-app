@@ -1,3 +1,6 @@
+from django.conf import settings
+
+
 def menu_leagues(request):
 	from ultimate.leagues.models import League
 
@@ -29,3 +32,19 @@ def user_rating_is_complete(request):
 			return result
 
 	return result
+
+
+def google_analytics(request):
+    """
+    Use the variables returned in this function to
+    render your Google Analytics tracking code template.
+    """
+    property_id = getattr(settings, 'GOOGLE_ANALYTICS_PROPERTY_ID', False)
+    domain = getattr(settings, 'GOOGLE_ANALYTICS_DOMAIN', False)
+    if not settings.DEBUG and property_id and domain:
+        return {
+            'GOOGLE_ANALYTICS_PROPERTY_ID': property_id,
+            'GOOGLE_ANALYTICS_DOMAIN': domain,
+        }
+
+    return {}
