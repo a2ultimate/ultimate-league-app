@@ -8,5 +8,13 @@ class StaticContentAdmin(admin.ModelAdmin):
 	save_as = True
 	save_on_top = True
 
-
 admin.site.register(StaticContent, StaticContentAdmin)
+
+
+class StaticMenuItemsAdmin(admin.ModelAdmin):
+	list_display = ('location', 'position', 'parent', 'content', 'href', 'type',)
+	list_display_links = ('location',)
+	save_as = True
+	save_on_top = True
+
+admin.site.register(StaticMenuItems, StaticMenuItemsAdmin)
