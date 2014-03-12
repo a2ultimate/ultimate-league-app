@@ -2,7 +2,6 @@
 
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import admin
-from django.core.urlresolvers import reverse
 from django.conf import settings
 
 from pybb.models import Category, Forum, Topic, Post, Profile, PollAnswer
@@ -69,14 +68,6 @@ class TopicAdmin(admin.ModelAdmin):
         )
     inlines = [PollAnswerAdmin, ]
 
-class TopicReadTrackerAdmin(admin.ModelAdmin):
-    list_display = ['topic', 'user', 'time_stamp']
-    search_fields = ['user__username']
-
-class ForumReadTrackerAdmin(admin.ModelAdmin):
-    list_display = ['forum', 'user', 'time_stamp']
-    search_fields = ['user__username']
-
 class PostAdmin(admin.ModelAdmin):
     list_display = ['topic', 'user', 'created', 'updated', 'summary']
     list_per_page = 20
@@ -118,8 +109,3 @@ admin.site.register(Post, PostAdmin)
 
 if settings.AUTH_PROFILE_MODULE == 'pybb.Profile':
     admin.site.register(Profile, ProfileAdmin)
-
-# This can be used to debug read/unread trackers
-
-#admin.site.register(TopicReadTracker, TopicReadTrackerAdmin)
-#admin.site.register(ForumReadTracker, ForumReadTrackerAdmin)

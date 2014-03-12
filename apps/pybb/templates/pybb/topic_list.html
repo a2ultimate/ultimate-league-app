@@ -18,10 +18,9 @@
         </tr>
     </thead>
     <tbody>
-    {% for topic in topic_list|pybb_topic_unread:user %}
+    {% for topic in topic_list %}
         <tr class="topic-row {% if topic.sticky %} sticky {% endif %} {% cycle "odd" "even" %} {% if topic.on_moderation %} on-moderation {% endif %}">
-            <td class="topic-name{% if topic.unread %} topic-unread{% endif %}">
-                <div class="state-indicator"></div>
+            <td class="topic-name">
                 <a href="{{ topic.get_absolute_url }}">{{ topic.name|truncatewords:10 }}</a>
                 {% if topic.poll_type != 0 %} &nbsp;[{% trans "Poll" %}] {% endif %}
                 {% if topic.sticky %} &nbsp;[{% trans "Sticky" %}] {% endif %}
