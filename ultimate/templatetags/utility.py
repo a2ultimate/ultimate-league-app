@@ -1,7 +1,9 @@
 from datetime import date
+import collections
 import re
 
 from django import template
+from django.core.urlresolvers import reverse
 from django.template.defaultfilters import stringfilter
 
 register = template.Library()
@@ -32,3 +34,32 @@ def smart_title(value):
     t = re.sub(r'\d([A-Z])', lambda m: m.group(0).lower(), t)
     return re.sub(r'(?i)\s(a|an|and|for|of|the)\b', lambda m: m.group(0).lower(), t)
 
+
+@register.filter(is_safe=True)
+def prepare_menu_items(menu_items):
+	# credit: http://stackoverflow.com/questions/5059401/make-a-python-nested-list-for-use-in-djangos-unordered-list
+
+	lists = collections.defaultdict(list)
+	for menu_item in menu_items:
+		itemHtml = ''
+
+		if menu_item.type == 'external_link':
+			itemHtml += '<a href="' + menu_item.href + '" target="_blank">'
+		elif menu_item.type == 'internal_link':
+			itemHtml += '<a href="' + reverse(menu_item.href) + '">'
+
+		itemHtml += menu_item.content
+
+		if menu_item.type == 'external_link' or menu_item.type == 'internal_link':
+			itemHtml += '</a>'
+
+		parent_id = menu_item.parent_id if menu_item.parent else 0
+		lists[parent_id] += [itemHtml, lists[menu_item.id]]
+
+
+	for menu_item in menu_items:
+		if not lists[menu_item.id]:
+			parent_id = menu_item.parent_id if menu_item.parent else 0
+			lists[parent_id].remove(lists[menu_item.id])
+
+	return lists[0]

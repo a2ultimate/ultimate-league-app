@@ -9,6 +9,22 @@ def menu_leagues(request):
 	return {'menu_leagues': leagues}
 
 
+def menu_items_nav(request):
+	from ultimate.index.models import StaticMenuItems
+
+	menu_items = StaticMenuItems.objects.filter(location='nav').order_by('position')
+
+	return {'menu_items_nav': menu_items}
+
+
+def menu_items_home_sidebar(request):
+	from ultimate.index.models import StaticMenuItems
+
+	menu_items = StaticMenuItems.objects.filter(location='home_sidebar').order_by('position')
+
+	return {'menu_items_home_sidebar': menu_items}
+
+
 def user_profile_is_complete(request):
 	result = {'user_profile_is_complete': False}
 	if request.user and request.user.is_authenticated():

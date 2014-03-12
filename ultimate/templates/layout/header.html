@@ -59,15 +59,17 @@
 
 	<div class="navbar_container">
 		<div class="navbar">
-			<ul class="nav">
-				<li><a href="{% url home %}">Home</a></li>
-				<li><a href="{% url user %}">My Account</a></li>
-				<li><a href="{% url pybb:index %}" target="_blank">Forum</a></li>
-				<li><a href="{% url contact %}">Contacts</a></li>
-				{% if user.is_superuser %}
+			{% autoescape off %}
+				<ul class="nav">
+					{{ menu_items_nav|prepare_menu_items|unordered_list }}
+				</ul>
+			{% endautoescape %}
+
+			{% if user.is_superuser %}
+				<ul class="nav">
 					<li><a href="{% url home %}admin">Admin</a></li>
-				{% endif %}
-			</ul>
+				</ul>
+			{% endif %}
 
 			<ul class="nav pull_right">
 				{% if menu_leagues %}
