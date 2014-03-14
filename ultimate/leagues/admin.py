@@ -89,10 +89,10 @@ class RegistrationsAdmin(admin.ModelAdmin):
 	captain_value.admin_order_field = 'captain'
 
 	def paypal_details(self, obj):
-		paypal_row = PayPalIPN.objects.get(invoice=obj.paypal_invoice_id)
+		paypal_row = PayPalIPN.objects.filter(invoice=obj.paypal_invoice_id).order_by('-payment_date')[:1].get()
 		if not paypal_row:
 			return None
-		return u'Name: %s %s <br />Email: %s' % (paypal_row.first_name, paypal_row.last_name, paypal_row.payer_email)
+		return u'Name: %s %s<br />Email: %s<br />Status: %s<br />Date: %s' % (paypal_row.first_name, paypal_row.last_name, paypal_row.payer_email, paypal_row.payment_status, paypal_row.payment_date)
 	paypal_details.allow_tags = True
 
 
