@@ -39,26 +39,6 @@
 .forum-headline {
   margin-top: 10px;
 }
-/* --- Unread --- */
-.state-indicator {
-  display: block;
-  float: left;
-  background-color: #eeeeee;
-  height: 10px;
-  width: 10px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  margin: 3px 5px;
-}
-.topic-unread a,
-.forum-unread a {
-  font-weight: bold;
-}
-.topic-unread .state-indicator,
-.forum-unread .state-indicator {
-  background-color: #0064cd;
-}
 /* --- Moderation --- */
 .on-moderation {
   background: #ffcccc;

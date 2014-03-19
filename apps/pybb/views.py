@@ -4,13 +4,12 @@ import math
 
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.contrib import messages
-from django.db import IntegrityError
-from django.db.models import F, Q
+from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse, Http404, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import ModelFormMixin
@@ -26,7 +25,7 @@ except ImportError:
 
 from pure_pagination import Paginator
 
-from pybb.models import Category, Forum, Topic, Post, TopicReadTracker, ForumReadTracker, PollAnswerUser
+from pybb.models import Category, Forum, Topic, Post, PollAnswerUser
 from pybb.forms import  PostForm, AdminPostForm, PollAnswerFormSet, PollForm
 from pybb.templatetags.pybb_tags import pybb_topic_poll_not_voted
 from pybb import defaults
@@ -122,7 +121,6 @@ class TopicView(generic.ListView):
                 ctx['form'] = AdminPostForm(initial={'login': self.request.user.username}, topic=self.topic)
             else:
                 ctx['form'] = PostForm(topic=self.topic)
-            self.mark_read(self.request, self.topic)
         elif defaults.PYBB_ENABLE_ANONYMOUS_POST:
             ctx['form'] = PostForm(topic=self.topic)
         else:
@@ -138,37 +136,6 @@ class TopicView(generic.ListView):
             ctx['poll_form'] = PollForm(self.topic)
 
         return ctx
-
-    def mark_read(self, request, topic):
-        try:
-            forum_mark = ForumReadTracker.objects.get(forum=topic.forum, user=request.user)
-        except ObjectDoesNotExist:
-            forum_mark = None
-        if (forum_mark is None) or (forum_mark.time_stamp < topic.updated):
-            # Mark topic as readed
-            try:
-                topic_mark, new = TopicReadTracker.objects.get_or_create(topic=topic, user=request.user)
-            except IntegrityError: # duplicate mark
-                topic_mark = TopicReadTracker.objects.get(topic=topic, user=request.user)
-                new = False
-            if not new:
-                topic_mark.save()
-
-            # Check, if there are any unread topics in forum
-            read = Topic.objects.filter(Q(forum=topic.forum) & (Q(topicreadtracker__user=request.user,topicreadtracker__time_stamp__gt=F('updated'))) |
-                                                                Q(forum__forumreadtracker__user=request.user,forum__forumreadtracker__time_stamp__gt=F('updated')))
-            unread = Topic.objects.filter(forum=topic.forum).exclude(id__in=read)
-            if not unread.exists():
-                # Clear all topic marks for this forum, mark forum as readed
-                TopicReadTracker.objects.filter(
-                        user=request.user,
-                        topic__forum=topic.forum
-                        ).delete()
-                try:
-                    forum_mark, new = ForumReadTracker.objects.get_or_create(forum=topic.forum, user=request.user)
-                except IntegrityError: # duplicate mark
-                    forum_mark = ForumReadTracker.objects.get(forum=topic.forum, user=request.user)
-                forum_mark.save()
 
 
 class PostEditMixin(object):
@@ -438,20 +405,6 @@ class TopicPollVoteView(generic.UpdateView):
 
     def get_success_url(self):
         return self.object.get_absolute_url()
-
-
-@login_required
-def mark_all_as_read(request):
-    for forum in perms.filter_forums(request.user, Forum.objects.all()):
-        try:
-            forum_mark, new = ForumReadTracker.objects.get_or_create(forum=forum, user=request.user)
-        except IntegrityError: # duplicate mark
-            forum_mark = ForumReadTracker.objects.get(forum=forum, user=request.user)
-        forum_mark.save()
-    TopicReadTracker.objects.filter(user=request.user).delete()
-    msg = _('All forums marked as read')
-    messages.success(request, msg, fail_silently=True)
-    return redirect(reverse('pybb:index'))
 
 
 @login_required

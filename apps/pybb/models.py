@@ -8,7 +8,6 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
 
 from annoying.fields import AutoOneToOneField
 from pybb.util import unescape
@@ -86,7 +85,6 @@ class Forum(models.Model):
     post_count = models.IntegerField(_('Post count'), blank=True, default=0)
     topic_count = models.IntegerField(_('Topic count'), blank=True, default=0)
     hidden = models.BooleanField(_('Hidden'), blank=False, null=False, default=False)
-    readed_by = models.ManyToManyField(User, through='ForumReadTracker', related_name='readed_forums')
     headline = models.TextField(_('Headline'), blank=True, null=True)
 
     class Meta(object):
@@ -153,7 +151,6 @@ class Topic(models.Model):
     sticky = models.BooleanField(_('Sticky'), blank=True, default=False)
     closed = models.BooleanField(_('Closed'), blank=True, default=False)
     post_count = models.IntegerField(_('Post count'), blank=True, default=0)
-    readed_by = models.ManyToManyField(User, through='TopicReadTracker', related_name='readed_topics')
     on_moderation = models.BooleanField(_('On moderation'), default=False)
     poll_type = models.IntegerField(_('Poll type'), choices=POLL_TYPE_CHOICES, default=POLL_TYPE_NONE)
     poll_question = models.TextField(_('Poll question'), blank=True, null=True)
@@ -325,34 +322,6 @@ class Profile(PybbProfile):
 
     def get_absolute_url(self):
         return reverse('pybb:user', kwargs={'username': self.user.username})
-
-
-class TopicReadTracker(models.Model):
-    """
-    Save per user topic read tracking
-    """
-    user = models.ForeignKey(User, blank=False, null=False)
-    topic = models.ForeignKey(Topic, blank=True, null=True)
-    time_stamp = models.DateTimeField(auto_now=True)
-
-    class Meta(object):
-        verbose_name = _('Topic read tracker')
-        verbose_name_plural = _('Topic read trackers')
-        unique_together = ('user', 'topic')
-
-
-class ForumReadTracker(models.Model):
-    """
-    Save per user forum read tracking
-    """
-    user = models.ForeignKey(User, blank=False, null=False)
-    forum = models.ForeignKey(Forum, blank=True, null=True)
-    time_stamp = models.DateTimeField(auto_now=True)
-
-    class Meta(object):
-        verbose_name = _('Forum read tracker')
-        verbose_name_plural = _('Forum read trackers')
-        unique_together = ('user', 'forum')
 
 
 class PollAnswer(models.Model):

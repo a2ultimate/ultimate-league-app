@@ -40,24 +40,12 @@
 		<div class="navbar navbar-inverse navbar-fixed-top">
 			<div class="navbar-inner">
 				<div class="container">
-					<a class="brand" href="{% url pybb:index %}">A2Ultimate Forum</a>
+					<a class="brand" href="{% url pybb:index %}">Ann Arbor Ultimate Forum</a>
 					<ul class="nav">
-						<li>
-							<a href="{% url home %}">Home</a>
-						</li>
 						{% if request.user.is_authenticated %}
-							<li>
-								<a href="{% url user %}">Profile</a>
-							</li>
 							<li>
 								<a href="{% url auth_logout %}">Logout</a>
 							</li>
-							{% if request.user.is_superuser %}
-								<li>
-									<a href="{% url admin:index %}">Admin Interface</a>
-								</li>
-							{% endif %}
-
 						{% else %}
 							<li>
 								<a href="{% url auth_login %}">Login</a>
@@ -66,6 +54,11 @@
 								<a href="{% url registration_register %}">Register</a>
 							</li>
 						{% endif %}
+					</ul>
+					<ul class="nav pull-right">
+						<li>
+							<a href="{% url home %}">&larr; Return to annarborultimate.org</a>
+						</li>
 					</ul>
 				</div>
 			</div>

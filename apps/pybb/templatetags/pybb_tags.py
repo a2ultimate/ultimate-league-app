@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import math
-from string import strip
 import time
 
 from django import template
@@ -20,13 +19,7 @@ except ImportError:
     from datetime import timedelta
     tznow = datetime.datetime.now
 
-try:
-    import pytils
-    pytils_enabled = True
-except ImportError:
-    pytils_enabled = False
-
-from pybb.models import TopicReadTracker, ForumReadTracker, PollAnswerUser
+from pybb.models import PollAnswerUser
 from pybb.permissions import perms
 from pybb import defaults
 
@@ -116,77 +109,6 @@ def pybb_posted_by(post, user):
     Check if the post is writed by the user.
     """
     return post.user == user
-
-
-@register.filter
-def pybb_is_topic_unread(topic, user):
-    if not user.is_authenticated():
-        return False
-
-    if not topic.updated:
-        return True
-
-    unread = not ForumReadTracker.objects.filter(
-        forum=topic.forum,
-        user=user.id,
-        time_stamp__gte=topic.updated).exists()
-    unread &= not TopicReadTracker.objects.filter(
-        topic=topic,
-        user=user.id,
-        time_stamp__gte=topic.updated).exists()
-    return unread
-
-
-@register.filter
-def pybb_topic_unread(topics, user):
-    """
-    Mark all topics in queryset/list with .unread for target user
-    """
-    topic_list = list(topics)
-
-    if user.is_authenticated():
-        for topic in topic_list:
-            topic.unread = True
-
-        forums_ids = [f.forum_id for f in topic_list]
-        forum_marks = dict([(m.forum_id, m.time_stamp)
-                            for m
-                            in ForumReadTracker.objects.filter(user=user, forum__in=forums_ids)])
-        if len(forum_marks):
-            for topic in topic_list:
-                topic_updated = topic.updated or topic.created
-                if topic.forum.id in forum_marks and topic_updated <= forum_marks[topic.forum.id]:
-                    topic.unread = False
-
-        qs = TopicReadTracker.objects.filter(user=user, topic__in=topic_list).select_related('topic')
-        topic_marks = list(qs)
-        topic_dict = dict(((topic.id, topic) for topic in topic_list))
-        for mark in topic_marks:
-            if topic_dict[mark.topic.id].updated <= mark.time_stamp:
-                topic_dict[mark.topic.id].unread = False
-    return topic_list
-
-
-@register.filter
-def pybb_forum_unread(forums, user):
-    """
-    Check if forum has unread messages.
-    """
-    forum_list = list(forums)
-    if user.is_authenticated():
-        for forum in forum_list:
-            if forum.topic_count:
-                forum.unread = True
-        forum_marks = ForumReadTracker.objects.filter(
-                user=user,
-                forum__in=forum_list
-                ).select_related('forum')
-        forum_dict = dict(((forum.id, forum) for forum in forum_list))
-        for mark in forum_marks:
-            if (forum_dict[mark.forum.id].updated is None) or\
-               (forum_dict[mark.forum.id].updated <= mark.time_stamp):
-                forum_dict[mark.forum.id].unread = False
-    return forum_list
 
 
 @register.filter
