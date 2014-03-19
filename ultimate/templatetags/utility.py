@@ -40,6 +40,8 @@ def smart_title(value):
 def prepare_menu_items(menu_items):
 	# credit: http://stackoverflow.com/questions/5059401/make-a-python-nested-list-for-use-in-djangos-unordered-list
 
+	from ultimate.index.models import StaticMenuItems
+
 	lists = collections.defaultdict(list)
 	for menu_item in menu_items:
 		itemHtml = ''
@@ -63,13 +65,27 @@ def prepare_menu_items(menu_items):
 		elif menu_item.type == 'header':
 			itemHtml += '</h3>'
 
-		parent_id = menu_item.parent_id if menu_item.parent else 0
+		parent_id = 0
+
+		try:
+			if menu_item.parent:
+				parent_id = menu_item.parent_id
+		except StaticMenuItems.DoesNotExist:
+			pass
+
 		lists[parent_id] += [itemHtml, lists[menu_item.id]]
 
 
 	for menu_item in menu_items:
 		if not lists[menu_item.id]:
-			parent_id = menu_item.parent_id if menu_item.parent else 0
+			parent_id = 0
+
+			try:
+				if menu_item.parent:
+					parent_id = menu_item.parent_id
+			except StaticMenuItems.DoesNotExist:
+				pass
+
 			lists[parent_id].remove(lists[menu_item.id])
 
 	return lists[0]
