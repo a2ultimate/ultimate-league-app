@@ -15,7 +15,7 @@ def menu_leagues(request):
 def menu_items_nav(request):
 	from ultimate.index.models import StaticMenuItems
 
-	menu_items = StaticMenuItems.objects.filter(location='nav').order_by('position')
+	menu_items = StaticMenuItems.objects.filter(location='nav')
 
 	return {'menu_items_nav': menu_items}
 
@@ -23,7 +23,7 @@ def menu_items_nav(request):
 def menu_items_home_sidebar(request):
 	from ultimate.index.models import StaticMenuItems
 
-	menu_items = StaticMenuItems.objects.filter(location='home_sidebar').order_by('position')
+	menu_items = StaticMenuItems.objects.filter(location='home_sidebar')
 
 	return {'menu_items_home_sidebar': menu_items}
 

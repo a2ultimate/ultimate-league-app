@@ -3,6 +3,7 @@ import collections
 import re
 
 from django import template
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.template.defaultfilters import stringfilter
 
@@ -47,11 +48,20 @@ def prepare_menu_items(menu_items):
 			itemHtml += '<a href="' + menu_item.href + '" target="_blank">'
 		elif menu_item.type == 'internal_link':
 			itemHtml += '<a href="' + reverse(menu_item.href) + '">'
+		elif menu_item.type == 'static_link':
+			itemHtml += '<a href="' + settings.MEDIA_URL + menu_item.href + '">'
+		elif menu_item.type == 'header':
+			itemHtml += '<h3>'
 
 		itemHtml += menu_item.content
 
-		if menu_item.type == 'external_link' or menu_item.type == 'internal_link':
+		if menu_item.type == 'external_link' or \
+			menu_item.type == 'internal_link' or \
+			menu_item.type == 'static_link':
+
 			itemHtml += '</a>'
+		elif menu_item.type == 'header':
+			itemHtml += '</h3>'
 
 		parent_id = menu_item.parent_id if menu_item.parent else 0
 		lists[parent_id] += [itemHtml, lists[menu_item.id]]

@@ -20,6 +20,7 @@ class StaticMenuItems(models.Model):
 		('header',			u'Header'),
 		('external_link',	u'External Link'),
 		('internal_link',	u'Internal Link'),
+		('static_link',		u'Static Link'),
 		('text',			u'Text'),
 	)
 
@@ -33,7 +34,7 @@ class StaticMenuItems(models.Model):
 
 	class Meta:
 		db_table = u'static_menu_items'
-		ordering = ['location', 'position']
+		ordering = ['location', 'parent__id', 'position']
 		verbose_name_plural = 'static menu items'
 
 	def __unicode__(self):
