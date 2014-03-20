@@ -1,5 +1,6 @@
 {% extends "layout/layout_user.html" %}
 
+{% load math %}
 {% load leagues %}
 {% load user_roles %}
 {% load utility %}
@@ -35,7 +36,11 @@
 	{% endif %}
 
 	<div id="league_players">
-		<h4>Currently {{ complete_registrations|length }} out of a maximum {{ league.max_players }} players registered</h4>
+		{% if request.user|in_group:"junta" %}
+			<h4>Currently {{ complete_registrations|length }} out of a maximum {{ league.max_players }} players registered</h4>
+		{% else %}
+			<h4>Currently {{ complete_registrations|length|limit_ceil:league.max_players }} out of a maximum {{ league.max_players }} players registered</h4>
+		{% endif %}
 
 		<table class="table table-striped">
 			<tbody>
