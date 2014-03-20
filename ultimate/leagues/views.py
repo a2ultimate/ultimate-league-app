@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -8,9 +9,8 @@ from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 
-from ultimate.leagues.models import *
-
 from ultimate.forms import RegistrationAttendanceForm
+from ultimate.leagues.models import *
 from ultimate.middleware.http import Http403
 
 from paypal.standard.forms import PayPalPaymentsForm
