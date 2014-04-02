@@ -78,7 +78,9 @@
 				PayPal ${{ league.paypal_price|floatformat:2 }}
 			</td>
 			<td>
-				Check ${{ league.check_price|floatformat:2 }}
+				{% if league.checks_accepted %}
+					Check ${{ league.check_price|floatformat:2 }}
+				{% endif %}
 			</td>
 			<td>
 				{{ league.baggage }}
