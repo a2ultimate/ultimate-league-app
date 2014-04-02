@@ -25,6 +25,11 @@ def is_past_deadline(league_date):
 
 
 @register.filter
+def is_free(league):
+	return bool(league.check_price == 0 and league.paypal_price == 0)
+
+
+@register.filter
 # returns league captains as user objects
 def get_league_captains(league):
 	return league.get_league_captains()

@@ -9,7 +9,7 @@ def league_registrations(league, user):
 
 
 @register.filter
-def get_registration_tick_color(registration, threshold):
+def get_registration_tick_color(threshold, registration):
 	if registration.progress >= threshold:
 		return 'success'
 	return ''

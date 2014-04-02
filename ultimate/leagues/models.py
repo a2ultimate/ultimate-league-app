@@ -347,7 +347,7 @@ class Registrations(models.Model):
 		percentage = 0
 		interval = 20
 
-		if self.league.check_price == 0 and self.league.paypal_price == 0:
+		if (self.league.check_price == 0 and self.league.paypal_price == 0) or not self.league.checks_accepted:
 			interval = 25
 
 		if self.conduct_complete:

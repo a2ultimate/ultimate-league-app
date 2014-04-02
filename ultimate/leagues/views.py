@@ -155,6 +155,11 @@ def registration(request, year, season, division, section=None):
 	if not league.is_open(request.user):
 		raise Http403
 
+
+	tick_percentage = 20
+	if (league.check_price == 0 and league.paypal_price == 0) or not league.checks_accepted:
+		tick_percentage = 25
+
 	try:
 		registration, created = Registrations.objects.get_or_create(user=request.user, league=league)
 	except IntegrityError:
@@ -213,8 +218,12 @@ def registration(request, year, season, division, section=None):
 					registration.baggage_id = baggage.id
 					registration.save()
 
-				if league.check_price == 0 or league.paypal_price == 0:
+				if league.check_price == 0 and league.paypal_price == 0:
 					registration.registered = datetime.now()
+					registration.save()
+
+				if not league.checks_accepted:
+					registration.pay_type = 'paypal'
 					registration.save()
 
 				messages.success(request, 'Attendance and captaining response saved.')
@@ -226,7 +235,12 @@ def registration(request, year, season, division, section=None):
 
 		# payment type response
 		if 'pay_type' in request.POST:
-			if request.POST.get('pay_type').lower() == 'check':
+			if not league.checks_accepted:
+				registration.pay_type = 'paypal'
+				registration.save()
+				messages.error(request, 'Payment type set to PayPal. Checks are not accepted for this league.')
+
+			elif request.POST.get('pay_type').lower() == 'check':
 				registration.pay_type = 'check'
 				registration.save()
 				messages.success(request, 'Payment type set to check.')
@@ -249,7 +263,8 @@ def registration(request, year, season, division, section=None):
 			{
 				'league': league,
 				'registration': registration,
-				'section': 'conduct'
+				'section': 'conduct',
+				'tick_percentage': tick_percentage
 			},
 			context_instance=RequestContext(request))
 
@@ -258,7 +273,8 @@ def registration(request, year, season, division, section=None):
 			{
 				'league': league,
 				'registration': registration,
-				'section': 'waiver'
+				'section': 'waiver',
+				'tick_percentage': tick_percentage
 			},
 			context_instance=RequestContext(request))
 
@@ -271,18 +287,21 @@ def registration(request, year, season, division, section=None):
 				'league': league,
 				'registration': registration,
 				'attendance_form': attendance_form,
-				'section': 'attendance'
+				'section': 'attendance',
+				'tick_percentage': tick_percentage
 			},
 			context_instance=RequestContext(request))
 
 	if league.check_price > 0 or league.paypal_price > 0:
 
-		if section == 'pay_type' or not registration.pay_type or (registration.pay_type != 'check' and registration.pay_type != 'paypal'):
+		if league.checks_accepted and (section == 'pay_type' or not registration.pay_type or (registration.pay_type != 'check' and registration.pay_type != 'paypal')):
+
 			return render_to_response('leagues/registration/payment.html',
 				{
 					'league': league,
 					'registration': registration,
-					'section': 'pay_type'
+					'section': 'pay_type',
+					'tick_percentage': tick_percentage
 				},
 				context_instance=RequestContext(request))
 
@@ -310,7 +329,8 @@ def registration(request, year, season, division, section=None):
 			'paypal_form': paypal_form,
 			'league': league,
 			'registration': registration,
-			'section': 'status'
+			'section': 'status',
+			'tick_percentage': tick_percentage
 		},
 		context_instance=RequestContext(request))
 
