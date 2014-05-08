@@ -11,6 +11,10 @@ def subtract(value, arg):
 	return int(value) - int(arg)
 
 @register.filter
+def multiply_by(value, arg):
+	return int(value) * int(arg)
+
+@register.filter
 def divide(value, arg):
 	return int(value) / int(arg)
 

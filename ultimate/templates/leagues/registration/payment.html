@@ -8,24 +8,32 @@
 
 	{% include "layout/league_tabs.html" with selected_tab="registration" %}
 
-	{% include "leagues/registration/_progress.html" with league=league registration=registration section=section only %}
+	{% include "leagues/registration/_progress.html" with league=league registration=registration section=section tick_percentage=tick_percentage only %}
 
 	<h2>How would you like to pay?</h2>
 
 	<p>
-		The cost of this league varies depending on payment type. PayPal is preferred, but check is also acceptable.
+		{% if league.checks_accepted %}
+			The cost of this league varies depending on payment type. PayPal is preferred, but check is also acceptable.
+		{% else %}
+			This league only accepts payment through PayPal.
+		{% endif %}
 	</p>
 
 	<p>
 		<ul>
 			<li>${{ league.paypal_price }} via PayPal</li>
-			<li>${{ league.check_price }} via Check</li>
+			{% if league.checks_accepted %}
+				<li>${{ league.check_price }} via Check</li>
+			{% endif %}
 		</ul>
 	</p>
 
 	<form method="post">{% csrf_token %}
 		<input class="button button_success" type="submit" value="Paypal" name="pay_type" />
-		<input class="button button_success" type="submit" value="Check" name="pay_type" />
+		{% if league.checks_accepted %}
+			<input class="button button_success" type="submit" value="Check" name="pay_type" />
+		{% endif %}
 	</form>
 
 {% endblock %}

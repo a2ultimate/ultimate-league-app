@@ -9,7 +9,7 @@
 
 	{% include "layout/league_tabs.html" with selected_tab="registration" %}
 
-	{% include "leagues/registration/_progress.html" with league=league registration=registration section=section only %}
+	{% include "leagues/registration/_progress.html" with league=league registration=registration section=section tick_percentage=tick_percentage only %}
 
 	<h2>Registration Status</h2>
 
@@ -19,7 +19,7 @@
 
 			{% if registration.waitlist %}
 				However, you are on the <strong class="text_warning">waitlist</strong>.
-			{% elif registration.league.baggage > 1 and not registration.league.waitlist_start_date|is_past_deadline %}
+			{% elif league.baggage > 1 and not league.waitlist_start_date|is_past_deadline %}
 				You may <a href="{% url league_group year=league.year season=league.season division=league.night %}">form a baggage group here</a>.
 			{% endif %}
 		</h3>
@@ -57,47 +57,50 @@
 
 	<hr />
 
-	{% if not registration.is_complete and registration.league.paypal_price > 0 and registration.league.check_price > 0 %}
-		{% if registration.pay_type = 'check' %}
-			<p>
-				You're currently set to pay by check. You may send a check for <strong>${{ league.check_price }}</strong> to:
-			</p>
+	{% if not registration.is_complete %}
+		{% if league.paypal_price != 0 or league.check_price != 0 %}
+			{% if registration.pay_type = 'paypal' %}
+				{% if not registration.paypal_complete %}
+					<p>
+						Click the "Checkout using PayPal" button to pay <strong>${{ league.paypal_price }}</strong>.
+					</p>
 
-			{{ league.mail_check_address|safe }}
+					<p>
+						You will be redirected to PayPal's website to pay and redirected back to the Ann Arbor Ultimate site afterward.
+					</p>
 
-			<form method="post">{% csrf_token %}
-				<input class="hidden" type="hidden" name="pay_type" value="paypal" />
-				<input class="button button_info" type="submit" value="Switch Payment Type to PayPal" />
-			</form>
-		{% endif %}
-		{% if registration.pay_type = 'paypal' %}
-			{% if not registration.paypal_complete %}
+					<p>
+						{{ paypal_form.render }}
+					</p>
+				{% endif %}
+
 				<p>
-					Click the "Checkout using PayPal" button to pay <strong>${{ league.paypal_price }}</strong>.
+					If you've already submitted a payment via PayPal, please be patient.<br />
+					It could take up to 24 hours to show as completed.
 				</p>
 
 				<p>
-					You will be redirected to PayPal's website to pay and redirected back to the Ann Arbor Ultimate site afterward.
+					If has already been 24 hours, please email <a href="mailto:registration@annarborultimate.org">registration@annarborultimate.org</a>
 				</p>
 
+				{% if league.checks_accepted %}
+					<form method="post">{% csrf_token %}
+						<input class="hidden" type="hidden" name="pay_type" value="check" />
+						<input class="button button_info" type="submit" value="Switch Payment Type to Check" />
+					</form>
+				{% endif %}
+			{% elif registration.pay_type = 'check' %}
 				<p>
-					{{ paypal_form.render }}
+					You're currently set to pay by check. You may send a check for <strong>${{ league.check_price }}</strong> to:
 				</p>
+
+				{{ league.mail_check_address|safe }}
+
+				<form method="post">{% csrf_token %}
+					<input class="hidden" type="hidden" name="pay_type" value="paypal" />
+					<input class="button button_info" type="submit" value="Switch Payment Type to PayPal" />
+				</form>
 			{% endif %}
-
-			<p>
-				If you've already submitted a payment via PayPal, please be patient.<br />
-				It could take up to 24 hours to show as completed.
-			</p>
-
-			<p>
-				If has already been 24 hours, please email <a href="mailto:registration@annarborultimate.org">registration@annarborultimate.org</a>
-			</p>
-
-			<form method="post">{% csrf_token %}
-				<input class="hidden" type="hidden" name="pay_type" value="check" />
-				<input class="button button_info" type="submit" value="Switch Payment Type to Check" />
-			</form>
 		{% endif %}
 	{% endif %}
 

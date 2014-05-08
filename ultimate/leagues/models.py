@@ -71,8 +71,8 @@ class League(models.Model):
 	waitlist_start_date = models.DateTimeField(help_text='date and time that waitlist is started (regardless of number of registrations)')
 	league_start_date = models.DateField(help_text='date of first game')
 	league_end_date = models.DateField(help_text='date of last game')
-	checks_accepted = models.BooleanField(default=True)
 	paypal_cost = models.IntegerField(help_text='base cost of league if paying by PayPal')
+	checks_accepted = models.BooleanField(default=True)
 	check_cost_increase = models.IntegerField(help_text='amount to be added to paypal_cost if paying by check')
 	late_cost_increase = models.IntegerField(help_text='amount to be added to paypal_cost if paying after price_increase_start_date')
 	max_players = models.IntegerField(help_text='max players for league, extra registrations will be placed on waitlist')
@@ -105,17 +105,17 @@ class League(models.Model):
 
 	@property
 	def paypal_price(self):
-		if datetime.now() >= self.price_increase_start_date:
-			return self.paypal_cost + self.late_cost_increase
+		if self.paypal_cost == 0 or datetime.now() < self.price_increase_start_date:
+			return self.paypal_cost
 
-		return self.paypal_cost
+		return self.paypal_cost + self.late_cost_increase
 
 	@property
 	def check_price(self):
-		if datetime.now() >= self.price_increase_start_date:
-			return self.paypal_cost + self.check_cost_increase + self.late_cost_increase
+		if self.paypal_cost + self.check_cost_increase == 0 or datetime.now() < self.price_increase_start_date:
+			return self.paypal_cost + self.check_cost_increase
 
-		return self.paypal_cost + self.check_cost_increase
+		return self.paypal_cost + self.check_cost_increase + self.late_cost_increase
 
 	def get_fields(self):
 		return FieldLeague.objects.filter(league=self)
@@ -347,7 +347,7 @@ class Registrations(models.Model):
 		percentage = 0
 		interval = 20
 
-		if self.league.check_price == 0 and self.league.paypal_price == 0:
+		if (self.league.check_price == 0 and self.league.paypal_price == 0) or not self.league.checks_accepted:
 			interval = 25
 
 		if self.conduct_complete:

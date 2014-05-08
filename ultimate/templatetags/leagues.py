@@ -5,6 +5,11 @@ register = template.Library()
 
 
 @register.filter
+def sort_by_league_start_date_weekday(leagues):
+	return sorted(leagues, key=lambda k: k.league_start_date.strftime('%w'))
+
+
+@register.filter
 def is_visible(league, user):
 	return league.is_visible(user)
 
@@ -22,6 +27,11 @@ def is_waitlist(league, user):
 @register.filter
 def is_past_deadline(league_date):
 	return bool(datetime.now() > league_date)
+
+
+@register.filter
+def is_free(league):
+	return bool(league.check_price == 0 and league.paypal_price == 0)
 
 
 @register.filter
