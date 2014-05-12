@@ -23,7 +23,7 @@
 					<li>
 						<h3>{{ season_year.grouper|smart_title }}</h3>
 						<ul>
-							{% for league in season_year.list %}
+							{% for league in season_year.list|sort_by_league_start_date_weekday %}
 								<li>
 									<h4>
 										{{ league.night|smart_title }}

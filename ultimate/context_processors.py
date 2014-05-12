@@ -7,8 +7,6 @@ def menu_leagues(request):
 	leagues = League.objects.filter(state__in=['closed', 'open', 'preview']).order_by('league_start_date')
 	leagues = [league for league in leagues if league.is_visible(request.user)]
 
-	leagues.sort(key=lambda k: k.league_start_date.weekday())
-
 	return {'menu_leagues': leagues}
 
 

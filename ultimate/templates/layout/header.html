@@ -95,7 +95,7 @@
 									{{ season_year.grouper|smart_title }}
 								</a>
 								<ul class="dropdown">
-									{% for league in season_year.list %}
+									{% for league in season_year.list|sort_by_league_start_date_weekday %}
 										<li>
 											<a href="{% url league_summary year=league.year season=league.season division=league.night %}">
 												{{ league.night_title|smart_title }}
