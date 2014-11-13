@@ -30,7 +30,6 @@ DATABASES = {
 
 TIME_ZONE = 'America/Detroit'
 LANGUAGE_CODE = 'en-us'
-SITE_ID = 1
 
 USE_I18N = True
 
@@ -104,7 +103,6 @@ INSTALLED_APPS = (
 	'django.contrib.humanize',
 	'django.contrib.messages',
 	'django.contrib.sessions',
-	'django.contrib.sites',
 	'django.contrib.staticfiles',
 	'django.contrib.webdesign',
 	'paypal.standard.ipn',
