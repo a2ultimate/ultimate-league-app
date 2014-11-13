@@ -51,7 +51,7 @@ def prepare_menu_items(menu_items):
 		elif menu_item.type == 'internal_link':
 			itemHtml += '<a href="' + reverse(menu_item.href) + '">'
 		elif menu_item.type == 'static_link':
-			itemHtml += '<a href="' + settings.MEDIA_URL + menu_item.href + '">'
+			itemHtml += '<a href="' + settings.STATIC_URL + menu_item.href + '">'
 		elif menu_item.type == 'header':
 			itemHtml += '<h3>'
 

@@ -34,16 +34,32 @@ SITE_ID = 1
 
 USE_I18N = True
 
-# Absolute path to the directory that holds media.
-# Example: "/home/media/media.lawrence.com/"
-# this is really only used for file uploads
-MEDIA_ROOT = '/path/to/project/ultimate-league-app/media'
+# Absolute filesystem path to the directory that will hold user-uploaded files.
+# Example: "/home/media/media.lawrence.com/media/"
+MEDIA_ROOT = ''
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash if there is a path component (optional in other cases).
-# Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/a2ultimate/media/'
-STATIC_URL = '/a2ultimate/media/'
+# trailing slash.
+# Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
+MEDIA_URL = ''
+
+# Absolute path to the directory static files should be collected to.
+# Don't put anything in this directory yourself; store your static files
+# in apps' "static/" subdirectories and in STATICFILES_DIRS.
+# Example: "/home/media/media.lawrence.com/static/"
+STATIC_ROOT = ''
+
+# URL prefix for static files.
+# Example: "http://media.lawrence.com/static/"
+STATIC_URL = '/static/'
+
+# Additional locations of static files
+STATICFILES_DIRS = (
+	# Put strings here, like "/home/html/static" or "C:/www/django/static".
+	# Always use forward slashes, even on Windows.
+	# Don't forget to use absolute paths, not relative paths.
+	os.path.join(PROJECT_ROOT, '../media'),
+)
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -89,6 +105,7 @@ INSTALLED_APPS = (
 	'django.contrib.messages',
 	'django.contrib.sessions',
 	'django.contrib.sites',
+	'django.contrib.staticfiles',
 	'django.contrib.webdesign',
 	'paypal.standard.ipn',
 	'syncr.flickr',
@@ -120,39 +137,43 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 	'pybb.context_processors.processor',
 	'ultimate.context_processors.google_analytics',
 	'ultimate.context_processors.menu_leagues',
+	'ultimate.context_processors.menu_items_home_sidebar',
+	'ultimate.context_processors.menu_items_nav',
 	'ultimate.context_processors.user_profile_is_complete',
 	'ultimate.context_processors.user_rating_is_complete',
 )
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
-# where project lives off web root, e.g. localhost/a2ultimate
-FORCE_SCRIPT_NAME = '/a2ultimate'
-
 # where project lives off web root, e.g. localhost/a2ultimate/user/login
-LOGIN_URL = '/a2ultimate/user/login/'
-LOGIN_REDIRECT_URL = '/a2ultimate/user/'
-LOGOUT_URL = '/a2ultimate/user/logout/'
-LOGOUT_REDIRECT_URL = '/a2ultimate/'
-REGISTER_URL = '/a2ultimate/accounts/register/'
+LOGIN_URL = '/user/login/'
+LOGIN_REDIRECT_URL = '/user/'
+LOGOUT_URL = '/user/logout/'
+LOGOUT_REDIRECT_URL = '/'
+REGISTER_URL = '/accounts/register/'
+
 
 # GOOGLE ANALYTICS
 GOOGLE_ANALYTICS_PROPERTY_ID = ''
 GOOGLE_ANALYTICS_DOMAIN = ''
 
+
 # Paypal Info
 PAYPAL_RECEIVER_EMAIL = ''
 PAYPAL_TEST = True			# Testing mode on
-PAYPAL_IMAGE = MEDIA_URL + 'images/paypal_checkout.png'
-PAYPAL_SUBSCRIPTION_IMAGE = MEDIA_URL + 'images/paypal_checkout.png'
-PAYPAL_DONATION_IMAGE = MEDIA_URL + 'images/paypal_checkout.png'
-PAYPAL_SANDBOX_IMAGE = MEDIA_URL + 'images/paypal_checkout.png'
-PAYPAL_SUBSCRIPTION_SANDBOX_IMAGE = MEDIA_URL + 'images/paypal_checkout.png'
-PAYPAL_DONATION_SANDBOX_IMAGE = MEDIA_URL + 'images/paypal_checkout.png'
+PAYPAL_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
+PAYPAL_SUBSCRIPTION_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
+PAYPAL_DONATION_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
+PAYPAL_SANDBOX_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
+PAYPAL_SUBSCRIPTION_SANDBOX_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
+PAYPAL_DONATION_SANDBOX_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
+
 
 # PYBB - http://www.pybbm.org/
 PYBB_DEFAULT_TITLE = 'A2Ultimate Forums'
 PYBB_TEMPLATE = 'layout/forum_base.html'
+PYBB_DEFAULT_TIME_ZONE = -5
+
 
 # SOCIAL
 FLICKR_KEY = ''
