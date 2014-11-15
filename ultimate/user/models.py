@@ -1,3 +1,6 @@
+import sys
+import math
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -22,6 +25,12 @@ def rating_total(self):
 
 	# determine the total rating of a user
 	rating_dict = dict([(key, float(sum([int(i) for i in values])) / (len(filter(lambda k: k > 0, values)) or 1)) for key, values in rating_dict.items()])
+
+	rating_dict['athleticism'] = rating_dict['athleticism'] * 10 / 6
+	rating_dict['experience'] = math.pow(rating_dict['experience'], 1.2) * 10 / math.pow(6, 1.2)
+	rating_dict['strategy'] = math.pow(rating_dict['strategy'], 1.2) * 10 / math.pow(6, 1.2)
+	rating_dict['throwing'] = rating_dict['throwing'] * 10 / 6
+
 	return sum(rating_dict.itervalues())
 
 User.add_to_class('rating_total', rating_total)
