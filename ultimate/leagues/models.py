@@ -231,7 +231,7 @@ class Player(PybbProfile):
 		('XXL',	'XXL - Extra Extra Large'),
 	)
 
-	user = models.ForeignKey(User)
+	user = models.OneToOneField(User)
 	groups = models.TextField()
 	nickname = models.CharField(max_length=30)
 	phone = models.CharField(max_length=15)
