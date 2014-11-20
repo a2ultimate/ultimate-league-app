@@ -14,11 +14,37 @@
 	<meta name="description" content="">
 	<meta name="author" content="">
 
-	<link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic" rel="stylesheet" type="text/css">
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/jquery-ui/jquery-ui-1.10.0.custom.min.css" />
-	<link rel="stylesheet" href="{{ MEDIA_URL }}css/site.css?2" type="text/css" />
+	<!-- favicon -->
+	<link rel="icon" type="image/png" href="{{ STATIC_URL }}favicons/favicon-16x16.png" sizes="16x16">
+	<link rel="icon" type="image/png" href="{{ STATIC_URL }}favicons/favicon-32x32.png" sizes="32x32">
+	<link rel="icon" type="image/png" href="{{ STATIC_URL }}favicons/favicon-96x96.png" sizes="96x96">
+	<link rel="icon" type="image/png" href="{{ STATIC_URL }}favicons/favicon-160x160.png" sizes="160x160">
+	<link rel="icon" type="image/png" href="{{ STATIC_URL }}favicons/favicon-192x192.png" sizes="192x192">
+	<link rel="shortcut icon" href="{{ STATIC_URL }}favicons/favicon.ico">
 
-	<script src="{{ MEDIA_URL }}js/modernizr.min.js"></script>
+	<!-- apple touch icons -->
+	<link rel="apple-touch-icon" sizes="57x57" href="{{ STATIC_URL }}favicons/apple-touch-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="{{ STATIC_URL }}favicons/apple-touch-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="{{ STATIC_URL }}favicons/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="{{ STATIC_URL }}favicons/apple-touch-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="{{ STATIC_URL }}favicons/apple-touch-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="{{ STATIC_URL }}favicons/apple-touch-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="{{ STATIC_URL }}favicons/apple-touch-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="{{ STATIC_URL }}favicons/apple-touch-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="{{ STATIC_URL }}favicons/apple-touch-icon-180x180.png">
+	<meta name="apple-mobile-web-app-title" content="A2Ultimate">
+
+	<!-- microsoft tile icon -->
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="{{ STATIC_URL }}favicons/mstile-144x144.png">
+	<meta name="msapplication-config" content="{{ STATIC_URL }}favicons/browserconfig.xml">
+	<meta name="application-name" content="A2Ultimate">
+
+	<link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui/jquery-ui-1.10.0.custom.min.css" />
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/site.css?2" type="text/css" />
+
+	<script src="{{ STATIC_URL }}js/libs/modernizr.min.js"></script>
 
 	{% if GOOGLE_ANALYTICS_PROPERTY_ID %}
 		<script>
@@ -53,7 +79,7 @@
 		<div id="header">
 			<div id="banner">
 				<a href="{% url home %}">
-					<img src="{{ MEDIA_URL }}images/banner.png" alt="Ann Arbor Ultimate" width="435" height="41" />
+					<img src="{{ STATIC_URL }}images/banner.png" alt="Ann Arbor Ultimate" width="435" height="41" />
 				</a>
 			</div>
 

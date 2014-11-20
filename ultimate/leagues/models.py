@@ -77,7 +77,7 @@ class League(models.Model):
 	late_cost_increase = models.IntegerField(help_text='amount to be added to paypal_cost if paying after price_increase_start_date')
 	max_players = models.IntegerField(help_text='max players for league, extra registrations will be placed on waitlist')
 	state = models.CharField(max_length=32, choices=LEAGUE_STATE_CHOICES, help_text='state of league, changes whether registration is open or league is visible')
-	field = models.ManyToManyField(Field, db_table='field_league', help_text='Select the fields these games will be played at, use the green "+" icon if we\'re playing at a new field.')
+	field = models.ManyToManyField(Field, through='FieldLeague', help_text='Select the fields these games will be played at, use the green "+" icon if we\'re playing at a new field.')
 	details = models.TextField(help_text='details page text, use HTML')
 	league_email = models.CharField(max_length=64, blank=True, help_text='email address for entire season')
 	league_captains_email = models.CharField(max_length=64, blank=True, help_text='email address for league captains')
@@ -231,7 +231,7 @@ class Player(PybbProfile):
 		('XXL',	'XXL - Extra Extra Large'),
 	)
 
-	user = models.ForeignKey(User, db_column='id')
+	user = models.OneToOneField(User)
 	groups = models.TextField()
 	nickname = models.CharField(max_length=30)
 	phone = models.CharField(max_length=15)
