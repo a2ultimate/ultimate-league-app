@@ -100,10 +100,9 @@ def registrationexport(request, year=None, season=None, division=None):
 		writer.writerow([
 			'Team',
 			'Baggage Id',
+			'Captain',
 			'Firstname',
 			'Lastname',
-			'Nickname',
-			'Player Id',
 			'Gender',
 			'Email',
 			'Rating Total',
@@ -113,12 +112,12 @@ def registrationexport(request, year=None, season=None, division=None):
 			'Athleticism',
 			'Competitiveness',
 			'Spirit',
-			'Attendance',
 			'Age',
 			'Height Inches',
 			'Jersey',
+			'Reg Status',
+			'Attendance',
 			'Captaining',
-			'Reg Status'
 		])
 
 		for registration in registrations:
@@ -126,10 +125,9 @@ def registrationexport(request, year=None, season=None, division=None):
 				writer.writerow([
 					registration.get_team_id(),
 					registration.baggage,
+					int(TeamMember.objects.filter(user=registration.user, team__league=registration.league)[:1].get().captain),
 					registration.user.first_name,
 					registration.user.last_name,
-					registration.user.get_profile().nickname,
-					registration.user.id,
 					registration.user.get_profile().gender,
 					registration.user.email,
 					registration.user.rating_total,
@@ -139,12 +137,12 @@ def registrationexport(request, year=None, season=None, division=None):
 					registration.average_athleticism,
 					registration.average_competitiveness,
 					registration.average_spirit,
-					registration.attendance,
 					registration.user.get_profile().age,
 					registration.user.get_profile().height_inches,
 					registration.user.get_profile().jersey_size,
+					registration.status,
 					registration.captain,
-					registration.status
+					registration.attendance,
 				])
 
 		return response
