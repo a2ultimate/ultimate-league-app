@@ -122,10 +122,15 @@ def registrationexport(request, year=None, season=None, division=None):
 
 		for registration in registrations:
 			if registration.is_complete and not registration.waitlist and not registration.refunded:
+				team_member_captain = 0
+				team_member_models = TeamMember.objects.filter(user=registration.user, team__league=registration.league)
+				if team_member_models.count():
+					team_member_captain = team_member_models[:1].get().captain
+
 				writer.writerow([
 					registration.get_team_id(),
 					registration.baggage,
-					int(TeamMember.objects.filter(user=registration.user, team__league=registration.league)[:1].get().captain),
+					int(team_member_captain),
 					registration.user.first_name,
 					registration.user.last_name,
 					registration.user.get_profile().gender,
