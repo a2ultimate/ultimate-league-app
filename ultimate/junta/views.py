@@ -2,7 +2,7 @@ import copy
 import csv
 from datetime import timedelta
 from itertools import groupby
-from math import ceil, floor
+from math import ceil
 import re
 
 from django.contrib import messages
@@ -221,17 +221,34 @@ def teamgeneration(request, year=None, season=None, division=None):
 						except ObjectDoesNotExist:
 							group['num_males'] += 1
 
-				# Goal is something close to LPT, Longest Processing Time
+				# goal is something close to LPT, Longest Processing Time
 
 				captain_groups = list(g for g in groups if not g['captain'] == None)
-				female_groups = sorted([g for g in groups if g['num_females'] > 0 and g['captain'] == None], key=lambda k: (k['num_females'], k['rating_total'], k['attendance_total']), reverse=True)
-				male_groups = sorted([g for g in groups if g['num_females'] <= 0 and g['captain'] == None], key=lambda k: (k['num_players'], k['rating_total'], k['attendance_total']), reverse=True)
+				female_groups = list(g for g in groups if g['num_females'] > 0 and g['captain'] == None)
+				male_groups = list(g for g in groups if g['num_females'] <= 0 and g['captain'] == None)
+
+				# sort female and male groups, least important to most important values
+				# sort by attendance
+				female_groups.sort(key=lambda k: k['attendance_total'])
+				male_groups.sort(key=lambda k: k['attendance_total'])
+				# sort by total rating of group
+				female_groups.sort(key=lambda k: k['rating_total'])
+				male_groups.sort(key=lambda k: k['rating_total'])
+				# sort by size of group
+				female_groups.sort(key=lambda k: k['num_players'], reverse=True)
+				male_groups.sort(key=lambda k: k['num_players'], reverse=True)
+				# sort female groups by number of females
+				female_groups.sort(key=lambda k: k['num_females'], reverse=True)
 
 				num_teams = int(request.POST.get('num_teams', 0))
+
+				# create a team object to track the teams as they are built
 				teams_object = list(copy.deepcopy({'num_players': 0, 'num_females': 0, 'num_males': 0, 'rating_total': 0, 'rating_average': 0, 'attendance_total': 0, 'attendance_average': 0, 'groups': [], 'players': []}) for i in range(num_teams))
 
+				# number of players on the biggest team
 				team_cap = ceil(float(len(players)) / num_teams)
 
+				# add a group to a team and update all team values
 				def assign_group_to_team(group, team):
 					team['groups'].append(group)
 					team['players'].extend(group['players'])
@@ -246,18 +263,33 @@ def teamgeneration(request, year=None, season=None, division=None):
 					team['attendance_total'] += group['attendance_total']
 					team['attendance_average'] = float(team['attendance_total']) / team['num_players']
 
+				# distribute the groups with captains in them, one per team
 				for group in captain_groups:
 					if not group['captain'] == None and group['captain'] < num_teams:
 						assign_group_to_team(group, teams_object[group['captain']])
 
+				# distribute the groups with females in them, should split females as evenly as possible
 				for group in female_groups:
-					teams_object.sort(key=lambda k: ((k['num_players'] + len(group['players']) > team_cap), k['num_females'], k['attendance_total']))
+					teams_object.sort(key=lambda k: k['attendance_total'], reverse=True)
+					teams_object.sort(key=lambda k: k['rating_average'], reverse=True)
+					teams_object.sort(key=lambda k: k['num_females'])
+					teams_object.sort(key=lambda k: k['num_players'] + len(group['players']) > team_cap)
 					assign_group_to_team(group, teams_object[0])
 
+				# distribute the remaining groups (all male groups)
 				for group in male_groups:
-					teams_object.sort(key=lambda k: (((k['num_players'] + len(group['players'])) > team_cap), k['num_players'], k['rating_total'], k['attendance_total']))
+					teams_object.sort(key=lambda k: k['attendance_total'], reverse=True)
+					teams_object.sort(key=lambda k: k['rating_average'], reverse=True)
+					teams_object.sort(key=lambda k: k['num_players'] + len(group['players']) > team_cap)
+
+					if group['rating_average'] > teams_object[0]['rating_average']:
+						teams_object.sort(key=lambda k: k['attendance_total'])
+						teams_object.sort(key=lambda k: k['rating_average'])
+						teams_object.sort(key=lambda k: k['num_players'] + len(group['players']) > team_cap)
+
 					assign_group_to_team(group, teams_object[0])
 
+				# reorganize new teams so that they can be saved
 				for team in teams_object:
 					new_teams.append({
 						'captains': list(User.objects.get(id=user_id) for user_id in captain_users.keys()),
@@ -315,6 +347,7 @@ def teamgeneration(request, year=None, season=None, division=None):
 
 				messages.success(request, 'Teams were successfully deleted.')
 				return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
+			# if POST and no other parameter, need to save newly generated teams
 			else:
 				for new_team in new_teams:
 					team = None
@@ -401,7 +434,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
 				field_names = request.POST.getlist('field_names')
 				for event in schedule:
 					for i, team in enumerate(event):
-						if (i % 2 == 0):
+						if i % 2 == 0:
 							game = Game()
 							game.date = event_date
 							game.field_name = FieldNames.objects.get(id=field_names[i / 2])

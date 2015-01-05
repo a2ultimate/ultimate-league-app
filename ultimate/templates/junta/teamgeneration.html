@@ -16,7 +16,7 @@
 		{% include "_partials/league_list.html" with leagues=leagues link_view="teamgeneration_league" only %}
 	{% else %}
 		<ul class="breadcrumbs">
-			<li><a href="{% url junta %}">Team Generation</a></li>
+			<li><a href="{% url teamgeneration %}">Team Generation</a></li>
 			<li><a href="{% url teamgeneration_league year=league.year season=league.season division=league.night %}">{{ league.season_title|smart_title }} {{ league.year }} {{ league.night|smart_title }}</a></li>
 		</ul>
 

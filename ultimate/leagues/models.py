@@ -383,6 +383,14 @@ class Registrations(models.Model):
 			return self.baggage.num_registrations
 		return 0
 
+	@property
+	def rating_adjusted(self):
+		rating_total = self.user.rating_total
+		num_events = self.league.get_num_game_events()
+		absence_weight = rating_total / num_events
+
+		return rating_total - ((self.attendance / 2) * absence_weight)
+
 	@transaction.commit_on_success
 	def add_to_baggage_group(self, email):
 		if datetime.now() > self.league.waitlist_start_date:
@@ -493,6 +501,17 @@ class Team(models.Model):
 	def rating_average(self):
 		if self.size > 0:
 			return self.rating_total / float(self.size)
+
+		return 0
+
+	@property
+	def rating_total_adjusted(self):
+		return sum(registration.rating_adjusted for registration in Registrations.objects.filter(league=self.league, user__id__in=self.teammember_set.all().values_list('user', flat=True)))
+
+	@property
+	def rating_average_adjusted(self):
+		if self.size > 0:
+			return self.rating_total_adjusted / float(self.size)
 
 		return 0
 
