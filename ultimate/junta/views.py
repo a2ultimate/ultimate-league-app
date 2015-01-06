@@ -232,8 +232,8 @@ def teamgeneration(request, year=None, season=None, division=None):
 				female_groups.sort(key=lambda k: k['attendance_total'])
 				male_groups.sort(key=lambda k: k['attendance_total'])
 				# sort by total rating of group
-				female_groups.sort(key=lambda k: k['rating_total'])
-				male_groups.sort(key=lambda k: k['rating_total'])
+				female_groups.sort(key=lambda k: k['rating_average'])
+				male_groups.sort(key=lambda k: k['rating_average'])
 				# sort by size of group
 				female_groups.sort(key=lambda k: k['num_players'], reverse=True)
 				male_groups.sort(key=lambda k: k['num_players'], reverse=True)
