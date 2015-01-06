@@ -2,7 +2,7 @@ import copy
 import csv
 from datetime import timedelta
 from itertools import groupby
-from math import ceil
+from math import floor
 import re
 
 from django.contrib import messages
@@ -232,8 +232,8 @@ def teamgeneration(request, year=None, season=None, division=None):
 				female_groups.sort(key=lambda k: k['attendance_total'])
 				male_groups.sort(key=lambda k: k['attendance_total'])
 				# sort by total rating of group
-				female_groups.sort(key=lambda k: k['rating_total'])
-				male_groups.sort(key=lambda k: k['rating_total'])
+				female_groups.sort(key=lambda k: k['rating_average'])
+				male_groups.sort(key=lambda k: k['rating_average'])
 				# sort by size of group
 				female_groups.sort(key=lambda k: k['num_players'], reverse=True)
 				male_groups.sort(key=lambda k: k['num_players'], reverse=True)
@@ -246,7 +246,7 @@ def teamgeneration(request, year=None, season=None, division=None):
 				teams_object = list(copy.deepcopy({'num_players': 0, 'num_females': 0, 'num_males': 0, 'rating_total': 0, 'rating_average': 0, 'attendance_total': 0, 'attendance_average': 0, 'groups': [], 'players': []}) for i in range(num_teams))
 
 				# number of players on the biggest team
-				team_cap = ceil(float(len(players)) / num_teams)
+				team_cap = floor(float(len(players)) / num_teams)
 
 				# add a group to a team and update all team values
 				def assign_group_to_team(group, team):
