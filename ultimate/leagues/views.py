@@ -80,7 +80,8 @@ def players(request, year, season, division):
 			'incomplete_registrations': incomplete_registrations,
 			'waitlist_registrations': waitlist_registrations,
 			'refunded_registrations': refunded_registrations,
-			'unassigned_registrations': unassigned_registrations
+			'unassigned_registrations': unassigned_registrations,
+			'registrations_remaining': max(0, league.max_players - len(complete_registrations))
 		},
 		context_instance=RequestContext(request))
 

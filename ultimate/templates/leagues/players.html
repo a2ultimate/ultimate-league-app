@@ -36,11 +36,14 @@
 	{% endif %}
 
 	<div id="league_players">
-		{% if request.user|in_group:"junta" %}
-			<h4>Currently {{ complete_registrations|length }} out of a maximum {{ league.max_players }} players registered</h4>
-		{% else %}
-			<h4>Currently {{ complete_registrations|length|limit_ceil:league.max_players }} out of a maximum {{ league.max_players }} players registered</h4>
-		{% endif %}
+
+		<h4>
+			There are {{ registrations_remaining }} of {{ league.max_players }} spaces available.
+			{% if registrations_remaining <= 0 %}
+				New registrations will be added to the waitlist.
+			{% endif %}
+		</h4>
+
 
 		<table class="table table-striped">
 			<tbody>
