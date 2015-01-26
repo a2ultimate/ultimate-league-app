@@ -33,7 +33,7 @@ def captainstatus(request, year=None, season=None, division=None):
 	league = None
 	leagues = None
 
-	if (year and season and division):
+	if year and season and division:
 		league = get_object_or_404(League, year=year, season=season, night=division)
 
 	else:
@@ -53,7 +53,7 @@ def leagueresults(request, year=None, season=None, division=None):
 	team_records = None
 
 
-	if (year and season and division):
+	if year and season and division:
 		league = get_object_or_404(League, year=year, season=season, night=division)
 		field_names = league.get_field_names()
 		teams = league.get_teams()
@@ -80,7 +80,7 @@ def leagueresults(request, year=None, season=None, division=None):
 def registrationexport(request, year=None, season=None, division=None):
 	leagues = League.objects.all().order_by('-league_start_date')
 
-	if (year and season and division):
+	if year and season and division:
 		league = get_object_or_404(League, year=year, season=season, night=division)
 
 		# TODO need to use better "complete" registration query
