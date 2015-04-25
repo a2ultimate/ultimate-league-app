@@ -18,6 +18,9 @@ from ultimate.junta.models import *
 from ultimate.leagues.models import *
 from ultimate.user.models import *
 
+from paypal.standard.ipn.models import PayPalIPN
+
+
 @login_required
 @user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='junta').exists())
 def index(request):
@@ -33,7 +36,7 @@ def captainstatus(request, year=None, season=None, division=None):
 	league = None
 	leagues = None
 
-	if (year and season and division):
+	if year and season and division:
 		league = get_object_or_404(League, year=year, season=season, night=division)
 
 	else:
@@ -53,7 +56,7 @@ def leagueresults(request, year=None, season=None, division=None):
 	team_records = None
 
 
-	if (year and season and division):
+	if year and season and division:
 		league = get_object_or_404(League, year=year, season=season, night=division)
 		field_names = league.get_field_names()
 		teams = league.get_teams()
@@ -80,7 +83,7 @@ def leagueresults(request, year=None, season=None, division=None):
 def registrationexport(request, year=None, season=None, division=None):
 	leagues = League.objects.all().order_by('-league_start_date')
 
-	if (year and season and division):
+	if year and season and division:
 		league = get_object_or_404(League, year=year, season=season, night=division)
 
 		# TODO need to use better "complete" registration query
@@ -116,12 +119,18 @@ def registrationexport(request, year=None, season=None, division=None):
 			'Height Inches',
 			'Jersey',
 			'Reg Status',
+			'PayPal Email',
 			'Attendance',
 			'Captaining',
 		])
 
 		for registration in registrations:
 			if registration.is_complete and not registration.waitlist and not registration.refunded:
+				try:
+					paypal_row = PayPalIPN.objects.filter(invoice=registration.paypal_invoice_id)[:1].get()
+				except PayPalIPN.DoesNotExist:
+					paypal_row = None
+
 				team_member_captain = 0
 				team_member_models = TeamMember.objects.filter(user=registration.user, team__league=registration.league)
 				if team_member_models.count():
@@ -146,6 +155,7 @@ def registrationexport(request, year=None, season=None, division=None):
 					registration.user.get_profile().height_inches,
 					registration.user.get_profile().jersey_size,
 					registration.status,
+					paypal_row.payer_email if paypal_row else paypal_row,
 					registration.captain,
 					registration.attendance,
 				])
