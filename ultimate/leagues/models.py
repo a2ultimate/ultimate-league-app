@@ -661,7 +661,7 @@ class Team(models.Model):
 		name = 'Team %d' % (self.id)
 
 		if self.name:
-			name = self.name
+			name = name + ' - ' + self.name
 		if self.color:
 			return name + (' (%s)' % (self.color))
 
