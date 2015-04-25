@@ -37,15 +37,23 @@
 				</tr>
 				<tr>
 					<th colspan="2">
-						Dates
+						{% ifequal league.league_start_date league.league_end_date %}
+							Date
+						{% else %}
+							Dates
+						{% endifequal %}
 					</th>
 					<th>
-						Times
+						Time
 					</th>
 				</tr>
 				<tr>
 					<td colspan="2">
-						{{ league.league_start_date|date:'F d, Y' }} through {{ league.league_end_date|date:'F d, Y' }}
+						{% ifequal league.league_start_date league.league_end_date %}
+							{{ league.league_start_date|date:'F d, Y' }}
+						{% else %}
+							{{ league.league_start_date|date:'F d, Y' }} through {{ league.league_end_date|date:'F d, Y' }}
+						{% endifequal %}
 					</td>
 					<td>
 						{{ league.times }}
