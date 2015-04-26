@@ -18,7 +18,7 @@ def payment_success(sender, **kwargs):
 			registration.waitlist = 1
 
 		registration.paypal_complete = 1
-		registration.registered = datetime.now()
+		registration.registered = ipn_obj.payment_date
 		registration.save()
 
 		print 'PayPal IPN Success: ' + ipn_obj.invoice
