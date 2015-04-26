@@ -170,8 +170,8 @@ def registrationexport(request, year=None, season=None, division=None):
 					paypal_row.payer_email.encode('ascii', 'ignore') if paypal_row else paypal_row,
 					registration.status,
 					paypal_row.payer_email if paypal_row else paypal_row,
-					registration.captain,
 					registration.attendance,
+					registration.captain,
 				])
 
 		return response
