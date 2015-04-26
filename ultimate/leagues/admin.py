@@ -73,6 +73,16 @@ class RegistrationsAdmin(admin.ModelAdmin):
 	list_filter = ('league__year', 'league__season', 'league__night', 'paypal_complete', 'check_complete', 'waitlist', 'refunded',)
 	search_fields = ['user__first_name', 'user__last_name', 'user__email', 'paypal_invoice_id',]
 
+	def get_form(self, request, obj=None, **kwargs):
+		# just save obj reference for future processing in Inline
+		request._registration_obj_ = obj
+		return super(RegistrationsAdmin, self).get_form(request, obj, **kwargs)
+
+	def formfield_for_foreignkey(self, db_field, request, **kwargs):
+		if db_field.name == 'baggage' and request._registration_obj_:
+			kwargs['queryset'] = Baggage.objects.filter(registrations__league=request._registration_obj_.league)
+		return super(RegistrationsAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
 	def year(self, obj):
 		return u'%d' % (obj.league.year)
 	year.admin_order_field  = 'league__year'
