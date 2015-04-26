@@ -97,7 +97,7 @@ class RegistrationsAdmin(admin.ModelAdmin):
 		paypal_row = PayPalIPN.objects.filter(invoice=obj.paypal_invoice_id).order_by('-payment_date')[:1].get()
 		if not paypal_row:
 			return None
-		return u'Name: %s %s<br />Email: %s<br />Status: %s<br />Date: %s' % (paypal_row.first_name, paypal_row.last_name, paypal_row.payer_email, paypal_row.payment_status, paypal_row.payment_date)
+		return u'Name: {} {}<br />Email: {}<br />Date: {}<br />Status: {}<br />Amount: {}'.format(paypal_row.first_name, paypal_row.last_name, paypal_row.payer_email, paypal_row.payment_date, paypal_row.payment_status, paypal_row.mc_gross)
 	paypal_details.allow_tags = True
 
 
