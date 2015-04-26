@@ -4,6 +4,7 @@ import re
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.db import IntegrityError
 from django.forms.formsets import formset_factory
 from django.forms.models import model_to_dict, modelformset_factory
 from django.http import HttpResponseRedirect
