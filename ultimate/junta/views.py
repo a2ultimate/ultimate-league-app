@@ -131,6 +131,18 @@ def registrationexport(request, year=None, season=None, division=None):
 				except PayPalIPN.DoesNotExist:
 					paypal_row = None
 
+				try:
+					registration_profile = registration.user.get_profile()
+					gender = registration_profile.gender.encode('ascii', 'ignore')
+					age = registration_profile.age.encode('ascii', 'ignore')
+					height_inches = registration_profile.height_inches.encode('ascii', 'ignore')
+					jersey_size = registration_profile.jersey_size.encode('ascii', 'ignore')
+				except:
+					gender = None
+					age = None
+					height_inches = None
+					jersey_size = None
+
 				team_member_captain = 0
 				team_member_models = TeamMember.objects.filter(user=registration.user, team__league=registration.league)
 				if team_member_models.count():
@@ -140,10 +152,10 @@ def registrationexport(request, year=None, season=None, division=None):
 					registration.get_team_id(),
 					registration.baggage,
 					int(team_member_captain),
-					registration.user.first_name.encode('ascii', 'ignore'),
-					registration.user.last_name.encode('ascii', 'ignore'),
-					registration.user.get_profile().gender.encode('ascii', 'ignore'),
-					registration.user.email.encode('ascii', 'ignore'),
+					registration.user.first_name,
+					registration.user.last_name,
+					gender,
+					registration.user.email,
 					registration.user.rating_total,
 					registration.average_experience,
 					registration.average_strategy,
@@ -151,11 +163,13 @@ def registrationexport(request, year=None, season=None, division=None):
 					registration.average_athleticism,
 					registration.average_competitiveness,
 					registration.average_spirit,
-					registration.user.get_profile().age,
-					registration.user.get_profile().height_inches.encode('ascii', 'ignore'),
-					registration.user.get_profile().jersey_size.encode('ascii', 'ignore'),
+					age,
+					height_inches,
+					jersey_size,
 					registration.status.encode('ascii', 'ignore'),
 					paypal_row.payer_email.encode('ascii', 'ignore') if paypal_row else paypal_row,
+					registration.status,
+					paypal_row.payer_email if paypal_row else paypal_row,
 					registration.captain,
 					registration.attendance,
 				])
