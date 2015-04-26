@@ -220,8 +220,10 @@ def gamereport(request, teamid, gameid):
 			score_formset = ScoreFormset(queryset=GameReportScore.objects.filter(report=game_report))
 		else:
 			game_teams = game.gameteams_set
+			user_team = game_teams.filter(team=team).get().team
+			opponent_team = game_teams.exclude(team=team).get().team
 			score_formset = ScoreFormset(queryset=GameReportScore.objects.none(),
-				initial=[{'team': game_teams.filter(team=team).get().team}, {'team': game_teams.exclude(team=team).get().team},])
+				initial=[{'team': user_team}, {'team': opponent_team}])
 
 		score_us_form = score_formset.forms[0]
 		score_them_form = score_formset.forms[1]
