@@ -315,6 +315,7 @@ class Registrations(models.Model):
 	class Meta:
 		db_table = u'registrations'
 		verbose_name_plural = 'registrations'
+		unique_together = ('user', 'league',)
 
 	@property
 	def status(self):
