@@ -192,6 +192,12 @@ def teamgeneration(request, year=None, season=None, division=None):
 		if request.method == 'POST':
 			new_teams = []
 			if 'generate_teams' in request.POST:
+				num_teams = int(request.POST.get('num_teams', 0))
+
+				if not num_teams:
+					messages.error(request, 'You must specify a number of teams greater than zero.')
+					return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
+
 				if teams:
 					messages.error(request, 'Teams were not generated. Teams already exist for this league.')
 					return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
@@ -249,8 +255,6 @@ def teamgeneration(request, year=None, season=None, division=None):
 				male_groups.sort(key=lambda k: k['num_players'], reverse=True)
 				# sort female groups by number of females
 				female_groups.sort(key=lambda k: k['num_females'], reverse=True)
-
-				num_teams = int(request.POST.get('num_teams', 0))
 
 				# create a team object to track the teams as they are built
 				teams_object = list(copy.deepcopy({'num_players': 0, 'num_females': 0, 'num_males': 0, 'rating_total': 0, 'rating_average': 0, 'attendance_total': 0, 'attendance_average': 0, 'groups': [], 'players': []}) for i in range(num_teams))
