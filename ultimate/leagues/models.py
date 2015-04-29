@@ -203,6 +203,10 @@ class League(models.Model):
 				(len(self.get_complete_registrations()) >= self.max_players) \
 			)
 
+	@property
+	def is_after_price_increase(self):
+		return datetime.now() >= self.price_increase_start_date
+
 	def __unicode__(self):
 		return ('%s %d %s' % (self.season, self.year, self.night)).replace('_', ' ')
 

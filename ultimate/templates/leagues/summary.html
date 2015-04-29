@@ -94,6 +94,14 @@
 				{{ league.baggage }}
 			</td>
 		</tr>
+		{% if not league.is_after_price_increase %}
+			<tr>
+				<td colspan="2">
+					<em>The price will increase by ${{ league.late_cost_increase }} on {{ league.price_increase_start_date|date:'F d, Y' }} at {{ league.price_increase_start_date|date:'h:iA' }}</em>
+				</td>
+				<td></td>
+			</tr>
+		{% endif %}
 		<tr>
 			<th colspan="3">
 				Important Dates
