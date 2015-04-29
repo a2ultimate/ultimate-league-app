@@ -131,14 +131,16 @@
 						{{ league.waitlist_start_date|date:'F d, Y' }} at {{ league.waitlist_start_date|date:'h:iA' }} or {{ league.max_players }} Players
 					</td>
 				</tr>
-				<tr>
-					<td>
-						Group Edit Deadline
-					</td>
-					<td colspan="2">
-						{{ league.waitlist_start_date|date:'F d, Y' }} at {{ league.waitlist_start_date|date:'h:iA' }}
-					</td>
-				</tr>
+				{% if league.baggage > 1 %}
+					<tr>
+						<td>
+							Group Edit Deadline
+						</td>
+						<td colspan="2">
+							{{ league.waitlist_start_date|date:'F d, Y' }} at {{ league.waitlist_start_date|date:'h:iA' }}
+						</td>
+					</tr>
+				{% endif %}
 
 				{% if league|is_open:user %}
 					<tr>
