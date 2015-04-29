@@ -101,18 +101,18 @@
 		</tr>
 		<tr>
 			<td>
-				Signup Cutoff/Deadline
+				Registration Deadline
 			</td>
 			<td colspan="2">
-				{{ league.max_players }} Players or {{ league.waitlist_start_date|date:'F d, Y' }}
+				{{ league.waitlist_start_date|date:'F d, Y' }} at {{ league.waitlist_start_date|date:'h:iA' }} or {{ league.max_players }} Players
 			</td>
 		</tr>
 		<tr>
 			<td>
-				Group Change Deadline
+				Group Edit Deadline
 			</td>
 			<td colspan="2">
-				{{ league.waitlist_start_date|date:'F d, Y' }}
+				{{ league.waitlist_start_date|date:'F d, Y' }} at {{ league.waitlist_start_date|date:'h:iA' }}
 			</td>
 		</tr>
 
