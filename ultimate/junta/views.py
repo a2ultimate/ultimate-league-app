@@ -134,12 +134,9 @@ def registrationexport(request, year=None, season=None, division=None):
 				try:
 					registration_profile = registration.user.get_profile()
 					gender = registration_profile.gender.encode('ascii', 'ignore')
-					age = registration_profile.age.encode('ascii', 'ignore')
-					height_inches = registration_profile.height_inches.encode('ascii', 'ignore')
 					jersey_size = registration_profile.jersey_size.encode('ascii', 'ignore')
 				except:
 					gender = None
-					age = None
 					height_inches = None
 					jersey_size = None
 
@@ -163,8 +160,8 @@ def registrationexport(request, year=None, season=None, division=None):
 					registration.average_athleticism,
 					registration.average_competitiveness,
 					registration.average_spirit,
-					age,
-					height_inches,
+					int(registration_profile.age),
+					int(registration_profile.height_inches),
 					jersey_size,
 					registration.status.encode('ascii', 'ignore'),
 					paypal_row.payer_email.encode('ascii', 'ignore') if paypal_row else paypal_row,
