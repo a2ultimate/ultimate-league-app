@@ -103,6 +103,7 @@ def registrationexport(request, year=None, season=None, division=None):
 		writer.writerow([
 			'Team',
 			'Group',
+			'Group Size',
 			'Captain',
 			'Firstname',
 			'Lastname',
@@ -149,6 +150,7 @@ def registrationexport(request, year=None, season=None, division=None):
 				writer.writerow([
 					registration.get_team_id(),
 					registration.baggage,
+					int(registration.baggage_size),
 					int(team_member_captain),
 					registration.user.first_name,
 					registration.user.last_name,
