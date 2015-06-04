@@ -102,7 +102,8 @@ def registrationexport(request, year=None, season=None, division=None):
 		writer = csv.writer(response)
 		writer.writerow([
 			'Team',
-			'Baggage Id',
+			'Group',
+			'Group Size',
 			'Captain',
 			'Firstname',
 			'Lastname',
@@ -117,8 +118,8 @@ def registrationexport(request, year=None, season=None, division=None):
 			'Spirit',
 			'Age',
 			'Height Inches',
-			'Jersey',
-			'Reg Status',
+			'Registration Status',
+			'Registration Timestamp',
 			'PayPal Email',
 			'Attendance',
 			'Captaining',
@@ -148,6 +149,7 @@ def registrationexport(request, year=None, season=None, division=None):
 				writer.writerow([
 					registration.get_team_id(),
 					registration.baggage,
+					int(registration.baggage_size),
 					int(team_member_captain),
 					registration.user.first_name,
 					registration.user.last_name,
@@ -162,8 +164,8 @@ def registrationexport(request, year=None, season=None, division=None):
 					registration.average_spirit,
 					int(registration_profile.age),
 					int(registration_profile.height_inches),
-					jersey_size,
 					registration.status.encode('ascii', 'ignore'),
+					registration.registered,
 					paypal_row.payer_email.encode('ascii', 'ignore') if paypal_row else paypal_row,
 					registration.attendance,
 					registration.captain,
