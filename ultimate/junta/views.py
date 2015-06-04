@@ -296,19 +296,19 @@ def teamgeneration(request, year=None, season=None, division=None):
 					teams_object.sort(key=lambda k: k['attendance_total'], reverse=True)
 					teams_object.sort(key=lambda k: k['rating_average'], reverse=True)
 					teams_object.sort(key=lambda k: k['num_females'])
-					teams_object.sort(key=lambda k: k['num_players'] + len(group['players']) > team_cap)
+					teams_object.sort(key=lambda k: k['num_players'] + len(group['players']) - team_cap)
 					assign_group_to_team(group, teams_object[0])
 
 				# distribute the remaining groups (all male groups)
 				for group in male_groups:
 					teams_object.sort(key=lambda k: k['attendance_total'], reverse=True)
 					teams_object.sort(key=lambda k: k['rating_average'], reverse=True)
-					teams_object.sort(key=lambda k: k['num_players'] + len(group['players']) > team_cap)
+					teams_object.sort(key=lambda k: k['num_players'] + len(group['players']) - team_cap)
 
 					if group['rating_average'] > teams_object[0]['rating_average']:
 						teams_object.sort(key=lambda k: k['attendance_total'])
 						teams_object.sort(key=lambda k: k['rating_average'])
-						teams_object.sort(key=lambda k: k['num_players'] + len(group['players']) > team_cap)
+						teams_object.sort(key=lambda k: k['num_players'] + len(group['players']) - team_cap)
 
 					assign_group_to_team(group, teams_object[0])
 
