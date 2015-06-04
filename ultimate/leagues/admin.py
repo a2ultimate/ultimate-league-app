@@ -80,7 +80,7 @@ class RegistrationsAdmin(admin.ModelAdmin):
 
 	def formfield_for_foreignkey(self, db_field, request, **kwargs):
 		if db_field.name == 'baggage' and request._registration_obj_:
-			kwargs['queryset'] = Baggage.objects.filter(registrations__league=request._registration_obj_.league)
+			kwargs['queryset'] = Baggage.objects.filter(registrations__league=request._registration_obj_.league).distinct()
 		return super(RegistrationsAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 	def year(self, obj):
