@@ -80,6 +80,42 @@ def leagueresults(request, year=None, season=None, division=None):
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='junta').exists())
+def gamereports(request, year=None, season=None, division=None, game_id=None, team_id=None):
+	field_names = None
+	game_report = None
+	games = None
+	league = None
+	leagues = None
+
+	if year and season and division:
+		league = get_object_or_404(League, year=year, season=season, night=division)
+
+		if game_id:
+			game = get_object_or_404(Game, id=game_id)
+			team = get_object_or_404(Team, id=team_id)
+
+			game_report = game.get_report_for_team(team).get()
+
+		else:
+			field_names = league.get_field_names()
+			games = league.get_games()
+
+	else:
+		leagues = League.objects.all().order_by('-league_start_date')
+
+	return render_to_response('junta/gamereports.html',
+		{
+			'field_names': field_names,
+			'games': games,
+			'game_report': game_report,
+			'league': league,
+			'leagues': leagues
+		},
+		context_instance=RequestContext(request))
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='junta').exists())
 def registrationexport(request, year=None, season=None, division=None):
 	leagues = League.objects.all().order_by('-league_start_date')
 
