@@ -12,4 +12,5 @@ urlpatterns = patterns('ultimate.index.views',
 	(r'^rules/$', 'content', {'url': 'rules/'}, 'rules'),
 	(r'^weather/$', 'content', {'url': 'weather/'}, 'weather'),
 	(r'^welcome/$', 'content', {'url': 'welcome/'}, 'welcome'),
+	(r'^youth/$', 'content', {'url': 'youth/'}, 'youth'),
 )
