@@ -129,8 +129,8 @@ def registrationexport(request, year=None, season=None, division=None):
 			.extra(select={'average_throwing':'SELECT COALESCE(AVG(player_ratings.throwing), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.throwing != 0'}) \
 			.extra(select={'average_athleticism':'SELECT COALESCE(AVG(player_ratings.athleticism), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.athleticism != 0'}) \
 			.extra(select={'average_competitiveness':'SELECT COALESCE(AVG(player_ratings.competitiveness), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.competitiveness != 0'}) \
-			.extra(select={'average_spirit':'SELECT COALESCE(AVG(player_ratings.spirit), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.spirit != 0'})
-
+			.extra(select={'average_spirit':'SELECT COALESCE(AVG(player_ratings.spirit), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.spirit != 0'}) \
+			.extra(select={'num_teams':'SELECT COUNT(team_member.id) FROM team_member WHERE team_member.user_id = registrations.user_id GROUP BY team_member.user_id'})
 
 		response = HttpResponse(content_type='text/csv')
 		response['Content-Disposition'] = 'attachment; filename="' + league.__unicode__() + '.csv"'
@@ -154,6 +154,7 @@ def registrationexport(request, year=None, season=None, division=None):
 			'Spirit',
 			'Age',
 			'Height Inches',
+			'Number of Leagues',
 			'Registration Status',
 			'Registration Timestamp',
 			'PayPal Email',
@@ -200,6 +201,7 @@ def registrationexport(request, year=None, season=None, division=None):
 					registration.average_spirit,
 					int(registration_profile.age),
 					int(registration_profile.height_inches),
+					registration.num_teams,
 					registration.status.encode('ascii', 'ignore'),
 					registration.registered,
 					paypal_row.payer_email.encode('ascii', 'ignore') if paypal_row else paypal_row,
@@ -528,4 +530,3 @@ def schedulegeneration(request, year=None, season=None, division=None):
 	return render_to_response('junta/schedulegeneration.html',
 		{'league': league, 'leagues': leagues, 'form': form, 'schedule': schedule, 'num_games': num_teams / 2},
 		context_instance=RequestContext(request))
-
