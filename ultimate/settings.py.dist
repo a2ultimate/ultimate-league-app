@@ -106,16 +106,17 @@ INSTALLED_APPS = (
 	'django.contrib.staticfiles',
 	'django.contrib.webdesign',
 	'paypal.standard.ipn',
-	'syncr.flickr',
+
+	'pybb',
+	'pytils',
+	'south',
+
 	'ultimate',
 	'ultimate.captain',
 	'ultimate.index',
 	'ultimate.junta',
 	'ultimate.leagues',
 	'ultimate.user',
-	'pybb',
-	'pytils',
-	'south',
 )
 
 AUTHENTICATION_BACKENDS = (
