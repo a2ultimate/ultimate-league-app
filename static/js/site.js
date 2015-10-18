@@ -75,7 +75,7 @@ $(function() {
 
 	$('.slide_selector').each(function () {
 		var $this = $(this),
-			$input = $('input[type=text]', $this),
+			$input = $('input', $this),
 			$slider = $('.slider', $this),
 			sliderMax = $this.data('slider-max') || 10,
 			sliderMin = $this.data('slider-min') || 0;
@@ -89,7 +89,7 @@ $(function() {
 			max: sliderMax || 10,
 			min: sliderMin || 0,
 			slide: function(event, slider) {
-				$(this).siblings('input[type=text]').val(slider.value);
+				$input.val(slider.value);
 			},
 			value: $input.val()
 		});
