@@ -14,19 +14,19 @@
 	{% endif %}
 
 	{% if registration.progress >= tick_percentage|multiply_by:"0" %}
-		<a class="tick_label" style="left: {{ tick_percentage|multiply_by:"1" }}%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='conduct' %}">Code of Conduct</a>
+		<a class="tick_label" style="left: {{ tick_percentage|multiply_by:"1" }}%" href="{% url 'league_registration_section' year=league.year season=league.season division=league.night section='conduct'  %}">Code of Conduct</a>
 	{% else %}
 		<span class="tick_label" style="left: {{ tick_percentage|multiply_by:"1" }}%">Code of Conduct</span>
 	{% endif %}
 
 	{% if registration.progress >= tick_percentage|multiply_by:"1" %}
-		<a class="tick_label" style="left: {{ tick_percentage|multiply_by:"2" }}%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='waiver' %}">Waiver</a>
+		<a class="tick_label" style="left: {{ tick_percentage|multiply_by:"2" }}%" href="{% url 'league_registration_section' year=league.year season=league.season division=league.night section='waiver'  %}">Waiver</a>
 	{% else %}
 		<span class="tick_label" style="left: {{ tick_percentage|multiply_by:"2" }}%">Waiver</span>
 	{% endif %}
 
 	{% if registration.progress >= tick_percentage|multiply_by:"2" %}
-		<a class="tick_label" style="left: {{ tick_percentage|multiply_by:"3" }}%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='attendance' %}">Attendance</a>
+		<a class="tick_label" style="left: {{ tick_percentage|multiply_by:"3" }}%" href="{% url 'league_registration_section' year=league.year season=league.season division=league.night section='attendance'  %}">Attendance</a>
 	{% else %}
 		<span class="tick_label" style="left: {{ tick_percentage|multiply_by:"3" }}%">Attendance</span>
 	{% endif %}
@@ -34,7 +34,7 @@
 	{% if league.check_price == 0 and league.paypal_price == 0 or not league.checks_accepted %}
 
 		{% if registration.progress >= tick_percentage|multiply_by:"3" %}
-			<a class="tick_label" style="left: {{ tick_percentage|multiply_by:"4" }}%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='status' %}">Status {{ registration.progress }}%</a>
+			<a class="tick_label" style="left: {{ tick_percentage|multiply_by:"4" }}%" href="{% url 'league_registration_section' year=league.year season=league.season division=league.night section='status'  %}">Status {{ registration.progress }}%</a>
 		{% else %}
 			<span class="tick_label" style="left: {{ tick_percentage|multiply_by:"4" }}%">Status {{ registration.progress }}%</span>
 		{% endif %}
@@ -42,13 +42,13 @@
 	{% else %}
 
 		{% if registration.progress >= tick_percentage|multiply_by:"3" %}
-			<a class="tick_label" style="left: {{ tick_percentage|multiply_by:"4" }}%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='pay_type' %}">Payment Type</a>
+			<a class="tick_label" style="left: {{ tick_percentage|multiply_by:"4" }}%" href="{% url 'league_registration_section' year=league.year season=league.season division=league.night section='pay_type'  %}">Payment Type</a>
 		{% else %}
 			<span class="tick_label" style="left: {{ tick_percentage|multiply_by:"4" }}%">Payment Type</span>
 		{% endif %}
 
 		{% if registration.progress >= tick_percentage|multiply_by:"4" %}
-			<a class="tick_label" style="left: {{ tick_percentage|multiply_by:"5" }}%" href="{% url league_registration_section year=league.year season=league.season division=league.night section='status' %}">Status {{ registration.progress }}%</a>
+			<a class="tick_label" style="left: {{ tick_percentage|multiply_by:"5" }}%" href="{% url 'league_registration_section' year=league.year season=league.season division=league.night section='status'  %}">Status {{ registration.progress }}%</a>
 		{% else %}
 			<span class="tick_label" style="left: {{ tick_percentage|multiply_by:"5" }}%">Status {{ registration.progress }}%</span>
 		{% endif %}

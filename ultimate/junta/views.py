@@ -7,7 +7,7 @@ import re
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.db import transaction
+from django.db.transaction import atomic
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
@@ -170,7 +170,7 @@ def registrationexport(request, year=None, season=None, division=None):
 					paypal_row = None
 
 				try:
-					registration_profile = registration.user.get_profile()
+					registration_profile = registration.user.profile
 					gender = registration_profile.gender.encode('ascii', 'ignore')
 					jersey_size = registration_profile.jersey_size.encode('ascii', 'ignore')
 				except:
@@ -219,7 +219,7 @@ def registrationexport(request, year=None, season=None, division=None):
 
 
 @login_required
-@transaction.commit_on_success
+@atomic
 @user_passes_test(lambda u: u.is_superuser)
 def teamgeneration(request, year=None, season=None, division=None):
 	if year and season and division:
@@ -279,7 +279,7 @@ def teamgeneration(request, year=None, season=None, division=None):
 							group['captain'] = captain_users[player['user'].id]
 
 						try:
-							if player['user'].get_profile().gender == 'F':
+							if player['user'].profile.gender == 'F':
 								group['num_females'] += 1
 							else:
 								group['num_males'] += 1
@@ -454,7 +454,7 @@ def teamgeneration(request, year=None, season=None, division=None):
 
 
 @login_required
-@transaction.commit_on_success
+@atomic
 @user_passes_test(lambda u: u.is_superuser)
 def schedulegeneration(request, year=None, season=None, division=None):
 	league = None

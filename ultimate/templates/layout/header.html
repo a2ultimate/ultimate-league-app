@@ -78,18 +78,18 @@
 	<div id="header_container">
 		<div id="header">
 			<div id="banner">
-				<a href="{% url home %}">
+				<a href="{% url 'home'  %}">
 					<img src="{{ STATIC_URL }}images/banner.png" alt="Ann Arbor Ultimate" width="435" height="41" />
 				</a>
 			</div>
 
 			<ul class="banner_links">
 				{% if user.is_authenticated %}
-					<li><a href="{% url user %}">{{ user.username }}</a></li>
-					<li><a href="{% url auth_logout %}">Logout?</a></li>
+					<li><a href="{% url 'user'  %}">{{ user.username }}</a></li>
+					<li><a href="{% url 'auth_logout'  %}">Logout?</a></li>
 				{% else %}
-					<li><a href="{% url auth_login %}">Login</a></li>
-					<li><a href="{% url registration_register %}">Signup</a></li>
+					<li><a href="{% url 'auth_login'  %}">Login</a></li>
+					<li><a href="{% url 'registration_register'  %}">Signup</a></li>
 				{% endif %}
 			</ul>
 		</div>
@@ -105,7 +105,7 @@
 
 			{% if user.is_superuser %}
 				<ul class="nav">
-					<li><a href="{% url home %}admin">Admin</a></li>
+					<li><a href="{% url 'home'  %}admin">Admin</a></li>
 				</ul>
 			{% endif %}
 
@@ -117,27 +117,27 @@
 					{% for season_year in season_years %}
 						{% with season_year_league=season_year.list|first %}
 							<li>
-								<a href="{% url league_index_season year=season_year_league.year season=season_year_league.season %}">
+								<a href="{% url 'league_index_season' year=season_year_league.year season=season_year_league.season  %}">
 									{{ season_year.grouper|smart_title }}
 								</a>
 								<ul class="dropdown">
 									{% for league in season_year.list|sort_by_league_start_date_weekday %}
 										<li>
-											<a href="{% url league_summary year=league.year season=league.season division=league.night %}">
+											<a href="{% url 'league_summary' year=league.year season=league.season division=league.night  %}">
 												{{ league.night_title|smart_title }}
 											</a>
 											<ul class="dropdown">
 												{% if league|is_open:user %}
 													{% if league|is_waitlist:user %}
-														<li><a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register for Waitlist</a></li>
+														<li><a href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register for Waitlist</a></li>
 													{% else %}
-														<li><a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register</a></li>
+														<li><a href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register</a></li>
 													{% endif %}
 												{% endif %}
-												<li><a href="{% url league_summary year=league.year season=league.season division=league.night %}">Summary</a></li>
-												<li><a href="{% url league_details year=league.year season=league.season division=league.night %}">Detailed Info</a></li>
-												<li><a href="{% url league_players year=league.year season=league.season division=league.night %}">Players</a></li>
-												<li><a href="{% url league_teams year=league.year season=league.season division=league.night %}">Teams & Schedules</a></li>
+												<li><a href="{% url 'league_summary' year=league.year season=league.season division=league.night  %}">Summary</a></li>
+												<li><a href="{% url 'league_details' year=league.year season=league.season division=league.night  %}">Detailed Info</a></li>
+												<li><a href="{% url 'league_players' year=league.year season=league.season division=league.night  %}">Players</a></li>
+												<li><a href="{% url 'league_teams' year=league.year season=league.season division=league.night  %}">Teams & Schedules</a></li>
 											</ul>
 										</li>
 									{% endfor %}

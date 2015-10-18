@@ -6,7 +6,7 @@
 	{% include "layout/account_tabs.html" with selected_tab="captain" %}
 
 	<ul class="breadcrumbs">
-		<li><a href="{% url captain %}">Captain Resources</a></li>
+		<li><a href="{% url 'captain'  %}">Captain Resources</a></li>
 		<li class="active">{{ team.league|smart_title }}</li>
 		<li class="active">Game Report</a>
 	</ul>
@@ -125,7 +125,7 @@
 						<input type="checkbox" id="user_{{ team_member.user.id }}" name="user_{{ team_member.user.id }}" {% if team_member.user.id in attendance %}checked{% endif %} />
 						<label for="user_{{ team_member.user.id }}">
 							{{ team_member.user.get_full_name }}
-							<em>{{ team_member.user.get_profile.nickname }}</em>
+							<em>{{ team_member.user.profile.nickname }}</em>
 						</label>
 					</td>
 
@@ -138,7 +138,7 @@
 
 		<div id="game_report_comment" class="control_group">
 			<h2 title="This will remain private and will not be shared with your co-captain">
-				Anything else? <a class="small" href="{% url comments %}" target="_blank">(help)</a>
+				Anything else? <a class="small" href="{% url 'comments'  %}" target="_blank">(help)</a>
 			</h2>
 			{{ comment_form.comment.errors }}
 			{{ comment_form.comment }}

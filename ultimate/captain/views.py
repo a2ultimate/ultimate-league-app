@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
+from django.db.transaction import atomic
 from django.forms.formsets import formset_factory
 from django.forms.models import model_to_dict, modelformset_factory
 from django.http import HttpResponseRedirect
@@ -50,7 +51,7 @@ def editteam(request, teamid):
 
 
 @login_required
-@transaction.commit_on_success
+@atomic
 def playersurvey(request, teamid):
 	team = get_object_or_404(Team, id=teamid)
 
@@ -137,7 +138,7 @@ def playersurvey(request, teamid):
 
 
 @login_required
-@transaction.commit_on_success
+@atomic
 def gamereport(request, teamid, gameid):
 	team = get_object_or_404(Team, id=teamid)
 	game = get_object_or_404(Game, id=gameid)

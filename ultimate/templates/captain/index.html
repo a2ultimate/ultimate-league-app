@@ -18,13 +18,13 @@
 
 				<ul>
 					<li>
-						<a href="{% url captaineditteam teamid=team.id %}">
+						<a href="{% url 'captaineditteam' teamid=team.id  %}">
 							<span class="status pull_left"></span>
 							Change Team Name or Color
 						</a>
 					</li>
 					<li>
-						<a href="{% url playersurvey teamid=team.id %}">
+						<a href="{% url 'playersurvey' teamid=team.id  %}">
 							{% if team.league|get_player_survey_status:user %}
 								<span class="status state_success pull_left"></span>
 							{% else %}
@@ -43,7 +43,7 @@
 							{% else %}
 								<span class="status state_error pull_left"></span>
 							{% endif %}
-							<a href="{% url gamereport teamid=team.id gameid=game.id %}">
+							<a href="{% url 'gamereport' teamid=team.id gameid=game.id  %}">
 								On {{ game.date|date:"m/d" }} vs. {{ game|get_game_opponent_team_name:user}}
 							</a>
 						</li>

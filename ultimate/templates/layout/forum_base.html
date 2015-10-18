@@ -40,24 +40,24 @@
 		<div class="navbar navbar-inverse navbar-fixed-top">
 			<div class="navbar-inner">
 				<div class="container">
-					<a class="brand" href="{% url pybb:index %}">Ann Arbor Ultimate Forum</a>
+					<a class="brand" href="{% url 'pybb:index'  %}">Ann Arbor Ultimate Forum</a>
 					<ul class="nav">
 						{% if request.user.is_authenticated %}
 							<li>
-								<a href="{% url auth_logout %}">Logout</a>
+								<a href="{% url 'auth_logout'  %}">Logout</a>
 							</li>
 						{% else %}
 							<li>
-								<a href="{% url auth_login %}">Login</a>
+								<a href="{% url 'auth_login'  %}">Login</a>
 							</li>
 							<li>
-								<a href="{% url registration_register %}">Register</a>
+								<a href="{% url 'registration_register'  %}">Register</a>
 							</li>
 						{% endif %}
 					</ul>
 					<ul class="nav pull-right">
 						<li>
-							<a href="{% url home %}">&larr; Return to annarborultimate.org</a>
+							<a href="{% url 'home'  %}">&larr; Return to annarborultimate.org</a>
 						</li>
 					</ul>
 				</div>

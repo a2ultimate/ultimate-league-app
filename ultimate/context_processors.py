@@ -30,7 +30,7 @@ def user_profile_is_complete(request):
 	result = {'user_profile_is_complete': False}
 	if request.user and request.user.is_authenticated():
 		try:
-			result['user_profile_is_complete'] = bool(request.user.get_profile().is_complete_for_user)
+			result['user_profile_is_complete'] = bool(request.user.profile.is_complete_for_user)
 		except:
 			return result
 

@@ -5,13 +5,13 @@
 	{% include "layout/account_tabs.html" with selected_tab="captain" %}
 
 	<ul class="breadcrumbs">
-		<li><a href="{% url captain %}">Captain Resources</a></li>
-		<li><a href="{% url captaineditteam teamid=team.id %}">Edit Team Information</a></li>
+		<li><a href="{% url 'captain'  %}">Captain Resources</a></li>
+		<li><a href="{% url 'captaineditteam' teamid=team.id  %}">Edit Team Information</a></li>
 	</ul>
 
 	<h1>Update Your Team Information</h1>
 
-	<form method="post" action="{% url captaineditteam teamid=team.id %}">{% csrf_token %}
+	<form method="post" action="{% url 'captaineditteam' teamid=team.id  %}">{% csrf_token %}
 		<div class="hidden">
 			{% for hidden in form.hidden_fields %}
 				{{ hidden }}
@@ -33,6 +33,6 @@
 		</table>
 
 		<input class="button button_success" type="submit" value="Update" />
-		<a class="form_cancel" href="{% url captaineditteam teamid=team.id %}">cancel</a>
+		<a class="form_cancel" href="{% url 'captaineditteam' teamid=team.id  %}">cancel</a>
 	</form>
 {% endblock %}

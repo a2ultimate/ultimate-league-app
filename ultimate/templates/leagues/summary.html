@@ -15,9 +15,9 @@
 
 	<table class="table table-striped-header">
 		<tr>
-			<td><a href="{% url league_details year=league.year season=league.season division=league.night %}">Detailed Info</a></td>
-			<td><a href="{% url league_players year=league.year season=league.season division=league.night %}">Players</a></td>
-			<td><a href="{% url league_teams year=league.year season=league.season division=league.night %}">Teams & Schedules</a></td>
+			<td><a href="{% url 'league_details' year=league.year season=league.season division=league.night  %}">Detailed Info</a></td>
+			<td><a href="{% url 'league_players' year=league.year season=league.season division=league.night  %}">Players</a></td>
+			<td><a href="{% url 'league_teams' year=league.year season=league.season division=league.night  %}">Teams & Schedules</a></td>
 		</tr>
 		<tr>
 			<th colspan="2">
@@ -136,9 +136,9 @@
 			<tr>
 				<td colspan="3">
 					{% if league|is_waitlist:user %}
-						<a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register for the Waitlist</a>
+						<a href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register for the Waitlist</a>
 					{% else %}
-						<a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register Now!</a>
+						<a href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register Now!</a>
 					{% endif %}
 				</td>
 			</tr>

@@ -10,7 +10,7 @@
         <ul class="tablist-inner topic">
             {% for topic in page.object_list %}
             <li class="tablist-inner-row topic">
-                <span class="title"><a href={% url pybb_topic topic.id %}>{{ topic }}</a></span>
+                <span class="title"><a href={% url 'pybb_topic' topic.id  %}>{{ topic }}</a></span>
                 <span class="post_count">{{ topic.posts.count }}</span>
                 <span class="updated">{{ topic.created|date:"Y/m/d h:iA" }}</span>
             </li>

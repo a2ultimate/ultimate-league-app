@@ -15,13 +15,13 @@ class Command(BaseCommand):
     help = 'Migrate pybb profiles to local site profile'
 
     def handle(self, *args, **options):
-        profile_app, profile_model = settings.AUTH_PROFILE_MODULE.split('.')
+        profile_app, profile_model = 'leagues.Player'.split('.')
         profile_model = ContentType.objects.get(app_label=profile_app, model=profile_model).model_class()
         for user in User.objects.all():
             #print(u'migrating profile for %s\n' % user.username)
             pybb_profile = user.pybb_profile
             try:
-                profile = user.get_profile()
+                profile = user.profile
             except profile_model.DoesNotExist:
                 profile = profile_model(user=user)
             profile.post_count = pybb_profile.post_count

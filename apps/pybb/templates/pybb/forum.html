@@ -24,7 +24,7 @@
 
         {% include "pybb/pagination.html" %}
 
-        {% if PYBB_ENABLE_ANONYMOUS_POST or not user.get_profile.is_banned %}
+        {% if PYBB_ENABLE_ANONYMOUS_POST or not user.profile.is_banned %}
             <div class="controls">
                 {% include "pybb/_button_new_topic.html" %}
             </div>

@@ -89,7 +89,7 @@
 											{% for team in game.get_teams %}
 												<div>
 													{% if game|get_report_for_team:team %}
-														<a href="{% url gamereports_game year=league.year season=league.season division=league.night game_id=game.id team_id=team.id %}">
+														<a href="{% url 'gamereports_game' year=league.year season=league.season division=league.night game_id=game.id team_id=team.id  %}">
 															{{ team.id }}
 														</a>
 													{% else %}

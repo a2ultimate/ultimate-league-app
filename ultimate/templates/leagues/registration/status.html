@@ -20,7 +20,7 @@
 			{% if registration.waitlist %}
 				However, you are on the <strong class="text_warning">waitlist</strong>.
 			{% elif league.baggage > 1 and not league.waitlist_start_date|is_past_deadline %}
-				You may <a href="{% url league_group year=league.year season=league.season division=league.night %}">form a baggage group here</a>.
+				You may <a href="{% url 'league_group' year=league.year season=league.season division=league.night  %}">form a baggage group here</a>.
 			{% endif %}
 		</h3>
 	{% else %}
@@ -52,7 +52,7 @@
 	</p>
 
 	<p>
-		If you would like to change your attendance or captaining rating, <a href="{% url league_registration_section year=league.year season=league.season division=league.night section='attendance' %}">click here</a>.
+		If you would like to change your attendance or captaining rating, <a href="{% url 'league_registration_section' year=league.year season=league.season division=league.night section='attendance'  %}">click here</a>.
 	</p>
 
 	<hr />

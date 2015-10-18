@@ -1,5 +1,6 @@
-from django.db import models, transaction
+from django.db import models
 from django.db.models import Count
+from django.db.transaction import atomic
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -235,7 +236,7 @@ class Player(PybbProfile):
 		('XXL',	'XXL - Extra Extra Large'),
 	)
 
-	user = models.OneToOneField(User)
+	user = models.OneToOneField(User, related_name='profile')
 	groups = models.TextField()
 	nickname = models.CharField(max_length=30)
 	phone = models.CharField(max_length=15)
@@ -305,14 +306,14 @@ class Registrations(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True)
 	registered = models.DateTimeField(null=True, blank=True)
-	conduct_complete = models.BooleanField()
-	waiver_complete = models.BooleanField()
+	conduct_complete = models.BooleanField(default=False)
+	waiver_complete = models.BooleanField(default=False)
 	pay_type = models.CharField(choices=REGISTRATION_PAYMENT_CHOICES, max_length=6, null=True, blank=True)
-	check_complete = models.BooleanField()
+	check_complete = models.BooleanField(default=False)
 	paypal_invoice_id = models.CharField(max_length=127, null=True, blank=True)
-	paypal_complete = models.BooleanField()
-	refunded = models.BooleanField()
-	waitlist = models.BooleanField()
+	paypal_complete = models.BooleanField(default=False)
+	refunded = models.BooleanField(default=False)
+	waitlist = models.BooleanField(default=False)
 	attendance = models.IntegerField(null=True, blank=True)
 	captain = models.IntegerField(null=True, blank=True, choices=REGISTRATION_CAPTAIN_CHOICES)
 
@@ -396,7 +397,7 @@ class Registrations(models.Model):
 
 		return rating_total - ((self.attendance / 2) * absence_weight)
 
-	@transaction.commit_on_success
+	@atomic
 	def add_to_baggage_group(self, email):
 		if datetime.now() > self.league.waitlist_start_date:
 			return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
@@ -443,26 +444,24 @@ class Registrations(models.Model):
 		return True
 
 
-	@transaction.commit_manually
 	def leave_baggage_group(self):
 		if datetime.now() > self.league.waitlist_start_date:
 			return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
 
+
 		try:
-			baggage = Baggage()
-			baggage.save()
+			with transaction.atomic():
+				baggage = Baggage()
+				baggage.save()
 
-			if (self.baggage.get_registrations().count() <= 1):
-				self.baggage.delete()
+				if self.baggage.get_registrations().count() <= 1:
+					self.baggage.delete()
 
-			self.baggage = baggage
-			self.save()
+				self.baggage = baggage
+				self.save()
 
 		except:
-			transaction.rollback()
 			return False
-		else:
-			transaction.commit()
 
 		return True
 
@@ -677,7 +676,7 @@ class TeamMember(models.Model):
 	id = models.AutoField(primary_key=True)
 	team = models.ForeignKey('leagues.Team')
 	user = models.ForeignKey(User)
-	captain = models.BooleanField()
+	captain = models.BooleanField(default=False)
 
 	class Meta:
 		db_table = u'team_member'

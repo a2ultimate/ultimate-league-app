@@ -163,7 +163,7 @@ class AdminPostForm(PostForm):
         return super(AdminPostForm, self).save(*args, **kwargs)
 
 try:
-    profile_app, profile_model = settings.AUTH_PROFILE_MODULE.split('.')
+    profile_app, profile_model = 'leauges.player'.split('.')
     profile_model = ContentType.objects.get_by_natural_key(profile_app, profile_model).model_class()
 except (AttributeError, ValueError, ObjectDoesNotExist):
     profile_model = Profile

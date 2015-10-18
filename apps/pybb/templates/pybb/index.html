@@ -14,11 +14,11 @@
         {% endfor %}
     {% else %}
         <h2>{% trans "Forum categories are not created" %}</h2>
-        <a href="{% url admin:pybb_category_add %}">{% trans "Add a category now" %}</a>
+        <a href="{% url 'admin:pybb_category_add'  %}">{% trans "Add a category now" %}</a>
     {% endif %}
     {% if user.is_authenticated %}
         <div>
-            <a href='{% url pybb:topic_latest %}'>
+            <a href='{% url 'pybb:topic_latest'  %}'>
                 {% trans "Last updates in topics" %}
             </a>
         </div>

@@ -91,7 +91,7 @@
 												</span>
 											{% endif %}
 
-											<em>{{ team_member.user.get_profile.nickname }}</em>
+											<em>{{ team_member.user.profile.nickname }}</em>
 										</li>
 									{% endfor %}
 								</ul>
@@ -130,10 +130,10 @@
 
 	<h2>Profile</h2>
 	<p>
-		<a href="{% url editprofile %}">Edit Profile</a>
+		<a href="{% url 'editprofile'  %}">Edit Profile</a>
 	</p>
 	<p>
-		<a href="{% url editratings %}">Edit Ratings</a>
+		<a href="{% url 'editratings'  %}">Edit Ratings</a>
 	</p>
 
 	<h2>Registrations</h2>
@@ -151,7 +151,7 @@
 					{% for registration in league|league_registrations:user %}
 						<tr>
 							<td>
-								<a href="{% url league_registration year=registration.league.year season=registration.league.season division=registration.league.night %}">
+								<a href="{% url 'league_registration' year=registration.league.year season=registration.league.season division=registration.league.night  %}">
 									{{ registration.league.season_title|smart_title }}
 									{{ registration.league.year }}
 									{{ registration.league.night|smart_title }}
@@ -167,7 +167,7 @@
 								{% endfor %}
 
 								{% if registration.is_complete and registration.league.baggage > 1 and not registration.waitlist and not registration.league.waitlist_start_date|is_past_deadline %}
-									<div><a href="{% url league_group year=league.year season=league.season division=league.night %}">Edit Group</a></div>
+									<div><a href="{% url 'league_group' year=league.year season=league.season division=league.night  %}">Edit Group</a></div>
 								{% endif %}
 							</td>
 						</tr>

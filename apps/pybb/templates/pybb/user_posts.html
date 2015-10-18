@@ -9,7 +9,7 @@
 
         <span class="post_count">{{ topic.posts.count }}</span>
         <span class="updated">{{ topic.created|date:"Y/m/d h:iA" }}</span>
-        <a href={% url pybb_post topic.id %}>{{ topic.body_text }}</a>
+        <a href={% url 'pybb_post' topic.id  %}>{{ topic.body_text }}</a>
         </li>
         {% endfor %}
 

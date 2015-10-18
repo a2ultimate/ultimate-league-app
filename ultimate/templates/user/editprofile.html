@@ -5,8 +5,8 @@
 <h1>Edit Profile and Ratings</h1>
 
 <ul class="nav_tabs">
-	<li class="selected"><a href="{% url editprofile %}">Edit Profile</a></li>
-	<li><a href="{% url editratings %}">Edit Ratings</a></li>
+	<li class="selected"><a href="{% url 'editprofile'  %}">Edit Profile</a></li>
+	<li><a href="{% url 'editratings'  %}">Edit Ratings</a></li>
 </ul>
 
 <form id="edit_profile_form" class="wide_form" method="post">{% csrf_token %}
@@ -49,7 +49,7 @@
 	</p>
 
 	<input class="button button_success" type="submit" value="Update Profile">
-	<a href="{% url user %}">Cancel</a>
+	<a href="{% url 'user'  %}">Cancel</a>
 </form>
 
 {% endblock %}

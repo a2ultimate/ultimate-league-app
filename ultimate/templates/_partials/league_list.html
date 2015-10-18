@@ -11,7 +11,7 @@
 			<ul>
 				{% for league in season_year.list|dictsort:'league_start_date' %}
 					<li>
-						<a href="{% url link_view year=league.year season=league.season division=league.night %}">
+						<a href="{% url link_view year=league.year season=league.season division=league.night  %}">
 							{{ league.night|smart_title }}
 						</a>
 					</li>

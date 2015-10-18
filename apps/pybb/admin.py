@@ -107,5 +107,5 @@ admin.site.register(Forum, ForumAdmin)
 admin.site.register(Topic, TopicAdmin)
 admin.site.register(Post, PostAdmin)
 
-if settings.AUTH_PROFILE_MODULE == 'pybb.Profile':
-    admin.site.register(Profile, ProfileAdmin)
+# if settings.AUTH_PROFILE_MODULE == 'pybb.Profile':
+#     admin.site.register(Profile, ProfileAdmin)

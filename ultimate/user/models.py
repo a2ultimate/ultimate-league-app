@@ -103,7 +103,7 @@ class PlayerRatings(models.Model):
 	ratings_type = models.PositiveIntegerField(choices=RATING_TYPE)
 	ratings_report = models.ForeignKey('user.PlayerRatingsReport', blank=True, null=True)
 	not_sure = models.BooleanField(default=False)
-	updated = models.DateTimeField(auto_now=True, auto_now_add=True)
+	updated = models.DateTimeField(auto_now=True)
 
 	class Meta:
 		db_table = u'player_ratings'

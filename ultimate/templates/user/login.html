@@ -8,7 +8,7 @@
 	<p>Your username and password didn't match. Please try again.</p>
 {% endif %}
 
-<form method="post" action="{% url auth_login %}">{% csrf_token %}
+<form method="post" action="{% url 'auth_login'  %}">{% csrf_token %}
 	<table class="form_table">
 		<tr>
 			<td><label for="id_username">Email Address</label></td>
@@ -25,9 +25,9 @@
 </form>
 
 <h1>Forgot Your Password?</h1>
-Click <a href="{% url password_reset %}">here</a> for help.
+Click <a href="{% url 'password_reset'  %}">here</a> for help.
 
 <h1>Don't Have An Account?</h1>
-Create a new account <a href="{% url registration_register %}">here</a>!
+Create a new account <a href="{% url 'registration_register'  %}">here</a>!
 
 {% endblock %}

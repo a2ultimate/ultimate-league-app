@@ -35,15 +35,15 @@
 									<ul>
 										{% if league|is_open:user %}
 											{% if league|is_waitlist:user %}
-												<li><a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register for Waitlist</a></li>
+												<li><a href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register for Waitlist</a></li>
 											{% else %}
-												<li><a href="{% url league_registration year=league.year season=league.season division=league.night %}">Register</a></li>
+												<li><a href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register</a></li>
 											{% endif %}
 										{% endif %}
-										<li><a href="{% url league_summary year=league.year season=league.season division=league.night %}">Summary</a></li>
-										<li><a href="{% url league_details year=league.year season=league.season division=league.night %}">Detailed Info</a></li>
-										<li><a href="{% url league_players year=league.year season=league.season division=league.night %}">Players</a></li>
-										<li><a href="{% url league_teams year=league.year season=league.season division=league.night %}">Teams & Schedules</a></li>
+										<li><a href="{% url 'league_summary' year=league.year season=league.season division=league.night  %}">Summary</a></li>
+										<li><a href="{% url 'league_details' year=league.year season=league.season division=league.night  %}">Detailed Info</a></li>
+										<li><a href="{% url 'league_players' year=league.year season=league.season division=league.night  %}">Players</a></li>
+										<li><a href="{% url 'league_teams' year=league.year season=league.season division=league.night  %}">Teams & Schedules</a></li>
 									</ul>
 								</li>
 							{% endfor %}
@@ -61,7 +61,7 @@
 			<div class="message state_warning">
 				You are missing profile information required to
 				register for a league. Please
-				<a href="{% url editprofile %}">complete your profile</a>.
+				<a href="{% url 'editprofile'  %}">complete your profile</a>.
 			</div>
 		{% endif %}
 
@@ -69,7 +69,7 @@
 			<div class="message state_warning">
 				You are missing player ratings required to
 				register for a league. Please
-				<a href="{% url editratings %}">complete your ratings</a>.
+				<a href="{% url 'editratings'  %}">complete your ratings</a>.
 			</div>
 		{% endif %}
 

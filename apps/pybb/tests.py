@@ -437,12 +437,12 @@ class FeaturesTest(TestCase, SharedTestModule):
         topic.save()
         post = Post(topic=topic, user=self.user, body='test') # another post
         post.save()
-        self.assertEqual(self.user.get_profile().post_count, 2)
+        self.assertEqual(self.user.profile.post_count, 2)
         post.body = 'test2'
         post.save()
-        self.assertEqual(Profile.objects.get(pk=self.user.get_profile().pk).post_count, 2)
+        self.assertEqual(Profile.objects.get(pk=self.user.profile.pk).post_count, 2)
         post.delete()
-        self.assertEqual(Profile.objects.get(pk=self.user.get_profile().pk).post_count, 1)
+        self.assertEqual(Profile.objects.get(pk=self.user.profile.pk).post_count, 1)
 
     def tearDown(self):
         defaults.PYBB_ENABLE_ANONYMOUS_POST = self.ORIG_PYBB_ENABLE_ANONYMOUS_POST
@@ -876,4 +876,3 @@ class CustomPermissionHandlerTest(TestCase, SharedTestModule):
             self.assertEqual(r.status_code, 404 if p.topic.forum.hidden or p.topic.forum.category.hidden else 200)
             r=self._get_with_user(p.get_absolute_url(), 'zeus', 'zeus')
             self.assertEqual(r.status_code, 200)
-

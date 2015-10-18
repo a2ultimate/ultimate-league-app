@@ -13,7 +13,7 @@
 
 	{% if user_registration.is_complete and user_registration.league.baggage > 1 and not user_registration.waitlist and not user_registration.league.waitlist_start_date|is_past_deadline %}
 		<p>To add someone to your group, you need to know their email address.</p>
-		<p>You may <a href="{% url league_group year=league.year season=league.season division=league.night %}">form a baggage group here</a>.</p>
+		<p>You may <a href="{% url 'league_group' year=league.year season=league.season division=league.night  %}">form a baggage group here</a>.</p>
 	{% endif %}
 
 	<h4>Name not on the list?</h4>
@@ -30,7 +30,7 @@
 
 		<ol>
 			{% for registration in waitlist_registrations %}
-				<li>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.get_profile.nickname }}</em></li>
+				<li>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></li>
 			{% endfor %}
 		</ol>
 	{% endif %}
@@ -55,7 +55,7 @@
 
 				<td class="col-span-6">
 					{% for registration in baggage.list %}
-						<div>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.get_profile.nickname }}</em></div>
+						<div>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></div>
 					{% endfor %}
 				</td>
 
@@ -82,7 +82,7 @@
 				<tbody>
 					{% for registration in unassigned_registrations|dictsort:"progress" %}
 						<tr>
-							<td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.get_profile.nickname }}</em></td>
+							<td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></td>
 							<td>{{ registration.status }}</td>
 							<td>{{ registration.updated|date:"Y/m/d h:iA" }}</td>
 						</tr>
@@ -105,7 +105,7 @@
 				<tbody>
 					{% for registration in incomplete_registrations|dictsort:"progress" %}
 						<tr>
-							<td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.get_profile.nickname }}</em></td>
+							<td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></td>
 							<td>{{ registration.status }}</td>
 							<td>{{ registration.updated|date:"Y/m/d h:iA" }}</td>
 						</tr>
@@ -121,7 +121,7 @@
 				<tbody>
 					{% for registration in refunded_registrations|dictsort:"updated" %}
 						<tr>
-							<td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.get_profile.nickname }}</em></td>
+							<td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></td>
 						</tr>
 					{% endfor %}
 				</tbody>

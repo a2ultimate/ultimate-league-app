@@ -5,8 +5,8 @@
 <h1>Edit Profile and Ratings</h1>
 
 <ul class="nav_tabs">
-	<li><a href="{% url editprofile %}">Edit Profile</a></li>
-	<li class="selected"><a href="{% url editratings %}">Edit Ratings</a></li>
+	<li><a href="{% url 'editprofile'  %}">Edit Profile</a></li>
+	<li class="selected"><a href="{% url 'editratings'  %}">Edit Ratings</a></li>
 </ul>
 
 <p>
@@ -55,7 +55,7 @@
 
 	<div class="control_group">
 		<input class="button button_success" type="submit" value="Update Ratings">
-		<a href="{% url user %}">Cancel</a>
+		<a href="{% url 'user'  %}">Cancel</a>
 	</div>
 </form>
 

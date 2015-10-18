@@ -11,12 +11,12 @@ from pybb import defaults
 def post_saved(instance, **kwargs):
 
     if kwargs['created']:
-        profile = instance.user.get_profile()
+        profile = instance.user.profile
         profile.post_count = instance.user.posts.count()
         profile.save()
 
 def post_deleted(instance, **kwargs):
-    profile = instance.user.get_profile()
+    profile = instance.user.profile
     profile.post_count = instance.user.posts.count()
     profile.save()
 
@@ -30,9 +30,9 @@ def user_saved(instance, created, **kwargs):
         return
     instance.user_permissions.add(add_post_permission, add_topic_permission)
     instance.save()
-    if settings.AUTH_PROFILE_MODULE == 'pybb.Profile':
-        from models import Profile
-        Profile(user=instance).save()
+    # if settings.AUTH_PROFILE_MODULE == 'pybb.Profile':
+    #     from models import Profile
+    #     Profile(user=instance).save()
 
 def setup_signals():
     from models import Post
