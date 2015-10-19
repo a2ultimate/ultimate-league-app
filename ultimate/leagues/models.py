@@ -240,14 +240,11 @@ class Player(PybbProfile):
 	groups = models.TextField()
 	nickname = models.CharField(max_length=30)
 	phone = models.CharField(max_length=15)
-	street_address = models.CharField(max_length=255)
-	city = models.CharField(max_length=127)
-	state = models.CharField(max_length=6)
-	zipcode = models.CharField(max_length=15)
+	zip_code = models.CharField(max_length=15)
 	gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
 	height_inches = models.IntegerField()
 	highest_level = models.TextField()
-	birthdate = models.DateField(help_text='e.g. ' + date.today().strftime('%Y-%m-%d'))
+	date_of_birth = models.DateField(help_text='e.g. ' + date.today().strftime('%Y-%m-%d'))
 	jersey_size = models.CharField(max_length=45, choices=JERSEY_SIZE_CHOICES)
 
 	class Meta:
@@ -255,17 +252,17 @@ class Player(PybbProfile):
 
 	@property
 	def age(self, now=None):
-		if not self.birthdate:
+		if not self.date_of_birth:
 			return 0
 
 		if now is None:
 			now = date.today()
 
-		return (now.year - self.birthdate.year) - int((now.month, now.day) < (self.birthdate.month, self.birthdate.day))
+		return (now.year - self.date_of_birth.year) - int((now.month, now.day) < (self.date_of_birth.month, self.date_of_birth.day))
 
 	@property
 	def is_complete_for_user(self):
-		return bool(self.gender and self.height_inches and self.birthdate and self.jersey_size)
+		return bool(self.gender and self.height_inches and self.date_of_birth and self.jersey_size)
 
 
 class Baggage(models.Model):

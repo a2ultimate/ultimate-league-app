@@ -110,13 +110,10 @@ class EditProfileForm(forms.ModelForm):
 class EditPlayerForm(forms.ModelForm):
 	nickname = forms.CharField(required=False)
 	phone = forms.CharField(required=False)
-	street_address = forms.CharField(required=False)
-	city = forms.CharField(required=False)
-	state = forms.CharField(required=False)
-	zipcode = forms.CharField(required=False)
+	zip_code = forms.CharField(label='Postal/Zip Code', required=False)
 	gender = forms.CharField(label='Gender*', widget=forms.Select(choices=(('', '----------'),) + Player.GENDER_CHOICES))
 	height_inches = forms.IntegerField(label='Height Inches*')
-	birthdate = forms.DateField(label='Birthdate*', help_text='e.g. ' + date.today().strftime('%Y-%m-%d'))
+	date_of_birth = forms.DateField(label='Date of Birth*', help_text='e.g. ' + date.today().strftime('%Y-%m-%d'))
 	jersey_size = forms.CharField(label='Jersey Size*', widget=forms.Select(choices=(('', '----------'),) + Player.JERSEY_SIZE_CHOICES))
 
 	class Meta:
