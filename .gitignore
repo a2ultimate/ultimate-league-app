@@ -6,3 +6,5 @@
 .DS_Store
 local_settings.py
 settings.py
+env/
+src/requirements/*.full.txt
