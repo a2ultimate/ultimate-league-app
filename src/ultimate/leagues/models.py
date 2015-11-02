@@ -557,10 +557,10 @@ class Team(models.Model):
 		return self.teammember_set.extra(select={'baggage_id':'SELECT baggage_id FROM registrations JOIN team ON team.league_id = registrations.league_id WHERE registrations.user_id = team_member.user_id AND team.id = team_member.team_id'}).order_by('baggage_id')
 
 	def get_male_members(self):
-		return self.get_members().filter(user__player__gender__iexact='M')
+		return TeamMember.objects.filter(team=self, user__profile__gender__iexact='M')
 
 	def get_female_members(self):
-		return self.get_members().filter(user__player__gender__iexact='F')
+		return TeamMember.objects.filter(team=self, user__profile__gender__iexact='F')
 
 	def get_games(self):
 		return Game.objects.filter(gameteams__team=self)
