@@ -1,0 +1,8 @@
+Django==1.8.5
+django-annoying==0.8.4
+django-paypal==0.2.7
+django-pure-pagination==0.2.1
+markdown==2.6.3
+MySQL-python==1.2.5
+postmarkup==1.2.2
+pytils==0.3

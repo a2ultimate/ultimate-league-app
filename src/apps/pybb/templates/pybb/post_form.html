@@ -1,0 +1,24 @@
+{% load i18n pybb_tags %}
+<form class="post-form" action="
+    {% if forum %}
+        {% url 'pybb:add_topic' forum.pk  %}
+    {% else %}
+        {% if topic %}
+            {% url 'pybb:add_post' topic.pk  %}
+        {% else %}
+            {% url 'pybb:edit_post' pk=object.pk  %}
+        {% endif %}
+    {% endif %}" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <fieldset>
+    {% include "pybb/form_errors.html" %}
+    {% if form.name %} {% include "pybb/form_field.html" with field=form.name %} {% endif %}
+    {% if form.login %} {% include "pybb/form_field.html" with field=form.login %}  {% endif %}
+    {% if form.body %} {% include "pybb/form_field.html" with field=form.body %}  {% endif %}
+
+    {% if form.poll_type %}
+      {% include "pybb/poll_edit_form.html" %}
+    {% endif %}
+    <p class="submit">{% include "pybb/_button_submit.html" %}</p>
+  </fieldset>
+</form>

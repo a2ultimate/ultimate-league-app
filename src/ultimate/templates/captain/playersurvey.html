@@ -1,0 +1,98 @@
+{% extends "layout/layout_user.html" %}
+{% load teams %}
+
+{% block content %}
+	{% include "layout/account_tabs.html" with selected_tab="captain" %}
+
+	<ul class="breadcrumbs">
+		<li><a href="{% url 'captain'  %}">Captain Resources</a></li>
+		<li><a href="{% url 'playersurvey' teamid=team.id  %}">Player Survey</a></li>
+	</ul>
+
+	<h1>Player Survey</h1>
+
+	<p>
+		Please complete the following form to the best of your ability.
+		The team formation process relies heavily on the accuracy of
+		these answers, as they will be used to help balance teams.
+	</p>
+
+	<p>
+		If you do not feel that you are able to rate a player (e.g.
+		you were unable to evaluate them due to absences), please
+		check the "Not Sure" box.
+	</p>
+
+	<p>
+		<strong>Note:</strong> This information is only used by league
+		administrators. Your answers will never be shared or
+		made public.
+	</p>
+
+	<hr />
+
+	<h2>Player Rating Values</h2>
+
+	<h3>Strategy</h3>
+	<ul>
+		{% for value, text in ratings_choices.strategy %}
+			<li>{{ value }} - {{ text }}</li>
+		{% endfor %}
+	</ul>
+
+	<h3>Throwing</h3>
+	<ul>
+		{% for value, text in ratings_choices.throwing %}
+			<li>{{ value }} - {{ text }}</li>
+		{% endfor %}
+	</ul>
+
+	<h3>Athleticism</h3>
+	<ul>
+		{% for value, text in ratings_choices.athleticism %}
+			<li>{{ value }} - {{ text }}</li>
+		{% endfor %}
+	</ul>
+
+	<form method="post" action="{% url 'playersurvey' teamid=team.id  %}">{% csrf_token %}
+		{{ formset.management_form }}
+
+		<table class="table table-striped">
+			<tr>
+				<td></td>
+				<th class="text_center">Strategy</th>
+				<th class="text_center">Throwing</th>
+				<th class="text_center">Athleticism</th>
+				<th class="text_center">Spirit</th>
+				<th class="text_center">Not Sure</th>
+			</tr>
+			{% for row in survey %}
+				<tr>
+					<th>
+						<div>
+							{{ row.user.get_full_name }}
+							{% for hidden in row.form.hidden_fields %}
+								{{ hidden }}
+							{% endfor %}
+						</div>
+					</th>
+					{% for field in row.form.visible_fields %}
+						<td class="text_center">
+							<div class="{% if field.errors %}state_error{% endif %}">
+								{{ field }}
+								{% if not forloop.last %}
+									<div class="small strong">{{ row.user|get_average:field.label }}</div>
+								{% endif %}
+							</div>
+						</td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
+		</table>
+
+		<div class="control_group">
+			<input class="button button_success" type="submit" value="Update" />
+			<a class="form_cancel" href="{% url 'playersurvey' teamid=team.id  %}">Cancel</a>
+		</div>
+	</form>
+{% endblock %}

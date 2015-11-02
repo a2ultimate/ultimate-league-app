@@ -1,0 +1,57 @@
+{% extends "layout/layout_user.html" %}
+
+{% load leagues %}
+{% load games %}
+{% load teams %}
+{% load utility %}
+
+{% block content %}
+	{% include "layout/account_tabs.html" with selected_tab="captain" %}
+
+	<ul class="flat_list">
+		{% for team in captain_teams %}
+			<li>
+				<h3>
+					<div class="pull_right">{{ team.name }}</div>
+					<div>{{ team.league.year }} {{ team.league.season_title|smart_title }} {{ team.league.night_title|smart_title }}</div>
+				</h3>
+
+				<ul>
+					<li>
+						<a href="{% url 'captaineditteam' teamid=team.id  %}">
+							<span class="status pull_left"></span>
+							Change Team Name or Color
+						</a>
+					</li>
+					<li>
+						<a href="{% url 'playersurvey' teamid=team.id  %}">
+							{% if team.league|get_player_survey_status:user %}
+								<span class="status state_success pull_left"></span>
+							{% else %}
+								<span class="status state_error pull_left"></span>
+							{% endif %}
+							Fill Out Player Survey
+						</a>
+					</li>
+				</ul>
+
+				<ul>
+					{% for game in team.get_games %}
+						<li>
+							{% if game|report_complete_for_team:user %}
+								<span class="status state_success pull_left"></span>
+							{% else %}
+								<span class="status state_error pull_left"></span>
+							{% endif %}
+							<a href="{% url 'gamereport' teamid=team.id gameid=game.id  %}">
+								On {{ game.date|date:"m/d" }} vs. {{ game|get_game_opponent_team_name:user}}
+							</a>
+						</li>
+					{% empty %}
+						<div class="text_center">No games found</div>
+					{% endfor %}
+				</ul>
+			</li>
+		{% endfor %}
+	</ul>
+{% endblock %}
