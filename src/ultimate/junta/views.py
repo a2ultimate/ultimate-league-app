@@ -228,17 +228,19 @@ def teamgeneration(request, year=None, season=None, division=None):
 		players = []
 
 		for registration in league.get_complete_registrations():
+			rating_totals = registration.user.rating_totals
 			players.append({
 				'attendance': registration.attendance,
 				'baggage_id': registration.baggage.id,
-				'rating_total': registration.user.rating_total,
+				'rating_totals': rating_totals,
+				'rating_total': rating_totals['total'],
 				'team_id': registration.get_team_id(),
 				'user': registration.user
 			})
 
-		players.sort(key=lambda k: (k['team_id'], k['baggage_id']))
-
 		if request.method == 'POST':
+			players.sort(key=lambda k: (k['team_id'], k['baggage_id']))
+
 			new_teams = []
 			if 'generate_teams' in request.POST:
 				num_teams = int(request.POST.get('num_teams', 0))
@@ -436,6 +438,8 @@ def teamgeneration(request, year=None, season=None, division=None):
 
 				messages.success(request, 'Teams were successfully generated.')
 				return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
+
+		players.sort(key=lambda k: (k['rating_total']), reverse=True)
 
 		response_dictionary = {
 			'league': league,

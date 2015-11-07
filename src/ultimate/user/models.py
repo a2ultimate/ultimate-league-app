@@ -8,31 +8,54 @@ from ultimate.leagues.models import *
 
 
 @property
-def rating_total(self):
-	rating_dict = {'athleticism': [], 'experience': [], 'strategy': [], 'throwing': []}
+def rating_totals(self):
+	player_ratings_collected = {'athleticism': [], 'experience': [], 'strategy': [], 'throwing': []}
 
 	# date cap for old ratings?
 	ratings = self.playerratings_set.all()
 	for rating in ratings:
 		if rating.athleticism:
-			rating_dict['athleticism'].append(rating.athleticism)
+			player_ratings_collected['athleticism'].append(rating.athleticism)
 		if rating.experience:
-			rating_dict['experience'].append(rating.experience)
+			player_ratings_collected['experience'].append(rating.experience)
 		if rating.strategy:
-			rating_dict['strategy'].append(rating.strategy)
+			player_ratings_collected['strategy'].append(rating.strategy)
 		if rating.throwing:
-			rating_dict['throwing'].append(rating.throwing)
+			player_ratings_collected['throwing'].append(rating.throwing)
 
 	# determine the total rating of a user
-	rating_dict = dict([(key, float(sum([int(i) for i in values])) / (len(filter(lambda k: k > 0, values)) or 1)) for key, values in rating_dict.items()])
+	rating_dict = dict([(key, float(sum([int(i) for i in values])) / (len(filter(lambda k: k > 0, values)) or 1)) for key, values in player_ratings_collected.items()])
 
-	rating_dict['athleticism'] = rating_dict['athleticism'] * 10 / 6
-	rating_dict['experience'] = math.pow(rating_dict['experience'], 1.2) * 10 / math.pow(6, 1.2)
-	rating_dict['strategy'] = math.pow(rating_dict['strategy'], 1.2) * 10 / math.pow(6, 1.2)
-	rating_dict['throwing'] = rating_dict['throwing'] * 10 / 6
+	player_ratings_averaged = {}
+	for key, values in player_ratings_collected.items():
+		player_ratings_averaged[key] = 1
 
-	return sum(rating_dict.itervalues())
+		if len(values):
+			player_ratings_averaged[key] = float(sum(values)) / len(values)
 
+	rating_min = 1
+	rating_max = 6
+	max_athleticism = (0.1 * math.pow(3, 3)) + (-1.2 * math.pow(3, 2)) + (5 * 3)
+	max_throwing = (0.1 * math.pow(3, 3)) + (-1.2 * math.pow(3, 2)) + (5 * 3)
+
+	player_ratings_averaged['athleticism'] -= 3
+	player_ratings_averaged['throwing'] -= 3
+
+	player_ratings_weighted = {}
+	player_ratings_weighted['athleticism'] = ((0.1 * math.pow(player_ratings_averaged['athleticism'], 3) + -1.2 * math.pow(player_ratings_averaged['athleticism'], 2) + 5 * player_ratings_averaged['athleticism'])) / max_athleticism * 10
+	player_ratings_weighted['experience'] = (math.pow(player_ratings_averaged['experience'], 1.4) / math.pow(6, 1.4)) * 6
+	player_ratings_weighted['strategy'] = (math.pow(player_ratings_averaged['strategy'], 0.25) / math.pow(6, 0.25)) * 6
+	player_ratings_weighted['throwing'] = ((0.1 * math.pow(player_ratings_averaged['throwing'], 3) + -1.2 * math.pow(player_ratings_averaged['throwing'], 2) + 5 * player_ratings_averaged['throwing'])) / max_throwing * 10
+
+	player_ratings_weighted['total'] = max(sum(player_ratings_weighted.itervalues()), 0)
+
+	return player_ratings_weighted
+
+@property
+def rating_total(self):
+	return self.rating_totals['total']
+
+User.add_to_class('rating_totals', rating_totals)
 User.add_to_class('rating_total', rating_total)
 
 

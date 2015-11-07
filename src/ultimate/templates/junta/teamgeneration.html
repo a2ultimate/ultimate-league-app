@@ -137,7 +137,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{% for player in players|dictsortreversed:'rating_total' %}
+						{% for player in players %}
 							<tr>
 								{% if not teams %}
 									<td>
@@ -152,7 +152,7 @@
 									{{ player.user.get_full_name }}
 								</td>
 								<td>{{ player.user.profile.gender }}</td>
-								<td>{{ player.rating_total|floatformat:2 }}</td>
+								<td title="{{ player.rating_totals|pprint }}">{{ player.rating_total|floatformat:2 }}</td>
 								<td>{{ player.attendance }}</td>
 								<td>{{ player.baggage_id }}</td>
 								<td>{{ player.team_id }}</td>
