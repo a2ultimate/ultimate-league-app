@@ -6,6 +6,10 @@
 .DS_Store
 local_settings.py
 settings.py
+
 env/
-src/ultimate/settings/*.py
+src/media/*
 src/requirements/*.full.txt
+src/static/build/*
+src/static/dist/*
+src/ultimate/settings/*.py
