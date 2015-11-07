@@ -35,18 +35,18 @@ USE_I18N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, '../../media/')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = os.path.join(PROJECT_ROOT, '../../static/dist/')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -57,7 +57,7 @@ STATICFILES_DIRS = (
 	# Put strings here, like "/home/html/static" or "C:/www/django/static".
 	# Always use forward slashes, even on Windows.
 	# Don't forget to use absolute paths, not relative paths.
-	os.path.join(PROJECT_ROOT, '../static/src'),
+	os.path.join(PROJECT_ROOT, '../../static/src'),
 )
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
@@ -104,8 +104,8 @@ INSTALLED_APPS = (
 	'django.contrib.sessions',
 	'django.contrib.staticfiles',
 	'django.contrib.webdesign',
-	'paypal.standard.ipn',
 
+	'paypal.standard.ipn',
 	'pybb',
 	'pytils',
 
@@ -168,9 +168,3 @@ PAYPAL_DONATION_SANDBOX_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
 PYBB_DEFAULT_TITLE = 'A2Ultimate Forums'
 PYBB_TEMPLATE = 'layout/forum_base.html'
 PYBB_DEFAULT_TIME_ZONE = -5
-
-
-# SOCIAL
-FLICKR_KEY = ''
-FLICKR_SECRET = ''
-FLICKR_SEARCH = 'ultimate+frisbee'
