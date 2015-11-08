@@ -1633,6 +1633,13 @@ ul.flat_list > li > ul > li {
 	text-transform: uppercase;
 }
 
+.team_notes h5 {
+	color: #BDC1C5;
+	font-size: 10px;
+	margin-bottom: 4px;
+	margin-top: 0;
+}
+
 /* USER PAGE */
 
 .next_game_info {

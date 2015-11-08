@@ -156,6 +156,7 @@
 
 							{% if request.user|in_group:"junta" %}
 								<div class="team_notes text_center">
+									<h5>Admin Only</h5>
 									{{ team.get_members|length }} Player{{ team.get_members|length|pluralize }},
 									{{ team.get_male_members|length }} Male{{ team.get_male_members|length|pluralize }},
 									{{ team.get_female_members|length }} Female{{ team.get_female_members|length|pluralize }}
