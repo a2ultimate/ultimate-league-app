@@ -512,8 +512,9 @@ fieldset > legend {
 	border-top-right-radius: 2px;
 	clear: both;
 	color: #BDC1C5;
-	letter-spacing: 1px;
+	letter-spacing: 0.5px;
 	margin-top: 32px;
+	min-height: 60px;
 	padding: 10px 0;
 	z-index: 1;
 }
