@@ -6,6 +6,16 @@ from paypal.standard.ipn.models import PayPalIPN
 from ultimate.leagues.models import *
 
 
+
+
+class FieldNameAdmin(admin.ModelAdmin):
+	save_as = True
+	save_on_top = True
+
+	list_display = ('name', 'field',)
+	list_filter = ('field',)
+
+
 class GameTeamsInline(admin.TabularInline):
 	model = GameTeams
 	max_num = 2
@@ -157,7 +167,7 @@ class TeamAdmin(admin.ModelAdmin):
 
 admin.site.register(Baggage)
 admin.site.register(Field)
-admin.site.register(FieldNames)
+admin.site.register(FieldNames, FieldNameAdmin)
 admin.site.register(Game, GameAdmin)
 admin.site.register(League, LeagueAdmin)
 admin.site.register(Registrations, RegistrationsAdmin)
