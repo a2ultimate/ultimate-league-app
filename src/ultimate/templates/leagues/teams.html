@@ -111,8 +111,10 @@
 								</div>
 
 								<div>
-									{% if user.is_authenticated and team.email %}
-										<a class="pull_right" style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}" title="Email Team List">Email</a>
+									{% if team.email and user.is_authenticated%}
+									{% if team|team_contains_user:user or user.is_superuser %}
+										<a class="pull_right" style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}">Email Team</a>
+									{% endif %}
 									{% endif %}
 
 									<div>
@@ -135,8 +137,10 @@
 							<ul class="team_members">
 								{% for team_member in team.get_members %}
 									<li class="team_member">
-										{% if team_member.captain and user.is_authenticated and team_member.user.email %}
-											<a class="pull_right" href="mailto:{{ team_member.user.email }}">Email</a>
+										{% if forloop.first and user.is_authenticated %}
+										{% if team|team_contains_user:user or user.is_superuser %}
+											<a class="pull_right" href="mailto:{% for captain in team.get_captains %}{{ captain.user.email }},{% endfor %}">Email Captains</a>
+										{% endif %}
 										{% endif %}
 
 										{% if team_member.captain %}

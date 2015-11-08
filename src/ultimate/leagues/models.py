@@ -551,6 +551,12 @@ class Team(models.Model):
 			color = '#2C3E50'
 		return color
 
+	def contains_user(self, user):
+		return bool(self.teammember_set.filter(user=user))
+
+	def get_captains(self):
+		return self.teammember_set.filter(captain=True)
+
 	def get_members(self):
 		return self.teammember_set.all()
 
