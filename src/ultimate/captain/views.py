@@ -20,7 +20,7 @@ from ultimate.user.models import *
 
 @login_required
 def index(request):
-	captain_teams = Team.objects.filter(teammember__user=request.user, teammember__captain=1).order_by('-league__league_start_date')
+	captain_teams = Team.objects.filter(teammember__user=request.user, teammember__captain=1, hidden=False).order_by('-league__league_start_date')
 
 	return render_to_response('captain/index.html',
 		{'captain_teams': captain_teams},
