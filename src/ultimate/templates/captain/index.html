@@ -36,7 +36,7 @@
 				</ul>
 
 				<ul>
-					{% for game in team.get_games %}
+					{% for game in team.get_past_games %}
 						<li>
 							{% if game|report_complete_for_team:user %}
 								<span class="status state_success pull_left"></span>
