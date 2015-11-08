@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib import admin
+from django.db.models import Max, Q
 
 from paypal.standard.ipn.models import PayPalIPN
 from ultimate.leagues.models import *
@@ -80,7 +81,8 @@ class RegistrationsAdmin(admin.ModelAdmin):
 
 	def formfield_for_foreignkey(self, db_field, request, **kwargs):
 		if db_field.name == 'baggage' and request._registration_obj_:
-			kwargs['queryset'] = Baggage.objects.filter(registrations__league=request._registration_obj_.league).distinct()
+			max_id = Baggage.objects.all().aggregate(Max('id'))['id__max']
+			kwargs['queryset'] = Baggage.objects.filter(Q(registrations__league=request._registration_obj_.league) | Q(id=max_id)).order_by('id').distinct()
 		return super(RegistrationsAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 	def year(self, obj):
