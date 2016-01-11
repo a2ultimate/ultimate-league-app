@@ -348,6 +348,11 @@ fieldset > legend {
 	top: 1px;
 }
 
+#banner a img {
+	height: 33px;
+	max-height: 33px;
+}
+
 .banner_links {
 	font-weight: bold;
 	line-height: 32px;
