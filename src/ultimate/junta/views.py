@@ -351,7 +351,7 @@ def teamgeneration(request, year=None, season=None, division=None):
 
 					if group['rating_average'] > teams_object[0]['rating_average']:
 						teams_object.sort(key=lambda k: k['attendance_total'], reverse=True)
-						teams_object.sort(key=lambda k: k['rating_average'], reverse=True)
+						teams_object.sort(key=lambda k: k['rating_average'])
 						teams_object.sort(key=lambda k: 0 if (k['num_players'] + group_size) <= team_cap else (k['num_players'] + group_size) - team_cap)
 
 					assign_group_to_team(group, teams_object[0])
