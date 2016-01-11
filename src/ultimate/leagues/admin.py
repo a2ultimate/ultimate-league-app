@@ -1,8 +1,19 @@
 from django import forms
 from django.contrib import admin
+from django.db.models import Max, Q
 
 from paypal.standard.ipn.models import PayPalIPN
 from ultimate.leagues.models import *
+
+
+
+
+class FieldNameAdmin(admin.ModelAdmin):
+	save_as = True
+	save_on_top = True
+
+	list_display = ('name', 'field',)
+	list_filter = ('field',)
 
 
 class GameTeamsInline(admin.TabularInline):
@@ -69,9 +80,9 @@ class RegistrationsAdmin(admin.ModelAdmin):
 	save_as = True
 	save_on_top = True
 
-	list_display = ('year', 'season', 'night', 'user_details', 'registered', 'attendance', 'captain_value', 'waitlist', 'status',)
+	list_display = ('id', 'league', 'user_details', 'registered', 'waitlist', 'status',)
 	list_filter = ('league__year', 'league__season', 'league__night', 'paypal_complete', 'check_complete', 'waitlist', 'refunded',)
-	search_fields = ['user__first_name', 'user__last_name', 'user__email', 'paypal_invoice_id',]
+	search_fields = ['user__first_name', 'user__last_name', 'user__email', 'paypal_invoice_id', 'baggage__id',]
 
 	def get_form(self, request, obj=None, **kwargs):
 		# just save obj reference for future processing in Inline
@@ -80,7 +91,8 @@ class RegistrationsAdmin(admin.ModelAdmin):
 
 	def formfield_for_foreignkey(self, db_field, request, **kwargs):
 		if db_field.name == 'baggage' and request._registration_obj_:
-			kwargs['queryset'] = Baggage.objects.filter(registrations__league=request._registration_obj_.league).distinct()
+			max_id = Baggage.objects.all().aggregate(Max('id'))['id__max']
+			kwargs['queryset'] = Baggage.objects.filter(Q(registrations__league=request._registration_obj_.league) | Q(id=max_id)).order_by('id').distinct()
 		return super(RegistrationsAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 	def year(self, obj):
@@ -155,7 +167,7 @@ class TeamAdmin(admin.ModelAdmin):
 
 admin.site.register(Baggage)
 admin.site.register(Field)
-admin.site.register(FieldNames)
+admin.site.register(FieldNames, FieldNameAdmin)
 admin.site.register(Game, GameAdmin)
 admin.site.register(League, LeagueAdmin)
 admin.site.register(Registrations, RegistrationsAdmin)

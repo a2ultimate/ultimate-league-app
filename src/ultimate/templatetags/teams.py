@@ -3,6 +3,12 @@ from django import template
 register = template.Library()
 
 
+
+@register.filter
+def team_contains_user(team, user):
+	return team.contains_user(user)
+
+
 @register.filter
 def get_team_name_font_size(name):
 	if len(name) <= 17:

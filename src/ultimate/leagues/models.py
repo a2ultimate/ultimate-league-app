@@ -1,3 +1,5 @@
+from datetime import date, datetime
+
 from django.db import models
 from django.db.models import Count
 from django.db.transaction import atomic
@@ -6,7 +8,6 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from pybb.models import *
 
-from datetime import date, datetime
 
 
 class Field(models.Model):
@@ -550,6 +551,12 @@ class Team(models.Model):
 			color = '#2C3E50'
 		return color
 
+	def contains_user(self, user):
+		return bool(self.teammember_set.filter(user=user))
+
+	def get_captains(self):
+		return self.teammember_set.filter(captain=True)
+
 	def get_members(self):
 		return self.teammember_set.all()
 
@@ -564,6 +571,9 @@ class Team(models.Model):
 
 	def get_games(self):
 		return Game.objects.filter(gameteams__team=self)
+
+	def get_past_games(self):
+		return self.get_games().filter(date__lte=date.today())
 
 	def get_record_list(self):
 		# return in format {wins, losses, ties, conflicts}
@@ -702,7 +712,7 @@ class Game(models.Model):
 
 	def get_user_opponent(self, user):
 		try:
-			return Team.objects.filter(gameteams__game=self).exclude(teammember__user=user)[0:1].get()
+			return Team.objects.filter(gameteams__game=self, hidden=False).exclude(teammember__user=user)[0:1].get()
 		except ObjectDoesNotExist:
 			return None
 

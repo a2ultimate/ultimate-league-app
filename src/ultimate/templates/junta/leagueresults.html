@@ -92,6 +92,10 @@
 					{% endfor %}
 				</tbody>
 			</table>
+
+			<div class="text_center">
+				<a href="{% url 'league_teams' year=league.year season=league.season division=league.night  %}">Go to Teams & Schedules</a>
+			</div>
 		{% else %}
 			<div class="text_center">The schedule for this league has not yet been completed.</div>
 		{% endif %}
