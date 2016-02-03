@@ -9,8 +9,8 @@
 
 	{% include "layout/league_tabs.html" with selected_tab="summary" %}
 
-	{% if league.gender_note %}
-		{{ league.gender_note|safe }}
+	{% if league.summary_info %}
+		{{ league.summary_info|safe }}
 	{% endif %}
 
 	<table class="table table-striped-header">
