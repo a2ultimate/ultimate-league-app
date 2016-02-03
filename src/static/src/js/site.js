@@ -107,8 +107,21 @@ $(function() {
 
 		$input.keyup(function(e) {
 			var value = this.value;
-			if (parseFloat(value) != parseInt(value, 10) || isNaN(value) || value < 1) {
-				value = 1;
+			if (parseFloat(value) != parseInt(value, 10) || isNaN(value) || value < 0) {
+				value = 0;
+			}
+
+			if (value > 10) {
+				value = 10;
+			}
+
+			$(this).siblings('.slider').slider('value', value);
+		});
+
+		$input.change(function(e) {
+			var value = this.value;
+			if (parseFloat(value) != parseInt(value, 10) || isNaN(value) || value < 0) {
+				value = 0;
 			}
 
 			if (value > 10) {

@@ -41,31 +41,46 @@ class FieldNames(models.Model):
 
 
 class League(models.Model):
+	STATE_CLOSED = 'closed'
+	STATE_HIDDEN = 'hidden'
+	STATE_OPEN = 'open'
+	STATE_PREVIEW = 'preview'
 	LEAGUE_STATE_CHOICES = (
-		('closed',	'Closed - visible to all, registration closed to all'),
-		('hidden',	'Hidden - hidden to all, registration closed to all'),
-		('open',	'Open - visible to all, registration conditionally open to all'),
-		('preview',	'Preview - visible only to admins, registration conditionally open only to admins'),
+		('CLOSED',	'Closed - visible to all, registration closed to all'),
+		('HIDDEN',	'Hidden - hidden to all, registration closed to all'),
+		('OPEN',	'Open - visible to all, registration conditionally open to all'),
+		('PREVIEW',	'Preview - visible only to admins, registration conditionally open only to admins'),
 	)
 
 	LEAGUE_GENDER_CHOICES = (
-		('50/50',		'50/50 League'),
-		('coed',		'Normal Co-Ed Gender Matched'),
-		('competitive',	'Competitive League'),
-		('event',		'Special Event'),
-		('hat',			'Hat Tourney'),
-		('open',		'Open, No Gender Match'),
-		('showcase',	'Showcase League'),
-		('women',		'Women Only'),
+		('mens',		'Men\'s'),
+		('mixed',		'Mixed'),
+		('open',		'Open'),
+		('womens',		'Women\'s'),
 	)
 
-	id = models.AutoField(primary_key=True)
+	LEAGUE_LEVEL_CHOICES = (
+		('competitive', 'Competitive'),
+		('recreational', 'Recreational'),
+	)
+
+	LEAGUE_TYPE_CHOICES = (
+		('event', 'Event'),
+		('league', 'League'),
+		('tournament', 'Tournament'),
+	)
+
 	night = models.CharField(max_length=32, help_text='lower case, no special characters, e.g. "sunday", "tuesday and thursday", "end of season tournament"')
 	season = models.CharField(max_length=32, help_text='lower case, no special characters, e.g. "late fall", "winter"')
 	year = models.IntegerField(help_text='four digit year, e.g. 2013')
+
 	gender = models.CharField(max_length=32, choices=LEAGUE_GENDER_CHOICES)
-	gender_note = models.TextField(help_text='gender or other notes for league, e.g. 50/50 league, showcase league notes')
-	baggage = models.IntegerField(help_text='max baggage group size')
+	level = models.CharField(max_length=32, choices=LEAGUE_LEVEL_CHOICES)
+	type = models.CharField(max_length=32, choices=LEAGUE_TYPE_CHOICES)
+
+	summary_info = models.TextField(help_text='notes for league, e.g. 50-50 league format, showcase league notes')
+	detailed_info = models.TextField(help_text='details page text, use HTML')
+
 	times = models.TextField(help_text='start to end time, e.g. 6:00-8:00pm')
 	num_games_per_week = models.IntegerField(default=1, help_text='number of games per week, used to calculate number of games for a league')
 	reg_start_date = models.DateTimeField(help_text='date and time that registration process is open (not currently automated)')
@@ -73,18 +88,23 @@ class League(models.Model):
 	waitlist_start_date = models.DateTimeField(help_text='date and time that waitlist is started (regardless of number of registrations)')
 	league_start_date = models.DateField(help_text='date of first game')
 	league_end_date = models.DateField(help_text='date of last game')
+
+	max_players = models.IntegerField(help_text='max players for league, extra registrations will be placed on waitlist')
+	baggage = models.IntegerField(help_text='max baggage group size')
+
 	paypal_cost = models.IntegerField(help_text='base cost of league if paying by PayPal')
 	checks_accepted = models.BooleanField(default=True)
 	check_cost_increase = models.IntegerField(help_text='amount to be added to paypal_cost if paying by check')
 	late_cost_increase = models.IntegerField(help_text='amount to be added to paypal_cost if paying after price_increase_start_date')
-	max_players = models.IntegerField(help_text='max players for league, extra registrations will be placed on waitlist')
-	state = models.CharField(max_length=32, choices=LEAGUE_STATE_CHOICES, help_text='state of league, changes whether registration is open or league is visible')
+	mail_check_address = models.TextField(help_text='treasurer mailing address')
+
 	field = models.ManyToManyField(Field, through='FieldLeague', help_text='Select the fields these games will be played at, use the green "+" icon if we\'re playing at a new field.')
-	details = models.TextField(help_text='details page text, use HTML')
+
 	league_email = models.CharField(max_length=64, blank=True, help_text='email address for entire season')
 	league_captains_email = models.CharField(max_length=64, blank=True, help_text='email address for league captains')
 	division_email = models.CharField(max_length=64, blank=True, help_text='email address for just this league')
-	mail_check_address = models.TextField(help_text='treasurer mailing address')
+
+	state = models.CharField(max_length=32, choices=LEAGUE_STATE_CHOICES, help_text='state of league, changes whether registration is open or league is visible')
 
 	class Meta:
 		db_table = u'league'
@@ -204,6 +224,10 @@ class League(models.Model):
 				(datetime.now() >= self.waitlist_start_date) or \
 				(len(self.get_complete_registrations()) >= self.max_players) \
 			)
+
+	@property
+	def is_after_registration_start(self):
+		return datetime.now() >= self.reg_start_date
 
 	@property
 	def is_after_price_increase(self):
