@@ -80,11 +80,11 @@
 						</tr>
 					</thead>
 					<tbody>
-						{% for registration in unassigned_registrations|dictsort:"progress" %}
+						{% for registration in unassigned_registrations|dictsort:"progress"|dictsort:"registered" %}
 							<tr>
 								<td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></td>
 								<td>{{ registration.status }}</td>
-								<td>{{ registration.updated|date:"Y/m/d h:iA" }}</td>
+								<td>{{ registration.registered|date:"Y/m/d h:iA" }}</td>
 							</tr>
 						{% endfor %}
 					</tbody>
@@ -103,7 +103,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{% for registration in incomplete_registrations|dictsort:"progress" %}
+						{% for registration in incomplete_registrations|dictsort:"progress"|dictsort:"updated" %}
 							<tr>
 								<td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></td>
 								<td>{{ registration.status }}</td>
