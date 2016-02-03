@@ -9,15 +9,34 @@
 
 	{% include "layout/league_tabs.html" with selected_tab="summary" %}
 
+	{% if not league.is_after_registration_start %}
+		<h3>
+			Registration opens on {{ league.reg_start_date|date:"l, F jS" }}
+			at {{ league.reg_start_date|date:"g:iA"|lower }}
+		</h3>
+	{% endif %}
+
 	{% if league.summary_info %}
 		{{ league.summary_info|safe }}
 	{% endif %}
 
 	<table class="table table-striped-header">
 		<tr>
-			<td><a href="{% url 'league_details' year=league.year season=league.season division=league.night  %}">Detailed Info</a></td>
-			<td><a href="{% url 'league_players' year=league.year season=league.season division=league.night  %}">Players</a></td>
-			<td><a href="{% url 'league_teams' year=league.year season=league.season division=league.night  %}">Teams & Schedules</a></td>
+			<td>
+				<a href="{% url 'league_details' year=league.year season=league.season division=league.night  %}">
+					Detailed Info
+				</a>
+			</td>
+			<td>
+				<a href="{% url 'league_players' year=league.year season=league.season division=league.night  %}">
+					Players
+				</a>
+			</td>
+			<td>
+				<a href="{% url 'league_teams' year=league.year season=league.season division=league.night  %}">
+					Teams & Schedules
+				</a>
+			</td>
 		</tr>
 		<tr>
 			<th colspan="2">
@@ -103,7 +122,7 @@
 		{% if not league.is_after_price_increase and league.late_cost_increase > 0 %}
 			<tr>
 				<td colspan="2">
-					<em>The price will increase by ${{ league.late_cost_increase }} on {{ league.price_increase_start_date|date:'F d, Y' }} at {{ league.price_increase_start_date|date:'h:iA' }}</em>
+					<em>The price will increase by ${{ league.late_cost_increase }} on {{ league.price_increase_start_date|date:'F d, Y' }} at {{ league.price_increase_start_date|date:'h:iA'|lower }}</em>
 				</td>
 				<td></td>
 			</tr>
@@ -118,7 +137,7 @@
 				Registration Deadline
 			</td>
 			<td colspan="2">
-				{{ league.waitlist_start_date|date:'F d, Y' }} at {{ league.waitlist_start_date|date:'h:iA' }} or {{ league.max_players }} Players
+				{{ league.waitlist_start_date|date:'F d, Y' }} at {{ league.waitlist_start_date|date:'h:iA'|lower }} or {{ league.max_players }} Players
 			</td>
 		</tr>
 		{% if league.baggage > 1 %}
@@ -127,7 +146,7 @@
 					Group Edit Deadline
 				</td>
 				<td colspan="2">
-					{{ league.waitlist_start_date|date:'F d, Y' }} at {{ league.waitlist_start_date|date:'h:iA' }}
+					{{ league.waitlist_start_date|date:'F d, Y' }} at {{ league.waitlist_start_date|date:'h:iA'|lower }}
 				</td>
 			</tr>
 		{% endif %}

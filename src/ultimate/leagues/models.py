@@ -222,6 +222,10 @@ class League(models.Model):
 			)
 
 	@property
+	def is_after_registration_start(self):
+		return datetime.now() >= self.reg_start_date
+
+	@property
 	def is_after_price_increase(self):
 		return datetime.now() >= self.price_increase_start_date
 
