@@ -11,7 +11,7 @@
 
 	{% include "layout/league_tabs.html" with selected_tab="players" %}
 
-	{% if not league.is_open %}
+	{% if not league.is_after_registration_start %}
 		<h3 class="none_found text_center">
 			Players are not yet available
 		</h3>
