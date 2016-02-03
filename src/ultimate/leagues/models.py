@@ -385,13 +385,15 @@ class Registrations(models.Model):
 				if self.attendance != None and self.captain != None:
 					percentage += interval
 
-					if self.league.check_price == 0 and self.league.paypal_price == 0:
+					if self.league.checks_accepted and \
+						self.league.check_price == 0 and \
+						self.league.paypal_price == 0 and \
+						self.pay_type:
+
 						percentage += interval
 
-					elif self.pay_type:
+					if self.check_complete or self.paypal_complete:
 						percentage += interval
-						if self.check_complete or self.paypal_complete:
-							percentage += interval
 
 		return percentage
 
