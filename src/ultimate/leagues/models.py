@@ -41,11 +41,15 @@ class FieldNames(models.Model):
 
 
 class League(models.Model):
+	STATE_CLOSED = 'closed'
+	STATE_HIDDEN = 'hidden'
+	STATE_OPEN = 'open'
+	STATE_PREVIEW = 'preview'
 	LEAGUE_STATE_CHOICES = (
-		('closed',	'Closed - visible to all, registration closed to all'),
-		('hidden',	'Hidden - hidden to all, registration closed to all'),
-		('open',	'Open - visible to all, registration conditionally open to all'),
-		('preview',	'Preview - visible only to admins, registration conditionally open only to admins'),
+		('CLOSED',	'Closed - visible to all, registration closed to all'),
+		('HIDDEN',	'Hidden - hidden to all, registration closed to all'),
+		('OPEN',	'Open - visible to all, registration conditionally open to all'),
+		('PREVIEW',	'Preview - visible only to admins, registration conditionally open only to admins'),
 	)
 
 	LEAGUE_GENDER_CHOICES = (
