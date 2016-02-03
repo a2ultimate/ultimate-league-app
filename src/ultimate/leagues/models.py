@@ -46,10 +46,10 @@ class League(models.Model):
 	STATE_OPEN = 'open'
 	STATE_PREVIEW = 'preview'
 	LEAGUE_STATE_CHOICES = (
-		('CLOSED',	'Closed - visible to all, registration closed to all'),
-		('HIDDEN',	'Hidden - hidden to all, registration closed to all'),
-		('OPEN',	'Open - visible to all, registration conditionally open to all'),
-		('PREVIEW',	'Preview - visible only to admins, registration conditionally open only to admins'),
+		(STATE_CLOSED,	'Closed - visible to all, registration closed to all'),
+		(STATE_HIDDEN,	'Hidden - hidden to all, registration closed to all'),
+		(STATE_OPEN,	'Open - visible to all, registration conditionally open to all'),
+		(STATE_PREVIEW,	'Preview - visible only to admins, registration conditionally open only to admins'),
 	)
 
 	LEAGUE_GENDER_CHOICES = (
