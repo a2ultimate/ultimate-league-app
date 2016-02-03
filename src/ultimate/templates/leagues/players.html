@@ -11,7 +11,7 @@
 
 	{% include "layout/league_tabs.html" with selected_tab="players" %}
 
-	{% if not league.is_after_registration_start %}
+	{% if not league.is_after_registration_start and not request.user|in_group:"junta" %}
 		<h3 class="none_found text_center">
 			Players are not yet available
 		</h3>
