@@ -103,6 +103,48 @@
 					{% endfor %}
 				</table>
 
+				<h4>Unassigned Registrations</h4>
+
+				<table class="table table-condensed table-striped">
+					<thead>
+						<tr class="team_stats_0">
+							<th rowspan="2"></th>
+							<th>Rating Average</th>
+							<th>Rating Total</th>
+							<th>Players</th>
+							<th>Females</th>
+							<th>Males</th>
+							<th>Absence Total</th>
+							<th>Absence Average</th>
+						</tr>
+					</thead>
+					<tbody id="team_0" class="sortable_table sortable_table_connected">
+						{% regroup unassigned_registrations by baggage_id as baggage_list %}
+
+						{% for baggage_group in baggage_list %}
+							{% for unassigned_registration in baggage_group.list %}
+								<tr class="team_member" data-baggage-id="{{ baggage_group.grouper }}" data-gender="{{ unassigned_registration.user.profile.gender }}" data-rating-total="{{ unassigned_registration.user.rating_total|floatformat:2 }}" data-attendance-total="{{ unassigned_registration.attendance_total|floatformat:2 }}">
+									<td>
+										<input class="team_member_input" name="team_member_0" value="{{ unassigned_registration.user.id }}" type="hidden" />
+										<label>
+											<input class="team_member_captain_input" name="team_member_captain_0" value="{{ unassigned_registration.user.id }}" type="checkbox" />
+											{{ unassigned_registration.user.get_full_name }}
+										</labe>
+									</td>
+									<td></td>
+									<td>{{ unassigned_registration.user.rating_total|floatformat:2 }}</td>
+									<td>1</td>
+									<td>{% if unassigned_registration.user.profile.gender == 'F' %}1{% endif %}</td>
+									<td>{% if unassigned_registration.user.profile.gender == 'M' %}1{% endif %}</td>
+									<td>{{ unassigned_registration.attendance_total }}</td>
+									<td></td>
+									<td>{{ baggage_group.grouper }}</td>
+								</tr>
+							{% endfor %}
+						{% endfor %}
+					</tbody>
+				</table>
+
 				<div class="control_group">
 					<input value="Save Changes" name="save_teams" class="button button_success" type="submit" />
 					<input value="Publish Teams" name="publish_teams" class="button button_success" type="submit" />
