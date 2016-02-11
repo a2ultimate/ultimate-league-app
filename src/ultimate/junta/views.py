@@ -369,34 +369,36 @@ def teamgeneration(request, year=None, season=None, division=None):
 					team_member_captain_match = re.match(r'^team_member_captain_([\d]+)$', key)
 
 					if team_member_match:
-						team_id = team_member_match.group(1)
-						team = filter(lambda k: k['team_id'] == team_id, new_teams)
+						team_id = int(team_member_match.group(1))
+						if team_id:
+							team = filter(lambda k: k['team_id'] == team_id, new_teams)
 
-						users = list(User.objects.get(id=user_id) for user_id in request.POST.getlist(key))
+							users = list(User.objects.get(id=user_id) for user_id in request.POST.getlist(key))
 
-						if team:
-							team[0]['users'] = users
-						else:
-							new_teams.append({
-								'captains': [],
-								'team_id': team_id,
-								'users': users
-							})
+							if team:
+								team[0]['users'] = users
+							else:
+								new_teams.append({
+									'captains': [],
+									'team_id': team_id,
+									'users': users
+								})
 
 					elif team_member_captain_match:
-						team_id = team_member_captain_match.group(1)
-						team = filter(lambda k: k['team_id'] == team_id, new_teams)
+						team_id = int(team_member_captain_match.group(1))
+						if team_id:
+							team = filter(lambda k: k['team_id'] == team_id, new_teams)
 
-						captains = list(User.objects.get(id=user_id) for user_id in request.POST.getlist(key))
+							captains = list(User.objects.get(id=user_id) for user_id in request.POST.getlist(key))
 
-						if team:
-							team[0]['captains'] = captains
-						else:
-							new_teams.append({
-								'captains': captains,
-								'team_id': team_id,
-								'users': []
-							})
+							if team:
+								team[0]['captains'] = captains
+							else:
+								new_teams.append({
+									'captains': captains,
+									'team_id': team_id,
+									'users': []
+								})
 
 			if 'publish_teams' in request.POST:
 				teams.update(hidden=False)
@@ -446,9 +448,9 @@ def teamgeneration(request, year=None, season=None, division=None):
 		response_dictionary = {
 			'league': league,
 			'teams': teams,
-			'players': players
+			'players': players,
+			'unassigned_registrations': league.get_unassigned_registrations(),
 		}
-
 
 	else:
 		leagues = League.objects.all().order_by('-league_start_date')
