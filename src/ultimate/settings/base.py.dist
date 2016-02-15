@@ -105,6 +105,7 @@ INSTALLED_APPS = (
 	'django.contrib.staticfiles',
 	'django.contrib.webdesign',
 
+	'captcha',
 	'paypal.standard.ipn',
 	'pybb',
 	'pytils',
@@ -141,11 +142,19 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 # where project lives off web root, e.g. localhost/a2ultimate/user/login
-LOGIN_URL = '/user/login/'
+LOGIN_URL = '/user/log-in/'
 LOGIN_REDIRECT_URL = '/user/'
-LOGOUT_URL = '/user/logout/'
+LOGOUT_URL = '/user/log-out/'
 LOGOUT_REDIRECT_URL = '/'
 REGISTER_URL = '/accounts/register/'
+
+
+# CAPTCHA
+CAPTCHA_FONT_SIZE = 32
+CAPTCHA_IMAGE_SIZE = (100, 36)
+CAPTCHA_LETTER_ROTATION = None
+CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_dots',)
+CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
 
 
 # GOOGLE ANALYTICS

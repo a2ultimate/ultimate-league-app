@@ -3,7 +3,7 @@
 
 {% include "layout/header.html" %}
 
-<div id="content_container">
+<div id="content_container" class="clearfix">
 	<div id="sidebar">
 		<p class="text_center">
 			<img src="{{ STATIC_URL }}images/logo.svg" width="180">
@@ -12,7 +12,6 @@
 		<ul class="social_icons text_center">
 			<li><a class="social_icon social_icon_twitter" href="http://twitter.com/a2ultimate" target="_blank">Twitter</a></li>
 			<li><a class="social_icon social_icon_facebook" href="https://www.facebook.com/annarborultimate" target="_blank">Facebook</a></li>
-			<li><a class="social_icon social_icon_flickr" href="http://www.flickr.com/search/?q=annarborultimate" target="_blank">Flickr</a></li>
 		</ul>
 
 		{% if menu_leagues %}

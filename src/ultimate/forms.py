@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
+from captcha.fields import CaptchaField
+
 from ultimate.captain.models import *
 from ultimate.leagues.models import *
 from ultimate.user.models import *
@@ -12,13 +14,17 @@ class SignupForm(forms.ModelForm):
 	email = forms.EmailField(label=_('Email Address'), max_length=75)
 	password1 = forms.CharField(label=_('Password'), widget=forms.PasswordInput)
 	password2 = forms.CharField(label=_('Confirm Password'), widget=forms.PasswordInput,
-		help_text=_('Enter the same password as above, for verification.'))
+		help_text=_('Enter the same password as above'))
+
 	first_name = forms.CharField(label=_('First Name'), max_length=30)
 	last_name = forms.CharField(label=_('Last Name'), max_length=30)
+
 	honeypot = forms.CharField(required=False, label=_('Honeypot'),
 		help_text=_('If you enter anything in this field your form submission will be treated as spam'))
 	blank = forms.CharField(required=False, label=_('Blank'),
 		help_text=_('If you enter anything in this field your form submission will be treated as spam'))
+
+	captcha = CaptchaField(label=_('To verify that you are a real person, please enter the letters you see in the image'))
 
 	class Meta:
 		model = User
@@ -36,9 +42,9 @@ class SignupForm(forms.ModelForm):
 		return self.cleaned_data['username']
 
 	def clean_password2(self):
-		password1 = self.cleaned_data.get('password1', '')
-		password2 = self.cleaned_data['password2']
-		if password1 != password2:
+		password1 = self.cleaned_data.get('password1', None)
+		password2 = self.cleaned_data.get('password2', None)
+		if not password1 == password2:
 			raise forms.ValidationError(_('The two password fields did not match.'))
 		return password2
 

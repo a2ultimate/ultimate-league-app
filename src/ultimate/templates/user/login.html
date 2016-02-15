@@ -1,14 +1,16 @@
 {% extends "layout/layout_home.html" %}
 
+{% load i18n %}
+
 {% block content %}
 
-<h1>Login</h1>
+<h1>{% trans 'Log In' %}</h1>
 
 {% if form.errors %}
 	<p>Your username and password didn't match. Please try again.</p>
 {% endif %}
 
-<form method="post" action="{% url 'auth_login'  %}">{% csrf_token %}
+<form method="post" action="{% url 'auth_log_in'  %}">{% csrf_token %}
 	<table class="form_table">
 		<tr>
 			<td><label for="id_username">Email Address</label></td>
@@ -20,7 +22,7 @@
 		</tr>
 	</table>
 
-	<input class="button button_success" type="submit" value="Login" />
+	<input class="button button_success" type="submit" value="Log In" />
 	<input type="hidden" name="next" value="{{ next }}" />
 </form>
 

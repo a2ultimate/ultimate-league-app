@@ -765,7 +765,7 @@ input[type='search']:focus,
 input[type='tel']:focus,
 input[type='color']:focus,
 .uneditable-input:focus {
-	border-color: #2ECC71;
+	border-color: #3498DB;
 }
 
 select[multiple='multiple'] {
@@ -1413,6 +1413,100 @@ ul.flat_list > li > ul {
 ul.flat_list > li > ul > li {
 	margin: 6px 4px;
 }
+
+
+/* SIGN UP */
+
+.sign-up-form {
+}
+
+.sign-up-form-field {
+	padding: 12px;
+
+	border-radius: 2px;
+}
+
+
+.sign-up-form-field-hidden {
+	display: none;
+}
+
+.sign-up-form-field-label {
+	display: inline-block;
+
+	width: 140px;
+	padding-top: 11px;
+
+	vertical-align: top;
+}
+
+.sign-up-form-field-content {
+	display: inline-block;
+
+	width: 340px;
+}
+
+.sign-up-form-field-content-input {
+	margin-bottom: 4px;
+}
+
+.sign-up-form-field-content-input-error {
+}
+
+.sign-up-form-field-content-input-error input {
+	border-color: #e74c3c;
+}
+
+.sign-up-form-field-content-help {
+	margin-bottom: 4px;
+}
+
+.sign-up-form-field-content-errors {
+	margin-bottom: 4px;
+
+	color: #e74c3c;
+}
+
+.sign-up-form-field-content-errors-list {
+	margin: 0;
+	padding: 0;
+
+	list-style: none;
+}
+
+.sign-up-form-field-content-errors-list-element {
+}
+
+.sign-up-form-field-captcha {
+	margin-bottom: 24px;
+
+	background: #ecf0f1;
+}
+
+.sign-up-form-field-captcha-label {
+	display: block;
+
+	margin-bottom: 6px;
+}
+
+.sign-up-form-field-captcha-content {
+	margin-bottom: 4px;
+}
+
+.sign-up-form-field-captcha-content img {
+	vertical-align: -13px;
+}
+
+.sign-up-form-field-captcha-content input {
+	margin-left: 4px;
+}
+
+.sign-up-form-field-captcha-content-error input {
+	border-color: #e74c3c;
+}
+
+
+
 
 
 /* INDEX / INDEX */
