@@ -1,1 +1,3 @@
 from .base import *
+
+PAYPAL_CALLBACK_SECRET = 'replace/this/path/with/a/secret/'
