@@ -123,7 +123,7 @@
 
 						{% for baggage_group in baggage_list %}
 							{% for unassigned_registration in baggage_group.list %}
-								<tr class="team_member" data-baggage-id="{{ baggage_group.grouper }}" data-gender="{{ unassigned_registration.user.profile.gender }}" data-rating-total="{{ unassigned_registration.user.rating_total|floatformat:2 }}" data-attendance-total="{{ unassigned_registration.attendance_total|floatformat:2 }}">
+								<tr class="team_member" data-baggage-id="{{ baggage_group.grouper }}" data-gender="{{ unassigned_registration.user.profile.gender }}" data-rating-total="{{ unassigned_registration.user.rating_total|floatformat:2 }}" data-attendance-total="{{ unassigned_registration.attendance|floatformat:2 }}">
 									<td>
 										<input class="team_member_input" name="team_member_0" value="{{ unassigned_registration.user.id }}" type="hidden" />
 										<label>
