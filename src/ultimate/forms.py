@@ -14,7 +14,7 @@ class SignupForm(forms.ModelForm):
 	email = forms.EmailField(label=_('Email Address'), max_length=75)
 	password1 = forms.CharField(label=_('Password'), widget=forms.PasswordInput)
 	password2 = forms.CharField(label=_('Confirm Password'), widget=forms.PasswordInput,
-		help_text=_('Enter the same password as above, for verification.'))
+		help_text=_('Enter the same password as above'))
 
 	first_name = forms.CharField(label=_('First Name'), max_length=30)
 	last_name = forms.CharField(label=_('Last Name'), max_length=30)
