@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -44,14 +46,14 @@
 					<ul class="nav">
 						{% if request.user.is_authenticated %}
 							<li>
-								<a href="{% url 'auth_logout'  %}">Logout</a>
+								<a href="{% url 'auth_log_out'  %}">{% trans 'Log Out' %}</a>
 							</li>
 						{% else %}
 							<li>
-								<a href="{% url 'auth_login'  %}">Login</a>
+								<a href="{% url 'auth_log_in'  %}">{% trans 'Log In' %}</a>
 							</li>
 							<li>
-								<a href="{% url 'registration_register'  %}">Register</a>
+								<a href="{% url 'registration_register'  %}">Create an Account</a>
 							</li>
 						{% endif %}
 					</ul>

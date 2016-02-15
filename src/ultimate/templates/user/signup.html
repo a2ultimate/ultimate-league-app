@@ -2,30 +2,52 @@
 
 {% block content %}
 
-<h1>Create An Account</h1>
+<h1>Create an Account</h1>
 
-<form method="post">{% csrf_token %}
-	<div class="hidden">
-		{% for hidden in form.hidden_fields %}
-			{{ hidden }}
-		{% endfor %}
+<form class="sign-up-form" method="post">{% csrf_token %}
+	{% for hidden in form.hidden_fields %}
+		{{ hidden }}
+	{% endfor %}
+
+	{% for field in form.visible_fields %}
+		{% if not field.name == 'captcha' %}
+			<div class="sign-up-form-field{% if field.name in 'blank,honeypot' %} sign-up-form-field-hidden{% endif %}">
+				<label class="sign-up-form-field-label" for="{{ field.id_for_label }}">
+					{{ field.label }}
+				</label>
+
+				<div class="sign-up-form-field-content">
+					<div class="sign-up-form-field-content-input{% if field.errors %} sign-up-form-field-content-input-error{% endif %}">{{ field }}</div>
+					<div class="sign-up-form-field-content-help">{{ field.help_text }}</div>
+					{% if field.errors %}
+						<div class="sign-up-form-field-content-errors">
+							<ul class="sign-up-form-field-content-errors-list">
+								{% for error in field.errors %}
+									<li>{{ error|escape }}</li>
+								{% endfor %}
+							</ul>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		{% endif %}
+	{% endfor %}
+
+	<div class="sign-up-form-field sign-up-form-field-captcha">
+		<label class="sign-up-form-field-captcha-label" for="{{ form.captcha.id_for_label }}">{{ form.captcha.label }}</label>
+		<div class="sign-up-form-field-captcha-content{% if form.captcha.errors %} sign-up-form-field-captcha-content-error{% endif %}">
+			{{ form.captcha }}
+		</div>
+		{% if form.captcha.errors %}
+			<div class="sign-up-form-field-content-errors">
+				<ul class="sign-up-form-field-content-errors-list">
+					{% for error in form.captcha.errors %}
+						<li>{{ error|escape }}</li>
+					{% endfor %}
+				</ul>
+			</div>
+		{% endif %}
 	</div>
-
-	<table class="form_table">
-		{% for field in form.visible_fields %}
-			<tr{% if field.name in 'honeypot,blank' %} style="display:none;"{% endif %}>
-				<td>{{ field.label_tag }}</td>
-				<td>
-					<div>
-						{{ field }}
-						{{ field.errors }}
-					</div>
-				</td>
-				<td>{{ field.help_text }}</td>
-			</tr>
-
-		{% endfor %}
-	</table>
 
 	<input class="button button_success" type="submit" value="Create Account">
 </form>

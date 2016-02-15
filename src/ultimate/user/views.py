@@ -46,6 +46,8 @@ def index(request):
 
 
 def signup(request):
+	form = None
+
 	if request.method == 'POST':
 		form = SignupForm(request.POST)
 		if form.is_valid():
@@ -55,8 +57,10 @@ def signup(request):
 			return HttpResponseRedirect(reverse('user'))
 		else:
 			messages.error(request, 'There was an error on the form you submitted.')
-	else:
+
+	if not form:
 		form = SignupForm()
+
 	return render_to_response('user/signup.html',
 		{'form': form},
 		context_instance=RequestContext(request))
