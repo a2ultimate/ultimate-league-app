@@ -272,6 +272,9 @@ class Player(PybbProfile):
 	date_of_birth = models.DateField(help_text='e.g. ' + date.today().strftime('%Y-%m-%d'))
 	jersey_size = models.CharField(max_length=45, choices=JERSEY_SIZE_CHOICES)
 
+	guardian_name = models.TextField(blank=True)
+	guardian_phone = models.TextField(blank=True)
+
 	class Meta:
 		db_table = u'player'
 
@@ -287,7 +290,12 @@ class Player(PybbProfile):
 
 	@property
 	def is_complete_for_user(self):
-		return bool(self.gender and self.date_of_birth)
+		is_complete = bool(self.gender and self.date_of_birth)
+
+		if is_complete and self.age < 18:
+			is_complete = bool(is_complete and self.guardian_name and self.guardian_phone)
+
+		return is_complete
 
 
 class Baggage(models.Model):

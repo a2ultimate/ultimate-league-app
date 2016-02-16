@@ -649,7 +649,11 @@ legend + .errorlist {
 
 .form_table th,
 .form_table td {
-	padding: 8px 12px 8px 0;
+	padding: 12px;
+}
+
+.form_table_highlight {
+	background-color: #ECEFF1;
 }
 
 input[type=checkbox],

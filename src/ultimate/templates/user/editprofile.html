@@ -29,15 +29,36 @@
 			{% endif %}
 		{% endfor %}
 		{% for field in player_form.visible_fields %}
-			<tr>
-				<td>{{ field.label_tag }}</td>
-				<td>{{ field }}</td>
-				<td>{{ field.help_text }}</td>
-			</tr>
-			{% if field.errors %}
+			{% if field.name != 'guardian_name' and field.name != 'guardian_phone' %}
 				<tr>
-					<td colspan="3">{{ field.errors }}</td>
+					<td>{{ field.label_tag }}</td>
+					<td>{{ field }}</td>
+					<td>{{ field.help_text }}</td>
 				</tr>
+				{% if field.errors %}
+					<tr>
+						<td colspan="3">{{ field.errors }}</td>
+					</tr>
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+		<tr>
+			<td class="form_table_highlight" colspan="3">
+				If you are under the age of 18, you must provide a parent or guardian's contact information
+			</td>
+		</tr>
+		{% for field in player_form.visible_fields %}
+			{% if field.name == 'guardian_name' or field.name == 'guardian_phone' %}
+				<tr>
+					<td class="form_table_highlight">{{ field.label_tag }}</td>
+					<td class="form_table_highlight">{{ field }}</td>
+					<td class="form_table_highlight">{{ field.help_text }}</td>
+				</tr>
+				{% if field.errors %}
+					<tr>
+						<td class="form_table_highlight" colspan="3">{{ field.errors }}</td>
+					</tr>
+				{% endif %}
 			{% endif %}
 		{% endfor %}
 	</table>

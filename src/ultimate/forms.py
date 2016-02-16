@@ -130,9 +130,15 @@ class EditPlayerForm(forms.ModelForm):
 	nickname = forms.CharField(required=False)
 	phone = forms.CharField(required=False)
 	zip_code = forms.CharField(label='Postal/Zip Code', required=False)
-	height_inches = forms.IntegerField(label='Height Inches')
+	height_inches = forms.IntegerField(label='Height Inches', required=False)
 	jersey_size = forms.CharField(label='Jersey Size',
+		required=False,
 		widget=forms.Select(choices=(('', ''),) + Player.JERSEY_SIZE_CHOICES))
+
+	guardian_name = forms.CharField(label='Parent/Guardian Name',
+		required=False)
+	guardian_phone = forms.CharField(label='Parent/Guardian Phone',
+		required=False)
 
 	class Meta:
 		model = Player
