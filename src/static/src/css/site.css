@@ -1450,12 +1450,26 @@ ul.flat_list > li > ul > li {
 	margin-bottom: 4px;
 }
 
+.sign-up-form-field-content-input input {
+	width: 240px;
+}
+
+.sign-up-form-field-content-input select {
+	display: inline-block;
+
+	margin-top: 9px;
+
+	font-size: 16px;
+}
+
+
 .sign-up-form-field-content-input-error {
 }
 
 .sign-up-form-field-content-input-error input {
 	border-color: #e74c3c;
 }
+
 
 .sign-up-form-field-content-help {
 	margin-bottom: 4px;
@@ -1772,10 +1786,13 @@ ul.flat_list > li > ul > li {
 .wide_form input[type=email],
 .wide_form input[type=number],
 .wide_form input[type=password],
-.wide_form select,
 .wide_form textarea {
 	max-height: 60px;
 	width: 400px;
+}
+
+.wide_form select {
+	font-size: 16px;
 }
 
 

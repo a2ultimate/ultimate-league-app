@@ -267,8 +267,8 @@ class Player(PybbProfile):
 	phone = models.CharField(max_length=15)
 	zip_code = models.CharField(max_length=15)
 	gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-	height_inches = models.IntegerField()
-	highest_level = models.TextField()
+	height_inches = models.IntegerField(blank=True, null=True)
+	highest_level = models.TextField(blank=True, null=True)
 	date_of_birth = models.DateField(help_text='e.g. ' + date.today().strftime('%Y-%m-%d'))
 	jersey_size = models.CharField(max_length=45, choices=JERSEY_SIZE_CHOICES)
 
@@ -287,7 +287,7 @@ class Player(PybbProfile):
 
 	@property
 	def is_complete_for_user(self):
-		return bool(self.gender and self.height_inches and self.date_of_birth and self.jersey_size)
+		return bool(self.gender and self.date_of_birth)
 
 
 class Baggage(models.Model):
