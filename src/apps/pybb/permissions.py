@@ -2,7 +2,8 @@
 """
 Extensible permission system for pybbm
 """
-from django.utils.importlib import import_module
+from importlib import import_module
+
 from django.db.models import Q
 
 from pybb import defaults
