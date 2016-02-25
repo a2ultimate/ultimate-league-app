@@ -2,7 +2,7 @@ from ultimate.utils.google_api import GoogleAppsApi
 
 
 def add_to_group(group_id=None, group_email_address=None,
-    email_address=None, file_path=None, team_id=None):
+    email_address=None, file_path=None):
 
     api = GoogleAppsApi()
     success_count = 0

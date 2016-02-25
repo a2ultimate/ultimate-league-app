@@ -44,7 +44,6 @@ class GoogleAppsApi:
                 if group.get('email') == group_email_address:
                     target_group = group
 
-
         # couldn't find group, create it
         if not target_group:
             body = { 'email': group_email_address, }
