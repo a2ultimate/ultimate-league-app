@@ -273,6 +273,8 @@ class UserView(generic.DetailView):
 
 
 class PostView(generic.RedirectView):
+    permanent = False
+
     def get_redirect_url(self, **kwargs):
         post = get_object_or_404(perms.filter_posts(self.request.user, Post.objects.all()), pk=self.kwargs['pk'])
         count = post.topic.posts.filter(created__lt=post.created).count() + 1
@@ -281,6 +283,8 @@ class PostView(generic.RedirectView):
 
 
 class ModeratePost(generic.RedirectView):
+    permanent = False
+
     def get_redirect_url(self, **kwargs):
         post = get_object_or_404(Post, pk=self.kwargs['pk'])
         if not perms.may_moderate_topic(self.request.user, post.topic):

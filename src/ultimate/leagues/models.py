@@ -506,9 +506,44 @@ class Team(models.Model):
 	email = models.CharField(max_length=128, blank=True)
 	league = models.ForeignKey('leagues.League')
 	hidden = models.BooleanField(default=False)
+	group_id = models.CharField(max_length=128, blank=True)
 
 	class Meta:
 		db_table = u'team'
+
+	def sync_email_group(self, force=False):
+		group_email_address = '{}{}-{}-{}@lists.annarborultimate.org'.format(
+			self.league.season,
+			self.league.league_start_date.strftime('%y'),
+			self.league.league_start_date.strftime('%a'),
+			self.id).lower()
+		group_name = '{} {} {} Team {}'.format(
+			self.league.season.title(),
+			self.league.league_start_date.strftime('%Y'),
+			self.league.league_start_date.strftime('%A'),
+			self.id)
+
+		from ultimate.utils.google_api import GoogleAppsApi
+		api = GoogleAppsApi()
+
+		if force:
+			api.delete_group(group_email_address=group_email_address)
+			self.group_id = None
+
+		if not self.group_id or force:
+			group = api.get_or_create_group(
+				group_email_address=group_email_address, group_name=group_name)
+			self.group_id = group.get('id')
+
+		success_count = 0
+		for team_member in self.teammember_set.all():
+			if api.add_group_member(team_member.user.email, group_id=self.group_id, group_email_address=group_email_address):
+				success_count = success_count + 1
+
+		self.email = group_email_address
+		self.save()
+
+		return success_count, group_email_address
 
 	@property
 	def attendance_total(self):
@@ -686,7 +721,6 @@ class Team(models.Model):
 			team_record['points_against'] += points_against
 
 		return team_record
-
 
 	def player_survey_complete(self, user):
 		ratings_reports = self.playerratingsreport_set.annotate(num_ratings=Count('playerratings')).filter(submitted_by=user)
