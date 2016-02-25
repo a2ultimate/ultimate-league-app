@@ -58,6 +58,31 @@ class GoogleAppsApi:
         return target_group
 
 
+    def delete_group(self, group_id=None, group_email_address=None):
+        service = build('admin', 'directory_v1', http=self.http)
+
+
+        if group_email_address and not group_id:
+            try:
+              groups_response = service.groups().list(customer='my_customer', domain='lists.annarborultimate.org').execute(http=self.http)
+
+              if groups_response:
+                  for group in groups_response.get('groups'):
+                      if group.get('email') == group_email_address:
+                          group_id = group.get('id', None)
+
+            except Exception as e:
+                return False
+
+        if group_id:
+            try:
+                service.groups().delete(groupKey=group_id).execute(http=self.http)
+            except Exception as e:
+                return False
+
+        return True
+
+
     def add_group_member(self, email_address, group_id=None, group_email_address=None, group_name=None):
         service = build('admin', 'directory_v1', http=self.http)
 

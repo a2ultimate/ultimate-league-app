@@ -526,6 +526,10 @@ class Team(models.Model):
 		from ultimate.utils.google_api import GoogleAppsApi
 		api = GoogleAppsApi()
 
+		if force:
+			api.delete_group(group_email_address=group_email_address)
+			self.group_id = None
+
 		if not self.group_id or force:
 			group = api.get_or_create_group(
 				group_email_address=group_email_address, group_name=group_name)
