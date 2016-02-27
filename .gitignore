@@ -2,12 +2,11 @@
 *.pot
 *.pyc
 *.swp
-*.wsgi
 .DS_Store
-local_settings.py
-settings.py
 
+config/*.json
 env/
+src/env/
 src/media/*
 src/requirements/*.full.txt
 src/static/build/*

@@ -162,6 +162,16 @@ GOOGLE_ANALYTICS_PROPERTY_ID = ''
 GOOGLE_ANALYTICS_DOMAIN = ''
 
 
+# GOOGLE APPS API
+GOOGLE_APPS_API_ACCOUNT = ''
+GOOGLE_APPS_API_CREDENTIALS_FILE = os.path.join(PROJECT_ROOT, '../../../config/', 'CREDENTIAL_FILE')
+GOOGLE_APPS_API_SCOPES = (
+	'https://www.googleapis.com/auth/calendar',
+	'https://www.googleapis.com/auth/admin.directory.group',
+)
+GOOGLE_APPS_CALENDAR_ID = ''
+
+
 # Paypal Info
 PAYPAL_RECEIVER_EMAIL = ''
 PAYPAL_TEST = True			# Testing mode on
