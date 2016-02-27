@@ -26,10 +26,10 @@
 	<input type="hidden" name="next" value="{{ next }}" />
 </form>
 
-<h1>Forgot Your Password?</h1>
-Click <a href="{% url 'password_reset'  %}">here</a> for help.
+<h2>Forgot Your Password?</h2>
+Go ahead and <a href="{% url 'password_reset'  %}">reset your password</a>.
 
-<h1>Don't Have An Account?</h1>
-Create a new account <a href="{% url 'registration_register'  %}">here</a>!
+<h2>Don't Have An Account?</h2>
+What are you waiting for? <a href="{% url 'registration_register'  %}">Create an account</a> now!
 
 {% endblock %}
