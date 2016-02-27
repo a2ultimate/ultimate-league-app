@@ -416,6 +416,16 @@ class Registrations(models.Model):
 			not self.refunded)
 
 	@property
+	def is_refunded(self):
+		return bool(self.conduct_complete and \
+			self.waiver_complete and \
+			self.attendance != None and \
+			self.captain != None and \
+			((self.league.check_price == 0 and self.league.paypal_price == 0) or \
+			(self.pay_type and (self.check_complete or self.paypal_complete))) and \
+			self.refunded)
+
+	@property
 	def baggage_size(self):
 		if self.baggage:
 			return self.baggage.num_registrations
