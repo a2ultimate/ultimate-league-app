@@ -264,13 +264,16 @@ class Player(PybbProfile):
 	user = models.OneToOneField(User, related_name='profile')
 	groups = models.TextField()
 	nickname = models.CharField(max_length=30)
+	date_of_birth = models.DateField(help_text='e.g. ' + date.today().strftime('%Y-%m-%d'))
+	gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
 	phone = models.CharField(max_length=15)
 	zip_code = models.CharField(max_length=15)
-	gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-	height_inches = models.IntegerField()
-	highest_level = models.TextField()
-	date_of_birth = models.DateField(help_text='e.g. ' + date.today().strftime('%Y-%m-%d'))
+	height_inches = models.IntegerField(blank=True, null=True)
+	highest_level = models.TextField(blank=True, null=True)
 	jersey_size = models.CharField(max_length=45, choices=JERSEY_SIZE_CHOICES)
+
+	guardian_name = models.TextField(blank=True)
+	guardian_phone = models.TextField(blank=True)
 
 	class Meta:
 		db_table = u'player'
@@ -287,7 +290,12 @@ class Player(PybbProfile):
 
 	@property
 	def is_complete_for_user(self):
-		return bool(self.gender and self.height_inches and self.date_of_birth and self.jersey_size)
+		is_complete = bool(self.gender and self.date_of_birth)
+
+		if is_complete and self.age < 18:
+			is_complete = bool(is_complete and self.guardian_name and self.guardian_phone)
+
+		return is_complete
 
 
 class Baggage(models.Model):
@@ -406,6 +414,16 @@ class Registrations(models.Model):
 			((self.league.check_price == 0 and self.league.paypal_price == 0) or \
 			(self.pay_type and (self.check_complete or self.paypal_complete))) and \
 			not self.refunded)
+
+	@property
+	def is_refunded(self):
+		return bool(self.conduct_complete and \
+			self.waiver_complete and \
+			self.attendance != None and \
+			self.captain != None and \
+			((self.league.check_price == 0 and self.league.paypal_price == 0) or \
+			(self.pay_type and (self.check_complete or self.paypal_complete))) and \
+			self.refunded)
 
 	@property
 	def baggage_size(self):

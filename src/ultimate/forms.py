@@ -1,5 +1,8 @@
+from datetime import date
+
 from django import forms
 from django.contrib.auth.models import User
+from django.forms.extras import SelectDateWidget
 from django.utils.translation import ugettext_lazy as _
 
 from captcha.fields import CaptchaField
@@ -18,6 +21,12 @@ class SignupForm(forms.ModelForm):
 
 	first_name = forms.CharField(label=_('First Name'), max_length=30)
 	last_name = forms.CharField(label=_('Last Name'), max_length=30)
+
+	date_of_birth = forms.DateField(label='Date of Birth',
+		widget=SelectDateWidget(empty_label=('Year', 'Month', 'Day'),
+		years=range(date.today().year, date.today().year - 70, -1)))
+
+	gender = forms.CharField(label='Gender', widget=forms.Select(choices=(('', ''),) + Player.GENDER_CHOICES))
 
 	honeypot = forms.CharField(required=False, label=_('Honeypot'),
 		help_text=_('If you enter anything in this field your form submission will be treated as spam'))
@@ -114,13 +123,22 @@ class EditProfileForm(forms.ModelForm):
 
 
 class EditPlayerForm(forms.ModelForm):
+	date_of_birth = forms.DateField(label='Date of Birth*',
+		widget=SelectDateWidget(empty_label=('Year', 'Month', 'Day'),
+		years=range(date.today().year, date.today().year - 70, -1)))
+	gender = forms.CharField(label='Gender*', widget=forms.Select(choices=(('', ''),) + Player.GENDER_CHOICES))
 	nickname = forms.CharField(required=False)
 	phone = forms.CharField(required=False)
 	zip_code = forms.CharField(label='Postal/Zip Code', required=False)
-	gender = forms.CharField(label='Gender*', widget=forms.Select(choices=(('', '----------'),) + Player.GENDER_CHOICES))
-	height_inches = forms.IntegerField(label='Height Inches*')
-	date_of_birth = forms.DateField(label='Date of Birth*', help_text='e.g. ' + date.today().strftime('%Y-%m-%d'))
-	jersey_size = forms.CharField(label='Jersey Size*', widget=forms.Select(choices=(('', '----------'),) + Player.JERSEY_SIZE_CHOICES))
+	height_inches = forms.IntegerField(label='Height Inches', required=False)
+	jersey_size = forms.CharField(label='Jersey Size',
+		required=False,
+		widget=forms.Select(choices=(('', ''),) + Player.JERSEY_SIZE_CHOICES))
+
+	guardian_name = forms.CharField(label='Parent/Guardian Name',
+		required=False)
+	guardian_phone = forms.CharField(label='Parent/Guardian Phone',
+		required=False)
 
 	class Meta:
 		model = Player

@@ -50,8 +50,8 @@ def editteam(request, teamid):
 		context_instance=RequestContext(request))
 
 
-@login_required
 @atomic
+@login_required
 def playersurvey(request, teamid):
 	team = get_object_or_404(Team, id=teamid)
 

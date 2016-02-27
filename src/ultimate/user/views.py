@@ -45,13 +45,18 @@ def index(request):
 		context_instance=RequestContext(request))
 
 
+@atomic
 def signup(request):
 	form = None
 
 	if request.method == 'POST':
 		form = SignupForm(request.POST)
 		if form.is_valid():
-			form.save()
+			user = form.save()
+
+			player, created = Player.objects.get_or_create(user=user,
+				defaults={'date_of_birth': form.cleaned_data.get('date_of_birth'),
+					'gender': form.cleaned_data.get('gender')})
 
 			messages.success(request, 'Your account was created. You may now log in.')
 			return HttpResponseRedirect(reverse('user'))

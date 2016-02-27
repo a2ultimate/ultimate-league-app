@@ -154,28 +154,44 @@ def group(request, year, season, division):
 def registration(request, year, season, division, section=None):
 	league = get_object_or_404(League, year=year, season=season, night=division)
 
-	if not league.is_open(request.user):
-		raise Http403
-
-
-	tick_percentage = 20
-	if (league.check_price == 0 and league.paypal_price == 0) or not league.checks_accepted:
-		tick_percentage = 25
-
 	try:
 		registration, created = Registrations.objects.get_or_create(user=request.user, league=league)
 	except IntegrityError:
 		registration = Registrations.objects.get(user=request.user, league=league)
 
-	try:
-		if ((not registration.is_complete) and
-			(not request.user.profile) or
-			(not request.user.profile.is_complete_for_user) or
-			(not request.user.playerratings_set.filter(submitted_by=request.user, user=request.user))):
+	if not league.is_open(request.user):
+		return render_to_response('leagues/registration/error.html',
+			{
+				'league': league,
+				'registration': registration,
+				'errors': ['closed'],
+			},
+			context_instance=RequestContext(request))
 
-			raise Http403
-	except ObjectDoesNotExist:
-		raise Http403
+	if not registration.is_complete:
+		errors = []
+		try:
+			if not request.user.profile or not request.user.profile.is_complete_for_user:
+				errors.append('profile')
+
+			if not request.user.playerratings_set.filter(submitted_by=request.user, user=request.user).exists():
+				errors.append('rating')
+
+		except ObjectDoesNotExist:
+			errors.append('unknown')
+
+		if len(errors):
+			return render_to_response('leagues/registration/error.html',
+				{
+					'league': league,
+					'registration': registration,
+					'errors': errors,
+				},
+				context_instance=RequestContext(request))
+
+	tick_percentage = 20
+	if (league.check_price == 0 and league.paypal_price == 0) or not league.checks_accepted:
+		tick_percentage = 25
 
 	attendance_form = None
 	paypal_form = None
@@ -340,4 +356,3 @@ def registration(request, year, season, division, section=None):
 @csrf_exempt
 def registrationcomplete(request, year, season, division):
 	return redirect('league_registration', year=year, season=season, division=division)
-

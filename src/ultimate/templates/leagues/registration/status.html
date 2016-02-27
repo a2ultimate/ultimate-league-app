@@ -23,6 +23,20 @@
 				You may <a href="{% url 'league_group' year=league.year season=league.season division=league.night  %}">form a baggage group here</a>.
 			{% endif %}
 		</h3>
+	{% elif registration.is_refunded %}
+		<h3>
+			Your registration has been <strong class="text_error">refunded</strong>.
+		</h3>
+
+		<p>
+			For PayPal, please allow up to a week for the refund process to complete. For check,
+			we will issue a refund as soon as possible, but please allow up to two weeks.
+		</p>
+
+		<p>
+			If your wait time exceeds this, please
+			<a href="mailto:registration@annarborultimate.org">registration@annarborultimate.org</a>.
+		</p>
 	{% else %}
 		<h3>
 			Your registration is <strong class="text_error">not complete</strong>.
@@ -37,69 +51,72 @@
 		{% endif %}
 	{% endif %}
 
+	{% if not registration.is_refunded %}
 	<hr />
+		<p>
+			Your attendance indicates you will miss <strong>{{ registration.attendance }}</strong> out of <strong>{{ league.get_num_game_events }}</strong> games.
+		</p>
 
-	<p>
-		Your attendance indicates you will miss <strong>{{ registration.attendance }}</strong> out of <strong>{{ league.get_num_game_events }}</strong> games.
-	</p>
+		<p>
+			{% if registration.captain >= 0 %}
+				Your captaining response is <strong>"{{ registration.get_captain_display }}"</strong>
+			{% else %}
+				You have not submitted a captain response.
+			{% endif %}
+		</p>
 
-	<p>
-		{% if registration.captain >= 0 %}
-			Your captaining response is <strong>"{{ registration.get_captain_display }}"</strong>
-		{% else %}
-			You have not submitted a captain response.
-		{% endif %}
-	</p>
+		<p>
+			If you would like to change your attendance or captaining rating,
+			<a href="{% url 'league_registration_section' year=league.year season=league.season division=league.night section='attendance'  %}">click here</a>.
+		</p>
 
-	<p>
-		If you would like to change your attendance or captaining rating, <a href="{% url 'league_registration_section' year=league.year season=league.season division=league.night section='attendance'  %}">click here</a>.
-	</p>
+		<hr />
 
-	<hr />
+		{% if not registration.is_complete %}
+			{% if league.paypal_price != 0 or league.check_price != 0 %}
+				{% if registration.pay_type = 'paypal' %}
+					{% if not registration.paypal_complete %}
+						<p>
+							Click the "Checkout using PayPal" button to pay <strong>${{ league.paypal_price }}</strong>.
+						</p>
 
-	{% if not registration.is_complete %}
-		{% if league.paypal_price != 0 or league.check_price != 0 %}
-			{% if registration.pay_type = 'paypal' %}
-				{% if not registration.paypal_complete %}
+						<p>
+							You will be redirected to PayPal's website to pay and redirected back to the Ann Arbor Ultimate site afterward.
+						</p>
+
+						<p>
+							{{ paypal_form.render }}
+						</p>
+					{% endif %}
+
 					<p>
-						Click the "Checkout using PayPal" button to pay <strong>${{ league.paypal_price }}</strong>.
+						If you've already submitted a payment via PayPal, please be patient.<br />
+						It could take up to 24 hours to show as completed.
 					</p>
 
 					<p>
-						You will be redirected to PayPal's website to pay and redirected back to the Ann Arbor Ultimate site afterward.
+						If has already been 24 hours, please email
+						<a href="mailto:registration@annarborultimate.org">registration@annarborultimate.org</a>.
 					</p>
 
+					{% if league.checks_accepted %}
+						<form method="post">{% csrf_token %}
+							<input class="hidden" type="hidden" name="pay_type" value="check" />
+							<input class="button button_info" type="submit" value="Switch Payment Type to Check" />
+						</form>
+					{% endif %}
+				{% elif registration.pay_type = 'check' %}
 					<p>
-						{{ paypal_form.render }}
+						You're currently set to pay by check. You may send a check for <strong>${{ league.check_price }}</strong> to:
 					</p>
-				{% endif %}
 
-				<p>
-					If you've already submitted a payment via PayPal, please be patient.<br />
-					It could take up to 24 hours to show as completed.
-				</p>
+					{{ league.mail_check_address|safe }}
 
-				<p>
-					If has already been 24 hours, please email <a href="mailto:registration@annarborultimate.org">registration@annarborultimate.org</a>
-				</p>
-
-				{% if league.checks_accepted %}
 					<form method="post">{% csrf_token %}
-						<input class="hidden" type="hidden" name="pay_type" value="check" />
-						<input class="button button_info" type="submit" value="Switch Payment Type to Check" />
+						<input class="hidden" type="hidden" name="pay_type" value="paypal" />
+						<input class="button button_info" type="submit" value="Switch Payment Type to PayPal" />
 					</form>
 				{% endif %}
-			{% elif registration.pay_type = 'check' %}
-				<p>
-					You're currently set to pay by check. You may send a check for <strong>${{ league.check_price }}</strong> to:
-				</p>
-
-				{{ league.mail_check_address|safe }}
-
-				<form method="post">{% csrf_token %}
-					<input class="hidden" type="hidden" name="pay_type" value="paypal" />
-					<input class="button button_info" type="submit" value="Switch Payment Type to PayPal" />
-				</form>
 			{% endif %}
 		{% endif %}
 	{% endif %}

@@ -1,0 +1,42 @@
+{% extends "layout/layout_user.html" %}
+
+{% load i18n %}
+{% load leagues %}
+{% load utility %}
+
+{% block content %}
+
+  {% include "layout/league_header.html" with league=league only %}
+
+  {% include "layout/league_tabs.html" with selected_tab="registration" %}
+
+  <h2>Registration Error</h2>
+
+  {% if 'closed' in errors %}
+    <p>
+      {% trans 'This league is not currently open for registration. Either it is no longer accepting registrations (e.g. the league is over), or league has not yet opened for registration.' %}
+    </p>
+  {% endif %}
+
+  {% if 'profile' in errors %}
+    <p>
+      {% trans 'You are missing profile information required to register for a league. Please ' %}
+      <a href="{% url 'editprofile' %}">{% trans 'complete your profile' %}</a>.
+    </p>
+  {% endif %}
+
+  {% if 'rating' in errors %}
+    <p>
+      {% trans 'You are missing player ratings required to register for a league. Please ' %}
+      <a href="{% url 'editratings' %}">{% trans 'complete your ratings' %}</a>.
+    </p>
+  {% endif %}
+
+  {% if 'unknown' in errors %}
+    <p>
+      {% trans 'You are currently not eligible to register for this league. Please ensure your profile is updated and you have filled out the player rating form. If that does not help, ' %}
+      <a href="mailto:registration@annarborultimate.org">email registration@annarborultimate.org</a>
+    </p>
+  {% endif %}
+
+{% endblock %}
