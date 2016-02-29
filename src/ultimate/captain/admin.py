@@ -18,7 +18,5 @@ class GameReportAdmin(admin.ModelAdmin):
 		return ', '.join(map(str, scores))
 
 
-admin.site.register(GameReport, GameReportAdmin)
-admin.site.register(GameReportAttendance)
-admin.site.register(GameReportComment)
-admin.site.register(GameReportScore)
+# TODO make this useful, allow score/attendance adjustment, etc.
+# admin.site.register(GameReport, GameReportAdmin)

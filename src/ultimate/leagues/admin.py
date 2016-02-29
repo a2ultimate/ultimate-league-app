@@ -165,11 +165,9 @@ class TeamAdmin(admin.ModelAdmin):
 	list_filter = ('league__year', 'league__season', 'league__night', 'league__gender', 'league__state', 'hidden',)
 
 
-admin.site.register(Baggage)
 admin.site.register(Field)
 admin.site.register(FieldNames, FieldNameAdmin)
 admin.site.register(Game, GameAdmin)
 admin.site.register(League, LeagueAdmin)
 admin.site.register(Registrations, RegistrationsAdmin)
 admin.site.register(Team, TeamAdmin)
-admin.site.register(TeamMember)
