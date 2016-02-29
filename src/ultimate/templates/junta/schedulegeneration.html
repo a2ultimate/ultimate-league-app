@@ -36,7 +36,8 @@
 		</table>
 
 		<p>
-			You will need to choose {{ num_games }} fields to play on. You may add
+			There are {{ league.num_time_slots }} time slots, so you will have to
+			choose at least {{ num_necessary_fields }} fields to play on. You may add
 			exceptions and make changes in the admin interface after the schedule
 			is created.
 		</p>
@@ -52,7 +53,7 @@
 				{% for field in form.visible_fields %}
 					<tr>
 						<td>{{ field.label_tag }}</td>
-						<td>{{ field }}</td>
+						<td class="wide_input">{{ field }}</td>
 						<td>{{ field.help_text }}</td>
 					</tr>
 					{% if field.errors %}

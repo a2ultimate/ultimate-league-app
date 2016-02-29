@@ -90,28 +90,52 @@ def players(request, year, season, division):
 def teams(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
 	games = league.get_games()
-	sorted_games = sorted(games, key=lambda game: game.date)
-	next_game_date = None
-	today = date.today()
-
-	for game in sorted_games:
-		if game.date >= today and game.date <= today + timedelta(days=7):
-			next_game_date = game.date
-			break
+	next_game_date = getattr(games.filter(date__gte=date.today() + timedelta(days=7)).first(), 'date', None)
 
 	if request.user.is_authenticated():
 		user_games = league.get_user_games(request.user)
 	else:
 		user_games = None
 
+	fields = {}
+	field_names = {}
+	times = {}
+	first_date = getattr(games.first(), 'date', None)
+
+	for game in games:
+		if game.date > first_date:
+			break
+
+		if game.field_name.field.pk in fields:
+			fields[game.field_name.field.pk]['count'] += 1
+		else:
+			fields[game.field_name.field.pk] = { 'object': game.field_name.field, 'count': 1 }
+
+		if game.field_name.pk in field_names:
+			field_names[game.field_name.pk]['count'] += 1
+		else:
+			field_names[game.field_name.pk] = { 'object': game.field_name, 'count': 1 }
+
+		if game.start in times:
+			times[game.start]['count'] += 1
+		else:
+			times[game.start] = { 'object': game.start, 'count': 1 }
+
 	return render_to_response('leagues/teams.html',
 	{
 		'league': league,
 		'field_names': league.get_field_names(),
 		'games': games,
+		'user_games': user_games,
 		'next_game_date': next_game_date,
-		'teams': Team.objects.filter(league=league, hidden=False),
-		'user_games': user_games
+		'fields': fields,
+		'field_names': field_names,
+		'times': times,
+
+		'teams': Team.objects.filter(league=league, hidden=False)
+			.prefetch_related('teammember_set')
+			.prefetch_related('teammember_set__user')
+			.prefetch_related('teammember_set__user__profile'),
 	},
 	context_instance=RequestContext(request))
 

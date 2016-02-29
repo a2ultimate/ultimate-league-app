@@ -13,80 +13,85 @@
 	{% if games|length %}
 		<table id="schedule_table" class="table table-fixed table-striped">
 			<thead>
+				{% if fields %}
 				<tr>
 					<td></td>
-					{% regroup field_names by field as fields %}
-					{% for field in fields %}
-						<th class="text_center" colspan="{{ field.list|length }}">
-							<h4>
-								{{ field.grouper }}
+					{% for key, field in fields.items %}
+						<th class="text_center" colspan="{{ field.count }}">
+							{{ field.object }}
 
-								{% if field.grouper.driving_link %}
-									<small>
-										&middot;
-										<a href="{{ field.grouper.driving_link }}" target="_blank">
-											Directions
-										</a>
-									</small>
-								{% endif %}
+							{% if field.object.driving_link %}
+                <small>
+                  &middot;
+                  <a href="{{ field.object.driving_link }}" target="_blank">
+                    Directions
+                  </a>
+                </small>
+              {% endif %}
 
-								{% if field.grouper.layout_link %}
-									<small>
-										&middot;
-										<a href="{{ STATIC_URL }}{{ field.grouper.layout_link }}" target="_blank">
-											Layout
-										</a>
-									</small>
-								{% endif %}
-							</h4>
+              {% if field.object.layout_link %}
+                <small>
+                  &middot;
+                  <a href="{{ STATIC_URL }}{{ field.object.layout_link }}" target="_blank">
+                    Layout
+                  </a>
+                </small>
+              {% endif %}
 						</th>
 					{% endfor %}
 				</tr>
-
+				{% endif %}
+				{% if field_names %}
 				<tr>
 					<td></td>
-					{% for field_name in field_names %}
-						<th class="text_center">{{ field_name.name }}</th>
+					{% for key, field_name in field_names.items %}
+						<th class="text_center" colspan="{{ field_name.count }}">
+							{{ field_name.object.name }}
+						</th>
 					{% endfor %}
 				</tr>
+				{% endif %}
+				{% if times %}
+				<tr>
+					<td></td>
+					{% for key, time in times.items %}
+						<th class="text_center" colspan="{{ time.count }}">
+							{{ time.object|date:'h:iA'|lower }}
+						</th>
+					{% endfor %}
+				</tr>
+				{% endif %}
 			</thead>
-
 			<tbody>
-				{% regroup games|dictsort:"field_name.field"|dictsort:"field_name.name"|dictsort:"date" by date as games_list %}
-				{% for date in games_list %}
-					<tr class="{% if date.grouper == next_game_date %}active{% endif %}">
-						<th class="text_right">
-							<div>{{ date.grouper|date:"M" }}</div>
-							<div>{{ date.grouper|date:"jS" }}</div>
-						</th>
-
-						{% for field_name in field_names %}
-							<td class="text_center">
-								{% for game in date.list|slice:":forloop.counter" %}
-									{% ifequal game.field_name field_name %}
-										{% if game in user_games %}
-											{% for team in game.get_teams %}
-												<a href="#team_roster_{{ team.id }}" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
-													{{ team.id }}
-												</a>
-											{% empty %}
-												TBA
-											{% endfor %}
-										{% else %}
-											{% for team in game.get_teams %}
-												<div>{{ team.id }}</div>
-											{% empty %}
-												TBA
-											{% endfor %}
-										{% endif %}
-									{% endifequal %}
+				<tr>
+					{% for game in games %}
+						{% ifchanged game.date %}
+							</tr>
+							<tr class="{% if game.date == next_game_date %}active{% endif %}">
+								<th class="text_right">
+									<div>{{ game.date|date:"M" }}</div>
+									<div>{{ game.date|date:"jS" }}</div>
+								</th>
+						{% endifchanged %}
+						<td class="text_center">
+							{% if game in user_games %}
+								{% for team in game.get_teams %}
+									<a href="#team_roster_{{ team.id }}" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
+										{{ team.id }}
+									</a>
 								{% empty %}
-									-
+									TBA
 								{% endfor %}
-							</td>
-						{% endfor %}
-					</tr>
-				{% endfor %}
+							{% else %}
+								{% for team in game.get_teams %}
+									<div>{{ team.id }}</div>
+								{% empty %}
+									TBA
+								{% endfor %}
+							{% endif %}
+						</td>
+					{% endfor %}
+				</tr>
 			</tbody>
 		</table>
 	{% else %}
