@@ -90,7 +90,7 @@ def players(request, year, season, division):
 def teams(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
 	games = league.get_games()
-	next_game_date = getattr(games.filter(date__gte=date.today() + timedelta(days=7)).first(), 'date', None)
+	next_game_date = getattr(games.filter(date__gte=date.today()).first(), 'date', None)
 
 	if request.user.is_authenticated():
 		user_games = league.get_user_games(request.user)
@@ -118,7 +118,7 @@ def teams(request, year, season, division):
 
 		if game.start in times:
 			times[game.start]['count'] += 1
-		else:
+		elif game.start:
 			times[game.start] = { 'object': game.start, 'count': 1 }
 
 	return render_to_response('leagues/teams.html',
