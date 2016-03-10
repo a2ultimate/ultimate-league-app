@@ -268,7 +268,7 @@ class Player(PybbProfile):
 	user = models.OneToOneField(User, related_name='profile')
 	groups = models.TextField()
 	nickname = models.CharField(max_length=30)
-	date_of_birth = models.DateField(help_text='e.g. ' + date.today().strftime('%Y-%m-%d'))
+	date_of_birth = models.DateField(null=True)
 	gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
 	phone = models.CharField(max_length=15)
 	zip_code = models.CharField(max_length=15)

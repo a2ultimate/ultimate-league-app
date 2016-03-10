@@ -11,9 +11,4 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='player',
-            name='date_of_birth',
-            field=models.DateField(help_text=b'e.g. 2016-02-27'),
-        ),
     ]
