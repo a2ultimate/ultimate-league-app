@@ -114,9 +114,9 @@ def teams(request, year, season, division):
 				}
 
 	columns = columns.values()
-	columns.sort(key=lambda k: k['field'])
+	columns.sort(key=lambda k: k['field'].name)
 	columns.sort(key=lambda k: k['start'])
-	columns.sort(key=lambda k: k['field_name'])
+	columns.sort(key=lambda k: k['field_name'].name)
 
 	num_columns = len(columns)
 	current_column_index = 0
