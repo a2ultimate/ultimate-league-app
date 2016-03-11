@@ -469,7 +469,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
 	leagues = None
 	form = None
 	schedule = None
-	num_teams = 0
+	num_necessary_fields = 0
 
 	if year and season and division:
 		league = get_object_or_404(League, year=year, season=season, night=division)
@@ -479,7 +479,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
 		teams = list(Team.objects.filter(league=league))
 		num_teams = len(teams)
 
-		if num_teams:
+		if teams:
 			teams = teams[0::2] + list(reversed(teams[1::2]))
 			teams = teams[:1] + teams[2:] + teams[1:2]
 
@@ -498,19 +498,41 @@ def schedulegeneration(request, year=None, season=None, division=None):
 				schedule_teams = [team for game in games for team in sorted(game, key=lambda k: k.id)]
 				schedule.append(schedule_teams)
 
+		num_necessary_fields = num_teams / 2 / league.num_time_slots
+
+
 		if request.method == 'POST':
 			form = ScheduleGenerationForm(request.POST)
-			if form.is_valid() and len(request.POST.getlist('field_names')) >= (num_teams / 2):
+			field_names = request.POST.getlist('field_names')
+			num_field_names = len(field_names)
+
+			if form.is_valid() and num_field_names >= num_necessary_fields:
+				start_datetime = datetime.combine(datetime.min, league.start_time)
+
+				if league.start_time <= league.end_time:
+					end_datetime = datetime.combine(datetime.min, league.end_time)
+				else:
+					end_datetime = datetime.combine(datetime.min + timedelta(days=1), league.end_time)
+
+				time_delta = end_datetime - start_datetime
+				time_slot_delta = time_delta / league.num_time_slots
+
 				event_date = league.league_start_date
-				field_names = request.POST.getlist('field_names')
+				field_names = FieldNames.objects.filter(pk__in=field_names)
+
 				for event in schedule:
+					event_datetime = datetime.combine(event_date, league.start_time)
+
 					for i, team in enumerate(event):
 						if i % 2 == 0:
 							game = Game()
 							game.date = event_date
-							game.field_name = FieldNames.objects.get(id=field_names[i / 2])
+							game.start = event_datetime
+							game.field_name = field_names[(i / 2) % num_field_names]
 							game.league = league
 							game.save()
+						elif (i / 2) % num_field_names == 0:
+							event_datetime += time_slot_delta
 
 						game_team = GameTeams()
 						game_team.game = game
@@ -522,7 +544,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
 				messages.success(request, 'Schedule was successfully generated.')
 				return HttpResponseRedirect(reverse('schedulegeneration'))
 			else:
-				if len(request.POST.getlist('field_names')) >= (num_teams / 2):
+				if num_field_names >= num_necessary_fields:
 					messages.error(request, 'There was an issue with the form you submitted.')
 				else:
 					messages.error(request, 'You must pick enough fields to cover the number of games for an event.')
@@ -536,5 +558,11 @@ def schedulegeneration(request, year=None, season=None, division=None):
 		leagues = League.objects.all().order_by('-league_start_date')
 
 	return render_to_response('junta/schedulegeneration.html',
-		{'league': league, 'leagues': leagues, 'form': form, 'schedule': schedule, 'num_games': num_teams / 2},
+		{
+			'league': league,
+			'leagues': leagues,
+			'form': form,
+			'schedule': schedule,
+			'num_necessary_fields': num_necessary_fields,
+		},
 		context_instance=RequestContext(request))

@@ -82,6 +82,10 @@ class League(models.Model):
 	detailed_info = models.TextField(help_text='details page text, use HTML')
 
 	times = models.TextField(help_text='start to end time, e.g. 6:00-8:00pm')
+	start_time = models.TimeField(null=True, help_text='start time for league')
+	end_time = models.TimeField(null=True, help_text='end time for league')
+	num_time_slots = models.IntegerField(default=1, help_text='number of time slots')
+
 	num_games_per_week = models.IntegerField(default=1, help_text='number of games per week, used to calculate number of games for a league')
 	reg_start_date = models.DateTimeField(help_text='date and time that registration process is open (not currently automated)')
 	price_increase_start_date = models.DateTimeField(help_text='date and time when cost increases for league')
@@ -149,7 +153,7 @@ class League(models.Model):
 		return Team.objects.filter(league=self, hidden=False)
 
 	def get_games(self):
-		return Game.objects.filter(league=self).order_by('field_name__field__name', 'field_name__name', 'date')
+		return self.game_set.order_by('date',)
 
 	def get_user_games(self, user):
 		return Game.objects.filter(league=self, gameteams__team__teammember__user=user).order_by('date')
@@ -264,7 +268,7 @@ class Player(PybbProfile):
 	user = models.OneToOneField(User, related_name='profile')
 	groups = models.TextField()
 	nickname = models.CharField(max_length=30)
-	date_of_birth = models.DateField(help_text='e.g. ' + date.today().strftime('%Y-%m-%d'))
+	date_of_birth = models.DateField(null=True)
 	gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
 	phone = models.CharField(max_length=15)
 	zip_code = models.CharField(max_length=15)
@@ -778,6 +782,7 @@ class TeamMember(models.Model):
 class Game(models.Model):
 	id = models.AutoField(primary_key=True)
 	date = models.DateField()
+	start = models.DateTimeField(null=True)
 	field_name = models.ForeignKey('leagues.FieldNames')
 	league = models.ForeignKey('leagues.league')
 
@@ -804,7 +809,7 @@ class Game(models.Model):
 		return any(report.is_complete for report in self.gamereport_set.filter(last_updated_by=user, team__teammember__user=user, team__teammember__captain=1))
 
 	def __unicode__(self):
-		return '%s - %s' % (self.date, self.league)
+		return '{} {} {} {}'.format(self.league, self.date, self.start, self.field_name)
 
 
 class GameTeams(models.Model):

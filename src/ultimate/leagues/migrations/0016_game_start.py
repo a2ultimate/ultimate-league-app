@@ -7,8 +7,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('leagues', '0003_auto_20151018_2204'),
+        ('leagues', '0015_auto_20160227_1827'),
     ]
 
     operations = [
+        migrations.AddField(
+            model_name='game',
+            name='start',
+            field=models.DateTimeField(null=True),
+        ),
     ]
