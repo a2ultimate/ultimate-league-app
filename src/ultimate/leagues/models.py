@@ -809,7 +809,7 @@ class Game(models.Model):
 		return any(report.is_complete for report in self.gamereport_set.filter(last_updated_by=user, team__teammember__user=user, team__teammember__captain=1))
 
 	def __unicode__(self):
-		return '%s - %s' % (self.date, self.league)
+		return '{} {} {} {}'.format(self.league, self.date, self.start, self.field_name)
 
 
 class GameTeams(models.Model):

@@ -10,29 +10,29 @@
 
 	{% include "layout/league_tabs.html" with selected_tab="teams" %}
 
-	{% if games|length %}
+	{% if game_dates|length %}
 		<table id="schedule_table" class="table table-fixed table-striped">
 			<thead>
-				{% if fields %}
 				<tr>
 					<td></td>
-					{% for key, field in fields.items %}
-						<th class="text_center" colspan="{{ field.count }}">
-							{{ field.object }}
+					{% regroup columns by field as field_list %}
+					{% for field in field_list %}
+						<th class="text_center" colspan="{{ field.list|length }}">
+							{{ field.grouper }}
 
-							{% if field.object.driving_link %}
+							{% if field.grouper.driving_link %}
                 <small>
                   &middot;
-                  <a href="{{ field.object.driving_link }}" target="_blank">
+                  <a href="{{ field.grouper.driving_link }}" target="_blank">
                     Directions
                   </a>
                 </small>
               {% endif %}
 
-              {% if field.object.layout_link %}
+              {% if field.grouper.layout_link %}
                 <small>
                   &middot;
-                  <a href="{{ STATIC_URL }}{{ field.object.layout_link }}" target="_blank">
+                  <a href="{{ STATIC_URL }}{{ field.grouper.layout_link }}" target="_blank">
                     Layout
                   </a>
                 </small>
@@ -40,58 +40,53 @@
 						</th>
 					{% endfor %}
 				</tr>
-				{% endif %}
-				{% if field_names %}
 				<tr>
 					<td></td>
-					{% for key, field_name in field_names.items %}
-						<th class="text_center" colspan="{{ field_name.count }}">
-							{{ field_name.object.name }}
+					{% regroup columns by start as start_list %}
+					{% for start in start_list %}
+						<th class="text_center" colspan="{{ start.list|length }}">
+							{{ start.grouper|date:'h:iA'|lower }}
 						</th>
 					{% endfor %}
 				</tr>
-				{% endif %}
-				{% if times %}
 				<tr>
 					<td></td>
-					{% for key, time in times.items %}
-						<th class="text_center" colspan="{{ time.count }}">
-							{{ time.object|date:'h:iA'|lower }}
-						</th>
+					{% regroup columns by field_name as field_name_list %}
+					{% for field_name in field_name_list %}
+							<th class="text_center" colspan="{{ field_name.list|length }}">
+								{{ field_name.grouper.name }}
+							</th>
 					{% endfor %}
 				</tr>
-				{% endif %}
 			</thead>
 			<tbody>
-				<tr>
-					{% for game in games %}
-						{% ifchanged game.date %}
-							</tr>
-							<tr class="{% if game.date == next_game_date %}active{% endif %}">
-								<th class="text_right">
-									<div>{{ game.date|date:"M" }}</div>
-									<div>{{ game.date|date:"jS" }}</div>
-								</th>
-						{% endifchanged %}
-						<td class="text_center">
-							{% if game in user_games %}
-								{% for team in game.get_teams %}
-									<a href="#team_roster_{{ team.id }}" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
-										{{ team.id }}
-									</a>
-								{% empty %}
-									TBA
-								{% endfor %}
-							{% else %}
-								{% for team in game.get_teams %}
-									<div>{{ team.id }}</div>
-								{% empty %}
-									TBA
-								{% endfor %}
-							{% endif %}
-						</td>
-					{% endfor %}
-				</tr>
+				{% for game_date in game_dates %}
+					<tr class="{% if game_date.date == next_game_date %}active{% endif %}">
+						<th class="text_right">
+							<div>{{ game_date.date|date:"M" }}</div>
+							<div>{{ game_date.date|date:"jS" }}</div>
+						</th>
+						{% for game in game_date.games %}
+							<td class="text_center">
+								{% if game in user_games %}
+									{% for team in game.get_teams %}
+										<a href="#team_roster_{{ team.id }}" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
+											{{ team.id }}
+										</a>
+									{% empty %}
+										TBA
+									{% endfor %}
+								{% else %}
+									{% for team in game.get_teams %}
+										<div>{{ team.id }}</div>
+									{% empty %}
+										TBA
+									{% endfor %}
+								{% endif %}
+							</td>
+						{% endfor %}
+					</tr>
+				{% endfor %}
 			</tbody>
 		</table>
 	{% else %}

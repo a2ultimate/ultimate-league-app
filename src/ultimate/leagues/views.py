@@ -89,7 +89,7 @@ def players(request, year, season, division):
 
 def teams(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
-	games = league.get_games()
+	games = league.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
 	next_game_date = getattr(games.filter(date__gte=date.today()).first(), 'date', None)
 
 	if request.user.is_authenticated():
@@ -97,40 +97,64 @@ def teams(request, year, season, division):
 	else:
 		user_games = None
 
-	fields = {}
-	field_names = {}
-	times = {}
-	first_date = getattr(games.first(), 'date', None)
+	columns = {}
 
 	for game in games:
-		if game.date > first_date:
-			break
+		game_field = game.field_name.field.pk
+		game_start = game.start.time() if game.start else game.start
+		game_field_name = game.field_name.pk
+		column_id = '{}_{}_{}'.format(game_field, game_start, game_field_name)
 
-		if game.field_name.field.pk in fields:
-			fields[game.field_name.field.pk]['count'] += 1
-		else:
-			fields[game.field_name.field.pk] = { 'object': game.field_name.field, 'count': 1 }
+		if column_id not in columns:
+			columns[column_id] = {
+				'id': column_id,
+				'field': game.field_name.field,
+				'start': game.start,
+				'field_name': game.field_name,
+				}
 
-		if game.field_name.pk in field_names:
-			field_names[game.field_name.pk]['count'] += 1
-		else:
-			field_names[game.field_name.pk] = { 'object': game.field_name, 'count': 1 }
+	columns = [columns[i] for i in sorted(columns)]
 
-		if game.start in times:
-			times[game.start]['count'] += 1
-		elif game.start:
-			times[game.start] = { 'object': game.start, 'count': 1 }
+	num_columns = len(columns)
+	current_column_index = 0
+	current_date = getattr(games.first(), 'date', None)
+	game_dates = {}
+	game_dates[current_date] = []
+
+	for game in games:
+		if current_date != game.date:
+			game_dates[game.date] = []
+
+			while current_column_index < num_columns:
+				game_dates[current_date].append(None)
+				current_column_index += 1
+
+			current_date = game.date
+			current_column_index = 0
+
+		game_field = game.field_name.field.pk
+		game_start = game.start.time() if game.start else game.start
+		game_field_name = game.field_name.pk
+		column_id = '{}_{}_{}'.format(game_field, game_start, game_field_name)
+
+		while columns[current_column_index]['id'] != column_id:
+			game_dates[current_date].append(None)
+			current_column_index += 1
+
+		game_dates[current_date].append(game)
+		current_column_index += 1
+
+	game_dates = [{'date': i, 'games': game_dates[i]} for i in sorted(game_dates)]
 
 	return render_to_response('leagues/teams.html',
 	{
 		'league': league,
-		'field_names': league.get_field_names(),
-		'games': games,
+
+		'columns': columns,
+		'game_dates': game_dates,
+
 		'user_games': user_games,
 		'next_game_date': next_game_date,
-		'fields': fields,
-		'field_names': field_names,
-		'times': times,
 
 		'teams': Team.objects.filter(league=league, hidden=False)
 			.prefetch_related('teammember_set')
