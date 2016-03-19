@@ -500,7 +500,6 @@ def schedulegeneration(request, year=None, season=None, division=None):
 
 		num_necessary_fields = num_teams / 2 / league.num_time_slots
 
-
 		if request.method == 'POST':
 			form = ScheduleGenerationForm(request.POST)
 			field_names = request.POST.getlist('field_names')
@@ -531,7 +530,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
 							game.field_name = field_names[(i / 2) % num_field_names]
 							game.league = league
 							game.save()
-						elif (i / 2) % num_field_names == 0:
+						elif (i / 2) % num_field_names > 0:
 							event_datetime += time_slot_delta
 
 						game_team = GameTeams()
