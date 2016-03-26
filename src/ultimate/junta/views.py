@@ -171,12 +171,14 @@ def registrationexport(request, year=None, season=None, division=None):
 
 				try:
 					registration_profile = registration.user.profile
+
 					gender = registration_profile.gender.encode('ascii', 'ignore')
-					jersey_size = registration_profile.jersey_size.encode('ascii', 'ignore')
+					age = getattr(registration_profile, 'age', 0)
+					height_inches = getattr(registration_profile, 'height_inches', 0)
 				except:
 					gender = None
+					age = None
 					height_inches = None
-					jersey_size = None
 
 				team_member_captain = 0
 				team_member_models = TeamMember.objects.filter(user=registration.user, team__league=registration.league)
@@ -199,8 +201,8 @@ def registrationexport(request, year=None, season=None, division=None):
 					registration.average_athleticism,
 					registration.average_competitiveness,
 					registration.average_spirit,
-					int(registration_profile.age),
-					int(registration_profile.height_inches),
+					age,
+					height_inches,
 					registration.num_teams,
 					registration.status.encode('ascii', 'ignore'),
 					registration.registered,
