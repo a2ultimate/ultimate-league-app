@@ -14,9 +14,13 @@
 			<div class="next_game_info">
 				<p>Your Next Game Is On:</p>
 				<div id="next_game_date">{{ next_game.date|date:"l F dS, Y" }}</div>
-				<div id="next_game_time">{{ next_game.league.times }}</div>
+				{% if next_game.start %}
+					<div id="next_game_time">{{ next_game.start|date:'g:iA'|lower }}</div>
+				{% else %}
+					<div id="next_game_time">{{ next_game.league.times }}</div>
+				{% endif %}
 				<div id="next_game_field">
-					@ {{ next_game.field_name.field.name }} {{ next_game.field_name.name }}
+					at {{ next_game.field_name.field.name }} {{ next_game.field_name.name }}
 
 					{% if next_game.field_name.field.driving_link %}
 						<small>
@@ -127,8 +131,17 @@
 
 	{% if following_game and following_game.get_teams|length %}
 		<p id="following_game">
-			The following game is on <strong>{{ following_game.date|date:"l F dS, Y" }}</strong> from <strong>{{ following_game.league.times }}</strong><br />
-			@ <strong>{{ following_game.field_name.field.name }} {{ following_game.field_name.name }}</strong>
+			The following game is
+
+			{% if following_game.start %}
+				at <strong>{{ following_game.start|date:'g:iA'|lower }}</strong>
+				on <strong>{{ following_game.date|date:"l F dS, Y" }}</strong><br />
+			{% else %}
+				on <strong>{{ following_game.date|date:"l F dS, Y" }}</strong>
+				from <strong>{{ following_game.league.times }}</strong><br />
+			{% endif %}
+
+			at <strong>{{ following_game.field_name.field.name }} {{ following_game.field_name.name }}</strong>
 		</p>
 	{% endif %}
 

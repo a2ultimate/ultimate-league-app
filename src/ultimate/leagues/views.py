@@ -109,7 +109,7 @@ def teams(request, year, season, division):
 			columns[column_id] = {
 				'id': column_id,
 				'field': game.field_name.field,
-				'start': game.start,
+				'start': game.start.time() if game.start else None,
 				'field_name': game.field_name,
 				}
 
@@ -240,9 +240,14 @@ def registration(request, year, season, division, section=None):
 				},
 				context_instance=RequestContext(request))
 
-	tick_percentage = 20
-	if (league.check_price == 0 and league.paypal_price == 0) or not league.checks_accepted:
-		tick_percentage = 25
+	num_steps = 3
+	if league.check_price > 0 and league.paypal_price > 0:
+		num_steps = num_steps + 1
+
+		if league.checks_accepted:
+			num_steps = num_steps + 1
+
+	tick_percentage = 100.0 / num_steps
 
 	attendance_form = None
 	paypal_form = None
@@ -267,7 +272,6 @@ def registration(request, year, season, division, section=None):
 			registration.waiver_complete = 1
 			registration.save()
 			messages.success(request, 'Waiver response saved.')
-
 		elif 'waiver_decline' in request.POST:
 			registration.waiver_complete = 0
 			registration.save()
@@ -289,10 +293,6 @@ def registration(request, year, season, division, section=None):
 
 				if league.check_price == 0 and league.paypal_price == 0:
 					registration.registered = datetime.now()
-					registration.save()
-
-				if not league.checks_accepted:
-					registration.pay_type = 'paypal'
 					registration.save()
 
 				messages.success(request, 'Attendance and captaining response saved.')
@@ -386,7 +386,7 @@ def registration(request, year, season, division, section=None):
 				'cancel_return': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration/',
 				'invoice': registration.paypal_invoice_id,
 				'item_name': str(league.season).capitalize() + ' League ' + str(league.year) + ' - ' + str(league.night).capitalize(),
-				'notify_url': baseUrl + '/leagues/registration/payment/notification/callback/for/a2ultimate/secret/',
+				'notify_url': baseUrl + '/leaguesregistration/payment/' + getattr(settings, 'PAYPAL_CALLBACK_SECRET', 'notification/callback/for/a2ultimate/secret/'),
 				'return_url': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration-complete/',
 			}
 

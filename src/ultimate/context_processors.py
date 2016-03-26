@@ -49,16 +49,11 @@ def user_rating_is_complete(request):
 
 
 def google_analytics(request):
-    """
-    Use the variables returned in this function to
-    render your Google Analytics tracking code template.
-    """
-    property_id = getattr(settings, 'GOOGLE_ANALYTICS_PROPERTY_ID', False)
-    domain = getattr(settings, 'GOOGLE_ANALYTICS_DOMAIN', False)
-    if not settings.DEBUG and property_id and domain:
-        return {
-            'GOOGLE_ANALYTICS_PROPERTY_ID': property_id,
-            'GOOGLE_ANALYTICS_DOMAIN': domain,
-        }
+    trackers = []
 
-    return {}
+    if not settings.DEBUG:
+        trackers = getattr(settings, 'GOOGLE_ANALYTICS_TRACKERS', [])
+
+    return {
+        'GOOGLE_ANALYTICS_TRACKERS': trackers,
+        }

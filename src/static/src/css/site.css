@@ -1273,7 +1273,6 @@ input[type='submit'] {
 }
 
 .progress_bar > .tick_label {
-	cursor: default;
 	display: block;
 	font-size: 13px;
 	font-weight: bold;
@@ -1764,12 +1763,14 @@ ul.flat_list > li > ul > li {
 }
 
 #next_game_date {
-	font-size: 20px;
+	font-size: 22px;
 	font-weight: bold;
 }
 
 #next_game_time {
+	font-size: 18px;
 	margin-bottom: 8px;
+	font-weight: bold;
 }
 
 #next_game_field {
