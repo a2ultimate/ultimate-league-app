@@ -35,6 +35,15 @@
 			</tbody>
 		</table>
 
+
+		{% for field in league.get_fields %}
+			{% if field.field.layout_link %}
+				<a href="{{ STATIC_URL }}{{ field.field.layout_link }}" target="_blank">
+					<img src="{{ STATIC_URL }}{{ field.field.layout_link }}" height="300px">
+				</a>
+			{% endif %}
+		{% endfor %}
+
 		<p>
 			There are {{ league.num_time_slots }} time slots, so you will have to
 			choose at least {{ num_necessary_fields }} fields to play on. You may add
