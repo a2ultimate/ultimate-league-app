@@ -82,7 +82,11 @@ def players(request, year, season, division):
 			'waitlist_registrations': waitlist_registrations,
 			'refunded_registrations': refunded_registrations,
 			'unassigned_registrations': unassigned_registrations,
-			'registrations_remaining': max(0, league.max_players - len(complete_registrations))
+
+			'registrations_female': len([r for r in complete_registrations if r.user.profile.is_female()]),
+			'registrations_male': len([r for r in complete_registrations if r.user.profile.is_male()]),
+			'registrations_minor': len([r for r in complete_registrations if r.user.profile.is_minor(league.league_start_date)]),
+			'registrations_remaining': max(0, league.max_players - len(complete_registrations)),
 		},
 		context_instance=RequestContext(request))
 

@@ -91,6 +91,12 @@
 				{% endfor %}
 			</tbody>
 		</table>
+
+		{% if league.schedule_note %}
+			<p class="schedule-note">
+				{{ league.schedule_note }}
+			</p>
+		{% endif %}
 	{% else %}
 		<h3 class="none_found text_center">
 			Schedules are not yet available
@@ -177,6 +183,39 @@
 				{% endfor %}
 			</tr>
 		</table>
+
+		{% if request.user|in_group:"junta" %}
+			<div class="page-teams-admin-notes">
+				<div class="page-teams-admin-notes-title">
+					Admin Only
+				</div>
+
+				<div class="page-teams-admin-notes-content">
+					<dl>
+						<dt>Division Email Address:</dt>
+						<dd>
+							{% if league.division_email %}
+								<a href="mailto:{{ league.division_email }}">
+									{{ league.division_email }}
+								</a>
+							{% else %}
+								None
+							{% endif %}
+						</dd>
+						<dt>Division Captains Email Address:</dt>
+						<dd>
+							{% if league.division_captains_email %}
+								<a href="mailto:{{ league.division_captains_email }}">
+									{{ league.division_captains_email }}
+								</a>
+							{% else %}
+								None
+							{% endif %}
+						</dd>
+					</dl>
+				</div>
+			</div>
+		{% endif %}
 	{% else %}
 		<h3 class="none_found text_center">
 			Teams are not yet available
