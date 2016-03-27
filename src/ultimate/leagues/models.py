@@ -104,9 +104,10 @@ class League(models.Model):
 
 	field = models.ManyToManyField(Field, through='FieldLeague', help_text='Select the fields these games will be played at, use the green "+" icon if we\'re playing at a new field.')
 
-	league_email = models.CharField(max_length=64, blank=True, help_text='email address for entire season')
-	league_captains_email = models.CharField(max_length=64, blank=True, help_text='email address for league captains')
-	division_email = models.CharField(max_length=64, blank=True, help_text='email address for just this league')
+	division_email = models.CharField(max_length=64, blank=True, null=True, help_text='email address for just this league')
+	division_email_group_id = models.CharField(max_length=128, blank=True, null=True)
+	division_captains_email = models.CharField(max_length=64, blank=True, null=True, help_text='email address for league captains')
+	division_captains_email_group_id = models.CharField(max_length=128, blank=True, null=True)
 
 	state = models.CharField(max_length=32, choices=LEAGUE_STATE_CHOICES, help_text='state of league, changes whether registration is open or league is visible')
 
@@ -236,6 +237,80 @@ class League(models.Model):
 	@property
 	def is_after_price_increase(self):
 		return datetime.now() >= self.price_increase_start_date
+
+	def sync_email_groups(self, force=False):
+		division_email_success, division_email_address = \
+			self.sync_division_email_group(force)
+
+		division_captains_email_success, division_captains_email_address = \
+			self.sync_division_captains_email_group(force)
+
+		return division_email_success + division_captains_email_success
+
+	def sync_division_email_group(self, force=False):
+		group_address = '{}{}-{}@lists.annarborultimate.org'.format(
+			self.season,
+			self.league_start_date.strftime('%y'),
+			self.league_start_date.strftime('%a')).lower()
+		group_name = '{} {} {}'.format(
+			self.season.title(),
+			self.league_start_date.strftime('%Y'),
+			self.league_start_date.strftime('%A'))
+
+		from ultimate.utils.google_api import GoogleAppsApi
+		api = GoogleAppsApi()
+		group_id = api.prepare_group_for_sync(
+			group_name=group_name,
+			group_id=self.division_captains_email_group_id,
+			group_email_address=group_address,
+			force=force)
+
+		self.division_email = group_address
+		self.division_email_group_id = group_id
+
+		success_count = 0
+		for registration in self.get_complete_registrations():
+			if api.add_group_member(registration.user.email, group_id=self.division_email_group_id, group_email_address=group_address):
+				success_count = success_count + 1
+
+		self.division_email = group_address
+		self.save()
+
+		return success_count, group_address
+
+	def sync_division_captains_email_group(self, force=False):
+		group_address = '{}{}-{}-captains@lists.annarborultimate.org'.format(
+			self.season,
+			self.league_start_date.strftime('%y'),
+			self.league_start_date.strftime('%a')).lower()
+		group_name = '{} {} {} Captains'.format(
+			self.season.title(),
+			self.league_start_date.strftime('%Y'),
+			self.league_start_date.strftime('%A'))
+
+		from ultimate.utils.google_api import GoogleAppsApi
+		api = GoogleAppsApi()
+		group_id = api.prepare_group_for_sync(
+			group_name=group_name,
+			group_id=self.division_captains_email_group_id,
+			group_email_address=group_address,
+			force=force)
+
+		self.division_captains_email = group_address
+		self.division_captains_email_group_id = group_id
+
+		success_count = 0
+		for registration in self.get_complete_registrations():
+			team_member_captain = 0
+			team_member_models = TeamMember.objects.filter(user=registration.user, team__league=registration.league)
+			if team_member_models.count():
+				if team_member_models[:1].get().captain:
+					if api.add_group_member(registration.user.email, group_id=self.division_captains_email_group_id, group_email_address=group_address):
+						success_count = success_count + 1
+
+		self.save()
+
+		return success_count, group_address
 
 	def __unicode__(self):
 		return ('%s %d %s' % (self.season, self.year, self.night)).replace('_', ' ')
@@ -412,7 +487,7 @@ class Registrations(models.Model):
 						if self.check_complete or self.paypal_complete:
 							percentage += interval
 
-		return percentage
+		return int(round(percentage))
 
 	@property
 	def is_complete(self):
@@ -562,7 +637,7 @@ class Team(models.Model):
 		db_table = u'team'
 
 	def sync_email_group(self, force=False):
-		group_email_address = '{}{}-{}-{}@lists.annarborultimate.org'.format(
+		group_address = '{}{}-{}-{}@lists.annarborultimate.org'.format(
 			self.league.season,
 			self.league.league_start_date.strftime('%y'),
 			self.league.league_start_date.strftime('%a'),
@@ -575,25 +650,23 @@ class Team(models.Model):
 
 		from ultimate.utils.google_api import GoogleAppsApi
 		api = GoogleAppsApi()
+		group_id = api.prepare_group_for_sync(
+			group_name=group_name,
+			group_id=self.group_id,
+			group_email_address=group_address,
+			force=force)
 
-		if force:
-			api.delete_group(group_email_address=group_email_address)
-			self.group_id = None
-
-		if not self.group_id or force:
-			group = api.get_or_create_group(
-				group_email_address=group_email_address, group_name=group_name)
-			self.group_id = group.get('id')
+		self.email = group_address
+		self.group_id = group_id
 
 		success_count = 0
 		for team_member in self.teammember_set.all():
-			if api.add_group_member(team_member.user.email, group_id=self.group_id, group_email_address=group_email_address):
+			if api.add_group_member(team_member.user.email, group_id=self.group_id, group_email_address=group_address):
 				success_count = success_count + 1
 
-		self.email = group_email_address
 		self.save()
 
-		return success_count, group_email_address
+		return success_count, group_address
 
 	@property
 	def attendance_total(self):

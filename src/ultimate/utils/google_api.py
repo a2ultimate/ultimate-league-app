@@ -27,6 +27,24 @@ class GoogleAppsApi:
             self.http = credentials.authorize(self.http)
 
 
+    def prepare_group_for_sync(self, group_name, group_id=None, group_email_address=None, force=False):
+        if force:
+            self.delete_group(group_id=group_id, group_email_address=group_email_address)
+        else:
+            self.remove_all_group_members(group_id=group_id, group_email_address=group_email_address)
+
+        if group_id:
+            return group_id
+        else:
+            group = self.get_or_create_group(
+                group_email_address=group_email_address, group_name=group_name)
+
+            if group:
+                return group.get('id')
+
+        return None
+
+
     # TODO need paging for when you have over 200 groups
     def get_or_create_group(self, group_email_address, group_name):
         service = build('admin', 'directory_v1', http=self.http)
@@ -61,12 +79,11 @@ class GoogleAppsApi:
     def delete_group(self, group_id=None, group_email_address=None):
         service = build('admin', 'directory_v1', http=self.http)
 
-
         if group_email_address and not group_id:
             try:
-              groups_response = service.groups().list(customer='my_customer', domain='lists.annarborultimate.org').execute(http=self.http)
+                groups_response = service.groups().list(customer='my_customer', domain='lists.annarborultimate.org').execute(http=self.http)
 
-              if groups_response:
+                if groups_response:
                   for group in groups_response.get('groups'):
                       if group.get('email') == group_email_address:
                           group_id = group.get('id', None)
@@ -81,6 +98,25 @@ class GoogleAppsApi:
                 return False
 
         return True
+
+
+    def remove_all_group_members(self, group_id=None, group_email_address=None, group_name=None):
+        service = build('admin', 'directory_v1', http=self.http)
+
+        # look for group
+        if not group_id and group_email_address:
+            group = self.get_or_create_group(
+                group_email_address=group_email_address, group_name=group_name)
+
+            if group:
+                group_id = group.get('id')
+
+        if group_id:
+            members_response = service.members().list(groupKey=group_id).execute(http=self.http)
+            if members_response and members_response.get('members'):
+                for member in members_response.get('members'):
+                    member_id = member.get('id', None)
+                    service.members().delete(groupKey=group_id, memberKey=member_id).execute(http=self.http)
 
 
     def add_group_member(self, email_address, group_id=None, group_email_address=None, group_name=None):
@@ -99,7 +135,6 @@ class GoogleAppsApi:
 
             if group:
                 group_id = group.get('id')
-
 
         if group_id:
             try:
