@@ -182,25 +182,33 @@ class League(models.Model):
 	def get_registrations_for_user(self, user):
 		return Registrations.objects.filter(league=self, user=user)
 
+	def get_registrations(self):
+		registrations = self.registrations_set.filter(league=self).order_by('registered') \
+			.prefetch_related('baggage') \
+			.prefetch_related('league') \
+			.prefetch_related('user') \
+			.prefetch_related('user__profile')
+		return registrations
+
 	def get_complete_registrations(self):
-		registrations = Registrations.objects.filter(league=self).order_by('registered')
+		registrations = self.get_registrations()
 		return [r for r in registrations if r.is_complete and not r.waitlist and not r.refunded]
 
 	def get_waitlist_registrations(self):
-		registrations = Registrations.objects.filter(league=self).order_by('registered')
+		registrations = self.get_registrations()
 		return [r for r in registrations if r.is_complete and r.waitlist and not r.refunded]
 
 	def get_incomplete_registrations(self):
-		registrations = Registrations.objects.filter(league=self).order_by('registered')
+		registrations = self.get_registrations()
 		return [r for r in registrations if not r.is_complete and not r.refunded]
 
 	def get_refunded_registrations(self):
-		registrations = Registrations.objects.filter(league=self).order_by('registered')
+		registrations = self.get_registrations()
 		return [r for r in registrations if r.is_complete and r.refunded]
 
 	def get_unassigned_registrations(self):
-		team_member_users = [t.user for t in TeamMember.objects.filter(team__league=self)]
-		registrations = Registrations.objects.filter(league=self).exclude(user__in=team_member_users)
+		team_member_users = [t.user for t in TeamMember.objects.filter(team__league=self).prefetch_related('user')]
+		registrations = self.get_registrations().exclude(user__in=team_member_users)
 		return [r for r in registrations if r.is_complete and not r.refunded]
 
 	def is_visible(self, user=None):
@@ -326,9 +334,11 @@ class FieldLeague(models.Model):
 
 
 class Player(PybbProfile):
+	GENDER_FEMALE = 'F'
+	GENDER_MALE = 'M'
 	GENDER_CHOICES = (
-		('M',	'Male'),
-		('F',	'Female'),
+		(GENDER_FEMALE,	'Female'),
+		(GENDER_MALE,	'Male'),
 	)
 
 	JERSEY_SIZE_CHOICES = (
@@ -358,14 +368,8 @@ class Player(PybbProfile):
 		db_table = u'player'
 
 	@property
-	def age(self, now=None):
-		if not self.date_of_birth:
-			return 0
-
-		if now is None:
-			now = date.today()
-
-		return (now.year - self.date_of_birth.year) - int((now.month, now.day) < (self.date_of_birth.month, self.date_of_birth.day))
+	def age(self):
+		return self.get_age_on(date.today())
 
 	@property
 	def is_complete_for_user(self):
@@ -375,6 +379,24 @@ class Player(PybbProfile):
 			is_complete = bool(is_complete and self.guardian_name and self.guardian_phone)
 
 		return is_complete
+
+	def is_male(self):
+		return self.gender == self.GENDER_MALE
+
+	def is_female(self):
+		return self.gender == self.GENDER_FEMALE
+
+	def is_minor(self, now=None):
+		if not now:
+			now = date.today()
+
+		return self.get_age_on(now) < 18
+
+	def get_age_on(self, now):
+		if not self.date_of_birth:
+			return 0
+
+		return (now.year - self.date_of_birth.year) - int((now.month, now.day) < (self.date_of_birth.month, self.date_of_birth.day))
 
 
 class Baggage(models.Model):

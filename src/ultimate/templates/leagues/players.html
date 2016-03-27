@@ -127,6 +127,25 @@
 					</tbody>
 				</table>
 			{% endif %}
+
+			<div class="page-players-admin-notes">
+				<div class="page-players-admin-notes-title">
+					Admin Only
+				</div>
+
+				<div class="page-players-admin-notes-content">
+					<dl>
+						<dt>Complete Registrations:</dt>
+						<dd>{{ complete_registrations|length }}</dd>
+						<dt>Female Registrations:</dt>
+						<dd>{{ registrations_female }}</dd>
+						<dt>Male Registrations:</dt>
+						<dd>{{ registrations_male }}</dd>
+						<dt>Minor Registrations:</dt>
+						<dd>{{ registrations_minor }}</dd>
+					</dl>
+				</div>
+			</div>
 		{% endif %}
 	{% endif %}
 {% endblock %}

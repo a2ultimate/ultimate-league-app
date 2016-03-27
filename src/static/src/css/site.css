@@ -1643,6 +1643,30 @@ ul.flat_list > li > ul > li {
 }
 
 
+/*  LEAGUE / PLAYERS */
+
+.page-players-admin-notes {
+	background-color: #ECF0F1;
+}
+
+.page-players-admin-notes-title {
+	text-transform: uppercase;
+	background-color: #95A5A6;
+	color: #FFFFFF;
+	font-weight: 400;
+	text-align: center;
+	padding: 12px 0;
+}
+
+.page-players-admin-notes-content {
+	padding: 8px 12px 16px;
+}
+
+.page-players-admin-notes-content dl dd {
+	margin-bottom: 12px;
+}
+
+
 /*  LEAGUE / TEAMS */
 
 #schedule_table {
@@ -1754,6 +1778,27 @@ ul.flat_list > li > ul > li {
 	font-size: 10px;
 	margin-bottom: 4px;
 	margin-top: 0;
+}
+
+.page-teams-admin-notes {
+	background-color: #ECF0F1;
+}
+
+.page-teams-admin-notes-title {
+	text-transform: uppercase;
+	background-color: #95A5A6;
+	color: #FFFFFF;
+	font-weight: 400;
+	text-align: center;
+	padding: 12px 0;
+}
+
+.page-teams-admin-notes-content {
+	padding: 8px 12px 16px;
+}
+
+.page-teams-admin-notes-content dl dd {
+	margin-bottom: 12px;
 }
 
 /* USER PAGE */
