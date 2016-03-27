@@ -91,6 +91,12 @@
 				{% endfor %}
 			</tbody>
 		</table>
+
+		{% if league.schedule_note %}
+			<p class="schedule-note">
+				{{ league.schedule_note }}
+			</p>
+		{% endif %}
 	{% else %}
 		<h3 class="none_found text_center">
 			Schedules are not yet available

@@ -1720,6 +1720,12 @@ ul.flat_list > li > ul > li {
 	padding: 0;
 }
 
+.schedule-note {
+	font-style: italic;
+	text-align: center;
+	margin-bottom: 24px;
+}
+
 .teams_table {
 	width: 100%;
 }
