@@ -13,7 +13,6 @@ class Command(BaseCommand):
     help = 'Add members to an email group from an email address, file, or team id'
 
     def add_arguments(self, parser):
-
         parser.add_argument('-e',
             dest='email',
             default='',
@@ -28,9 +27,14 @@ class Command(BaseCommand):
             type=int,
             dest='team',
             default=0,
-            help='Import a team')
+            help='Sync a team')
 
         parser.add_argument('-l',
+            default='',
+            dest='league',
+            help='Sync a league')
+
+        parser.add_argument('-g',
             default='',
             dest='group_address',
             help='Group Address (required for email and file)')
@@ -45,6 +49,7 @@ class Command(BaseCommand):
         email_address = options.get('email', None)
         file_path = options.get('file', None)
         team_id = options.get('team', None)
+        league_id = options.get('league', None)
         group_address = options.get('group_address', None)
         force = options.get('force', None)
 
@@ -68,4 +73,15 @@ class Command(BaseCommand):
             except Team.DoesNotExist:
                 self.stdout.write('bad team id')
 
-        self.stdout.write('{} email addresses added to {}'.format(success_count, group_address))
+        elif league_id:
+            from ultimate.leagues.models import League
+            try:
+                league = League.objects.get(id=league_id)
+                success_count = league.sync_email_groups(force)
+            except League.DoesNotExist:
+                self.stdout.write('bad league id')
+
+        if group_address:
+            self.stdout.write('{} email addresses added to {}'.format(success_count, group_address))
+        else:
+            self.stdout.write('Success! Added {} email addresses.'.format(success_count))
