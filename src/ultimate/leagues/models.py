@@ -450,6 +450,7 @@ class Registrations(models.Model):
 	waitlist = models.BooleanField(default=False)
 	attendance = models.IntegerField(null=True, blank=True)
 	captain = models.IntegerField(null=True, blank=True, choices=REGISTRATION_CAPTAIN_CHOICES)
+	coupon = models.ForeignKey('leagues.Coupon', null=True, blank=True)
 
 	class Meta:
 		db_table = u'registrations'
@@ -978,6 +979,9 @@ class Coupon(models.Model):
 
 	class Meta:
 		db_table = u'coupons'
+
+	def __unicode__(self):
+		return self.code
 
 	def save(self, *args, **kwargs):
 		if not self.code:
