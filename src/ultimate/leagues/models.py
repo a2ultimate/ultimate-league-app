@@ -1,8 +1,10 @@
 from datetime import date, datetime
+import random
 
 from django.db import models
 from django.db.models import Count
 from django.db.transaction import atomic
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -943,3 +945,49 @@ class GameTeams(models.Model):
 
 	class Meta:
 		db_table = u'game_teams'
+
+class Coupon(models.Model):
+	CODE_CHARACTERS = getattr(settings, 'COUPON_CODE_CHARACTERS', 'abcdefghijklmnopqrstuvwxyz')
+	CODE_SEGMENT_LENGTH = getattr(settings, 'COUPON_CODE_SEGMENT_LENGTH', 4)
+	CODE_SEGMENT_COUNT = getattr(settings, 'COUPON_CODE_SEGMENT_COUNT', 3)
+
+	COUPON_TYPE_FULL = 'full'
+	COUPON_TYPE_PERCENTAGE = 'percentage'
+	COUPON_TYPE_AMOUNT = 'amount'
+	COUPON_TYPE_CHOICES = (
+		(COUPON_TYPE_FULL,	'Full Value'),
+		(COUPON_TYPE_FULL,	'Percentage'),
+		(COUPON_TYPE_FULL,	'Amount'),
+	)
+
+	code = models.CharField(max_length=30, unique=True, blank=True,
+		help_text='Leaving this field empty will generate a random code.')
+
+	type = models.CharField(max_length=20, choices=COUPON_TYPE_CHOICES)
+
+	use_count = models.IntegerField(default=0)
+	use_limit = models.IntegerField(default=1)
+	value = models.IntegerField(blank=True, null=True, default=None)
+
+	created_at = models.DateTimeField(auto_now_add=True)
+	created_by = models.ForeignKey(User, null=True)
+	updated_at = models.DateTimeField(auto_now=True)
+	redeemed_at = models.DateTimeField(blank=True, null=True)
+	valid_until = models.DateTimeField(blank=True, null=True,
+		help_text='Leave empty for coupons that never expire')
+
+	class Meta:
+		db_table = u'coupons'
+
+	def save(self, *args, **kwargs):
+		if not self.code:
+			self.code = self.generate_code()
+		super(Coupon, self).save(*args, **kwargs)
+
+	def generate_code(self):
+		while(1):
+			code = '-'.join(''.join(random.choice(self.CODE_CHARACTERS) for i in range(self.CODE_SEGMENT_LENGTH)) for j in range(self.CODE_SEGMENT_COUNT))
+			try:
+				Coupon.objects.get(code=code)
+			except ObjectDoesNotExist:
+				return code

@@ -6,6 +6,14 @@ from paypal.standard.ipn.models import PayPalIPN
 from ultimate.leagues.models import *
 
 
+class CouponAdmin(admin.ModelAdmin):
+	list_display = ('code', 'type', 'value', 'redeemed_at',)
+	exclude = ('created_at', 'updated_at',)
+	readonly_fields = ('created_by', 'redeemed_at',)
+
+	def save_model(self, request, obj, form, change):
+		obj.created_by = request.user
+		obj.save()
 
 
 class FieldNameAdmin(admin.ModelAdmin):
@@ -165,6 +173,7 @@ class TeamAdmin(admin.ModelAdmin):
 	list_filter = ('league__year', 'league__season', 'league__night', 'league__gender', 'league__state', 'hidden',)
 
 
+admin.site.register(Coupon, CouponAdmin)
 admin.site.register(Field)
 admin.site.register(FieldNames, FieldNameAdmin)
 admin.site.register(Game, GameAdmin)
