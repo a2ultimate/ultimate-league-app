@@ -956,9 +956,9 @@ class Coupon(models.Model):
 	COUPON_TYPE_PERCENTAGE = 'percentage'
 	COUPON_TYPE_AMOUNT = 'amount'
 	COUPON_TYPE_CHOICES = (
-		(COUPON_TYPE_FULL,	'Full Value'),
-		(COUPON_TYPE_FULL,	'Percentage'),
-		(COUPON_TYPE_FULL,	'Amount'),
+		(COUPON_TYPE_FULL, 'Full Value'),
+		(COUPON_TYPE_PERCENTAGE, 'Percentage'),
+		(COUPON_TYPE_AMOUNT, 'Amount'),
 	)
 
 	code = models.CharField(max_length=30, unique=True, blank=True,
