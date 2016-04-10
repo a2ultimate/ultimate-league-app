@@ -8,8 +8,11 @@ from ultimate.leagues.models import *
 
 class CouponAdmin(admin.ModelAdmin):
 	list_display = ('code', 'type', 'value', 'redeemed_at',)
+
 	exclude = ('created_at', 'updated_at',)
 	readonly_fields = ('created_by', 'redeemed_at',)
+	save_as = True
+	save_on_top = True
 
 	def save_model(self, request, obj, form, change):
 		obj.created_by = request.user
@@ -77,7 +80,7 @@ class LeagueAdmin(admin.ModelAdmin):
 class RegistrationsAdmin(admin.ModelAdmin):
 	fieldsets = (
 		(None, {
-			'fields': ('user', 'league', 'registered', 'paypal_complete', 'check_complete', 'waitlist', 'refunded', 'attendance', 'captain',)
+			'fields': ('user', 'league', 'registered', 'paypal_complete', 'check_complete', 'coupon', 'waitlist', 'refunded', 'attendance', 'captain',)
 		}),
 		('Advanced Options', {
 			'classes': ('collapse',),
