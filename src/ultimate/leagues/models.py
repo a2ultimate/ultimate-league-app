@@ -104,6 +104,7 @@ class League(models.Model):
 	check_cost_increase = models.IntegerField(help_text='amount to be added to paypal_cost if paying by check')
 	late_cost_increase = models.IntegerField(help_text='amount to be added to paypal_cost if paying after price_increase_start_date')
 	mail_check_address = models.TextField(help_text='treasurer mailing address')
+	coupons_accepted = models.BooleanField(default=True)
 
 	field = models.ManyToManyField(Field, through='FieldLeague', help_text='Select the fields these games will be played at, use the green "+" icon if we\'re playing at a new field.')
 
