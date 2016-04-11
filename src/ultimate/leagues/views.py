@@ -328,6 +328,48 @@ def registration(request, year, season, division, section=None):
 				section = 'pay_type'
 				messages.error(request, 'You must select a valid payment type to continue.')
 
+		if 'coupon_code' in request.POST:
+			if league.coupons_accepted:
+				try:
+					coupon = Coupon.objects.get(code=request.POST.get('coupon_code'))
+				except ObjectDoesNotExist:
+					coupon = None
+
+				if coupon and coupon.is_valid():
+					registration.coupon = coupon
+					registration.save()
+
+					messages.success(request, 'Your coupon code has been applied.')
+				else:
+					success = False
+					messages.error(request, 'You have entered an invalid coupon code.')
+
+		if 'remove_coupon' in request.POST:
+			if registration.coupon:
+				registration.coupon = None
+				registration.save()
+
+				messages.success(request, 'Your coupon has been removed and will not be used with this registration.')
+			else:
+				success = False
+				messages.error(request, 'No coupon has been added to this registration.')
+
+		if 'process_registration' in request.POST:
+			if registration.is_ready_for_payment:
+				registration.payment_complete = True
+				registration.registered = datetime.now()
+				registration.save()
+
+				if registration.coupon:
+					registration.coupon.update(
+						use_count=F('use_count') + 1, redeemed_at=datetime.now())
+
+				success = True
+				messages.success(request, 'Your registration has been processed.')
+
+			else:
+				messages.error(request, 'Your registration could not be processed.')
+
 		if success:
 			return HttpResponseRedirect(reverse('league_registration', kwargs={'year': year, 'season': season, 'division': division}))
 
@@ -365,7 +407,7 @@ def registration(request, year, season, division, section=None):
 			},
 			context_instance=RequestContext(request))
 
-	if league.check_price > 0 or league.paypal_price > 0:
+	if registration.check_price > 0 or registration.paypal_price > 0:
 
 		if league.checks_accepted and (section == 'pay_type' or not registration.pay_type or (registration.pay_type != 'check' and registration.pay_type != 'paypal')):
 
@@ -386,7 +428,7 @@ def registration(request, year, season, division, section=None):
 			baseUrl = request.build_absolute_uri(getattr(settings, 'FORCE_SCRIPT_NAME', '/')).replace(request.path_info.replace(' ', '%20'), '')
 
 			paypal_dict = {
-				'amount': league.paypal_price,
+				'amount': registration.paypal_price,
 				'cancel_return': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration/',
 				'invoice': registration.paypal_invoice_id,
 				'item_name': str(league.season).capitalize() + ' League ' + str(league.year) + ' - ' + str(league.night).capitalize(),

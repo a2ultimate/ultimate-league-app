@@ -444,9 +444,10 @@ class Registrations(models.Model):
 	conduct_complete = models.BooleanField(default=False)
 	waiver_complete = models.BooleanField(default=False)
 	pay_type = models.CharField(choices=REGISTRATION_PAYMENT_CHOICES, max_length=6, null=True, blank=True)
-	check_complete = models.BooleanField(default=False)
 	paypal_invoice_id = models.CharField(max_length=127, null=True, blank=True)
 	paypal_complete = models.BooleanField(default=False)
+	check_complete = models.BooleanField(default=False)
+	payment_complete = models.BooleanField(default=False)
 	refunded = models.BooleanField(default=False)
 	waitlist = models.BooleanField(default=False)
 	attendance = models.IntegerField(null=True, blank=True)
@@ -457,6 +458,20 @@ class Registrations(models.Model):
 		db_table = u'registrations'
 		verbose_name_plural = 'registrations'
 		unique_together = ('user', 'league',)
+
+	@property
+	def check_price(self):
+		if self.coupon:
+			return self.coupon.get_adjusted_price(self.league.check_price)
+
+		return self.league.check_price
+
+	@property
+	def paypal_price(self):
+		if self.coupon:
+			return self.coupon.get_adjusted_price(self.league.paypal_price)
+
+		return self.league.paypal_price
 
 	@property
 	def status(self):
@@ -515,6 +530,25 @@ class Registrations(models.Model):
 							percentage += interval
 
 		return int(round(percentage))
+
+	@property
+	def is_ready_for_payment(self):
+		if not self.conduct_complete:
+			return False
+
+		if not self.waiver_complete:
+			return False
+
+		if self.attendance is None or self.captain is None:
+			return False
+
+		if self.payment_complete:
+			return False
+
+		if self.refunded:
+			return False
+
+		return True
 
 	@property
 	def is_complete(self):
@@ -623,7 +657,6 @@ class Registrations(models.Model):
 	def leave_baggage_group(self):
 		if datetime.now() > self.league.waitlist_start_date:
 			return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
-
 
 		try:
 			with transaction.atomic():
@@ -983,6 +1016,36 @@ class Coupon(models.Model):
 
 	def __unicode__(self):
 		return self.code
+
+	@property
+	def display_value(self):
+		if self.type == self.COUPON_TYPE_AMOUNT:
+			return '${} off'.format(self.value)
+		elif self.type == self.COUPON_TYPE_FULL:
+			return 'one free registration'
+		elif self.type == self.COUPON_TYPE_PERCENTAGE:
+			return '{}% off'.format(self.value)
+
+	def get_adjusted_price(self, price):
+		if self.type == self.COUPON_TYPE_AMOUNT:
+			return max(price - self.value, 0)
+		elif self.type == self.COUPON_TYPE_FULL:
+			return 0
+		elif self.type == self.COUPON_TYPE_PERCENTAGE:
+			return int(max(price * (1 - (self.value / 100.0)), 0))
+
+	def is_valid(self, league=None):
+		if self.use_limit is not None and self.use_limit <= self.use_count:
+			return False
+
+		if self.valid_until and self.valid_until >= datetime.now():
+			return False
+
+		if league is not None:
+			# TODO check to see if league is supported by coupon
+			pass
+
+		return True
 
 	def save(self, *args, **kwargs):
 		if not self.code:
