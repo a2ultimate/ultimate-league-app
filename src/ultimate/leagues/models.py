@@ -11,7 +11,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from pybb.models import *
 
 
-
 class Field(models.Model):
 	id = models.AutoField(primary_key=True)
 	name = models.TextField()
@@ -497,6 +496,8 @@ class Registrations(models.Model):
 							status = 'Waiting for Paypal'
 						elif self.pay_type == 'paypal' and self.paypal_complete:
 							status = 'Paypal Completed'
+						elif self.payment_complete:
+							status = 'Payment Complete'
 		return status
 
 	@property
@@ -523,10 +524,13 @@ class Registrations(models.Model):
 					if self.league.check_price > 0 and \
 						self.league.paypal_price > 0:
 
-						if self.league.checks_accepted and self.pay_type:
+						if self.league.checks_accepted and \
+							(self.pay_type or self.payment_complete):
 							percentage += interval
 
-						if self.check_complete or self.paypal_complete:
+						if self.check_complete or \
+							self.paypal_complete or \
+							self.payment_complete:
 							percentage += interval
 
 		return int(round(percentage))
@@ -539,10 +543,14 @@ class Registrations(models.Model):
 		if not self.waiver_complete:
 			return False
 
-		if self.attendance is None or self.captain is None:
+		if self.attendance is None or \
+			self.captain is None:
 			return False
 
-		if self.payment_complete:
+		if self.check_complete or \
+			self.paypal_complete or \
+			self.payment_complete:
+
 			return False
 
 		if self.refunded:
@@ -558,12 +566,18 @@ class Registrations(models.Model):
 		if not self.waiver_complete:
 			return False
 
-		if self.attendance is None or self.captain is None:
+		if self.attendance is None or \
+			self.captain is None:
+
 			return False
 
-		if self.league.check_price > 0 and self.league.paypal_price > 0:
+		if self.league.check_price > 0 and \
+			self.league.paypal_price > 0:
 
-			if not self.check_complete and not self.paypal_complete:
+			if not self.check_complete and \
+				not self.paypal_complete and \
+				not self.payment_complete:
+
 				return False
 
 		if self.refunded:
