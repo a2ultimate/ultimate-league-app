@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
+from django.db.models import F
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
@@ -171,6 +172,7 @@ def teams(request, year, season, division):
 	context_instance=RequestContext(request))
 
 
+@atomic
 @login_required
 def group(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
@@ -205,6 +207,7 @@ def group(request, year, season, division):
 		context_instance=RequestContext(request))
 
 
+@atomic
 @login_required
 def registration(request, year, season, division, section=None):
 	league = get_object_or_404(League, year=year, season=season, night=division)
@@ -361,8 +364,9 @@ def registration(request, year, season, division, section=None):
 				registration.save()
 
 				if registration.coupon:
-					registration.coupon.update(
-						use_count=F('use_count') + 1, redeemed_at=datetime.now())
+					registration.coupon.use_count = F('use_count') + 1
+					registration.coupon.redeemed_at = datetime.now()
+					registration.coupon.save()
 
 				success = True
 				messages.success(request, 'Your registration has been processed.')
