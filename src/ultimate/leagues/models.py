@@ -1027,6 +1027,7 @@ class Coupon(models.Model):
 
 	class Meta:
 		db_table = u'coupons'
+		ordering = ['-created_at',]
 
 	def __unicode__(self):
 		return self.code
