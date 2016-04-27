@@ -2,6 +2,8 @@
 
 from datetime import datetime
 
+from django.db.models import F
+
 from ultimate.leagues.models import League, Registrations
 
 from paypal.standard.ipn.signals import payment_was_successful
@@ -15,11 +17,16 @@ def payment_success(sender, **kwargs):
 		registration = Registrations.objects.get(paypal_invoice_id=ipn_obj.invoice)
 
 		if registration.league.is_waitlist(registration.user):
-			registration.waitlist = 1
+			registration.waitlist = True
 
-		registration.paypal_complete = 1
+		registration.payment_complete = True
+		registration.paypal_complete = True
 		registration.registered = ipn_obj.payment_date
 		registration.save()
+
+		if registration.coupon:
+			registration.coupon.update(
+				use_count=F('use_count') + 1, redeemed_at=datetime.now())
 
 		print 'PayPal IPN Success: ' + ipn_obj.invoice
 	except Registrations.DoesNotExist:

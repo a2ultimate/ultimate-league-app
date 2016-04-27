@@ -1,13 +1,14 @@
 from datetime import date, datetime
+import random
 
 from django.db import models
 from django.db.models import Count
 from django.db.transaction import atomic
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
 from pybb.models import *
-
 
 
 class Field(models.Model):
@@ -102,6 +103,7 @@ class League(models.Model):
 	check_cost_increase = models.IntegerField(help_text='amount to be added to paypal_cost if paying by check')
 	late_cost_increase = models.IntegerField(help_text='amount to be added to paypal_cost if paying after price_increase_start_date')
 	mail_check_address = models.TextField(help_text='treasurer mailing address')
+	coupons_accepted = models.BooleanField(default=True)
 
 	field = models.ManyToManyField(Field, through='FieldLeague', help_text='Select the fields these games will be played at, use the green "+" icon if we\'re playing at a new field.')
 
@@ -441,18 +443,34 @@ class Registrations(models.Model):
 	conduct_complete = models.BooleanField(default=False)
 	waiver_complete = models.BooleanField(default=False)
 	pay_type = models.CharField(choices=REGISTRATION_PAYMENT_CHOICES, max_length=6, null=True, blank=True)
-	check_complete = models.BooleanField(default=False)
 	paypal_invoice_id = models.CharField(max_length=127, null=True, blank=True)
 	paypal_complete = models.BooleanField(default=False)
+	check_complete = models.BooleanField(default=False)
+	payment_complete = models.BooleanField(default=False)
 	refunded = models.BooleanField(default=False)
 	waitlist = models.BooleanField(default=False)
 	attendance = models.IntegerField(null=True, blank=True)
 	captain = models.IntegerField(null=True, blank=True, choices=REGISTRATION_CAPTAIN_CHOICES)
+	coupon = models.ForeignKey('leagues.Coupon', null=True, blank=True)
 
 	class Meta:
 		db_table = u'registrations'
 		verbose_name_plural = 'registrations'
 		unique_together = ('user', 'league',)
+
+	@property
+	def check_price(self):
+		if self.coupon:
+			return self.coupon.get_adjusted_price(self.league.check_price)
+
+		return self.league.check_price
+
+	@property
+	def paypal_price(self):
+		if self.coupon:
+			return self.coupon.get_adjusted_price(self.league.paypal_price)
+
+		return self.league.paypal_price
 
 	@property
 	def status(self):
@@ -478,6 +496,8 @@ class Registrations(models.Model):
 							status = 'Waiting for Paypal'
 						elif self.pay_type == 'paypal' and self.paypal_complete:
 							status = 'Paypal Completed'
+						elif self.payment_complete:
+							status = 'Payment Complete'
 		return status
 
 	@property
@@ -504,13 +524,39 @@ class Registrations(models.Model):
 					if self.league.check_price > 0 and \
 						self.league.paypal_price > 0:
 
-						if self.league.checks_accepted and self.pay_type:
+						if self.league.checks_accepted and \
+							(self.pay_type or self.payment_complete):
 							percentage += interval
 
-						if self.check_complete or self.paypal_complete:
+						if self.check_complete or \
+							self.paypal_complete or \
+							self.payment_complete:
 							percentage += interval
 
 		return int(round(percentage))
+
+	@property
+	def is_ready_for_payment(self):
+		if not self.conduct_complete:
+			return False
+
+		if not self.waiver_complete:
+			return False
+
+		if self.attendance is None or \
+			self.captain is None:
+			return False
+
+		if self.check_complete or \
+			self.paypal_complete or \
+			self.payment_complete:
+
+			return False
+
+		if self.refunded:
+			return False
+
+		return True
 
 	@property
 	def is_complete(self):
@@ -520,12 +566,18 @@ class Registrations(models.Model):
 		if not self.waiver_complete:
 			return False
 
-		if self.attendance is None or self.captain is None:
+		if self.attendance is None or \
+			self.captain is None:
+
 			return False
 
-		if self.league.check_price > 0 and self.league.paypal_price > 0:
+		if self.league.check_price > 0 and \
+			self.league.paypal_price > 0:
 
-			if not self.check_complete and not self.paypal_complete:
+			if not self.check_complete and \
+				not self.paypal_complete and \
+				not self.payment_complete:
+
 				return False
 
 		if self.refunded:
@@ -619,7 +671,6 @@ class Registrations(models.Model):
 	def leave_baggage_group(self):
 		if datetime.now() > self.league.waitlist_start_date:
 			return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
-
 
 		try:
 			with transaction.atomic():
@@ -943,3 +994,83 @@ class GameTeams(models.Model):
 
 	class Meta:
 		db_table = u'game_teams'
+
+class Coupon(models.Model):
+	CODE_CHARACTERS = getattr(settings, 'COUPON_CODE_CHARACTERS', 'abcdefghijklmnopqrstuvwxyz')
+	CODE_SEGMENT_LENGTH = getattr(settings, 'COUPON_CODE_SEGMENT_LENGTH', 4)
+	CODE_SEGMENT_COUNT = getattr(settings, 'COUPON_CODE_SEGMENT_COUNT', 3)
+
+	COUPON_TYPE_FULL = 'full'
+	COUPON_TYPE_PERCENTAGE = 'percentage'
+	COUPON_TYPE_AMOUNT = 'amount'
+	COUPON_TYPE_CHOICES = (
+		(COUPON_TYPE_FULL, 'Full Value'),
+		(COUPON_TYPE_PERCENTAGE, 'Percentage'),
+		(COUPON_TYPE_AMOUNT, 'Amount'),
+	)
+
+	code = models.CharField(max_length=30, unique=True, blank=True,
+		help_text='Leaving this field empty will generate a random code.')
+
+	type = models.CharField(max_length=20, choices=COUPON_TYPE_CHOICES)
+
+	use_count = models.IntegerField(default=0)
+	use_limit = models.IntegerField(default=1)
+	value = models.IntegerField(blank=True, null=True, default=None)
+
+	created_at = models.DateTimeField(auto_now_add=True)
+	created_by = models.ForeignKey(User, null=True)
+	updated_at = models.DateTimeField(auto_now=True)
+	redeemed_at = models.DateTimeField(blank=True, null=True)
+	valid_until = models.DateTimeField(blank=True, null=True,
+		help_text='Leave empty for coupons that never expire')
+
+	class Meta:
+		db_table = u'coupons'
+		ordering = ['-created_at',]
+
+	def __unicode__(self):
+		return self.code
+
+	@property
+	def display_value(self):
+		if self.type == self.COUPON_TYPE_AMOUNT:
+			return '${} off'.format(self.value)
+		elif self.type == self.COUPON_TYPE_FULL:
+			return 'one free registration'
+		elif self.type == self.COUPON_TYPE_PERCENTAGE:
+			return '{}% off'.format(self.value)
+
+	def get_adjusted_price(self, price):
+		if self.type == self.COUPON_TYPE_AMOUNT:
+			return max(price - self.value, 0)
+		elif self.type == self.COUPON_TYPE_FULL:
+			return 0
+		elif self.type == self.COUPON_TYPE_PERCENTAGE:
+			return int(max(price * (1 - (self.value / 100.0)), 0))
+
+	def is_valid(self, league=None):
+		if self.use_limit is not None and self.use_limit <= self.use_count:
+			return False
+
+		if self.valid_until and self.valid_until >= datetime.now():
+			return False
+
+		if league is not None:
+			# TODO check to see if league is supported by coupon
+			pass
+
+		return True
+
+	def save(self, *args, **kwargs):
+		if not self.code:
+			self.code = self.generate_code()
+		super(Coupon, self).save(*args, **kwargs)
+
+	def generate_code(self):
+		while(1):
+			code = '-'.join(''.join(random.choice(self.CODE_CHARACTERS) for i in range(self.CODE_SEGMENT_LENGTH)) for j in range(self.CODE_SEGMENT_COUNT))
+			try:
+				Coupon.objects.get(code=code)
+			except ObjectDoesNotExist:
+				return code
