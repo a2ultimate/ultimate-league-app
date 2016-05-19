@@ -1,4 +1,4 @@
-Django==1.8.5
+Django>=1.8,<1.8.99
 django-annoying==0.8.4
 django-paypal==0.2.7
 django-pure-pagination==0.2.1
