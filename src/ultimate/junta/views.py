@@ -517,6 +517,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
 
 				time_delta = end_datetime - start_datetime
 				time_slot_delta = time_delta / league.num_time_slots
+				num_time_slots = league.num_time_slots
 
 				event_date = league.league_start_date
 				field_names = FieldNames.objects.filter(pk__in=field_names)
@@ -532,13 +533,17 @@ def schedulegeneration(request, year=None, season=None, division=None):
 							game.field_name = field_names[(i / 2) % num_field_names]
 							game.league = league
 							game.save()
-						elif (i / 2) % num_field_names > 0:
-							event_datetime += time_slot_delta
 
 						game_team = GameTeams()
 						game_team.game = game
 						game_team.team = team
 						game_team.save()
+
+						# if no new game/will create new game on next loop
+						if not i % 2 == 0:
+							# if out of fields for timeslot
+							if ((i / 2) + 1) % num_field_names == 0:
+								event_datetime += time_slot_delta
 
 					event_date = event_date + timedelta(days=7)
 
