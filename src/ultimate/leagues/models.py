@@ -63,6 +63,7 @@ class League(models.Model):
 	LEAGUE_LEVEL_CHOICES = (
 		('competitive', 'Competitive'),
 		('recreational', 'Recreational'),
+		('youth', 'Youth'),
 	)
 
 	LEAGUE_TYPE_CHOICES = (
