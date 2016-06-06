@@ -54,15 +54,15 @@ class League(models.Model):
 	)
 
 	LEAGUE_GENDER_CHOICES = (
-		('mens',		'Men\'s'),
-		('mixed',		'Mixed'),
-		('open',		'Open'),
-		('womens',		'Women\'s'),
+		('mens', 'Men\'s'),
+		('mixed', 'Mixed'),
+		('open', 'Open'),
+		('womens', 'Women\'s'),
 	)
 
 	LEAGUE_LEVEL_CHOICES = (
-		('competitive', 'Competitive'),
-		('recreational', 'Recreational'),
+		('comp', 'Competitive'),
+		('rec', 'Recreational'),
 		('youth', 'Youth'),
 	)
 
@@ -117,6 +117,18 @@ class League(models.Model):
 
 	class Meta:
 		db_table = u'league'
+
+	@property
+	def display_gender(self):
+		return dict(self.LEAGUE_GENDER_CHOICES)[self.gender]
+
+	@property
+	def display_level(self):
+		return dict(self.LEAGUE_LEVEL_CHOICES)[self.level]
+
+	@property
+	def display_type(self):
+		return dict(self.LEAGUE_TYPE_CHOICES)[self.type]
 
 	@property
 	def night_title(self):
@@ -260,14 +272,18 @@ class League(models.Model):
 		return division_email_success + division_captains_email_success
 
 	def sync_division_email_group(self, force=False):
-		group_address = '{}{}-{}@lists.annarborultimate.org'.format(
+		group_address = '{}{}-{}-{}@lists.annarborultimate.org'.format(
 			self.season,
 			self.league_start_date.strftime('%y'),
-			self.league_start_date.strftime('%a')).lower()
-		group_name = '{} {} {}'.format(
+			self.league_start_date.strftime('%a'),
+			self.league.level,
+			).lower()
+		group_name = '{} {} {} {}'.format(
 			self.season.title(),
 			self.league_start_date.strftime('%Y'),
-			self.league_start_date.strftime('%A'))
+			self.league_start_date.strftime('%A'),
+			self.league.display_level,
+			)
 
 		from ultimate.utils.google_api import GoogleAppsApi
 		api = GoogleAppsApi()
@@ -712,16 +728,20 @@ class Team(models.Model):
 		db_table = u'team'
 
 	def sync_email_group(self, force=False):
-		group_address = '{}{}-{}-{}@lists.annarborultimate.org'.format(
+		group_address = '{}{}-{}-{}-{}@lists.annarborultimate.org'.format(
 			self.league.season,
 			self.league.league_start_date.strftime('%y'),
 			self.league.league_start_date.strftime('%a'),
-			self.id).lower()
-		group_name = '{} {} {} Team {}'.format(
+			self.league.level,
+			self.id,
+			).lower()
+		group_name = '{} {} {} {} Team {}'.format(
 			self.league.season.title(),
 			self.league.league_start_date.strftime('%Y'),
 			self.league.league_start_date.strftime('%A'),
-			self.id)
+			self.league.display_level,
+			self.id,
+			)
 
 		from ultimate.utils.google_api import GoogleAppsApi
 		api = GoogleAppsApi()
