@@ -31,7 +31,10 @@ class GoogleAppsApi:
         if force:
             self.delete_group(group_id=group_id, group_email_address=group_email_address)
         else:
-            self.remove_all_group_members(group_id=group_id, group_email_address=group_email_address)
+            self.remove_all_group_members(
+                group_id=group_id, \
+                group_email_address=group_email_address, \
+                group_name=group_name)
 
         if group_id:
             return group_id

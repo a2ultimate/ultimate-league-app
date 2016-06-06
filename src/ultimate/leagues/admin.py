@@ -71,8 +71,8 @@ class LeagueAdmin(admin.ModelAdmin):
 	save_on_top = True
 
 	inlines = (FieldLeagueInline,)
-	list_display = ('year', 'season', 'night', 'gender', 'state',)
-	list_display_links = ('year', 'season', 'night', 'gender', 'state',)
+	list_display = ('id', 'year', 'season', 'night', 'gender', 'level', 'type', 'state',)
+	list_display_links = ('id',)
 	list_filter = ('year', 'season', 'night', 'gender', 'state', )
 	search_fields = ['year', 'season', 'night', 'gender',]
 
