@@ -276,13 +276,13 @@ class League(models.Model):
 			self.season,
 			self.league_start_date.strftime('%y'),
 			self.league_start_date.strftime('%a'),
-			self.league.level,
+			self.level,
 			).lower()
 		group_name = '{} {} {} {}'.format(
 			self.season.title(),
 			self.league_start_date.strftime('%Y'),
 			self.league_start_date.strftime('%A'),
-			self.league.display_level,
+			self.display_level,
 			)
 
 		from ultimate.utils.google_api import GoogleAppsApi
@@ -307,14 +307,18 @@ class League(models.Model):
 		return success_count, group_address
 
 	def sync_division_captains_email_group(self, force=False):
-		group_address = '{}{}-{}-captains@lists.annarborultimate.org'.format(
+		group_address = '{}{}-{}-{}-captains@lists.annarborultimate.org'.format(
 			self.season,
 			self.league_start_date.strftime('%y'),
-			self.league_start_date.strftime('%a')).lower()
-		group_name = '{} {} {} Captains'.format(
+			self.league_start_date.strftime('%a'),
+			self.level,
+			).lower()
+		group_name = '{} {} {} {} Captains'.format(
 			self.season.title(),
 			self.league_start_date.strftime('%Y'),
-			self.league_start_date.strftime('%A'))
+			self.league_start_date.strftime('%A'),
+			self.display_level,
+			)
 
 		from ultimate.utils.google_api import GoogleAppsApi
 		api = GoogleAppsApi()
