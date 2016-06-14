@@ -287,7 +287,7 @@ def registration(request, year, season, division, section=None):
 			messages.error(request, 'You must accept the waiver to continue.')
 
 		# attendance/captaining response
-		if 'id' in request.POST and 'attendance' in request.POST and 'captain' in request.POST:
+		if 'id' in request.POST and 'attendance' in request.POST:
 			attendance_form = RegistrationAttendanceForm(request.POST, instance=registration)
 			if attendance_form.is_valid():
 				attendance_form.save()
@@ -302,12 +302,19 @@ def registration(request, year, season, division, section=None):
 					registration.registered = datetime.now()
 					registration.save()
 
-				messages.success(request, 'Attendance and captaining response saved.')
+				if league.type == 'league':
+					messages.success(request, 'Attendance and captaining response saved.')
+				else:
+					messages.success(request, 'Attendance response saved.')
 
 			else:
 				success = False
 				section = 'attendance'
-				messages.error(request, 'You must provide a valid attendance and captaining rating to continue.')
+				
+				if league.type == 'league':
+					messages.error(request, 'You must provide a valid attendance and captaining rating to continue.')
+				else:
+					messages.error(request, 'You must provide a valid attendance rating to continue.')
 
 		# payment type response
 		if 'pay_type' in request.POST:
@@ -397,7 +404,10 @@ def registration(request, year, season, division, section=None):
 			},
 			context_instance=RequestContext(request))
 
-	if section == 'attendance' or registration.attendance == None or registration.captain == None:
+	if section == 'attendance' or \
+		registration.attendance == None or \
+		(registration.captain == None and league.type == 'league'):
+
 		if not attendance_form:
 			attendance_form = RegistrationAttendanceForm(instance=registration)
 
