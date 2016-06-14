@@ -10,7 +10,11 @@
 
 {% include "leagues/registration/_progress.html" with league=league registration=registration section=section tick_percentage=tick_percentage only %}
 
-<h2>Attendance and Captaining</h2>
+{% if league.type == 'league' %}
+	<h2>Attendance and Captaining</h2>
+{% else %}
+	<h2>Attendance</h2>
+{% endif %}
 
 <form method="post">{% csrf_token %}
 	{{ attendance_form.id }}
@@ -26,24 +30,26 @@
 		</div>
 	</div>
 
-	<div id="captain" class="slide_selector" data-slider-min="0" data-slider-max="4">
-		<label for="id_captain"><h3>Would you like to captain a team?</h3></label>
-		<p>
-			The Ann Arbor Ultimate captains' committee uses the following values to determine captains
-			for league. In general, the higher your value, the more willing you are to captain.
-		</p>
-		{{ attendance_form.captain }}
-		<div class="slider_errors">{{ attendance_form.captain.errors }}</div>
-		<div class="slider"></div>
-	</div>
+	{% if league.type == 'league' %}
+		<div id="captain" class="slide_selector" data-slider-min="0" data-slider-max="4">
+			<label for="id_captain"><h3>Would you like to captain a team?</h3></label>
+			<p>
+				The Ann Arbor Ultimate captains' committee uses the following values to determine captains
+				for league. In general, the higher your value, the more willing you are to captain.
+			</p>
+			{{ attendance_form.captain }}
+			<div class="slider_errors">{{ attendance_form.captain.errors }}</div>
+			<div class="slider"></div>
+		</div>
 
-	<ul>
-		<li>0 - I refuse to captain.</li>
-		<li>1 - I will captain if absolutely necessary.</li>
-		<li>2 - I am willing to captain.</li>
-		<li>3 - I would like to captain.</li>
-		<li>4 - I will be very sad if I don't get to captain.</li>
-	</ul>
+		<ul>
+			<li>0 - I refuse to captain.</li>
+			<li>1 - I will captain if absolutely necessary.</li>
+			<li>2 - I am willing to captain.</li>
+			<li>3 - I would like to captain.</li>
+			<li>4 - I will be very sad if I don't get to captain.</li>
+		</ul>
+	{% endif %}
 
 	<p>
 		<input class="button button_success" type="submit" value="Submit" name="submit">

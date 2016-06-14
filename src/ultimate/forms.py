@@ -225,7 +225,7 @@ class GameReportScoreForm(forms.ModelForm):
 class RegistrationAttendanceForm(forms.ModelForm):
 	id = forms.IntegerField(widget=forms.HiddenInput, required=True)
 	attendance = forms.IntegerField(min_value=0, initial=0)
-	captain = forms.IntegerField(min_value=0, max_value=4, initial=0)
+	captain = forms.IntegerField(min_value=0, max_value=4, initial=0, required=False)
 
 	class Meta:
 		model = Registrations
