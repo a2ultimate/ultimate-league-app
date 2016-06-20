@@ -502,7 +502,7 @@ class Registrations(models.Model):
 			status = 'Conduct Completed'
 			if self.waiver_complete:
 				status = 'Waiver Completed'
-				if self.attendance != None and self.captain != None:
+				if self.attendance != None:
 					status = 'Attendance Completed'
 
 					if self.league.check_price == 0 and self.league.paypal_price == 0:
