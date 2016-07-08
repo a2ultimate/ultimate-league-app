@@ -1,6 +1,6 @@
 from .base import *
 
-ENVIRONMENT = 'dev'
+ENVIRONMENT = 'prod'
 
 ALLOWED_HOSTS = [
 ]
