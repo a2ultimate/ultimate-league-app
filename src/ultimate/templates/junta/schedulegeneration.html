@@ -2,6 +2,7 @@
 
 {% load games %}
 {% load leagues %}
+{% load staticfiles %}
 {% load utility %}
 
 {% block content %}
@@ -38,8 +39,8 @@
 
 		{% for field in league.get_fields %}
 			{% if field.field.layout_link %}
-				<a href="{{ STATIC_URL }}{{ field.field.layout_link }}" target="_blank">
-					<img src="{{ STATIC_URL }}{{ field.field.layout_link }}" height="300px">
+				<a href="{% static field.field.layout_link %}" target="_blank">
+					<img src="{% static field.field.layout_link %}" height="300px">
 				</a>
 			{% endif %}
 		{% endfor %}

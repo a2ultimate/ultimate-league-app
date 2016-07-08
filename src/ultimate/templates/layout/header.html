@@ -1,168 +1,94 @@
 {% load i18n %}
 {% load leagues %}
+{% load staticfiles %}
 {% load utility %}
 
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<div id="alerts_container">
+  {% if messages %}
+    <ul>
+      {% regroup messages|dictsortreversed:"level" by tags as message_groups %}
+      {% for message_group in message_groups %}
+        {% for message in message_group.list %}
+          <li class="alert state_{{ message_group.grouper }}">
+            {{ message }}
+          </li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+  {% endif %}
+</div>
 
-	<title>Ann Arbor Ultimate</title>
-	<meta name="description" content="">
-	<meta name="author" content="">
+<div id="header_container">
+  <div id="header">
+    <div id="banner">
+      <a href="{% url 'home'  %}">
+        <img src="{% static 'images/assets/header.svg' %}" alt="Ann Arbor Ultimate">
+      </a>
+    </div>
 
-	<!-- apple touch icons -->
-	<link rel="apple-touch-icon" sizes="57x57" href="{{ STATIC_URL }}favicons/apple-icon-57x57.png">
-	<link rel="apple-touch-icon" sizes="60x60" href="{{ STATIC_URL }}favicons/apple-icon-60x60.png">
-	<link rel="apple-touch-icon" sizes="72x72" href="{{ STATIC_URL }}favicons/apple-icon-72x72.png">
-	<link rel="apple-touch-icon" sizes="76x76" href="{{ STATIC_URL }}favicons/apple-icon-76x76.png">
-	<link rel="apple-touch-icon" sizes="114x114" href="{{ STATIC_URL }}favicons/apple-icon-114x114.png">
-	<link rel="apple-touch-icon" sizes="120x120" href="{{ STATIC_URL }}favicons/apple-icon-120x120.png">
-	<link rel="apple-touch-icon" sizes="144x144" href="{{ STATIC_URL }}favicons/apple-icon-144x144.png">
-	<link rel="apple-touch-icon" sizes="152x152" href="{{ STATIC_URL }}favicons/apple-icon-152x152.png">
-	<link rel="apple-touch-icon" sizes="180x180" href="{{ STATIC_URL }}favicons/apple-icon-180x180.png">
-	<meta name="apple-mobile-web-app-title" content="A2Ultimate">
+    <ul class="banner_links">
+      {% if user.is_authenticated %}
+        <li><a href="{% url 'user'  %}">{{ user.email }}</a></li>
+        <li><a href="{% url 'auth_log_out' %}">{% trans 'Log Out' %}</a></li>
+      {% else %}
+        <li><a href="{% url 'registration_register' %}">Create an Account</a></li>
+        <li><a href="{% url 'auth_log_in' %}">{% trans 'Log In' %}</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</div>
 
-	<!-- favicon -->
-	<link rel="icon" type="image/png" sizes="16x16" href="{{ STATIC_URL }}favicons/favicon-16x16.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="{{ STATIC_URL }}favicons/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="96x96" href="{{ STATIC_URL }}favicons/favicon-96x96.png">
-	<link rel="icon" type="image/png" sizes="160x160" href="{{ STATIC_URL }}favicons/favicon-160x160.png">
-	<link rel="icon" type="image/png" sizes="192x192" href="{{ STATIC_URL }}favicons/favicon-192x192.png">
-	<link rel="shortcut icon" href="{{ STATIC_URL }}favicons/favicon.ico">
+<div class="navbar_container">
+  <div class="navbar">
+    {% autoescape off %}
+      <ul class="nav">
+        {{ menu_items_nav|prepare_menu_items|unordered_list }}
+      </ul>
+    {% endautoescape %}
 
-	<!-- microsoft tile icon -->
-	<meta name="msapplication-TileColor" content="#ffffff">
-	<meta name="msapplication-TileImage" content="{{ STATIC_URL }}favicons/mstile-144x144.png">
-	<meta name="msapplication-config" content="{{ STATIC_URL }}favicons/browserconfig.xml">
-	<meta name="application-name" content="A2Ultimate">
+    {% if user.is_superuser %}
+      <ul class="nav">
+        <li><a href="{% url 'home' %}admin">Admin</a></li>
+      </ul>
+    {% endif %}
 
-	<!-- safari tab icon -->
+    <ul class="nav pull_right">
+      {% if menu_leagues %}
+        <li><span>Leagues</span></li>
+        {% regroup menu_leagues by season_year as season_years %}
 
-	<link rel="mask-icon" href="{{ STATIC_URL }}favicons/tab-icon.svg" color="#2ECC71">
-
-	<!-- open graph http://ogp.me/ -->
-	<meta property="og:url" content="https://annarborultimate.org">
-	<meta property="og:site_name" content="Ann Arbor Ultimate">
-	<meta property="og:title" content="Ann Arbor Ultimate">
-	<meta property="og:description" content="Provides players of all skill and experience in the greater Ann Arbor area with the ability to play ultimate year-round.">
-	<meta property="og:image" content="{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{{ STATIC_URL }}images/logo.png">
-	<meta property="og:image:type" content="image/png">
-	<meta property="og:image:width" content="517">
-	<meta property="og:image:height" content="459">
-
-	<link href="https://fonts.googleapis.com/css?family=Lato:400,300italic,700,300&subset=latin,latin-ext" rel="stylesheet" type="text/css">
-	<link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui/jquery-ui-1.10.0.custom.min.css" />
-	<link rel="stylesheet" href="{{ STATIC_URL }}css/site.css?2" type="text/css" />
-
-	<script src="{{ STATIC_URL }}js/libs/modernizr.min.js"></script>
-
-	{% if GOOGLE_ANALYTICS_TRACKERS %}
-		<script>
-			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-			{% for tracker in GOOGLE_ANALYTICS_TRACKERS %}
-				ga('create', '{{ tracker.id }}', 'auto', '{{ tracker.name }}');
-				ga('{{ tracker.name }}.send', 'pageview');
-			{% endfor %}
-		</script>
-	{% endif %}
-</head>
-
-<body>
-	<div id="alerts_container">
-		{% if messages %}
-			<ul>
-				{% regroup messages|dictsortreversed:"level" by tags as message_groups %}
-				{% for message_group in message_groups %}
-					{% for message in message_group.list %}
-						<li class="alert state_{{ message_group.grouper }}">
-							{{ message }}
-						</li>
-					{% endfor %}
-				{% endfor %}
-			</ul>
-		{% endif %}
-	</div>
-
-	<div id="header_container">
-		<div id="header">
-			<div id="banner">
-				<a href="{% url 'home'  %}">
-					<img src="{{ STATIC_URL }}images/header.svg" alt="Ann Arbor Ultimate">
-				</a>
-			</div>
-
-			<ul class="banner_links">
-				{% if user.is_authenticated %}
-					<li><a href="{% url 'user'  %}">{{ user.email }}</a></li>
-					<li><a href="{% url 'auth_log_out' %}">{% trans 'Log Out' %}</a></li>
-				{% else %}
-					<li><a href="{% url 'registration_register' %}">Create an Account</a></li>
-					<li><a href="{% url 'auth_log_in' %}">{% trans 'Log In' %}</a></li>
-				{% endif %}
-			</ul>
-		</div>
-	</div>
-
-	<div class="navbar_container">
-		<div class="navbar">
-			{% autoescape off %}
-				<ul class="nav">
-					{{ menu_items_nav|prepare_menu_items|unordered_list }}
-				</ul>
-			{% endautoescape %}
-
-			{% if user.is_superuser %}
-				<ul class="nav">
-					<li><a href="{% url 'home'  %}admin">Admin</a></li>
-				</ul>
-			{% endif %}
-
-			<ul class="nav pull_right">
-				{% if menu_leagues %}
-					<li><span>Leagues</span></li>
-					{% regroup menu_leagues by season_year as season_years %}
-
-					{% for season_year in season_years %}
-						{% with season_year_league=season_year.list|first %}
-							<li>
-								<a href="{% url 'league_index_season' year=season_year_league.year season=season_year_league.season  %}">
-									{{ season_year.grouper|smart_title }}
-								</a>
-								<ul class="dropdown">
-									{% for league in season_year.list|sort_by_league_start_date_weekday %}
-										<li>
-											<a href="{% url 'league_summary' year=league.year season=league.season division=league.night  %}">
-												{{ league.night_title|smart_title }}
-											</a>
-											<ul class="dropdown">
-												{% if league|is_open:user %}
-													{% if league|is_waitlist:user %}
-														<li><a href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register for Waitlist</a></li>
-													{% else %}
-														<li><a href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register</a></li>
-													{% endif %}
-												{% endif %}
-												<li><a href="{% url 'league_summary' year=league.year season=league.season division=league.night  %}">Summary</a></li>
-												<li><a href="{% url 'league_details' year=league.year season=league.season division=league.night  %}">Detailed Info</a></li>
-												<li><a href="{% url 'league_players' year=league.year season=league.season division=league.night  %}">Players</a></li>
-												<li><a href="{% url 'league_teams' year=league.year season=league.season division=league.night  %}">Teams & Schedules</a></li>
-											</ul>
-										</li>
-									{% endfor %}
-								</ul>
-							</li>
-						{% endwith %}
-					{% endfor %}
-				{% endif %}
-			</ul>
-		</div>
-	</div>
+        {% for season_year in season_years %}
+          {% with season_year_league=season_year.list|first %}
+            <li>
+              <a href="{% url 'league_index_season' year=season_year_league.year season=season_year_league.season  %}">
+                {{ season_year.grouper|smart_title }}
+              </a>
+              <ul class="dropdown">
+                {% for league in season_year.list|sort_by_league_start_date_weekday %}
+                  <li>
+                    <a href="{% url 'league_summary' year=league.year season=league.season division=league.night  %}">
+                      {{ league.night_title|smart_title }}
+                    </a>
+                    <ul class="dropdown">
+                      {% if league|is_open:user %}
+                        {% if league|is_waitlist:user %}
+                          <li><a href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register for Waitlist</a></li>
+                        {% else %}
+                          <li><a href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register</a></li>
+                        {% endif %}
+                      {% endif %}
+                      <li><a href="{% url 'league_summary' year=league.year season=league.season division=league.night  %}">Summary</a></li>
+                      <li><a href="{% url 'league_details' year=league.year season=league.season division=league.night  %}">Detailed Info</a></li>
+                      <li><a href="{% url 'league_players' year=league.year season=league.season division=league.night  %}">Players</a></li>
+                      <li><a href="{% url 'league_teams' year=league.year season=league.season division=league.night  %}">Teams & Schedules</a></li>
+                    </ul>
+                  </li>
+                {% endfor %}
+              </ul>
+            </li>
+          {% endwith %}
+        {% endfor %}
+      {% endif %}
+    </ul>
+  </div>
+</div>

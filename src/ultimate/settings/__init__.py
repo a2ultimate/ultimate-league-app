@@ -1,14 +1,14 @@
 import logging
 import os
 
-ultimate_runmode = os.environ.get('ULTIMATE_RUNMODE', None)
+app_runmode = os.environ.get('APP_RUNMODE', None)
 
-if ultimate_runmode == 'dev':
+if app_runmode == 'dev':
     logging.info('Loading DEVELOPMENT environment...')
     from .dev import *
-elif ultimate_runmode == 'prod':
+elif app_runmode == 'prod':
     logging.info('Loading PRODUCTION environment...')
     from .prod import *
 else:
-    logging.info('Invalid value for ULTIMATE_RUNMODE `{}`, loading DEVELOPMENT environment...:'.format(ultimate_runmode))
+    logging.info('Invalid value for APP_RUNMODE `{}`, loading DEVELOPMENT environment...:'.format(app_runmode))
     from .dev import *

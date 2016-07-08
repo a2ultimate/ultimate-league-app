@@ -2,6 +2,7 @@
 
 {% load leagues %}
 {% load league_registrations %}
+{% load staticfiles %}
 {% load teams %}
 {% load user_roles %}
 {% load utility %}
@@ -34,7 +35,7 @@
 					{% if next_game.field_name.field.layout_link %}
 						<small>
 							&middot;
-							<a href="{{ STATIC_URL }}{{ next_game.field_name.field.layout_link }}">
+							<a href="{% static next_game.field_name.field.layout_link %}" target="_blank">
 								Layout
 							</a>
 						</small>

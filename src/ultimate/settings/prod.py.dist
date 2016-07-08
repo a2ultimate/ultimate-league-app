@@ -1,7 +1,8 @@
 from .base import *
 
-ALLOWED_HOSTS = [
+ENVIRONMENT = 'dev'
 
+ALLOWED_HOSTS = [
 ]
 
 # GOOGLE ANALYTICS
@@ -10,3 +11,10 @@ GOOGLE_ANALYTICS_TRACKERS = [
 ]
 
 PAYPAL_CALLBACK_SECRET = 'replace/this/path/with/a/secret/'
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': '',
+        'STATS_FILE': os.path.join(STATIC_ROOT, '../static/dist/stats.json'),
+    }
+}

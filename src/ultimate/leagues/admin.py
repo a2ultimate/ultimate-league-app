@@ -19,6 +19,14 @@ class CouponAdmin(admin.ModelAdmin):
 		obj.save()
 
 
+class FieldAdmin(admin.ModelAdmin):
+	save_as = True
+	save_on_top = True
+
+	list_display = ('name', 'layout_link', 'driving_link',)
+	list_editable = ('name', 'layout_link', 'driving_link',)
+
+
 class FieldNameAdmin(admin.ModelAdmin):
 	save_as = True
 	save_on_top = True
@@ -177,7 +185,7 @@ class TeamAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Coupon, CouponAdmin)
-admin.site.register(Field)
+admin.site.register(Field, FieldAdmin)
 admin.site.register(FieldNames, FieldNameAdmin)
 admin.site.register(Game, GameAdmin)
 admin.site.register(League, LeagueAdmin)

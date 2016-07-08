@@ -1,6 +1,7 @@
 {% extends "layout/layout_user.html" %}
 
 {% load leagues %}
+{% load staticfiles %}
 {% load utility %}
 
 {% block content %}
@@ -84,7 +85,7 @@
 					{% if field.field.layout_link %}
 						<small>
 							&middot;
-							<a href="{{ STATIC_URL }}{{ field.field.layout_link }}" target="_blank">
+							<a href="{% static field.field.layout_link %}" target="_blank">
 								Layout
 							</a>
 						</small>

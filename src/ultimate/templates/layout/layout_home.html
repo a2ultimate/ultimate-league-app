@@ -1,30 +1,41 @@
-{% load url from future %}
-
+{% load staticfiles %}
 {% load utility %}
 
-{% include "layout/header.html" %}
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    {% include "layout/head.html" %}
+  </head>
 
-<div id="content_container" class="clearfix">
-	<div id="sidebar">
-		<p class="text_center">
-			<img src="{{ STATIC_URL }}images/logo.svg" width="180">
-		</p>
+  <body>
+    {% include "layout/header.html" %}
 
-		<ul class="social_icons text_center">
-			<li><a class="social_icon social_icon_twitter" href="http://twitter.com/a2ultimate" target="_blank">Twitter</a></li>
-			<li><a class="social_icon social_icon_facebook" href="https://www.facebook.com/annarborultimate" target="_blank">Facebook</a></li>
-		</ul>
+    <div id="content_container" class="clearfix">
+      <div id="sidebar">
+        <p class="text_center">
+          <img src="{% static 'images/assets/logo.svg' %}" width="180">
+        </p>
 
-		{% autoescape off %}
-			<ul>
-				{{ menu_items_home_sidebar|prepare_menu_items|unordered_list }}
-			</ul>
-		{% endautoescape %}
-	</div>
+        <ul class="social_icons text_center">
+          <li><a class="social_icon social_icon_twitter" href="http://twitter.com/a2ultimate" target="_blank">Twitter</a></li>
+          <li><a class="social_icon social_icon_facebook" href="https://www.facebook.com/annarborultimate" target="_blank">Facebook</a></li>
+        </ul>
 
-	<div id="content">
-		{% block content %}{% endblock %}
-	</div>
-</div>
+        {% autoescape off %}
+          <ul>
+            {{ menu_items_home_sidebar|prepare_menu_items|unordered_list }}
+          </ul>
+        {% endautoescape %}
+      </div>
 
-{% include "layout/footer.html" %}
+      <div id="content">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+
+    {% include "layout/footer.html" %}
+  </body>
+</html>

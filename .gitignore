@@ -8,7 +8,8 @@ config/*.json
 env/
 src/env/
 src/media/*
+src/node_modules/
 src/requirements/*.full.txt
-src/static/build/*
-src/static/dist/*
+src/static/build/
+src/static/dist/
 src/ultimate/settings/*.py

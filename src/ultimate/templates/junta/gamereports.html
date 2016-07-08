@@ -55,7 +55,7 @@
 									{% if field.grouper.layout_link %}
 										<small>
 											&middot;
-											<a href="{{ STATIC_URL }}{{ field.grouper.layout_link }}" target="_blank">
+											<a href="{% static field.grouper.layout_link %}" target="_blank">
 												Layout
 											</a>
 										</small>
