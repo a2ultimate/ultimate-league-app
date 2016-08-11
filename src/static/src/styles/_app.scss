@@ -1,13 +1,23 @@
 // globals
+@import '_colors';
+@import '_fonts';
+@import '_variables';
+// @import '_z-index';
+
+// normalize
+@import '~normalize.css/normalize.css';
+
+// reboot
 @import '_reboot';
-// @import '_fonts';
-// @import '_base';
-// @import '_z-index';
-// @import '_z-index';
+
+@import '~bourbon/app/assets/stylesheets/_bourbon';
+@import '~bourbon-neat/app/assets/stylesheets/_neat';
+
+@import '_base';
 
 // app styles
 @import 'breakpoints';
-// @import 'layout';
+@import 'layout';
 
 // components
 // @import 'component-banner';
@@ -17,4 +27,4 @@
 
 // legacy
 @import 'legacy/legacy';
-@import 'legacy/jquery-ui-1.10.0.custom.min';
+// @import 'legacy/jquery-ui-1.10.0.custom.min';

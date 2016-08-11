@@ -2,16 +2,43 @@
 {% load utility %}
 
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<html>
   <head>
     {% include "layout/head.html" %}
   </head>
 
   <body>
     {% include "layout/header.html" %}
+
+    <div class="content">
+      <div class="content-left">
+        <div class="content-left-logo">
+          <img class="content-left-logo-image" src="{% static 'images/assets/logo.svg' %}">
+        </div>
+
+        <div class="content-left-social">
+          <ul class="content-left-social-list">
+            <li class="content-left-social-list-element">
+              <a class="content-left-social-list-element-link social-icon social-icon-twitter" href="http://twitter.com/a2ultimate" target="_blank">Twitter</a>
+            </li>
+            <li class="content-left-social-list-element">
+              <a class="content-left-social-list-element-link social-icon social-icon-facebook" href="https://www.facebook.com/annarborultimate" target="_blank">Facebook</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="content-left-links">
+          <ul class="content-left-links-list">
+            {% autoescape off %}
+              {{ menu_items_home_sidebar|prepare_menu_items|unordered_list }}
+            {% endautoescape %}
+          </ul>
+        </div>
+      </div>
+      <div class="content-right">
+        right
+      </div>
+    </div>
 
     <div id="content_container" class="clearfix">
       <div id="sidebar">

@@ -53,7 +53,7 @@ def prepare_menu_items(menu_items):
 		elif menu_item.type == 'static_link':
 			itemHtml += '<a href="' + settings.STATIC_URL + menu_item.href + '">'
 		elif menu_item.type == 'header':
-			itemHtml += '<h3>'
+			itemHtml += '<h5>'
 
 		itemHtml += menu_item.content
 
@@ -63,7 +63,7 @@ def prepare_menu_items(menu_items):
 
 			itemHtml += '</a>'
 		elif menu_item.type == 'header':
-			itemHtml += '</h3>'
+			itemHtml += '</h5>'
 
 		parent_id = 0
 

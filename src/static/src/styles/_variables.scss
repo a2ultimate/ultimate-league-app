@@ -1,0 +1,36 @@
+$column: 1rem !global;
+$gutter: 0rem !global;
+
+$spacer: 1rem !default;
+$spacer-x: 1rem !default;
+$spacer-y: 1rem !default;
+$border-width: 0.0625rem !default;
+
+
+$font-size-root: 16px !default;
+
+$font-size-base: 1rem !default;
+$font-size-lg: 1.25rem !default;
+$font-size-sm: .875rem !default;
+$font-size-xs: .75rem !default;
+
+$line-height-base: 1.5 !default;
+
+$font-size-h1: 2.5rem !default;
+$font-size-h2: 2rem !default;
+$font-size-h3: 1.75rem !default;
+$font-size-h4: 1.5rem !default;
+$font-size-h5: 1.25rem !default;
+$font-size-h6: 1rem !default;
+
+$small-font-size: 80% !default;
+
+$hr-border-color: rgba(0,0,0,.1) !default;
+$hr-border-width: $border-width !default;
+
+
+$headings-margin-bottom: ($spacer / 2) !default;
+$headings-font-family: $font-family-lato-semibold !default;
+$headings-font-weight: 500 !default;
+$headings-line-height: 1.1 !default;
+$headings-color: inherit !default;

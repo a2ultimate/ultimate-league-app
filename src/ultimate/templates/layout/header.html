@@ -3,13 +3,13 @@
 {% load staticfiles %}
 {% load utility %}
 
-<div id="alerts_container">
+<div class="alerts">
   {% if messages %}
-    <ul>
+    <ul class="alerts-list">
       {% regroup messages|dictsortreversed:"level" by tags as message_groups %}
       {% for message_group in message_groups %}
         {% for message in message_group.list %}
-          <li class="alert state_{{ message_group.grouper }}">
+          <li class="alerts-list-element state_{{ message_group.grouper }}">
             {{ message }}
           </li>
         {% endfor %}
@@ -18,77 +18,87 @@
   {% endif %}
 </div>
 
-<div id="header_container">
-  <div id="header">
-    <div id="banner">
-      <a href="{% url 'home'  %}">
+<div class="header">
+  <div class="header-inner">
+    <div class="header-inner-top">
+      <a class="header-inner-top-banner" href="{% url 'home'  %}">
         <img src="{% static 'images/assets/header.svg' %}" alt="Ann Arbor Ultimate">
       </a>
-    </div>
 
-    <ul class="banner_links">
-      {% if user.is_authenticated %}
-        <li><a href="{% url 'user'  %}">{{ user.email }}</a></li>
-        <li><a href="{% url 'auth_log_out' %}">{% trans 'Log Out' %}</a></li>
-      {% else %}
-        <li><a href="{% url 'registration_register' %}">Create an Account</a></li>
-        <li><a href="{% url 'auth_log_in' %}">{% trans 'Log In' %}</a></li>
-      {% endif %}
-    </ul>
+      <div class="header-inner-top-links">
+        <ul class="header-inner-top-links-list">
+          {% if user.is_authenticated %}
+            <li class="header-inner-top-links-list-element">
+              <a href="{% url 'user'  %}">{{ user.email }}</a>
+            </li>
+            <li class="header-inner-top-links-list-element">
+              <a href="{% url 'auth_log_out' %}">{% trans 'Log Out' %}</a>
+            </li>
+          {% else %}
+            <li class="header-inner-top-links-list-element">
+              <a href="{% url 'registration_register' %}">Create an Account</a>
+            </li>
+            <li class="header-inner-top-links-list-element">
+              <a href="{% url 'auth_log_in' %}">{% trans 'Log In' %}</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="navbar_container">
-  <div class="navbar">
-    {% autoescape off %}
-      <ul class="nav">
-        {{ menu_items_nav|prepare_menu_items|unordered_list }}
+<div class="nav">
+  <div class="nav-inner">
+    <div class="nav-inner-left">
+      <ul class="nav-inner-list">
+        {% autoescape off %}{{ menu_items_nav|prepare_menu_items|unordered_list }}{% endautoescape %}
+        {% if user.is_superuser %}
+          <li>
+            <a href="{% url 'admin:index' %}">Admin</a>
+          </li>
+        {% endif %}
       </ul>
-    {% endautoescape %}
+    </div>
+    <div class="nav-inner-right">
+      <ul class="nav-inner-list">
+        {% if menu_leagues %}
+          <li>Leagues</li>
+          {% regroup menu_leagues by season_year as season_years %}
 
-    {% if user.is_superuser %}
-      <ul class="nav">
-        <li><a href="{% url 'home' %}admin">Admin</a></li>
-      </ul>
-    {% endif %}
-
-    <ul class="nav pull_right">
-      {% if menu_leagues %}
-        <li><span>Leagues</span></li>
-        {% regroup menu_leagues by season_year as season_years %}
-
-        {% for season_year in season_years %}
-          {% with season_year_league=season_year.list|first %}
-            <li>
-              <a href="{% url 'league_index_season' year=season_year_league.year season=season_year_league.season  %}">
-                {{ season_year.grouper|smart_title }}
-              </a>
-              <ul class="dropdown">
-                {% for league in season_year.list|sort_by_league_start_date_weekday %}
-                  <li>
-                    <a href="{% url 'league_summary' year=league.year season=league.season division=league.night  %}">
-                      {{ league.night_title|smart_title }}
-                    </a>
-                    <ul class="dropdown">
-                      {% if league|is_open:user %}
-                        {% if league|is_waitlist:user %}
-                          <li><a href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register for Waitlist</a></li>
-                        {% else %}
-                          <li><a href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register</a></li>
+          {% for season_year in season_years %}
+            {% with season_year_league=season_year.list|first %}
+              <li>
+                <a href="{% url 'league_index_season' year=season_year_league.year season=season_year_league.season  %}">
+                  {{ season_year.grouper|smart_title }}
+                </a>
+                <ul class="nav-inner-list-dropdown">
+                  {% for league in season_year.list|sort_by_league_start_date_weekday %}
+                    <li>
+                      <a href="{% url 'league_summary' year=league.year season=league.season division=league.night  %}">
+                        {{ league.night_title|smart_title }}
+                      </a>
+                      <ul class="nav-inner-list-dropdown">
+                        {% if league|is_open:user %}
+                          {% if league|is_waitlist:user %}
+                            <li><a href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register for Waitlist</a></li>
+                          {% else %}
+                            <li><a href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register</a></li>
+                          {% endif %}
                         {% endif %}
-                      {% endif %}
-                      <li><a href="{% url 'league_summary' year=league.year season=league.season division=league.night  %}">Summary</a></li>
-                      <li><a href="{% url 'league_details' year=league.year season=league.season division=league.night  %}">Detailed Info</a></li>
-                      <li><a href="{% url 'league_players' year=league.year season=league.season division=league.night  %}">Players</a></li>
-                      <li><a href="{% url 'league_teams' year=league.year season=league.season division=league.night  %}">Teams & Schedules</a></li>
-                    </ul>
-                  </li>
-                {% endfor %}
-              </ul>
-            </li>
-          {% endwith %}
-        {% endfor %}
-      {% endif %}
-    </ul>
+                        <li><a href="{% url 'league_summary' year=league.year season=league.season division=league.night  %}">Summary</a></li>
+                        <li><a href="{% url 'league_details' year=league.year season=league.season division=league.night  %}">Detailed Info</a></li>
+                        <li><a href="{% url 'league_players' year=league.year season=league.season division=league.night  %}">Players</a></li>
+                        <li><a href="{% url 'league_teams' year=league.year season=league.season division=league.night  %}">Teams & Schedules</a></li>
+                      </ul>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </li>
+            {% endwith %}
+          {% endfor %}
+        {% endif %}
+      </ul>
+    </div>
   </div>
 </div>

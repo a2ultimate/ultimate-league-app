@@ -4,16 +4,24 @@
 {% load utility %}
 
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<html>
   <head>
     {% include "layout/head.html" %}
   </head>
 
   <body>
     {% include "layout/header.html" %}
+
+    <div class="content">
+      <div class="content-left">
+        <div class="content-left-logo">
+          <img class="content-left-logo-image" src="{% static 'images/assets/logo.svg' %}">
+        </div>
+      </div>
+      <div class="content-right">
+        right
+      </div>
+    </div>
 
     <div id="content_container" class="clearfix">
       <div id="sidebar">
