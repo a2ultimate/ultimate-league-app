@@ -178,8 +178,8 @@ def registrationexport(request, year=None, season=None, division=None):
 					height_inches = getattr(registration_profile, 'height_inches', 0)
 				except:
 					gender = None
-					age = None
-					height_inches = None
+					age = 0
+					height_inches = 0
 
 				team_member_captain = 0
 				team_member_models = TeamMember.objects.filter(user=registration.user, team__league=registration.league)
