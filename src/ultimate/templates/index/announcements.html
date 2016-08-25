@@ -1,0 +1,64 @@
+{% extends "layout/layout_home.html" %}
+
+{% block content %}
+  <h1>Subscribe to Our Announcments List</h1>
+
+  <p>
+    We will periodically send announcements to this list regarding league
+    news, events, and pertinent registration dates. We will never spam and
+    try to limit mailings to 1 or 2 per month.
+  </p>
+
+  <p>
+    Alternatively, you can <a href="https://www.facebook.com/annarborultimate">Like us on Facebook</a> or
+    <a href="http://twitter.com/a2ultimate" target="_blank">Follow us on Twitter</a>.
+  </p>
+
+  <form method="post">{% csrf_token %}
+    {% for hidden in form.hidden_fields %}
+  		{{ hidden }}
+  	{% endfor %}
+
+    {% with field=form.email %}
+    <div class="sign-up-form-field">
+      <label class="sign-up-form-field-label" for="{{ field.id_for_label }}">
+        {{ field.label }}
+      </label>
+
+      <div class="sign-up-form-field-content">
+        <div class="sign-up-form-field-content-input{% if field.errors %} sign-up-form-field-content-input-error{% endif %}">{{ field }}</div>
+        <div class="sign-up-form-field-content-help">{{ field.help_text }}</div>
+        {% if field.errors %}
+          <div class="sign-up-form-field-content-errors">
+            <ul class="sign-up-form-field-content-errors-list">
+              {% for error in field.errors %}
+                <li>{{ error|escape }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endwith %}
+
+    <div class="sign-up-form-field sign-up-form-field-captcha">
+      <label class="sign-up-form-field-captcha-label" for="{{ form.captcha.id_for_label }}">{{ form.captcha.label }}</label>
+      <div class="sign-up-form-field-captcha-content{% if form.captcha.errors %} sign-up-form-field-captcha-content-error{% endif %}">
+        {{ form.captcha }}
+      </div>
+      {% if form.captcha.errors %}
+        <div class="sign-up-form-field-content-errors">
+          <ul class="sign-up-form-field-content-errors-list">
+            {% for error in form.captcha.errors %}
+              <li>{{ error|escape }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+    </div>
+
+    <input class="button button_success" type="submit" value="Join List" />
+    <a class="form_cancel" href="{% url 'home'  %}">cancel</a>
+  </form>
+
+{% endblock %}

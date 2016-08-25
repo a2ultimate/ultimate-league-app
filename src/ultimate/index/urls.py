@@ -3,6 +3,7 @@ from django.contrib.auth.views import login, logout
 
 urlpatterns = patterns('ultimate.index.views',
 	(r'^$', 'index', {}, 'home'),
+	(r'^announcements/$', 'announcements', {}, 'announcements'),
 
 	(r'^about/$', 'content', {'url': 'about_us/'}, 'about_us'),
 	(r'^comments/$', 'content', {'url': 'comments/'}, 'comments'),
