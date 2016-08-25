@@ -89,6 +89,7 @@
 						</p>
 					</form>
 				{% else %}
+					<p>Do you have a coupon code?</p>
 					<form method="post">{% csrf_token %}
 						<input name="coupon_code" type="text">
 						<button class="button button_success" type="submit">
