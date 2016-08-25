@@ -58,7 +58,7 @@
 
 									<div>
 										{% if team.email and user.is_authenticated%}
-										{% if team|team_contains_user:user or user.is_superuser %}
+										{% if user|is_on_team:team or user.is_superuser %}
 											<a class="pull_right" style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}">Email Team</a>
 										{% endif %}
 										{% endif %}
@@ -84,7 +84,7 @@
 									{% for team_member in team.get_members %}
 										<li class="team_member">
 											{% if forloop.first and user.is_authenticated %}
-											{% if team|team_contains_user:user or user.is_superuser %}
+											{% if user.is_superuser or user|is_on_team:team or user|is_division_captain:league %}
 												<a class="pull_right" href="mailto:{% for captain in team.get_captains %}{{ captain.user.email }},{% endfor %}">Email Captains</a>
 											{% endif %}
 											{% endif %}

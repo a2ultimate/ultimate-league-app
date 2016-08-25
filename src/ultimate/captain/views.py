@@ -1,3 +1,4 @@
+import csv
 from datetime import datetime
 import re
 
@@ -8,7 +9,7 @@ from django.db import IntegrityError
 from django.db.transaction import atomic
 from django.forms.formsets import formset_factory
 from django.forms.models import model_to_dict, modelformset_factory
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
@@ -20,7 +21,7 @@ from ultimate.user.models import *
 
 @login_required
 def index(request):
-	captain_teams = Team.objects.filter(teammember__user=request.user, teammember__captain=1, hidden=False).order_by('-league__league_start_date')
+	captain_teams = Team.objects.filter(teammember__user=request.user, teammember__captain=True, hidden=False).order_by('-league__league_start_date')
 
 	return render_to_response('captain/index.html',
 		{'captain_teams': captain_teams},
@@ -31,7 +32,7 @@ def index(request):
 def editteam(request, teamid):
 	team = get_object_or_404(Team, id=teamid)
 
-	if not bool(team.teammember_set.filter(user=request.user,captain=1)[0:1].count()):
+	if not bool(team.teammember_set.filter(user=request.user, captain=True)[0:1].count()):
 		raise Http403
 
 	if request.method == 'POST':
@@ -50,12 +51,68 @@ def editteam(request, teamid):
 		context_instance=RequestContext(request))
 
 
+@login_required
+def exportteam(request, teamid):
+	team = get_object_or_404(Team, id=teamid)
+
+	if not bool(team.teammember_set.filter(user=request.user, captain=True)[0:1].count()):
+		raise Http403
+
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="{}.csv"'.format(team.__unicode__())
+
+	writer = csv.writer(response)
+	writer.writerow([
+		'Team',
+		'Captain',
+		'Firstname',
+		'Lastname',
+		'Gender',
+		'Email',
+		'Age',
+		'Height Inches',
+		'Number of Leagues',
+		'Attendance',
+	])
+
+	team_members = team.teammember_set.all() \
+		.extra(select={'num_teams':'SELECT COUNT(team_member.id) FROM team_member as tm WHERE tm.user_id = team_member.user_id GROUP BY tm.user_id'})
+
+	for team_member in team.teammember_set.all():
+		user_profile = team_member.user.profile
+
+		try:
+			gender = getattr(user_profile, 'gender', '').encode('ascii', 'ignore')
+			age = getattr(user_profile, 'age', 0)
+			height_inches = getattr(user_profile, 'height_inches', 0)
+		except:
+			gender = None
+			age = 0
+			height_inches = 0
+
+		writer.writerow([
+			int(team.id),
+			int(team_member.captain),
+			team_member.user.first_name,
+			team_member.user.last_name,
+			gender,
+			team_member.user.email,
+			int(age),
+			int(height_inches),
+			TeamMember.objects.filter(user=team_member.user).count(),
+			getattr(Registrations.objects.get(user=team_member.user, league=team.league), 'attendance', 0),
+		])
+
+	return response
+
+
+
 @atomic
 @login_required
 def playersurvey(request, teamid):
 	team = get_object_or_404(Team, id=teamid)
 
-	if not bool(team.teammember_set.filter(user=request.user,captain=1)[0:1].count()):
+	if not bool(team.teammember_set.filter(user=request.user, captain=True)[0:1].count()):
 		raise Http403
 
 	team_member_users = User.objects.filter(teammember__team=team).exclude(id=request.user.id) \
@@ -143,8 +200,8 @@ def gamereport(request, teamid, gameid):
 	team = get_object_or_404(Team, id=teamid)
 	game = get_object_or_404(Game, id=gameid)
 
-	if not bool(team.teammember_set.filter(user=request.user,captain=1)[0:1].count()) or \
-		not bool(game.gameteams_set.filter(team__teammember__user=request.user, team__teammember__captain=1)[0:1].count()):
+	if not bool(team.teammember_set.filter(user=request.user, captain=True)[0:1].count()) or \
+		not bool(game.gameteams_set.filter(team__teammember__user=request.user, team__teammember__captain=True)[0:1].count()):
 
 		raise Http403
 
