@@ -162,6 +162,7 @@ def registrationexport(request, year=None, season=None, division=None):
 			'Captaining',
 		])
 
+		registration_list = []
 		for registration in registrations:
 			if registration.is_complete and not registration.waitlist and not registration.refunded:
 				try:
@@ -185,31 +186,62 @@ def registrationexport(request, year=None, season=None, division=None):
 				if team_member_models.count():
 					team_member_captain = team_member_models[:1].get().captain
 
-				writer.writerow([
-					registration.get_team_id(),
-					registration.baggage,
-					int(registration.baggage_size),
-					int(team_member_captain),
-					registration.user.first_name,
-					registration.user.last_name,
-					gender,
-					registration.user.email,
-					registration.user.rating_total,
-					registration.average_experience,
-					registration.average_strategy,
-					registration.average_throwing,
-					registration.average_athleticism,
-					registration.average_competitiveness,
-					registration.average_spirit,
-					age,
-					height_inches,
-					registration.num_teams,
-					registration.status.encode('ascii', 'ignore'),
-					registration.registered,
-					paypal_row.payer_email.encode('ascii', 'ignore') if paypal_row else paypal_row,
-					registration.attendance,
-					registration.captain,
-				])
+				registration_list.append({
+					'team_id': registration.get_team_id(),
+					'baggage_id': registration.baggage,
+					'baggage_size': int(registration.baggage_size),
+					'is_captain': int(team_member_captain),
+					'first_name': registration.user.first_name,
+					'last_name': registration.user.last_name,
+					'gender': gender,
+					'email': registration.user.email,
+					'rating_total': registration.user.rating_total,
+					'rating_experience': registration.average_experience,
+					'rating_strategy': registration.average_strategy,
+					'rating_throwing': registration.average_throwing,
+					'rating_athleticism': registration.average_athleticism,
+					'rating_competitiveness': registration.average_competitiveness,
+					'rating_spirit': registration.average_spirit,
+					'age': age,
+					'height': height_inches,
+					'num_teams': registration.num_teams,
+					'registration_status': registration.status.encode('ascii', 'ignore'),
+					'registration_timestamp': registration.registered,
+					'paypal_email': paypal_row.payer_email.encode('ascii', 'ignore') if paypal_row else paypal_row,
+					'attendance': registration.attendance,
+					'captaining': registration.captain,
+				})
+
+		registration_list.sort(key=lambda k: k['last_name'])
+		registration_list.sort(key=lambda k: k['is_captain'], reverse=True)
+		registration_list.sort(key=lambda k: k['team_id'])
+
+		for registration in registration_list:
+			writer.writerow([
+				registration['team_id'],
+				registration['baggage_id'],
+				registration['baggage_size'],
+				registration['is_captain'],
+				registration['first_name'],
+				registration['last_name'],
+				registration['gender'],
+				registration['email'],
+				registration['rating_total'],
+				registration['rating_experience'],
+				registration['rating_strategy'],
+				registration['rating_throwing'],
+				registration['rating_athleticism'],
+				registration['rating_competitiveness'],
+				registration['rating_spirit'],
+				registration['age'],
+				registration['height'],
+				registration['num_teams'],
+				registration['registration_status'],
+				registration['registration_timestamp'],
+				registration['paypal_email'],
+				registration['attendance'],
+				registration['captaining'],
+			])
 
 		return response
 
