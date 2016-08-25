@@ -24,6 +24,12 @@
 						</a>
 					</li>
 					<li>
+						<a href="{% url 'captain_team_export' teamid=team.id  %}">
+							<span class="status pull_left"></span>
+							Export Team Information
+						</a>
+					</li>
+					<li>
 						<a href="{% url 'playersurvey' teamid=team.id  %}">
 							{% if team.league|get_player_survey_status:user %}
 								<span class="status state_success pull_left"></span>

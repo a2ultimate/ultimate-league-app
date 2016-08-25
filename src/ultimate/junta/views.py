@@ -173,7 +173,7 @@ def registrationexport(request, year=None, season=None, division=None):
 				try:
 					registration_profile = registration.user.profile
 
-					gender = registration_profile.gender.encode('ascii', 'ignore')
+					gender = getattr(registration_profile, 'gender', '').encode('ascii', 'ignore')
 					age = getattr(registration_profile, 'age', 0)
 					height_inches = getattr(registration_profile, 'height_inches', 0)
 				except:
@@ -202,14 +202,14 @@ def registrationexport(request, year=None, season=None, division=None):
 					'rating_athleticism': registration.average_athleticism,
 					'rating_competitiveness': registration.average_competitiveness,
 					'rating_spirit': registration.average_spirit,
-					'age': age,
-					'height': height_inches,
-					'num_teams': registration.num_teams,
+					'age': int(age),
+					'height': int(height_inches),
+					'num_teams': int(registration.num_teams),
 					'registration_status': registration.status.encode('ascii', 'ignore'),
 					'registration_timestamp': registration.registered,
 					'paypal_email': paypal_row.payer_email.encode('ascii', 'ignore') if paypal_row else paypal_row,
-					'attendance': registration.attendance,
-					'captaining': registration.captain,
+					'attendance': int(registration.attendance),
+					'captaining': int(registration.captain),
 				})
 
 		registration_list.sort(key=lambda k: k['last_name'])
