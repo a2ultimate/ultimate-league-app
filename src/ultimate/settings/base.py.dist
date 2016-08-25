@@ -172,6 +172,10 @@ GOOGLE_APPS_API_SCOPES = (
 GOOGLE_APPS_CALENDAR_ID = ''
 
 
+# Annoucements Email Group/List Address
+ANNOUNCEMENTS_GROUP_ADDRESS = ''
+
+
 # Paypal Info
 PAYPAL_RECEIVER_EMAIL = ''
 PAYPAL_TEST = True			# Testing mode on

@@ -234,3 +234,28 @@ class RegistrationAttendanceForm(forms.ModelForm):
 
 class ScheduleGenerationForm(forms.Form):
 	field_names = forms.ModelMultipleChoiceField(FieldNames.objects.all(), required=True, label=_('Fields'), help_text=_('You must pick enough fields to cover the number of games for an event. (Hold CTRL or Command to select more than one.)'))
+
+
+class AnnoucementsForm(forms.Form):
+	email = forms.EmailField(label=_('Email Address'))
+
+	honeypot = forms.CharField(required=False, label=_('Honeypot'),
+		help_text=_('If you enter anything in this field your form submission will be treated as spam'))
+	blank = forms.CharField(required=False, label=_('Blank'),
+		help_text=_('If you enter anything in this field your form submission will be treated as spam'))
+
+	captcha = CaptchaField(label=_('To verify that you are a real person, please enter the letters you see in the image'))
+
+	def clean_honeypot(self):
+		value = self.cleaned_data['honeypot']
+		if not value == '':
+			print('honeypot!')
+			raise forms.ValidationError(self.fields['honeypot'].label)
+		return value
+
+	def clean_blank(self):
+		value = self.cleaned_data['blank']
+		if not value == '':
+			print('blank!')
+			raise forms.ValidationError(self.fields['blank'].label)
+		return value

@@ -15,28 +15,12 @@
 					</li>
 				{% endfor %}
 			</ul>
+			<p>
+				<a class="button button_info" href="{% url 'announcements' %}">Join Our Announcements List</a>
 		</div>
 		<div id="calendar" class="clearfix">
 			<h1>Calendar</h1>
 			<iframe src="https://www.google.com/calendar/embed?showTitle=0&amp;showNav=0&amp;showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;mode=AGENDA&amp;height=400&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=pm3odo50mikpffck6bnrhrqj3c%40group.calendar.google.com&amp;color=%23182C57&amp;ctz=America%2FNew_York" style=" border-width:0 " width="270" height="400" frameborder="0" scrolling="no"></iframe>
 		</div>
 	</div>
-
-	<ul id="social_feed">
-		{% for update in updates %}
-			<li class="update">
-				{% if update.type == 'photo' %}
-					{% for photo in update.photoset %}
-						{% if forloop.first %}
-							<div class="update_header">
-								<a class="update_user" href="http://flickr.com/photos/{{ photo.owner_nsid }}" target="_blank">{{ photo.owner }}</a>
-								<span class="update_datetime">{{ photo.upload_date|timesince }} ago</span>
-							</div>
-						{% endif %}
-						<a href="{{ photo.photopage_url }}" target="_blank"><img class="photo" src="{{ photo.url }}" /></a>
-					{% endfor %}
-				{% endif %}
-			</li>
-		{% endfor %}
-	</ul>
 {% endblock %}
