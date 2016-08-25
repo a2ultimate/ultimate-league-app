@@ -5,7 +5,7 @@ register = template.Library()
 
 
 @register.filter
-def team_contains_user(team, user):
+def is_on_team(user, team):
 	return team.contains_user(user)
 
 
