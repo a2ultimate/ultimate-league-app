@@ -203,7 +203,7 @@ def registrationexport(request, year=None, season=None, division=None):
 					'rating_competitiveness': registration.average_competitiveness,
 					'rating_spirit': registration.average_spirit,
 					'age': int(age),
-					'height': int(height_inches),
+					'height': height_inches,
 					'num_teams': int(registration.num_teams),
 					'registration_status': registration.status.encode('ascii', 'ignore'),
 					'registration_timestamp': registration.registered,
