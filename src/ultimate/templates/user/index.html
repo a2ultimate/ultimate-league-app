@@ -84,7 +84,7 @@
 									{% for team_member in team.get_members %}
 										<li class="team_member">
 											{% if forloop.first and user.is_authenticated %}
-											{% if user.is_superuser or user|is_on_team:team or user|is_division_captain:league %}
+											{% if user.is_superuser or user|is_on_team:team or user|is_division_captain:team.league %}
 												<a class="pull_right" href="mailto:{% for captain in team.get_captains %}{{ captain.user.email }},{% endfor %}">Email Captains</a>
 											{% endif %}
 											{% endif %}
