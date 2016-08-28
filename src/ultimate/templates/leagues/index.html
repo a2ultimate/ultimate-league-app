@@ -170,9 +170,9 @@
 					<tr>
 						<td colspan="3">
 							{% if league|is_waitlist:user %}
-								<a href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register for the Waitlist</a>
+								<a class="button button-info" href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Join Waitlist</a>
 							{% else %}
-								<a href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register Now!</a>
+								<a class="button button-success" href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register Now</a>
 							{% endif %}
 						</td>
 					</tr>

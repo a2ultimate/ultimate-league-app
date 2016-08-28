@@ -1,0 +1,39 @@
+.breadcrumbs {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+
+  background: $color-light-gray;
+
+  font-family: $font-family-lato-medium;
+}
+
+.breadcrumbs-list {
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.breadcrumb {
+  display: inline-block;
+
+  &::after {
+    display: inline-block;
+
+    padding: 0 0.3125rem;
+
+    content: '/';
+
+    color: #cccccc;
+  }
+
+  &:last-child {
+    &::after {
+      content: '';
+    }
+  }
+
+  .breadcrumb-active {
+    color: $color-gray;
+  }
+}

@@ -1,0 +1,24 @@
+.header-list {
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.header-list-header {
+  padding: 0.375rem;
+
+  background: #ecf0f1;
+}
+
+.header-list-inner {
+  margin: 0 0 1rem 0;
+  padding: 0;
+
+  list-style: none;
+
+  > li {
+    margin-bottom: 0.3125rem;
+    padding-left: 0.5rem;
+  }
+}

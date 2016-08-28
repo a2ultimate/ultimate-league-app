@@ -1,0 +1,164 @@
+fieldset {
+  margin: 0.75rem 0.5rem 1.125rem;
+  padding: 0;
+
+  border: 0;
+}
+
+legend {
+  font-size: 1.125rem;
+  line-height: 2.25rem;
+}
+
+fieldset > legend {
+  padding-right: 0.75rem;
+}
+
+
+
+
+
+
+.radio,
+.checkbox {
+  display: block;
+
+  min-height: 1.25rem;
+  padding-left: 1.25rem;
+
+  vertical-align: middle;
+}
+
+.radio label,
+.checkbox label {
+  display: inline;
+
+  margin-bottom: 0;
+
+  cursor: pointer;
+
+  font-weight: normal;
+}
+
+.radio input[type='radio'],
+.checkbox input[type='checkbox'] {
+  float: left;
+
+  margin-left: -1.25rem;
+}
+
+.radio + .radio,
+.checkbox + .checkbox {
+  margin-top: 0.5rem;
+}
+
+
+
+
+
+
+
+// form {
+//   margin: 0.75rem 0;
+// }
+
+.errorlist {
+  margin: 0 0 0.5rem;
+
+  color: #e74c3c;
+}
+
+legend + .errorlist {
+  margin-top: -0.625rem;
+}
+
+.form_table {
+  margin: 0 0 0.75rem;
+}
+
+.form_table th,
+.form_table td {
+  padding: 0.75rem;
+}
+
+.form_table_highlight {
+  background-color: #eceff1;
+}
+
+input[type=checkbox],
+input[type=radio] {
+  font-size: 150%;
+}
+
+input[disabled],
+input[readonly],
+textarea[disabled],
+textarea[readonly] {
+  cursor: default;
+
+  color: #cad2d3;
+  border-color: transparent;
+  background-color: #ededed;
+}
+
+[type='color'],
+[type='date'],
+[type='datetime-local'],
+[type='datetime'],
+[type='email'],
+[type='month'],
+[type='number'],
+[type='password'],
+[type='search'],
+[type='tel'],
+[type='text'],
+[type='time'],
+[type='url'],
+[type='week'],
+input:not([type]),
+textarea {
+  box-sizing: border-box;
+  width: 12rem;
+  padding: 0.625rem 0 0.6875rem 0.625rem;
+
+  transition: border-color 150ms ease;
+  vertical-align: middle;
+
+  color: $color-primary;
+  border: 0.125rem solid $color-light-gray;
+  border-radius: $border-radius;
+  box-shadow: 0;
+
+  appearance: none;
+  -webkit-font-smoothing: antialiased;
+
+  &:active {
+    border-color: $color-secondary;
+  }
+
+  &::placeholder {
+    color: $color-light-gray;
+  }
+}
+
+select[multiple='multiple'] {
+  min-height: 6rem;
+  padding-right: 0.625rem;
+}
+
+.control {
+  margin: 0.75rem 0.5rem 1.125rem;
+}
+
+.control-inline {
+  display: inline-block;
+
+  margin-right: 0.75rem;
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.control-group {
+}

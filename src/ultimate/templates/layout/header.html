@@ -9,7 +9,7 @@
       {% regroup messages|dictsortreversed:"level" by tags as message_groups %}
       {% for message_group in message_groups %}
         {% for message in message_group.list %}
-          <li class="alerts-list-element state_{{ message_group.grouper }}">
+          <li class="alerts-list-element alert alert-{{ message_group.grouper }}">
             {{ message }}
           </li>
         {% endfor %}

@@ -102,7 +102,7 @@ hr {
   border-top: 1px solid rgba(0, 0, 0, 0.2);
 }*/
 
-fieldset {
+/*fieldset {
   border: 0;
   margin: 12px 8px 18px;
 }
@@ -114,7 +114,7 @@ legend {
 
 fieldset > legend {
   padding-right: 12px;
-}
+}*/
 
 .center_margin {
   margin: 0 auto;
@@ -140,7 +140,7 @@ fieldset > legend {
   float: right;
 }
 
-.alert {
+/*.alert {
   font-weight: bold;
   list-style: none;
   margin: 0;
@@ -190,9 +190,9 @@ fieldset > legend {
 
 .state_info hr {
   border-top-color: #2980B9;
-}
+}*/
 
-.text_info {
+/*.text_info {
   color: #3498DB;
 }
 
@@ -209,9 +209,9 @@ fieldset > legend {
 
 .state_warning hr {
   border-top-color: #D35400;
-}
+}*/
 
-.text_warning {
+/*.text_warning {
   color: #F1C40F;
 }
 
@@ -232,7 +232,7 @@ fieldset > legend {
 
 .text_error {
   color: #E74C3C;
-}
+}*/
 
 /* ALERTS */
 
@@ -257,7 +257,7 @@ fieldset > legend {
   border-bottom-right-radius: 2px;
 }*/
 
-.radio,
+/*.radio,
 .checkbox {
   display: block;
   min-height: 20px;
@@ -282,18 +282,18 @@ fieldset > legend {
 .radio + .radio,
 .checkbox + .checkbox {
   margin-top: 8px;
-}
+}*/
 
 
-#container {
+/*#container {
   margin: 0 auto;
   width: 960px;
-}
+}*/
 
 
 /* FOOTER */
 
-#footer {
+/*#footer {
   background: #ECEFF1;
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
@@ -309,11 +309,11 @@ fieldset > legend {
 #footer_bar {
   padding: 3px;
   text-align: center;
-}
+}*/
 
 /* CONTENT */
 
-#content_container {
+/*#content_container {
   margin: 0 auto 10px;
   width: 960px;
   z-index: 2;
@@ -406,13 +406,13 @@ fieldset > legend {
   margin-left: 12px;
   padding: 0 12px 12px;
   width: 728px;
-}
+}*/
 
 .none_found {
   color: #95A5A6;
 }
 
-form {
+/*form {
   margin: 12px 0;
 }
 
@@ -609,9 +609,9 @@ legend + .control_group {
 .control_group.success input[type='color'],
 .control_group.success .uneditable-input {
   border-color: #2ECC71;
-}
+}*/
 
-input[type='button'],
+/*input[type='button'],
 input[type='submit'] {
   min-width: 160px;
 }
@@ -741,10 +741,10 @@ input[type='submit'] {
 .button.button_warning:active,
 .button.button_warning.active {
   background-color: #cea70c;
-}
+}*/
 
 
-.table {
+/*.table {
   margin-bottom: 20px;
   width: 100%;
 }
@@ -925,19 +925,19 @@ input[type='submit'] {
 .table-hover > tbody > tr.warning:hover > td {
   background-color: #FAF2CC;
   border-color: #F8E5BE;
-}
+}*/
 
-.form_cancel {
+/*.form_cancel {
   padding: 0 6px;
 }
 
 .form_cancel:active {
   position: relative;
   top: 1px;
-}
+}*/
 
 
-.nav_tabs {
+/*.nav_tabs {
   border-bottom: 3px solid #34495E;
   font-weight: 400;
   letter-spacing: 1px;
@@ -982,9 +982,9 @@ input[type='submit'] {
 
 .nav_tabs:after {
   clear: both;
-}
+}*/
 
-.breadcrumbs {
+/*.breadcrumbs {
   background: #ECF0F1;
   letter-spacing: 1px;
   list-style: none;
@@ -1013,7 +1013,7 @@ input[type='submit'] {
 
 .nav_tabs + .breadcrumbs {
   margin-top: -12px;
-}
+}*/
 
 .progress_bar {
   background: #BDC3C7;
@@ -1175,7 +1175,7 @@ tr.sortable-placeholder td {
 
 /* LEAGUE LIST */
 
-ul.flat_list {
+/*ul.flat_list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -1195,7 +1195,7 @@ ul.flat_list > li > ul {
 
 ul.flat_list > li > ul > li {
   margin: 6px 4px;
-}
+}*/
 
 
 /* SIGN UP */
@@ -1308,7 +1308,7 @@ ul.flat_list > li > ul > li {
 
 /* INDEX / INDEX */
 
-#news {
+/*#news {
   float: left;
   padding-bottom: 36px;
 }
@@ -1341,46 +1341,8 @@ ul.flat_list > li > ul > li {
 
 #calendar {
   float: left;
-}
+}*/
 
-#social_feed {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-
-#social_feed li {
-  padding: 4px 0;
-}
-
-.user_image a {
-  -moz-background-size: 48px 48px;
-  -webkit-background-size: 48px 48px;
-
-  background-color: transparent;
-  background-position: top left;
-  background-repeat: no-repeat;
-  background-size: 48px 48px;
-  border-radius: 4px;
-  display: block;
-  height: 48px;
-  width: 48px;
-}
-
-.update_content {
-  min-height: 50px;
-}
-
-.update_header {
-  margin-bottom: 2px;
-}
-
-.update_datetime {
-  color: #95A5A6;
-  float: right;
-  letter-spacing: 1px;
-}
 
 
 /* CAPTAIN / INDEX */

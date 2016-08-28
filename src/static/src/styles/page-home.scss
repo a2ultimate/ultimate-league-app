@@ -1,0 +1,47 @@
+.page-home {
+}
+
+.page-home-info {
+  @include outer-container();
+}
+
+.page-home-info-news {
+  @include span-columns(7);
+}
+
+.page-home-info-news-content {
+}
+
+.page-home-info-news-content-list {
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.page-home-info-news-content-list-element {
+  margin: 0.5rem 0;
+  padding: 0.75rem 0.5rem;
+
+  border-radius: 0.125rem;
+  background-color: $color-light-gray;
+}
+
+.page-home-info-news-content-list-element-content {
+  color: $color-dark-gray;
+
+  font-family: $font-family-lato-bold;
+  font-size: 1.125rem;
+}
+
+.page-home-info-news-content-list-element-footer {
+  color: $color-gray;
+
+  font-size: 0.9375rem;
+}
+
+.page-home-info-events {
+  padding-left: 1rem;
+
+  @include span-columns(5);
+}

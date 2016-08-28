@@ -8,15 +8,15 @@
 {% block content %}
 	{% include "layout/account_tabs.html" with selected_tab="captain" %}
 
-	<ul class="flat_list">
+	<ul class="header-list">
 		{% for team in captain_teams %}
 			<li>
-				<h3>
+				<h4 class="header-list-header">
 					<div class="pull_right">{{ team.name }}</div>
 					<div>{{ team.league.year }} {{ team.league.season_title|smart_title }} {{ team.league.night_title|smart_title }}</div>
-				</h3>
+				</h4>
 
-				<ul>
+				<ul class="header-list-inner">
 					<li>
 						<a href="{% url 'captaineditteam' teamid=team.id  %}">
 							<span class="status pull_left"></span>
@@ -41,7 +41,7 @@
 					</li>
 				</ul>
 
-				<ul>
+				<ul class="header-list-inner">
 					{% for game in team.get_past_games %}
 						<li>
 							{% if game|report_complete_for_team:user %}

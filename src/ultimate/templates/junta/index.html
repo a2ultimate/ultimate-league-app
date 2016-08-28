@@ -3,25 +3,25 @@
 {% block content %}
 	{% include "layout/account_tabs.html" with selected_tab="junta" %}
 
-	<ul class="flat_list">
+	<ul class="header-list">
 		<li>
-			<a href="{% url 'captainstatus'  %}"><h3>Captain Status</h3></a>
+			<a href="{% url 'captainstatus'  %}"><h4 class="header-list-header">Captain Status</h4></a>
 		</li>
 		<li>
-			<a href="{% url 'gamereports'  %}"><h3>Game Reports</h3></a>
+			<a href="{% url 'gamereports'  %}"><h4 class="header-list-header">Game Reports</h4></a>
 		</li>
 		<li>
-			<a href="{% url 'leagueresults'  %}"><h3>League Results</h3></a>
+			<a href="{% url 'leagueresults'  %}"><h4 class="header-list-header">League Results</h4></a>
 		</li>
 		<li>
-			<a href="{% url 'registrationexport'  %}"><h3>Registration Export</h3></a>
+			<a href="{% url 'registrationexport'  %}"><h4 class="header-list-header">Registration Export</h4></a>
 		</li>
 		{% if request.user.is_superuser %}
 			<li>
-				<a href="{% url 'teamgeneration'  %}"><h3>Team Generation</h3></a>
+				<a href="{% url 'teamgeneration'  %}"><h4 class="header-list-header">Team Generation</h4></a>
 			</li>
 			<li>
-				<a href="{% url 'schedulegeneration'  %}"><h3>Schedule Generation</h3></a>
+				<a href="{% url 'schedulegeneration'  %}"><h4 class="header-list-header">Schedule Generation</h4></a>
 			</li>
 		{% endif %}
 	</ul>

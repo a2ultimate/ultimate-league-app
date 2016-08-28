@@ -1,0 +1,53 @@
+.tabs {
+  margin-bottom: 0.75rem;
+
+  border-bottom: 0.1875rem solid $color-dark-gray;
+
+  font-family: $font-family-lato-medium;
+
+  + .breadcrumbs {
+    margin-top: -0.75rem;
+  }
+}
+
+.tabs-list {
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.tab {
+  display: inline-block;
+}
+
+.tab-link {
+  display: block;
+
+  margin-right: 0.25rem;
+  padding: 0.6125rem 1rem;
+
+  border-top-left-radius: 0.125rem;
+  border-top-right-radius: 0.125rem;
+  background-color: $color-light-gray;
+
+  &:active {
+    text-decoration: none;
+  }
+
+  &:focus,
+  &:hover {
+    text-decoration: none;
+
+    background-color: $color-light-gray-dark;
+  }
+
+  .tab.tab-selected & {
+    color: $color-white;
+    background-color: $color-dark-gray;
+
+    &:hover {
+      background-color: $color-dark-gray-dark;
+    }
+  }
+}

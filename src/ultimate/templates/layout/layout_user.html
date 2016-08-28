@@ -17,74 +17,92 @@
         <div class="content-left-logo">
           <img class="content-left-logo-image" src="{% static 'images/assets/logo.svg' %}">
         </div>
+
+        <div class="content-left-social">
+          <ul class="content-left-social-list">
+            <li class="content-left-social-list-element">
+              <a class="content-left-social-list-element-link social-icon social-icon-twitter" href="http://twitter.com/a2ultimate" target="_blank">Twitter</a>
+            </li>
+            <li class="content-left-social-list-element">
+              <a class="content-left-social-list-element-link social-icon social-icon-facebook" href="https://www.facebook.com/annarborultimate" target="_blank">Facebook</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="content-left-leagues">
+          {% if menu_leagues %}
+            <ul class="content-left-leagues-list">
+              {% regroup menu_leagues by season_year as season_years %}
+
+              {% for season_year in season_years %}
+                <li class="content-left-leagues-list-element">
+                  <div class="content-left-leagues-list-element-header">
+                    <h3>
+                      {{ season_year.grouper|smart_title }}
+                    </h3>
+                  </div>
+                  <div class="content-left-leagues-list-element-divisions">
+                    <ul class="content-left-leagues-list-element-divisions-list">
+                      {% for league in season_year.list|sort_by_league_start_date_weekday %}
+                        <li class="content-left-leagues-list-element-divisions-list-element">
+                          <div class="content-left-leagues-list-element-divisions-list-element-header">
+                            <h5>
+                              {{ league.night|smart_title }}
+
+                              {% if league.state == 'preview' %}
+                                <em>({{ league.state|capfirst }})</em>
+                              {% endif %}
+                            </h5>
+                          </div>
+                          <div class="content-left-leagues-list-element-divisions-list-element-links">
+                            <ul class="content-left-leagues-list-element-divisions-list-element-links-list">
+                              {% if league|is_open:user %}
+                                {% if league|is_waitlist:user %}
+                                  <li class="content-left-leagues-list-element-divisions-list-element-links-list-element">
+                                    <a class="content-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register for Waitlist</a>
+                                  </li>
+                                {% else %}
+                                  <li class="content-left-leagues-list-element-divisions-list-element-links-list-element">
+                                    <a class="content-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register</a>
+                                  </li>
+                                {% endif %}
+                              {% endif %}
+                              <li class="content-left-leagues-list-element-divisions-list-element-links-list-element">
+                                <a class="content-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_summary' year=league.year season=league.season division=league.night  %}">Summary</a>
+                              </li>
+                              <li class="content-left-leagues-list-element-divisions-list-element-links-list-element">
+                                <a class="content-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_details' year=league.year season=league.season division=league.night  %}">Detailed Info</a>
+                              </li>
+                              <li class="content-left-leagues-list-element-divisions-list-element-links-list-element">
+                                <a class="content-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_players' year=league.year season=league.season division=league.night  %}">Players</a>
+                              </li>
+                              <li class="content-left-leagues-list-element-divisions-list-element-links-list-element">
+                                <a class="content-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_teams' year=league.year season=league.season division=league.night  %}">Teams & Schedules</a>
+                              </li>
+                            </ul>
+                          </div>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>No leagues are available.</p>
+          {% endif %}
+        </div>
       </div>
       <div class="content-right">
-        right
-      </div>
-    </div>
-
-    <div id="content_container" class="clearfix">
-      <div id="sidebar">
-        <p class="text_center">
-          <img src="{% static 'images/assets/logo.svg' %}" width="180">
-        </p>
-
-        <ul class="social_icons text_center">
-          <li><a class="social_icon social_icon_twitter" href="http://twitter.com/a2ultimate" target="_blank">Twitter</a></li>
-          <li><a class="social_icon social_icon_facebook" href="https://www.facebook.com/annarborultimate" target="_blank">Facebook</a></li>
-        </ul>
-
-        {% if menu_leagues %}
-          <ul>
-            {% regroup menu_leagues by season_year as season_years %}
-
-            {% for season_year in season_years %}
-              <li>
-                <h3>{{ season_year.grouper|smart_title }}</h3>
-                <ul>
-                  {% for league in season_year.list|sort_by_league_start_date_weekday %}
-                    <li>
-                      <h4>
-                        {{ league.night|smart_title }}
-
-                        {% if league.state == 'preview' %}
-                          <em>({{ league.state|capfirst }})</em>
-                        {% endif %}
-                      </h4>
-                      <ul>
-                        {% if league|is_open:user %}
-                          {% if league|is_waitlist:user %}
-                            <li><a href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register for Waitlist</a></li>
-                          {% else %}
-                            <li><a href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register</a></li>
-                          {% endif %}
-                        {% endif %}
-                        <li><a href="{% url 'league_summary' year=league.year season=league.season division=league.night  %}">Summary</a></li>
-                        <li><a href="{% url 'league_details' year=league.year season=league.season division=league.night  %}">Detailed Info</a></li>
-                        <li><a href="{% url 'league_players' year=league.year season=league.season division=league.night  %}">Players</a></li>
-                        <li><a href="{% url 'league_teams' year=league.year season=league.season division=league.night  %}">Teams & Schedules</a></li>
-                      </ul>
-                    </li>
-                  {% endfor %}
-                </ul>
-              </li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p>No leagues are available.</p>
-        {% endif %}
-      </div>
-
-      <div id="content">
         {% if user and user.is_authenticated and not user_profile_is_complete %}
-          <div class="message state_warning">
+          <div class="message message-warning">
             {% trans 'You are missing profile information required to register for a league. Please' %}
             <a href="{% url 'editprofile' %}">{% trans 'complete your profile' %}</a>.
           </div>
         {% endif %}
 
         {% if user and user.is_authenticated and not user_rating_is_complete %}
-          <div class="message state_warning">
+          <div class="message message-warning">
             {% trans 'You are missing player ratings required to register for a league. Please' %}
             <a href="{% url 'editratings' %}">{% trans 'complete your ratings' %}</a>.
           </div>

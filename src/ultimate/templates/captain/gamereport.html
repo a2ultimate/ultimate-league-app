@@ -5,11 +5,21 @@
 {% block content %}
 	{% include "layout/account_tabs.html" with selected_tab="captain" %}
 
-	<ul class="breadcrumbs">
-		<li><a href="{% url 'captain'  %}">Captain Resources</a></li>
-		<li class="active">{{ team.league|smart_title }}</li>
-		<li class="active">Game Report</a>
-	</ul>
+  <div class="breadcrumbs">
+  	<ul class="breadcrumbs-list">
+  		<li class="breadcrumb">
+        <a href="{% url 'captain'  %}">
+          Captain Resources
+        </a>
+      </li>
+  		<li class="breadcrumb breadcrumb-active">
+        {{ team.league|smart_title }}
+      </li>
+  		<li class="breadcrumb breadcrumb-active">
+        Game Report
+      </li>
+  	</ul>
+  </div>
 
 	<h1>Game Report for {{ game.date|date:"l, F jS" }}</h1>
 
@@ -101,7 +111,7 @@
 			</tr>
 		</table>
 
-		<div class="control_group">
+		<div class="control">
 			<h2>How would you rate the spirit of the game?</h2>
 			{% if comment_form.spirit.errors %}
 				<p class="text_error">
@@ -113,7 +123,7 @@
 			{{ comment_form.spirit }}
 		</div>
 
-		<div class="control_group">
+		<div class="control">
 			<h2>Who was there for your team?</h2>
 			<table class="form_table">
 				{% for team_member in team.get_members|dictsort:"user.last_name" %}
@@ -136,7 +146,7 @@
 			</table>
 		</div>
 
-		<div id="game_report_comment" class="control_group">
+		<div id="game_report_comment" class="control">
 			<h2 title="This will remain private and will not be shared with your co-captain">
 				Anything else? <a class="small" href="{% url 'comments'  %}" target="_blank">(help)</a>
 			</h2>
@@ -144,8 +154,8 @@
 			{{ comment_form.comment }}
 		</div>
 
-		<div class="control_group">
-			<input class="button button_success" type="submit" value="Submit Report">
+		<div class="control">
+			<input class="button button-success" type="submit" value="Submit Report">
 		</div>
 	</form>
 

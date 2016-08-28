@@ -1,0 +1,54 @@
+.alerts {
+  position: fixed;
+  z-index: 5;
+  top: 0;
+  left: 50%;
+
+  overflow: hidden;
+
+  width: 48rem;
+  margin-left: -24rem;
+
+  border-bottom-right-radius: $border-radius;
+  border-bottom-left-radius: $border-radius;
+}
+
+.alerts-list {
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.alerts-list-element {
+}
+
+.alert {
+  padding: 1rem;
+
+  font-size: 1rem;
+
+  &.alert-info {
+    color: $color-white;
+    border-color: $color-info-dark;
+    background: $color-info;
+  }
+
+  &.alert-success {
+    color: $color-white;
+    border-color: $color-success-dark;
+    background: $color-success;
+  }
+
+  &.alert-warning {
+    color: $color-white;
+    border-color: $color-warning-dark;
+    background: $color-warning;
+  }
+
+  &.alert-error {
+    color: $color-white;
+    border-color: $color-danger-dark;
+    background: $color-danger;
+  }
+}

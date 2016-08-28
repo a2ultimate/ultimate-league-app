@@ -1,7 +1,7 @@
 {
     "always-semicolon": true,
     "color-case": "lower",
-    "block-indent": "\t",
+    "block-indent": "  ",
     "color-shorthand": false,
     "element-case": "lower",
     "eof-newline": true,

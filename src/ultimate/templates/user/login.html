@@ -27,7 +27,7 @@
 <form method="post" action="{% url 'auth_log_in' %}">{% csrf_token %}
   <table class="form_table">
     <tr>
-      <td><label for="id_username">Email</label></td>
+      <td><label for="id_username">Email Address</label></td>
       <td>{{ form.username }}</td>
     </tr>
     <tr>
@@ -36,7 +36,7 @@
     </tr>
   </table>
 
-  <input class="button button_success" type="submit" value="Log In" />
+  <input class="button button-success" type="submit" value="Log In" />
   <input type="hidden" name="next" value="{{ next }}" />
 </form>
 
@@ -44,6 +44,6 @@
 Go ahead and <a href="{% url 'password_reset' %}">reset your password</a>.
 
 <h2>Don't Have An Account?</h2>
-What are you waiting for? <a href="{% url 'registration_register' %}">Create an account</a>now!
+What are you waiting for? <a href="{% url 'registration_register' %}">Create an account</a> now!
 
 {% endblock %}

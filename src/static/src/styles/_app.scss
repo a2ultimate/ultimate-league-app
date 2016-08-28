@@ -15,15 +15,25 @@
 
 @import '_base';
 
-// app styles
+// breakpoints
 @import 'breakpoints';
-@import 'layout';
 
 // components
-// @import 'component-banner';
+@import 'component-alert';
+@import 'component-breadcrumbs';
+@import 'component-button';
+@import 'component-form';
+@import 'component-list';
+@import 'component-message';
+@import 'component-social';
+@import 'component-table';
+@import 'component-tabs';
+
+// layout
+@import 'layout';
 
 // pages
-// @import 'page-about';
+@import 'page-home';
 
 // legacy
 @import 'legacy/legacy';
