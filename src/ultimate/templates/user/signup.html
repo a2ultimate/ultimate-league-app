@@ -2,9 +2,9 @@
 
 {% block content %}
 
-<h1>Create an Account</h1>
+<h1>Create an Ann Arbor Ultimate Account</h1>
 
-<form class="sign-up-form" method="post">{% csrf_token %}
+<form class="form sign-up-form" method="post">{% csrf_token %}
 	{% for hidden in form.hidden_fields %}
 		{{ hidden }}
 	{% endfor %}

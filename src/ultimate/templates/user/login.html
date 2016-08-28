@@ -1,16 +1,10 @@
-{% extends "layout/layout_home.html" %}
+{% extends 'layout/layout_home.html' %}
 
 {% load i18n %}
 
 {% block content %}
 
-<h1>{% trans 'Log In' %}</h1>
-
-{% if form.errors %}
-<p>
-  {% trans 'Your email and password did not match. Please try again.' %}
-</p>
-{% endif %}
+<h1>{% trans 'Log in to Ann Arbor Ultimate' %}</h1>
 
 {% if next %}
 {% if user.is_authenticated %}
@@ -22,6 +16,12 @@
   {% trans 'Please log in to see this page.' %}
 </p>
 {% endif %}
+{% endif %}
+
+{% if form.errors %}
+<div class="message message-danger">
+  {% trans 'Your username and password did not match. Please try again.' %}
+</div>
 {% endif %}
 
 <form method="post" action="{% url 'auth_log_in' %}">{% csrf_token %}
@@ -40,10 +40,14 @@
   <input type="hidden" name="next" value="{{ next }}" />
 </form>
 
-<h2>Forgot Your Password?</h2>
-Go ahead and <a href="{% url 'password_reset' %}">reset your password</a>.
+<h4>Forgot your password?</h4>
+<p>
+  Go ahead and <a href="{% url 'password_reset' %}">reset your password</a>.
+</p>
 
-<h2>Don't Have An Account?</h2>
-What are you waiting for? <a href="{% url 'registration_register' %}">Create an account</a> now!
+<h4>Don't have an account?</h4>
+<p>
+  What are you waiting for? <a href="{% url 'registration_register' %}">Create an account</a> now!
+</p>
 
 {% endblock %}

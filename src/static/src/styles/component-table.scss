@@ -1,18 +1,11 @@
 table {
-  width: 100%;
   margin-bottom: 1rem;
-
-  table-layout: fixed;
 
   border-collapse: collapse;
 }
 
 th {
-  padding: 0.75rem;
-
   text-align: left;
-
-  border-bottom: 0.0625rem solid $color-light-gray;
 
   font-family: $font-family-lato-semibold;
 
@@ -22,7 +15,6 @@ th {
 }
 
 td {
-  padding: 0.75rem;
 }
 
 tr,
@@ -32,10 +24,13 @@ th {
 }
 
 .table {
+  width: 100%;
 }
 
 .table th,
 .table td {
+  padding: 0.75rem;
+
   border-top: 0.0625rem solid $color-light-gray;
 }
 

@@ -66,23 +66,28 @@ body {
 .header-inner-top-links-list-element {
   display: inline-block;
 
-  margin-left: 0.5rem;
-
   font-family: $font-family-lato-bold;
 
   &:after {
     display: inline-block;
+    // padding: 0 0.5rem;
 
-    padding: 0 0.3125rem;
-
-    content: '\00a0 \00b7 \00a0';
+    content: '\00b7';
 
     color: $color-light-gray-dark;
   }
 
-  &:last-child:after {
-    content: '';
+  &:last-child {
+    &::after {
+      display: none;
+    }
   }
+}
+
+.header-inner-top-links-list-element-link {
+  display: inline-block;
+
+  padding: 0 0.75rem;
 }
 
 .nav {
@@ -131,7 +136,8 @@ body {
 
       font-family: $font-family-lato-bold;
 
-      &:active, &:hover {
+      &:active,
+      &:hover {
         text-decoration: none !important;
 
         color: $color-dark-gray-dark;
@@ -240,7 +246,7 @@ body {
 }
 
 .content-left-social {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 
   text-align: center;
 }

@@ -29,17 +29,25 @@
         <ul class="header-inner-top-links-list">
           {% if user.is_authenticated %}
             <li class="header-inner-top-links-list-element">
-              <a href="{% url 'user'  %}">{{ user.email }}</a>
+              <a class="header-inner-top-links-list-element-link" href="{% url 'user'  %}">
+                {{ user.email }}
+              </a>
             </li>
             <li class="header-inner-top-links-list-element">
-              <a href="{% url 'auth_log_out' %}">{% trans 'Log Out' %}</a>
+              <a class="header-inner-top-links-list-element-link" href="{% url 'auth_log_out' %}">
+                {% trans 'Log Out' %}
+              </a>
             </li>
           {% else %}
             <li class="header-inner-top-links-list-element">
-              <a href="{% url 'registration_register' %}">Create an Account</a>
+              <a class="header-inner-top-links-list-element-link" href="{% url 'registration_register' %}">
+                {% trans 'Create an Account' %}
+              </a>
             </li>
             <li class="header-inner-top-links-list-element">
-              <a href="{% url 'auth_log_in' %}">{% trans 'Log In' %}</a>
+              <a class="header-inner-top-links-list-element-link" href="{% url 'auth_log_in' %}">
+                {% trans 'Log In' %}
+              </a>
             </li>
           {% endif %}
         </ul>
