@@ -75,8 +75,7 @@ def exportteam(request, teamid):
 		'Attendance',
 	])
 
-	team_members = team.teammember_set.all() \
-		.extra(select={'num_teams':'SELECT COUNT(team_member.id) FROM team_member as tm WHERE tm.user_id = team_member.user_id GROUP BY tm.user_id'})
+	team_members = team.teammember_set.all()
 
 	for team_member in team.teammember_set.all():
 		user_profile = team_member.user.profile

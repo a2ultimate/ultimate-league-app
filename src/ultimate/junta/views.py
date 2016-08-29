@@ -204,7 +204,7 @@ def registrationexport(request, year=None, season=None, division=None):
 					'rating_spirit': registration.average_spirit,
 					'age': int(age),
 					'height': height_inches,
-					'num_teams': int(registration.num_teams),
+					'num_teams': registration.num_teams,
 					'registration_status': registration.status.encode('ascii', 'ignore'),
 					'registration_timestamp': registration.registered,
 					'paypal_email': paypal_row.payer_email.encode('ascii', 'ignore') if paypal_row else paypal_row,
