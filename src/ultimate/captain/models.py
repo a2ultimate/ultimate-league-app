@@ -1,12 +1,12 @@
+from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User
 
 
 class GameReport(models.Model):
 	id = models.AutoField(primary_key=True)
 	team = models.ForeignKey('leagues.Team')
 	game = models.ForeignKey('leagues.Game')
-	last_updated_by = models.ForeignKey(User)
+	last_updated_by = models.ForeignKey(settings.AUTH_USER_MODEL)
 
 	class Meta:
 		db_table = u'game_report'
@@ -21,7 +21,7 @@ class GameReport(models.Model):
 class GameReportAttendance(models.Model):
 	id = models.AutoField(primary_key=True)
 	report = models.ForeignKey('captain.GameReport')
-	user = models.ForeignKey(User)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 
 	class Meta:
 		db_table = u'game_report_attendance'
@@ -45,7 +45,7 @@ class GameReportComment(models.Model):
 
 	id = models.AutoField(primary_key=True)
 	report = models.ForeignKey('captain.GameReport')
-	submitted_by = models.ForeignKey(User)
+	submitted_by = models.ForeignKey(settings.AUTH_USER_MODEL)
 	spirit = models.IntegerField(choices=SPIRIT_CHOICES)
 	comment = models.TextField()
 

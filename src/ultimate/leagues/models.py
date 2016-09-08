@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models import Count
 from django.db.transaction import atomic
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 
 from pybb.models import *
@@ -187,7 +187,7 @@ class League(models.Model):
 		return num_games
 
 	def get_league_captains(self):
-		return User.objects.filter(teammember__team__league=self, teammember__captain=1)
+		return get_user_model().objects.filter(teammember__team__league=self, teammember__captain=1)
 
 	def get_league_captains_teammember(self):
 		return TeamMember.objects.filter(team__league=self, captain=1).order_by('team')
@@ -357,72 +357,6 @@ class FieldLeague(models.Model):
 		db_table = u'field_league'
 
 
-class Player(PybbProfile):
-	GENDER_FEMALE = 'F'
-	GENDER_MALE = 'M'
-	GENDER_CHOICES = (
-		(GENDER_FEMALE,	'Female'),
-		(GENDER_MALE,	'Male'),
-	)
-
-	JERSEY_SIZE_CHOICES = (
-		('XS',	'XS - Extra Small'),
-		('S',	'S - Small'),
-		('M',	'M - Medium'),
-		('L',	'L - Large'),
-		('XL',	'XL -Extra Large'),
-		('XXL',	'XXL - Extra Extra Large'),
-	)
-
-	user = models.OneToOneField(User, related_name='profile')
-	groups = models.TextField()
-	nickname = models.CharField(max_length=30)
-	date_of_birth = models.DateField(null=True)
-	gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-	phone = models.CharField(max_length=15)
-	zip_code = models.CharField(max_length=15)
-	height_inches = models.IntegerField(blank=True, null=True)
-	highest_level = models.TextField(blank=True, null=True)
-	jersey_size = models.CharField(max_length=45, choices=JERSEY_SIZE_CHOICES)
-
-	guardian_name = models.TextField(blank=True)
-	guardian_phone = models.TextField(blank=True)
-
-	class Meta:
-		db_table = u'player'
-
-	@property
-	def age(self):
-		return self.get_age_on(date.today())
-
-	@property
-	def is_complete_for_user(self):
-		is_complete = bool(self.gender and self.date_of_birth)
-
-		if is_complete and self.age < 18:
-			is_complete = bool(is_complete and self.guardian_name and self.guardian_phone)
-
-		return is_complete
-
-	def is_male(self):
-		return self.gender == self.GENDER_MALE
-
-	def is_female(self):
-		return self.gender == self.GENDER_FEMALE
-
-	def is_minor(self, now=None):
-		if not now:
-			now = date.today()
-
-		return self.get_age_on(now) < 18
-
-	def get_age_on(self, now):
-		if not self.date_of_birth:
-			return 0
-
-		return (now.year - self.date_of_birth.year) - int((now.month, now.day) < (self.date_of_birth.month, self.date_of_birth.day))
-
-
 class Baggage(models.Model):
 	id = models.AutoField(primary_key=True)
 
@@ -455,7 +389,7 @@ class Registrations(models.Model):
 	)
 
 	id = models.AutoField(primary_key=True)
-	user = models.ForeignKey(User)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	league = models.ForeignKey('leagues.League')
 	baggage = models.ForeignKey('leagues.Baggage', null=True, blank=True)
 	created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
@@ -964,7 +898,7 @@ class Team(models.Model):
 class TeamMember(models.Model):
 	id = models.AutoField(primary_key=True)
 	team = models.ForeignKey('leagues.Team')
-	user = models.ForeignKey(User)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL)
 	captain = models.BooleanField(default=False)
 
 	class Meta:
@@ -1044,7 +978,7 @@ class Coupon(models.Model):
 	value = models.IntegerField(blank=True, null=True, default=None)
 
 	created_at = models.DateTimeField(auto_now_add=True)
-	created_by = models.ForeignKey(User, null=True)
+	created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
 	updated_at = models.DateTimeField(auto_now=True)
 	redeemed_at = models.DateTimeField(blank=True, null=True)
 	valid_until = models.DateTimeField(blank=True, null=True,

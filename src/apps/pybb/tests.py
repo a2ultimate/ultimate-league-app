@@ -294,8 +294,8 @@ class FeaturesTest(TestCase, SharedTestModule):
         self.user.is_superuser = True
         self.user.save()
         self.login_client()
-        self.assertEqual(self.client.get(reverse('pybb:block_user', args=[user.username]), follow=True).status_code, 200)
-        user = User.objects.get(username=user.username)
+        self.assertEqual(self.client.get(reverse('pybb:block_user', args=[user.email]), follow=True).status_code, 200)
+        user = User.objects.get(username=user.email)
         self.assertFalse(user.is_active)
 
     def test_headline(self):
@@ -429,7 +429,7 @@ class FeaturesTest(TestCase, SharedTestModule):
         self.assertEqual(forum_1.post_count, 0)
 
     def test_user_view(self):
-        resp = self.client.get(reverse('pybb:user', kwargs={'username': self.user.username}))
+        resp = self.client.get(reverse('pybb:user', kwargs={'username': self.user.email}))
         self.assertEqual(resp.status_code, 200)
 
     def test_post_count(self):
@@ -483,7 +483,7 @@ def premoderate_test(user, post):
     Test premoderate function
     Allow post without moderation for staff users only
     """
-    if user.username.startswith('allowed'):
+    if user.email.startswith('allowed'):
         return True
     return False
 

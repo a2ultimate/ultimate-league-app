@@ -212,7 +212,7 @@ def registrationexport(request, year=None, season=None, division=None):
 					'captaining': int(registration.captain),
 				})
 
-		registration_list.sort(key=lambda k: k['last_name'])
+		registration_list.sort(key=lambda k: k['last_name'].lower())
 		registration_list.sort(key=lambda k: k['is_captain'], reverse=True)
 		registration_list.sort(key=lambda k: k['team_id'])
 

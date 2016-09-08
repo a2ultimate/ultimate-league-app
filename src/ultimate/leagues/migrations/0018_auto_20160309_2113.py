@@ -4,12 +4,13 @@ from __future__ import unicode_literals
 from django.db import migrations, models
 
 
+def update_date_of_birth(apps, schema_editor):
+    Player = apps.get_model('leagues', 'Player')
+
+    Player.objects.filter(date_of_birth__lte='1800-01-01').update(date_of_birth=None)
+
+
 class Migration(migrations.Migration):
-
-    def update_date_of_birth(apps, schema_editor):
-        Player = apps.get_model('leagues', 'Player')
-
-        Player.objects.filter(date_of_birth__lte='1800-01-01').update(date_of_birth=None)
 
     dependencies = [
         ('leagues', '0017_auto_20160309_2110'),
