@@ -127,13 +127,9 @@ class Forum(models.Model):
 
 class Topic(models.Model):
     POLL_TYPE_NONE = 0
-    POLL_TYPE_SINGLE = 1
-    POLL_TYPE_MULTIPLE = 2
 
     POLL_TYPE_CHOICES = (
         (POLL_TYPE_NONE, _('None')),
-        (POLL_TYPE_SINGLE, _('Single answer')),
-        (POLL_TYPE_MULTIPLE, _('Multiple answers')),
     )
 
     forum = models.ForeignKey(Forum, related_name='topics', verbose_name=_('Forum'))
@@ -148,7 +144,6 @@ class Topic(models.Model):
     on_moderation = models.BooleanField(_('On moderation'), default=False)
 
     poll_type = models.IntegerField(_('Poll type'), choices=POLL_TYPE_CHOICES, default=POLL_TYPE_NONE)
-    poll_question = models.TextField(_('Poll question'), blank=True, null=True)
     class Meta(object):
         ordering = ['-created']
         verbose_name = _('Topic')
@@ -198,12 +193,6 @@ class Topic(models.Model):
         Used in templates for breadcrumb building
         """
         return self.forum.category, self.forum
-
-    def poll_votes(self):
-        if self.poll_type != self.POLL_TYPE_NONE:
-            return PollAnswerUser.objects.filter(poll_answer__topic=self).count()
-        else:
-            return None
 
 
 class RenderableItem(models.Model):
@@ -316,41 +305,6 @@ class Profile(PybbProfile):
 
     def get_absolute_url(self):
         return reverse('pybb:user', kwargs={'username': self.user.email})
-
-
-class PollAnswer(models.Model):
-    topic = models.ForeignKey(Topic, related_name='poll_answers', verbose_name=_('Topic'))
-    text = models.CharField(max_length=255, verbose_name=_('Text'))
-
-    class Meta:
-        verbose_name = _('Poll answer')
-        verbose_name_plural = _('Polls answers')
-
-    def __unicode__(self):
-        return self.text
-
-    def votes(self):
-        return self.users.count()
-
-    def votes_percent(self):
-        topic_votes = self.topic.poll_votes()
-        if topic_votes > 0:
-            return 1.0 * self.votes() / topic_votes * 100
-
-
-class PollAnswerUser(models.Model):
-    poll_answer = models.ForeignKey(PollAnswer, related_name='users', verbose_name=_('Poll answer'))
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='poll_answers', verbose_name=_('User'))
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        verbose_name = _('Poll answer user')
-        verbose_name_plural = _('Polls answers users')
-        unique_together = (('poll_answer', 'user', ), )
-
-    def __unicode__(self):
-        return u'%s - %s' % (self.poll_answer.topic, self.user)
-
 
 from pybb import signals
 signals.setup_signals()

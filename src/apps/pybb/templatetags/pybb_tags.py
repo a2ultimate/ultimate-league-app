@@ -19,7 +19,6 @@ except ImportError:
     from datetime import timedelta
     tznow = datetime.datetime.now
 
-from pybb.models import PollAnswerUser
 from pybb.permissions import perms
 from pybb import defaults
 
@@ -117,11 +116,6 @@ def pybb_topic_inline_pagination(topic):
     if page_count <= 5:
         return range(1, page_count+1)
     return range(1, 5) + ['...', page_count]
-
-
-@register.filter
-def pybb_topic_poll_not_voted(topic, user):
-    return not PollAnswerUser.objects.filter(poll_answer__topic=topic, user=user).exists()
 
 
 @register.filter

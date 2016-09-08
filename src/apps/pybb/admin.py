@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib import admin
 from django.conf import settings
 
-from pybb.models import Category, Forum, Topic, Post, Profile, PollAnswer
+from pybb.models import Category, Forum, Topic, Post, Profile
 
 
 class ForumInlineAdmin(admin.TabularInline):
@@ -42,14 +42,8 @@ class ForumAdmin(admin.ModelAdmin):
         )
 
 
-class PollAnswerAdmin(admin.TabularInline):
-    model = PollAnswer
-    fields = ['text', ]
-    extra = 0
-
-
 class TopicAdmin(admin.ModelAdmin):
-    list_display = ['name', 'forum', 'created', 'head', 'post_count', 'poll_type',]
+    list_display = ['name', 'forum', 'created', 'head', 'post_count',]
     list_per_page = 20
     raw_id_fields = ['user']
     ordering = ['-created']
@@ -57,7 +51,7 @@ class TopicAdmin(admin.ModelAdmin):
     search_fields = ['name']
     fieldsets = (
         (None, {
-                'fields': ('forum', 'name', 'user', ('created', 'updated'), 'poll_type',)
+                'fields': ('forum', 'name', 'user', ('created', 'updated'),)
                 }
          ),
         (_('Additional options'), {
@@ -66,7 +60,6 @@ class TopicAdmin(admin.ModelAdmin):
                 }
          ),
         )
-    inlines = [PollAnswerAdmin, ]
 
 class PostAdmin(admin.ModelAdmin):
     list_display = ['topic', 'user', 'created', 'updated', 'summary']
