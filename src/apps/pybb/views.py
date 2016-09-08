@@ -25,9 +25,8 @@ except ImportError:
 
 from pure_pagination import Paginator
 
-from pybb.models import Category, Forum, Topic, Post, PollAnswerUser
-from pybb.forms import  PostForm, AdminPostForm, PollAnswerFormSet, PollForm
-from pybb.templatetags.pybb_tags import pybb_topic_poll_not_voted
+from pybb.models import Category, Forum, Topic, Post
+from pybb.forms import  PostForm, AdminPostForm
 from pybb import defaults
 
 from pybb.permissions import perms
@@ -131,10 +130,6 @@ class TopicView(generic.ListView):
             ctx['first_post'] = None
         ctx['topic'] = self.topic
 
-        if self.request.user.is_authenticated() and self.topic.poll_type != Topic.POLL_TYPE_NONE and \
-           pybb_topic_poll_not_voted(self.topic, self.request.user):
-            ctx['poll_form'] = PollForm(self.topic)
-
         return ctx
 
 
@@ -148,37 +143,19 @@ class PostEditMixin(object):
 
     def get_context_data(self, **kwargs):
         ctx = super(PostEditMixin, self).get_context_data(**kwargs)
-        if 'pollformset' not in kwargs:
-            ctx['pollformset'] = PollAnswerFormSet(instance=self.object.topic if getattr(self, 'object') else None)
         return ctx
 
     def form_valid(self, form):
         success = True
-        save_poll_answers = False
         self.object = form.save(commit=False)
-
-
-        pollformset = PollAnswerFormSet()
-        if getattr(self, 'forum', None) or self.object.topic.head == self.object:
-            if self.object.topic.poll_type != Topic.POLL_TYPE_NONE:
-                pollformset = PollAnswerFormSet(self.request.POST, instance=self.object.topic)
-                if pollformset.is_valid():
-                    save_poll_answers = True
-                else:
-                    success = False
-            else:
-                self.object.topic.poll_question = None
-                self.object.topic.poll_answers.all().delete()
 
         if success:
             self.object.topic.save()
             self.object.topic = self.object.topic
             self.object.save()
-            if save_poll_answers:
-                pollformset.save()
             return super(ModelFormMixin, self).form_valid(form)
         else:
-            return self.render_to_response(self.get_context_data(form=form, pollformset=pollformset))
+            return self.render_to_response(self.get_context_data(form=form))
 
 
 class AddPostView(PostEditMixin, generic.CreateView):
@@ -374,41 +351,6 @@ class OpenTopicView(TopicActionBaseView):
             raise PermissionDenied
         topic.closed = False
         topic.save()
-
-
-class TopicPollVoteView(generic.UpdateView):
-    model = Topic
-    http_method_names = ['post', ]
-    form_class = PollForm
-
-    @method_decorator(login_required)
-    def dispatch(self, request, *args, **kwargs):
-        return super(TopicPollVoteView, self).dispatch(request, *args, **kwargs)
-
-    def get_form_kwargs(self):
-        kwargs = super(ModelFormMixin, self).get_form_kwargs()
-        kwargs['topic'] = self.object
-        return kwargs
-
-    def form_valid(self, form):
-        # already voted
-        if not pybb_topic_poll_not_voted(self.object, self.request.user):
-            return HttpResponseBadRequest()
-
-        answers = form.cleaned_data['answers']
-        for answer in answers:
-            # poll answer from another topic
-            if answer.topic != self.object:
-                return HttpResponseBadRequest()
-
-            PollAnswerUser.objects.create(poll_answer=answer, user=self.request.user)
-        return super(ModelFormMixin, self).form_valid(form)
-
-    def form_invalid(self, form):
-        return self.object.get_absolute_url()
-
-    def get_success_url(self):
-        return self.object.get_absolute_url()
 
 
 @login_required

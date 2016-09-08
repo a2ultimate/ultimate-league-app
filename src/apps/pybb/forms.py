@@ -17,40 +17,14 @@ except ImportError:
 
     tznow = datetime.datetime.now
 
-from pybb.models import Topic, Post, Profile, PollAnswer
+from pybb.models import Topic, Post, Profile
 from pybb import defaults
 
 
-class PollAnswerForm(forms.ModelForm):
-    class Meta:
-        model = PollAnswer
-        fields = ('text', )
-
-
-class BasePollAnswerFormset(BaseInlineFormSet):
-    def clean(self):
-        if any(self.errors):
-            raise forms.ValidationError(self.errors)
-        forms_cnt = len(self.initial_forms) + len([form for form in self.extra_forms if form.has_changed()]) -\
-                    len(self.deleted_forms)
-        if forms_cnt > defaults.PYBB_POLL_MAX_ANSWERS:
-            raise forms.ValidationError(
-                _('You can''t add more than %s answers for poll' % defaults.PYBB_POLL_MAX_ANSWERS))
-        if forms_cnt < 2:
-            raise forms.ValidationError(_('Add two or more answers for this poll'))
-
-
-PollAnswerFormSet = inlineformset_factory(Topic, PollAnswer, extra=2, max_num=defaults.PYBB_POLL_MAX_ANSWERS,
-    form=PollAnswerForm, formset=BasePollAnswerFormset)
 
 
 class PostForm(forms.ModelForm):
     name = forms.CharField(label=_('Subject'))
-    poll_type = forms.TypedChoiceField(label=_('Poll type'), choices=Topic.POLL_TYPE_CHOICES, coerce=int)
-    poll_question = forms.CharField(
-        label=_('Poll question'),
-        required=False,
-        widget=forms.Textarea())
 
     class Meta(object):
         model = Post
@@ -66,19 +40,14 @@ class PostForm(forms.ModelForm):
         self.forum = kwargs.pop('forum', None)
         if not (self.topic or self.forum or ('instance' in kwargs)):
             raise ValueError('You should provide topic, forum or instance')
-            #Handle topic subject, poll type and question if editing topic head
         if ('instance' in kwargs) and kwargs['instance'] and (kwargs['instance'].topic.head == kwargs['instance']):
             kwargs.setdefault('initial', {})['name'] = kwargs['instance'].topic.name
-            kwargs.setdefault('initial', {})['poll_type'] = kwargs['instance'].topic.poll_type
-            kwargs.setdefault('initial', {})['poll_question'] = kwargs['instance'].topic.poll_question
 
         super(PostForm, self).__init__(**kwargs)
 
         # remove topic specific fields
         if not (self.forum or (self.instance.pk and (self.instance.topic.head == self.instance))):
             del self.fields['name']
-            del self.fields['poll_type']
-            del self.fields['poll_question']
 
     def clean_body(self):
         body = self.cleaned_data['body']
@@ -91,11 +60,6 @@ class PostForm(forms.ModelForm):
         return body
 
     def clean(self):
-        poll_type = self.cleaned_data.get('poll_type', None)
-        poll_question = self.cleaned_data.get('poll_question', None)
-        if poll_type is not None and poll_type != Topic.POLL_TYPE_NONE and not poll_question:
-            raise forms.ValidationError(_('Poll''s question is required when adding a poll'))
-
         return self.cleaned_data
 
     def save(self, commit=True):
@@ -105,8 +69,6 @@ class PostForm(forms.ModelForm):
                 post.user = self.user
             if post.topic.head == post:
                 post.topic.name = self.cleaned_data['name']
-                post.topic.poll_type = self.cleaned_data['poll_type']
-                post.topic.poll_question = self.cleaned_data['poll_question']
                 post.topic.updated = tznow()
                 if commit:
                     post.topic.save()
@@ -122,8 +84,6 @@ class PostForm(forms.ModelForm):
                 forum=self.forum,
                 user=self.user,
                 name=self.cleaned_data['name'],
-                poll_type=self.cleaned_data['poll_type'],
-                poll_question=self.cleaned_data['poll_question'],
             )
             if not allow_post:
                 topic.on_moderation = True
@@ -180,27 +140,3 @@ class UserSearchForm(forms.Form):
             return qs.filter(email__contains=query)
         else:
             return qs
-
-
-class PollForm(forms.Form):
-    def __init__(self, topic,  *args, **kwargs):
-        self.topic = topic
-
-        super(PollForm, self).__init__(*args, **kwargs)
-
-        qs = PollAnswer.objects.filter(topic=topic)
-        if topic.poll_type == Topic.POLL_TYPE_SINGLE:
-            self.fields['answers'] = forms.ModelChoiceField(
-                label='', queryset=qs, empty_label=None,
-                widget=forms.RadioSelect())
-        elif topic.poll_type == Topic.POLL_TYPE_MULTIPLE:
-            self.fields['answers'] = forms.ModelMultipleChoiceField(
-                label='', queryset=qs,
-                widget=forms.CheckboxSelectMultiple())
-
-    def clean_answers(self):
-        answers = self.cleaned_data['answers']
-        if self.topic.poll_type == Topic.POLL_TYPE_SINGLE:
-            return [answers]
-        else:
-            return answers

@@ -16,9 +16,6 @@
     {% if form.login %} {% include "pybb/form_field.html" with field=form.login %}  {% endif %}
     {% if form.body %} {% include "pybb/form_field.html" with field=form.body %}  {% endif %}
 
-    {% if form.poll_type %}
-      {% include "pybb/poll_edit_form.html" %}
-    {% endif %}
     <p class="submit">{% include "pybb/_button_submit.html" %}</p>
   </fieldset>
 </form>
