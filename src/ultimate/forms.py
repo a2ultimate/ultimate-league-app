@@ -1,7 +1,7 @@
 from datetime import date
 
 from django import forms
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.forms.extras import SelectDateWidget
 from django.utils.translation import ugettext_lazy as _
 
@@ -13,7 +13,6 @@ from ultimate.user.models import *
 
 
 class SignupForm(forms.ModelForm):
-	username = forms.CharField(widget=forms.HiddenInput, required=False)
 	email = forms.EmailField(label=_('Email Address'), max_length=75)
 	password1 = forms.CharField(label=_('Password'), widget=forms.PasswordInput)
 	password2 = forms.CharField(label=_('Confirm Password'), widget=forms.PasswordInput,
@@ -36,19 +35,16 @@ class SignupForm(forms.ModelForm):
 	captcha = CaptchaField(label=_('To verify that you are a real person, please enter the letters you see in the image'))
 
 	class Meta:
-		model = User
-		fields = ('username', 'email', 'first_name', 'last_name',)
+		model = get_user_model()
+		fields = ('email', 'first_name', 'last_name',)
 
 	def clean_email(self):
 		email = self.cleaned_data['email']
 		try:
-			User.objects.get(email=email)
-		except User.DoesNotExist:
+			get_user_model().objects.get(email=email)
+		except get_user_model().DoesNotExist:
 			return email
 		raise forms.ValidationError(_('A user with that email already exists.'))
-
-	def clean_username(self):
-		return self.cleaned_data['username']
 
 	def clean_password2(self):
 		password1 = self.cleaned_data.get('password1', None)
@@ -71,12 +67,6 @@ class SignupForm(forms.ModelForm):
 			raise forms.ValidationError(self.fields['blank'].label)
 		return value
 
-	def clean(self):
-		if not self.errors:
-			self.cleaned_data['username'] = self.cleaned_data['email']
-		super(SignupForm, self).clean()
-		return self.cleaned_data
-
 	def save(self, commit=True):
 		user = super(SignupForm, self).save(commit=False)
 		user.set_password(self.cleaned_data['password1'])
@@ -86,34 +76,24 @@ class SignupForm(forms.ModelForm):
 
 
 class EditProfileForm(forms.ModelForm):
-	username = forms.CharField(widget=forms.HiddenInput, required=False)
 	email = forms.EmailField(label=_('Email Address*'), max_length=75)
 	first_name = forms.CharField(label=_('First Name*'), max_length=30)
 	last_name = forms.CharField(label=_('Last Name*'), max_length=30)
 
 	class Meta:
-		model = User
-		fields = ('username', 'email', 'first_name', 'last_name',)
+		model = get_user_model()
+		fields = ('email', 'first_name', 'last_name',)
 
 	def clean_email(self):
 		email = self.cleaned_data['email']
 		if email != self.instance.email:
 			try:
-				User.objects.get(email=email)
-			except User.DoesNotExist:
+				get_user_model().objects.get(email=email)
+			except get_user_model().DoesNotExist:
 				return email
 			raise forms.ValidationError(_('A user with that email already exists.'))
 		else:
 			return email
-
-	def clean_username(self):
-		return self.cleaned_data['username']
-
-	def clean(self):
-		if not self.errors:
-			self.cleaned_data['username'] = self.cleaned_data['email']
-		super(EditProfileForm, self).clean()
-		return self.cleaned_data
 
 	def save(self, commit=True):
 		user = super(EditProfileForm, self).save(commit=False)

@@ -1,164 +1,335 @@
-import sys
 import math
 
+from django.conf import settings
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.core.mail import send_mail
 from django.db import models
-from django.contrib.auth.models import User
+from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 
 from ultimate.leagues.models import *
 
 
-@property
-def rating_totals(self):
-	player_ratings_collected = {'athleticism': [], 'experience': [], 'strategy': [], 'throwing': []}
+class UserManager(BaseUserManager):
 
-	# date cap for old ratings?
-	ratings = self.playerratings_set.all()
-	for rating in ratings:
-		if rating.athleticism:
-			player_ratings_collected['athleticism'].append(rating.athleticism)
-		if rating.experience:
-			player_ratings_collected['experience'].append(rating.experience)
-		if rating.strategy:
-			player_ratings_collected['strategy'].append(rating.strategy)
-		if rating.throwing:
-			player_ratings_collected['throwing'].append(rating.throwing)
+    """
+    Custom manager for User.
+    """
 
-	# determine the total rating of a user
-	rating_dict = dict([(key, float(sum([int(i) for i in values])) / (len(filter(lambda k: k > 0, values)) or 1)) for key, values in player_ratings_collected.items()])
+    def _create_user(self, email, password,
+                     is_staff, is_superuser, **extra_fields):
+        now = timezone.now()
+        if not email:
+            raise ValueError('The given email must be set')
+        email = self.normalize_email(email)
+        is_active = extra_fields.pop('is_active', True)
+        user = self.model(email=email,
+                          is_staff=is_staff, is_active=is_active,
+                          is_superuser=is_superuser,
+                          date_joined=now, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-	player_ratings_averaged = {}
-	for key, values in player_ratings_collected.items():
-		player_ratings_averaged[key] = 1
+    def create_user(self, email, password=None, **extra_fields):
+        is_staff = extra_fields.pop('is_staff', False)
+        return self._create_user(email, password, is_staff, False,
+                                 **extra_fields)
 
-		if len(values):
-			player_ratings_averaged[key] = float(sum(values)) / len(values)
+    def create_superuser(self, email, password, **extra_fields):
+        return self._create_user(email, password, True, True,
+                                 **extra_fields)
 
-	rating_min = 1
-	rating_max = 6
-	max_athleticism = (0.1 * math.pow(3, 3)) + (-1.2 * math.pow(3, 2)) + (5 * 3)
-	max_throwing = (0.1 * math.pow(3, 3)) + (-1.2 * math.pow(3, 2)) + (5 * 3)
 
-	player_ratings_averaged['athleticism'] -= 3
-	player_ratings_averaged['throwing'] -= 3
+class AbstractUser(AbstractBaseUser, PermissionsMixin):
 
-	player_ratings_weighted = {}
-	player_ratings_weighted['athleticism'] = ((0.1 * math.pow(player_ratings_averaged['athleticism'], 3) + -1.2 * math.pow(player_ratings_averaged['athleticism'], 2) + 5 * player_ratings_averaged['athleticism'])) / max_athleticism * 10
-	player_ratings_weighted['experience'] = (math.pow(player_ratings_averaged['experience'], 1.4) / math.pow(6, 1.4)) * 6
-	player_ratings_weighted['strategy'] = (math.pow(player_ratings_averaged['strategy'], 0.25) / math.pow(6, 0.25)) * 6
-	player_ratings_weighted['throwing'] = ((0.1 * math.pow(player_ratings_averaged['throwing'], 3) + -1.2 * math.pow(player_ratings_averaged['throwing'], 2) + 5 * player_ratings_averaged['throwing'])) / max_throwing * 10
+    """Abstract User with the same behaviour as Django's default User.
+    AbstractUser does not have username field. Uses email as the
+    USERNAME_FIELD for authentication.
+    Use this if you need to extend User.
+    Inherits from both the AbstractBaseUser and PermissionMixin.
+    The following attributes are inherited from the superclasses:
+        * password
+        * last_login
+        * is_superuser
+    """
 
-	player_ratings_weighted['total'] = max(sum(player_ratings_weighted.itervalues()), 0)
+    email = models.EmailField(_('email address'), max_length=255,
+                              unique=True, db_index=True)
+    first_name = models.CharField(_('first name'), max_length=30, blank=True)
+    last_name = models.CharField(_('last name'), max_length=30, blank=True)
+    is_staff = models.BooleanField(
+        _('staff status'), default=False, help_text=_(
+            'Designates whether the user can log into the admin site.'))
+    is_active = models.BooleanField(_('active'), default=True, help_text=_(
+        'Designates whether this user should be treated as '
+        'active. Unselect this instead of deleting accounts.'))
+    date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
-	return player_ratings_weighted
+    objects = UserManager()
 
-@property
-def rating_total(self):
-	return self.rating_totals['total']
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name',]
 
-User.add_to_class('rating_totals', rating_totals)
-User.add_to_class('rating_total', rating_total)
+    class Meta:
+        verbose_name = _('user')
+        verbose_name_plural = _('users')
+        abstract = True
+
+    def get_full_name(self):
+        """
+        Returns the first_name plus the last_name, with a space in between.
+        """
+        full_name = '%s %s' % (self.first_name, self.last_name)
+        return full_name.strip()
+
+    def get_short_name(self):
+        """
+        Returns the short name for the user.
+        """
+        return self.first_name
+
+    def email_user(self, subject, message, from_email=None, **kwargs):
+        """
+        Sends an email to this User.
+        """
+        send_mail(subject, message, from_email, [self.email], **kwargs)
+
+
+class User(AbstractUser):
+
+    """
+    Concrete class of AbstractUser.
+    Use this if you don't need to extend User.
+    """
+
+    class Meta(AbstractUser.Meta):
+        swappable = 'AUTH_USER_MODEL'
+
+    @property
+    def rating_totals(self):
+        player_ratings_collected = {'athleticism': [],
+                                    'experience': [], 'strategy': [], 'throwing': []}
+
+        # date cap for old ratings?
+        ratings = self.playerratings_set.all()
+        for rating in ratings:
+            if rating.athleticism:
+                player_ratings_collected['athleticism'].append(rating.athleticism)
+            if rating.experience:
+                player_ratings_collected['experience'].append(rating.experience)
+            if rating.strategy:
+                player_ratings_collected['strategy'].append(rating.strategy)
+            if rating.throwing:
+                player_ratings_collected['throwing'].append(rating.throwing)
+
+        # determine the total rating of a user
+        rating_dict = dict([(key, float(sum([int(i) for i in values])) / (len(filter(
+            lambda k: k > 0, values)) or 1)) for key, values in player_ratings_collected.items()])
+
+        player_ratings_averaged = {}
+        for key, values in player_ratings_collected.items():
+            player_ratings_averaged[key] = 1
+
+            if len(values):
+                player_ratings_averaged[key] = float(sum(values)) / len(values)
+
+        rating_min = 1
+        rating_max = 6
+        max_athleticism = (0.1 * math.pow(3, 3)) + \
+            (-1.2 * math.pow(3, 2)) + (5 * 3)
+        max_throwing = (0.1 * math.pow(3, 3)) + (-1.2 * math.pow(3, 2)) + (5 * 3)
+
+        player_ratings_averaged['athleticism'] -= 3
+        player_ratings_averaged['throwing'] -= 3
+
+        player_ratings_weighted = {}
+        player_ratings_weighted['athleticism'] = ((0.1 * math.pow(player_ratings_averaged['athleticism'], 3) + -1.2 * math.pow(
+            player_ratings_averaged['athleticism'], 2) + 5 * player_ratings_averaged['athleticism'])) / max_athleticism * 10
+        player_ratings_weighted['experience'] = (
+            math.pow(player_ratings_averaged['experience'], 1.4) / math.pow(6, 1.4)) * 6
+        player_ratings_weighted['strategy'] = (
+            math.pow(player_ratings_averaged['strategy'], 0.25) / math.pow(6, 0.25)) * 6
+        player_ratings_weighted['throwing'] = ((0.1 * math.pow(player_ratings_averaged['throwing'], 3) + -1.2 * math.pow(
+            player_ratings_averaged['throwing'], 2) + 5 * player_ratings_averaged['throwing'])) / max_throwing * 10
+
+        player_ratings_weighted['total'] = max(
+            sum(player_ratings_weighted.itervalues()), 0)
+
+        return player_ratings_weighted
+
+    @property
+    def rating_total(self):
+        return self.rating_totals['total']
+
+
+class Player(PybbProfile):
+    GENDER_FEMALE = 'F'
+    GENDER_MALE = 'M'
+    GENDER_CHOICES = (
+        (GENDER_FEMALE, 'Female'),
+        (GENDER_MALE, 'Male'),
+    )
+
+    JERSEY_SIZE_CHOICES = (
+        ('XS', 'XS - Extra Small'),
+        ('S', 'S - Small'),
+        ('M', 'M - Medium'),
+        ('L', 'L - Large'),
+        ('XL', 'XL -Extra Large'),
+        ('XXL', 'XXL - Extra Extra Large'),
+    )
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='profile')
+    groups = models.TextField()
+    nickname = models.CharField(max_length=30, blank=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    phone = models.CharField(max_length=15, blank=True)
+    zip_code = models.CharField(max_length=15, blank=True)
+    height_inches = models.IntegerField(default=0)
+    highest_level = models.TextField(blank=True)
+    jersey_size = models.CharField(max_length=45, choices=JERSEY_SIZE_CHOICES, blank=True)
+
+    guardian_name = models.TextField(blank=True)
+    guardian_phone = models.TextField(blank=True)
+
+    @property
+    def age(self):
+        return self.get_age_on(date.today())
+
+    @property
+    def is_complete_for_user(self):
+        is_complete = bool(self.gender and self.date_of_birth)
+
+        if is_complete and self.age < 18:
+            is_complete = bool(is_complete and self.guardian_name and self.guardian_phone)
+
+        return is_complete
+
+    def is_male(self):
+        return self.gender == self.GENDER_MALE
+
+    def is_female(self):
+        return self.gender == self.GENDER_FEMALE
+
+    def is_minor(self, now=None):
+        if not now:
+            now = date.today()
+
+        return self.get_age_on(now) < 18
+
+    def get_age_on(self, now):
+        if not self.date_of_birth:
+            return 0
+
+        return (now.year - self.date_of_birth.year) - int((now.month, now.day) < (self.date_of_birth.month, self.date_of_birth.day))
 
 
 class PlayerRatings(models.Model):
 
-	RATING_EXPERIENCE_CHOICES = (
-		(1,	'I am new to ultimate or have played less than 2 years of pickup.'),
-		(2,	'I have played in an organized league or on a high school team for 1-2 seasons, or pickup for 3+ years.'),
-		(3,	'I have played in an organized league or on a high school team for 3+ seasons.'),
-		(4, 'I have played on a college or club team in the last 6 years.'),
-		(5,	'I have played multiple seasons on a college or club team in the last 4 years.'),
-		(6,	'I have played multiple seasons on a regionals or nationals-level college or club team in the last 4 years.'),
-	)
+    RATING_EXPERIENCE_CHOICES = (
+        (1,    'I am new to ultimate or have played less than 2 years of pickup.'),
+        (2,    'I have played in an organized league or on a high school team for 1-2 seasons, or pickup for 3+ years.'),
+        (3,    'I have played in an organized league or on a high school team for 3+ seasons.'),
+        (4,    'I have played on a college or club team in the last 6 years.'),
+        (5,    'I have played multiple seasons on a college or club team in the last 4 years.'),
+        (6,    'I have played multiple seasons on a regionals or nationals-level college or club team in the last 4 years.'),
+    )
 
-	RATING_STRATEGY_CHOICES = (
-		(1,	'I am new to organized ultimate.'),
-		(2,	'I have basic knowledge of the game (e.g. stall counts, pivoting).'),
-		(3,	'I have moderate knowledge (e.g. vertical stack, force, basic man defense).'),
-		(4,	'I have advanced knowledge (e.g. zone defense, horizontal stack, switching).'),
-		(5,	'I am familiar enough with the above concepts that I could explain them to a new player.'),
-		(6,	'I would consider myself an expert in ultimate strategy.'),
-	)
+    RATING_STRATEGY_CHOICES = (
+        (1,    'I am new to organized ultimate.'),
+        (2,    'I have basic knowledge of the game (e.g. stall counts, pivoting).'),
+        (3,    'I have moderate knowledge (e.g. vertical stack, force, basic man defense).'),
+        (4,    'I have advanced knowledge (e.g. zone defense, horizontal stack, switching).'),
+        (5,    'I am familiar enough with the above concepts that I could explain them to a new player.'),
+        (6,    'I would consider myself an expert in ultimate strategy.'),
+    )
 
-	RATING_THROWING_CHOICES = (
-		(1,	'I am a novice or am learning to throw.'),
-		(2,	'I can throw a backhand 10 yards with 90% confidence.'),
-		(3,	'I can throw a forehand 10+ yards with 90% confidence and can handle if needed.'),
-		(4,	'I am confident throwing forehand and backhand various distances and can handle at a league level.'),
-		(5,	'I am confident throwing break throws and can be a very good league-level handler.'),
-		(6,	'I am confident in many styles of throws and could be a college or club-level handler.'),
-	)
+    RATING_THROWING_CHOICES = (
+        (1,    'I am a novice or am learning to throw.'),
+        (2,    'I can throw a backhand 10 yards with 90% confidence.'),
+        (3,    'I can throw a forehand 10+ yards with 90% confidence and can handle if needed.'),
+        (4,    'I am confident throwing forehand and backhand various distances and can handle at a league level.'),
+        (5,    'I am confident throwing break throws and can be a very good league-level handler.'),
+        (6,    'I am confident in many styles of throws and could be a college or club-level handler.'),
+    )
 
-	RATING_ATHLETICISM_CHOICES = (
-		(1,	'I am slow, it is hard to change direction, and am easily winded.'),
-		(2,	'I can change direction decently, but need to rest often.'),
-		(3,	'I am somewhat fast, can make hard cuts, and can play for a few minutes at a time before resting.'),
-		(4,	'I am fairly fast, can change direction and react well, and can play a few hard points in a row.'),
-		(5,	'I am very fast, can turn well, jump high, and need little rest.'),
-		(6,	'I am faster than anyone on the field at any level and enjoy playing almost every point.'),
-	)
+    RATING_ATHLETICISM_CHOICES = (
+        (1,    'I am slow, it is hard to change direction, and am easily winded.'),
+        (2,    'I can change direction decently, but need to rest often.'),
+        (3,    'I am somewhat fast, can make hard cuts, and can play for a few minutes at a time before resting.'),
+        (4,    'I am fairly fast, can change direction and react well, and can play a few hard points in a row.'),
+        (5,    'I am very fast, can turn well, jump high, and need little rest.'),
+        (6,    'I am faster than anyone on the field at any level and enjoy playing almost every point.'),
+    )
 
-	RATING_COMPETITIVENESS_CHOICES = (
-		(1,	'I do not care whether I win or lose, I play purely to socialize and have fun.'),
-		(2,	'I play ultimate to have fun, but would prefer to win.'),
-		(3,	'I am competitive, fight to win close games, and am somewhat disappointed by a loss.'),
-		(4,	'I am extremely competitive and am very disappointed by a loss.'),
-	)
+    RATING_COMPETITIVENESS_CHOICES = (
+        (1,    'I do not care whether I win or lose, I play purely to socialize and have fun.'),
+        (2,    'I play ultimate to have fun, but would prefer to win.'),
+        (3,    'I am competitive, fight to win close games, and am somewhat disappointed by a loss.'),
+        (4,    'I am extremely competitive and am very disappointed by a loss.'),
+    )
 
-	RATING_TYPE_CAPTAIN = 1
-	RATING_TYPE_JUNTA = 2
-	RATING_TYPE_USER = 3
-	RATING_TYPE = (
-		(RATING_TYPE_CAPTAIN,	'Captain'),
-		(RATING_TYPE_JUNTA,		'Junta'),
-		(RATING_TYPE_USER,		'User'),
-	)
+    RATING_TYPE_CAPTAIN = 1
+    RATING_TYPE_JUNTA = 2
+    RATING_TYPE_USER = 3
+    RATING_TYPE = (
+        (RATING_TYPE_CAPTAIN,    'Captain'),
+        (RATING_TYPE_JUNTA,        'Junta'),
+        (RATING_TYPE_USER,        'User'),
+    )
 
-	id = models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True)
 
-	experience = models.PositiveIntegerField(default=None, choices=RATING_EXPERIENCE_CHOICES, blank=True, null=True)
-	strategy = models.PositiveIntegerField(default=None, choices=RATING_STRATEGY_CHOICES, blank=True, null=True)
-	throwing = models.PositiveIntegerField(default=None, choices=RATING_THROWING_CHOICES, blank=True, null=True)
-	athleticism = models.PositiveIntegerField(default=None, choices=RATING_ATHLETICISM_CHOICES, blank=True, null=True)
-	competitiveness = models.PositiveIntegerField(default=None, choices=RATING_COMPETITIVENESS_CHOICES, blank=True, null=True)
-	spirit = models.PositiveIntegerField(default=None, blank=True, null=True)
-	user = models.ForeignKey(User)
-	submitted_by = models.ForeignKey(User, related_name='ratings_submitted_by_set')
-	ratings_type = models.PositiveIntegerField(choices=RATING_TYPE)
-	ratings_report = models.ForeignKey('user.PlayerRatingsReport', blank=True, null=True)
-	not_sure = models.BooleanField(default=False)
-	updated = models.DateTimeField(auto_now=True)
+    experience = models.PositiveIntegerField(
+        default=None, choices=RATING_EXPERIENCE_CHOICES, blank=True, null=True)
+    strategy = models.PositiveIntegerField(
+        default=None, choices=RATING_STRATEGY_CHOICES, blank=True, null=True)
+    throwing = models.PositiveIntegerField(
+        default=None, choices=RATING_THROWING_CHOICES, blank=True, null=True)
+    athleticism = models.PositiveIntegerField(
+        default=None, choices=RATING_ATHLETICISM_CHOICES, blank=True, null=True)
+    competitiveness = models.PositiveIntegerField(
+        default=None, choices=RATING_COMPETITIVENESS_CHOICES, blank=True, null=True)
+    spirit = models.PositiveIntegerField(default=None, blank=True, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    submitted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='ratings_submitted_by_set')
+    ratings_type = models.PositiveIntegerField(choices=RATING_TYPE)
+    ratings_report = models.ForeignKey(
+        'user.PlayerRatingsReport', blank=True, null=True)
+    not_sure = models.BooleanField(default=False)
+    updated = models.DateTimeField(auto_now=True)
 
-	class Meta:
-		db_table = u'player_ratings'
-		verbose_name_plural = 'player ratings'
+    class Meta:
+        verbose_name_plural = 'player ratings'
 
-	def save(self, *args, **kwargs):
-		if not self.experience:
-			self.experience = None
-		if not self.strategy:
-			self.strategy = None
-		if not self.throwing:
-			self.throwing = None
-		if not self.athleticism:
-			self.athleticism = None
-		if not self.competitiveness:
-			self.competitiveness = None
-		if not self.spirit:
-			self.spirit = None
-		super(PlayerRatings, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        if not self.experience:
+            self.experience = None
+        if not self.strategy:
+            self.strategy = None
+        if not self.throwing:
+            self.throwing = None
+        if not self.athleticism:
+            self.athleticism = None
+        if not self.competitiveness:
+            self.competitiveness = None
+        if not self.spirit:
+            self.spirit = None
+        super(PlayerRatings, self).save(*args, **kwargs)
 
-	def __unicode__(self):
-		return '%s %s <- %s' % (str(self.updated), self.user, self.submitted_by)
+    def __unicode__(self):
+        return '%s %s <- %s' % (str(self.updated), self.user, self.submitted_by)
 
 
 class PlayerRatingsReport(models.Model):
-	id = models.AutoField(primary_key=True)
-	submitted_by = models.ForeignKey(User, related_name='ratings_report_submitted_by_set')
-	team = models.ForeignKey('leagues.Team')
-	updated = models.DateTimeField()
+    id = models.AutoField(primary_key=True)
+    submitted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='ratings_report_submitted_by_set')
+    team = models.ForeignKey('leagues.Team')
+    updated = models.DateTimeField()
 
-	class Meta:
-		db_table = u'player_ratings_report'
-
-	def __unicode__(self):
-		return '%s, %s, %s' % (self.team, self.team.league, self.submitted_by)
+    def __unicode__(self):
+        return '%s, %s, %s' % (self.team, self.team.league, self.submitted_by)

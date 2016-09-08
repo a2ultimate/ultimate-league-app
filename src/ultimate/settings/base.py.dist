@@ -141,12 +141,13 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
-# where project lives off web root, e.g. localhost/a2ultimate/user/login
+
+# USER
+AUTH_USER_MODEL = 'user.User'
 LOGIN_URL = '/user/log-in/'
 LOGIN_REDIRECT_URL = '/user/'
 LOGOUT_URL = '/user/log-out/'
 LOGOUT_REDIRECT_URL = '/'
-REGISTER_URL = '/accounts/register/'
 
 
 # CAPTCHA

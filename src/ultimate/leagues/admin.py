@@ -137,7 +137,7 @@ class RegistrationsAdmin(admin.ModelAdmin):
 class TeamMemberModelChoiceField(forms.ModelChoiceField):
 	def label_from_instance(self, team_member):
 		# Return a string of the format: "firstname lastname (username)"
-		return '%s, %s (%s)' % (team_member.last_name, team_member.first_name, team_member.username)
+		return '%s, %s (%s)' % (team_member.last_name, team_member.first_name, team_member.email)
 
 	class Meta:
 		label = ''

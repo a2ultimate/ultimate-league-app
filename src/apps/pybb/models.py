@@ -3,9 +3,10 @@
 import os.path
 import uuid
 
-from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
+from django.db import models
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
 
@@ -73,7 +74,7 @@ class Forum(models.Model):
     name = models.CharField(_('Name'), max_length=80)
     position = models.IntegerField(_('Position'), blank=True, default=0)
     description = models.TextField(_('Description'), blank=True)
-    moderators = models.ManyToManyField(User, blank=True, verbose_name=_('Moderators'))
+    moderators = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, verbose_name=_('Moderators'))
     updated = models.DateTimeField(_('Updated'), blank=True, null=True)
     post_count = models.IntegerField(_('Post count'), blank=True, default=0)
     topic_count = models.IntegerField(_('Topic count'), blank=True, default=0)
@@ -139,15 +140,15 @@ class Topic(models.Model):
     name = models.CharField(_('Subject'), max_length=255)
     created = models.DateTimeField(_('Created'), null=True)
     updated = models.DateTimeField(_('Updated'), null=True)
-    user = models.ForeignKey(User, verbose_name=_('User'))
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('User'))
     views = models.IntegerField(_('Views count'), blank=True, default=0)
     sticky = models.BooleanField(_('Sticky'), blank=True, default=False)
     closed = models.BooleanField(_('Closed'), blank=True, default=False)
     post_count = models.IntegerField(_('Post count'), blank=True, default=0)
     on_moderation = models.BooleanField(_('On moderation'), default=False)
+
     poll_type = models.IntegerField(_('Poll type'), choices=POLL_TYPE_CHOICES, default=POLL_TYPE_NONE)
     poll_question = models.TextField(_('Poll question'), blank=True, null=True)
-
     class Meta(object):
         ordering = ['-created']
         verbose_name = _('Topic')
@@ -227,7 +228,7 @@ class RenderableItem(models.Model):
 
 class Post(RenderableItem):
     topic = models.ForeignKey(Topic, related_name='posts', verbose_name=_('Topic'))
-    user = models.ForeignKey(User, related_name='posts', verbose_name=_('User'))
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='posts', verbose_name=_('User'))
     created = models.DateTimeField(_('Created'), blank=True, db_index=True)
     updated = models.DateTimeField(_('Updated'), blank=True, null=True)
     user_ip = models.GenericIPAddressField(_('User IP'), blank=True, null=True, default='0.0.0.0')
@@ -307,14 +308,14 @@ class Profile(PybbProfile):
     Profile class that can be used if you doesn't have
     your site profile.
     """
-    user = AutoOneToOneField(User, related_name='pybb_profile', verbose_name=_('User'))
+    user = AutoOneToOneField(settings.AUTH_USER_MODEL, related_name='pybb_profile', verbose_name=_('User'))
 
     class Meta(object):
         verbose_name = _('Profile')
         verbose_name_plural = _('Profiles')
 
     def get_absolute_url(self):
-        return reverse('pybb:user', kwargs={'username': self.user.username})
+        return reverse('pybb:user', kwargs={'username': self.user.email})
 
 
 class PollAnswer(models.Model):
@@ -339,7 +340,7 @@ class PollAnswer(models.Model):
 
 class PollAnswerUser(models.Model):
     poll_answer = models.ForeignKey(PollAnswer, related_name='users', verbose_name=_('Poll answer'))
-    user = models.ForeignKey(User, related_name='poll_answers', verbose_name=_('User'))
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='poll_answers', verbose_name=_('User'))
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:

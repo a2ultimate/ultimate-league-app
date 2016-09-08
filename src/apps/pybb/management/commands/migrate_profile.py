@@ -15,10 +15,10 @@ class Command(BaseCommand):
     help = 'Migrate pybb profiles to local site profile'
 
     def handle(self, *args, **options):
-        profile_app, profile_model = 'leagues.Player'.split('.')
+        profile_app, profile_model = 'user.Player'.split('.')
         profile_model = ContentType.objects.get(app_label=profile_app, model=profile_model).model_class()
         for user in User.objects.all():
-            #print(u'migrating profile for %s\n' % user.username)
+            #print(u'migrating profile for %s\n' % user.email)
             pybb_profile = user.pybb_profile
             try:
                 profile = user.profile

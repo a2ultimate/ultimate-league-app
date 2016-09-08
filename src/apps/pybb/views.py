@@ -118,7 +118,7 @@ class TopicView(generic.ListView):
         if self.request.user.is_authenticated():
             self.request.user.is_moderator = self.request.user.is_superuser or (self.request.user in self.topic.forum.moderators.all())
             if perms.may_post_as_admin(self.request.user):
-                ctx['form'] = AdminPostForm(initial={'login': self.request.user.username}, topic=self.topic)
+                ctx['form'] = AdminPostForm(initial={'login': self.request.user.email}, topic=self.topic)
             else:
                 ctx['form'] = PostForm(topic=self.topic)
         elif defaults.PYBB_ENABLE_ANONYMOUS_POST:
@@ -197,10 +197,10 @@ class AddPostView(PostEditMixin, generic.CreateView):
                 raise Http404
             else:
                 post = get_object_or_404(Post, pk=quote_id)
-                quote = defaults.PYBB_QUOTE_ENGINES[defaults.PYBB_MARKUP](post.body, post.user.username)
+                quote = defaults.PYBB_QUOTE_ENGINES[defaults.PYBB_MARKUP](post.body, post.user.email)
                 form_kwargs['initial']['body'] = quote
         if self.user.is_staff:
-            form_kwargs['initial']['login'] = self.user.username
+            form_kwargs['initial']['login'] = self.user.email
         return form_kwargs
 
     def get_context_data(self, **kwargs):

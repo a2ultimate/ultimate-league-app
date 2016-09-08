@@ -102,7 +102,7 @@
 
 			<ul class="banner_links">
 				{% if user.is_authenticated %}
-					<li><a href="{% url 'user'  %}">{{ user.username }}</a></li>
+					<li><a href="{% url 'user'  %}">{{ user.email }}</a></li>
 					<li><a href="{% url 'auth_log_out' %}">{% trans 'Log Out' %}</a></li>
 				{% else %}
 					<li><a href="{% url 'registration_register' %}">Create an Account</a></li>
