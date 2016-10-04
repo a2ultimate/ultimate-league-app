@@ -14,47 +14,53 @@
     <a href="http://twitter.com/a2ultimate" target="_blank">Follow us on Twitter</a>.
   </p>
 
-  <form method="post">{% csrf_token %}
+  <form class="form" method="post">{% csrf_token %}
     {% for hidden in form.hidden_fields %}
   		{{ hidden }}
   	{% endfor %}
 
     {% with field=form.email %}
-    <div class="sign-up-form-field">
-      <label class="sign-up-form-field-label" for="{{ field.id_for_label }}">
+    <div class="form-field form-field-inline{% if field.errors %} form-field-error{% endif %}">
+      <label class="form-field-label" for="{{ field.id_for_label }}">
         {{ field.label }}
       </label>
 
-      <div class="sign-up-form-field-content">
-        <div class="sign-up-form-field-content-input{% if field.errors %} sign-up-form-field-content-input-error{% endif %}">{{ field }}</div>
-        <div class="sign-up-form-field-content-help">{{ field.help_text }}</div>
+      <div class="form-field-input">
+        {{ field }}
+
         {% if field.errors %}
-          <div class="sign-up-form-field-content-errors">
-            <ul class="sign-up-form-field-content-errors-list">
-              {% for error in field.errors %}
-                <li>{{ error|escape }}</li>
-              {% endfor %}
-            </ul>
-          </div>
+        <div class="form-field-input-errors">
+          <ul class="form-field-input-errors-list">
+            {% for error in field.errors %}
+              <li>{{ error|escape }}</li>
+            {% endfor %}
+          </ul>
+        </div>
         {% endif %}
+      </div>
+      <div class="form-field-help">
+        {{ field.help_text }}
       </div>
     </div>
     {% endwith %}
 
-    <div class="sign-up-form-field sign-up-form-field-captcha">
-      <label class="sign-up-form-field-captcha-label" for="{{ form.captcha.id_for_label }}">{{ form.captcha.label }}</label>
-      <div class="sign-up-form-field-captcha-content{% if form.captcha.errors %} sign-up-form-field-captcha-content-error{% endif %}">
+    <div class="form-field form-field-highlighted{% if form.captcha.errors %} form-field-error{% endif %}">
+      <label class="form-field-label" for="{{ form.captcha.id_for_label }}">
+        {{ form.captcha.label }}
+      </label>
+      <div class="form-field-input">
         {{ form.captcha }}
-      </div>
-      {% if form.captcha.errors %}
-        <div class="sign-up-form-field-content-errors">
-          <ul class="sign-up-form-field-content-errors-list">
+
+        {% if form.captcha.errors %}
+        <div class="form-field-input-errors">
+          <ul class="form-field-input-errors-list">
             {% for error in form.captcha.errors %}
               <li>{{ error|escape }}</li>
             {% endfor %}
           </ul>
         </div>
-      {% endif %}
+        {% endif %}
+      </div>
     </div>
 
     <input class="button button-success" type="submit" value="Join List" />

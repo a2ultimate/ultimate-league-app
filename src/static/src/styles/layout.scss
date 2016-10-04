@@ -4,7 +4,7 @@ body {
 
   color: $color-primary;
   border-top: 0.25rem solid $color-secondary;
-  background-color: #f9f9f9;
+  background-color: $color-light-gray;
 
   font-family: $font-family-lato;
   font-size: $font-size-root;
@@ -92,8 +92,6 @@ body {
 
 .nav {
   position: relative;
-
-  margin-bottom: 1rem;
 
   background-color: $color-light-gray;
 }
@@ -218,6 +216,12 @@ body {
 
     opacity: 100;
   }
+}
+
+.content-wrapper {
+  padding-top: 1rem;
+
+  background-color: #f9f9f9;
 }
 
 .content {
@@ -359,18 +363,17 @@ body {
 .footer {
   z-index: 1;
 
-  min-height: 4rem;
-  margin-top: 2rem;
-  padding: 0.625rem 0;
+  padding: 1rem 0;
 
   color: $color-gray;
   border-top-left-radius: 0.125rem;
   border-top-right-radius: 0.125rem;
-  background-color: $color-light-gray;
 }
 
 .footer-content {
   padding: 0.1875rem;
+
+  font-size: 0.9375rem;
 
   text-align: center;
 }

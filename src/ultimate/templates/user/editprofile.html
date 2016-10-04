@@ -6,12 +6,12 @@
 
 <div class="tabs">
   <ul class="tabs-list">
-  	<li class="tab tab-selected">
+    <li class="tab tab-selected">
       <a class="tab-link" href="{% url 'editprofile'  %}">
         Edit Profile
       </a>
     </li>
-  	<li class="tab">
+    <li class="tab">
       <a class="tab-link" href="{% url 'editratings'  %}">
         Edit Ratings
       </a>
@@ -19,68 +19,102 @@
   </ul>
 </div>
 
-<form id="edit_profile_form" class="wide_form" method="post">{% csrf_token %}
-	<div class="field_wrapper">
-		{% for hidden in form.hidden_fields %}
-			{{ hidden }}
-		{% endfor %}
-	</div>
-	<table class="form_table">
-		{% for field in form.visible_fields %}
-			<tr>
-				<td>{{ field.label_tag }}</td>
-				<td>{{ field }}</td>
-				<td>{{ field.help_text }}</td>
-			</tr>
-			{% if field.errors %}
-				<tr>
-					<td colspan="3">{{ field.errors }}</td>
-				</tr>
-			{% endif %}
-		{% endfor %}
-		{% for field in player_form.visible_fields %}
-			{% if field.name != 'guardian_name' and field.name != 'guardian_phone' %}
-				<tr>
-					<td>{{ field.label_tag }}</td>
-					<td>{{ field }}</td>
-					<td>{{ field.help_text }}</td>
-				</tr>
-				{% if field.errors %}
-					<tr>
-						<td colspan="3">{{ field.errors }}</td>
-					</tr>
-				{% endif %}
-			{% endif %}
-		{% endfor %}
-		<tr>
-			<td class="form_table_highlight" colspan="3">
-				If you are under the age of 18, you must provide a parent or guardian's contact information
-			</td>
-		</tr>
-		{% for field in player_form.visible_fields %}
-			{% if field.name == 'guardian_name' or field.name == 'guardian_phone' %}
-				<tr>
-					<td class="form_table_highlight">{{ field.label_tag }}</td>
-					<td class="form_table_highlight">{{ field }}</td>
-					<td class="form_table_highlight">{{ field.help_text }}</td>
-				</tr>
-				{% if field.errors %}
-					<tr>
-						<td class="form_table_highlight" colspan="3">{{ field.errors }}</td>
-					</tr>
-				{% endif %}
-			{% endif %}
-		{% endfor %}
-	</table>
+<form class="form" method="post">{% csrf_token %}
+  {% for hidden in form.hidden_fields %}
+    {{ hidden }}
+  {% endfor %}
 
-	<p>
-		<small>
-			An asterisk (*) denotes a required field.
-		</small>
-	</p>
+    {% for field in form.visible_fields %}
+      <div class="form-field form-field-table{% if field.errors %} form-field-error{% endif %}">
+        <label class="form-field-label" for="{{ field.id_for_label }}">
+          {{ field.label }}
+        </label>
 
-	<input class="button button_success" type="submit" value="Update Profile">
-	<a class="button button-link" href="{% url 'user'  %}">Cancel</a>
+        <div class="form-field-input">
+          {{ field }}
+
+          {% if field.errors %}
+          <div class="form-field-input-errors">
+            <ul class="form-field-input-errors-list">
+              {% for error in field.errors %}
+                <li>{{ error|escape }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+        </div>
+        <div class="form-field-help">
+          {{ field.help_text }}
+        </div>
+      </div>
+    {% endfor %}
+    {% for field in player_form.visible_fields %}
+      {% if field.name != 'guardian_name' and field.name != 'guardian_phone' %}
+        <div class="form-field form-field-table{% if field.errors %} form-field-error{% endif %}">
+          <label class="form-field-label" for="{{ field.id_for_label }}">
+            {{ field.label }}
+          </label>
+
+          <div class="form-field-input">
+            {{ field }}
+
+            {% if field.errors %}
+            <div class="form-field-input-errors">
+              <ul class="form-field-input-errors-list">
+                {% for error in field.errors %}
+                  <li>{{ error|escape }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+          </div>
+          <div class="form-field-help">
+            {{ field.help_text }}
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+
+    <p class="form-field form-field-highlighted" colspan="3">
+      If you are under the age of 18, you must provide a parent or guardian's contact information
+    </p>
+
+    {% for field in player_form.visible_fields %}
+      {% if field.name == 'guardian_name' or field.name == 'guardian_phone' %}
+        <div class="form-field form-field-table form-field-highlighted{% if field.errors %} form-field-error{% endif %}">
+
+          <label class="form-field-label" for="{{ field.id_for_label }}">
+            {{ field.label }}
+          </label>
+
+          <div class="form-field-input">
+            {{ field }}
+
+            {% if field.errors %}
+            <div class="form-field-input-errors">
+              <ul class="form-field-input-errors-list">
+                {% for error in field.errors %}
+                  <li>{{ error|escape }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+          </div>
+          <div class="form-field-help">
+            {{ field.help_text }}
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+
+  <p>
+    <small>
+      An asterisk (*) denotes a required field.
+    </small>
+  </p>
+
+  <input class="button button-success" type="submit" value="Update Profile">
+  <a class="button button-link" href="{% url 'user'  %}">Cancel</a>
 </form>
 
 {% endblock %}

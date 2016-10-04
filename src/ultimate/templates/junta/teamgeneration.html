@@ -8,207 +8,208 @@
 
 {% block content %}
 
-	{% include "layout/account_tabs.html" with selected_tab="junta" %}
+  {% include 'layout/account_tabs.html' with selected_tab='junta' %}
 
-	{% if leagues %}
-		<h1>Team Generation</h1>
+  {% if leagues %}
+    <h1>Team Generation</h1>
 
-		{% include "_partials/league_list.html" with leagues=leagues link_view="teamgeneration_league" only %}
-	{% else %}
+    {% include '_partials/league_list.html' with leagues=leagues link_view='teamgeneration_league' only %}
+  {% else %}
     <div class="breadcrumbs">
-  		<ul class="breadcrumbs-list">
-  			<li class="breadcrumb">
+      <ul class="breadcrumbs-list">
+        <li class="breadcrumb">
           <a href="{% url 'teamgeneration' %}">Team Generation</a>
         </li>
-  			<li class="breadcrumb">
+        <li class="breadcrumb">
           <a href="{% url 'teamgeneration_league' year=league.year season=league.season division=league.night %}">{{ league.season_title|smart_title }} {{ league.year }} {{ league.night|smart_title }}</a>
         </li>
-  		</ul>
+      </ul>
     </div>
 
-		{% include "layout/league_header.html" with league=league header="Team Generation" only %}
+    {% include 'layout/league_header.html' with league=league header='Team Generation' only %}
 
-		<form method="post">{% csrf_token %}
-			{% if teams %}
-				<table id="team_stats_table" class="table table-striped">
-					<thead>
-						<th></th>
-						<th>Rating Total</th>
-						<th>Rating Average</th>
-						<th>Players</th>
-						<th>Females</th>
-						<th>Males</th>
-						<th>Absence Total</th>
-						<th>Absence Average</th>
-					</thead>
-					<tbody>
-						{% for team in teams %}
-							<tr class="team_stats_{{ team.id }}">
-								<th>Team {{ team.id }}</td>
-								<td class="team_rating_total">{{ team.rating_total|floatformat:2 }}</td>
-								<td class="team_rating_average">{{ team.rating_average|floatformat:2 }}</td>
-								<td class="team_size">{{ team.get_members|length }}</td>
-								<td class="team_size_female">{{ team.get_female_members|length }}</td>
-								<td class="team_size_male">{{ team.get_male_members|length }}</td>
-								<td class="team_attendance_total">{{ team.attendance_total|floatformat:2 }}</td>
-								<td class="team_attendance_average">{{ team.attendance_average|floatformat:2 }}</td>
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
+    <form class="form" method="post">{% csrf_token %}
+      {% if teams %}
+        <table id="team_stats_table" class="table table-striped">
+          <thead>
+            <th></th>
+            <th>Rating Total</th>
+            <th>Rating Average</th>
+            <th>Players</th>
+            <th>Females</th>
+            <th>Males</th>
+            <th>Absence Total</th>
+            <th>Absence Average</th>
+          </thead>
+          <tbody>
+            {% for team in teams %}
+              <tr class="team_stats_{{ team.id }}">
+                <th>Team {{ team.id }}</td>
+                <td class="team_rating_total">{{ team.rating_total|floatformat:2 }}</td>
+                <td class="team_rating_average">{{ team.rating_average|floatformat:2 }}</td>
+                <td class="team_size">{{ team.get_members|length }}</td>
+                <td class="team_size_female">{{ team.get_female_members|length }}</td>
+                <td class="team_size_male">{{ team.get_male_members|length }}</td>
+                <td class="team_attendance_total">{{ team.attendance_total|floatformat:2 }}</td>
+                <td class="team_attendance_average">{{ team.attendance_average|floatformat:2 }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
 
-				<table class="table table-condensed table-striped">
-					{% for team in teams %}
-						<thead>
-							<tr class="team_stats_{{ team.id }}">
-								<th rowspan="2">Team {{ team.id }}</th>
-								<th>Rating Average</th>
-								<th>Rating Total</th>
-								<th>Players</th>
-								<th>Females</th>
-								<th>Males</th>
-								<th>Absence Total</th>
-								<th>Absence Average</th>
-							</tr>
-							<tr class="team_stats_{{ team.id }}">
-								<td class="team_rating_average">{{ team.rating_average|floatformat:2 }}</td>
-								<td class="team_rating_total">{{ team.rating_total|floatformat:2 }}</td>
-								<td class="team_size">{{ team.get_members|length }}</td>
-								<td class="team_size_female">{{ team.get_female_members|length }}</td>
-								<td class="team_size_male">{{ team.get_male_members|length }}</td>
-								<td class="team_attendance_total">{{ team.attendance_total|floatformat:2 }}</td>
-								<td class="team_attendance_average">{{ team.attendance_average|floatformat:2 }}</td>
-								<td></td>
-							</tr>
-						</thead>
-						<tbody id="team_{{ team.id }}" class="sortable_table sortable_table_connected">
-							{% regroup team.get_members_with_baggage by baggage_id as baggage_list %}
+        <table class="table table-condensed table-striped">
+          {% for team in teams %}
+            <thead>
+              <tr class="team_stats_{{ team.id }}">
+                <th rowspan="2">Team {{ team.id }}</th>
+                <th>Rating Average</th>
+                <th>Rating Total</th>
+                <th>Players</th>
+                <th>Females</th>
+                <th>Males</th>
+                <th>Absence Total</th>
+                <th>Absence Average</th>
+              </tr>
+              <tr class="team_stats_{{ team.id }}">
+                <td class="team_rating_average">{{ team.rating_average|floatformat:2 }}</td>
+                <td class="team_rating_total">{{ team.rating_total|floatformat:2 }}</td>
+                <td class="team_size">{{ team.get_members|length }}</td>
+                <td class="team_size_female">{{ team.get_female_members|length }}</td>
+                <td class="team_size_male">{{ team.get_male_members|length }}</td>
+                <td class="team_attendance_total">{{ team.attendance_total|floatformat:2 }}</td>
+                <td class="team_attendance_average">{{ team.attendance_average|floatformat:2 }}</td>
+                <td></td>
+              </tr>
+            </thead>
+            <tbody id="team_{{ team.id }}" class="sortable_table sortable_table_connected">
+              {% regroup team.get_members_with_baggage by baggage_id as baggage_list %}
 
-							{% for baggage_group in baggage_list %}
-								{% for team_member in baggage_group.list %}
-									<tr class="team_member" data-baggage-id="{{ baggage_group.grouper }}" data-gender="{{ team_member.user.profile.gender }}" data-rating-total="{{ team_member.user.rating_total|floatformat:2 }}" data-attendance-total="{{ team_member.attendance_total|floatformat:2 }}">
-										<td>
-											<input class="team_member_input" name="team_member_{{ team.id }}" value="{{ team_member.user.id }}" type="hidden" />
-											<label>
-												<input class="team_member_captain_input" name="team_member_captain_{{ team.id }}" {% if team_member.captain %}checked="checked"{% endif %} value="{{ team_member.user.id }}" type="checkbox" />
-												{{ team_member.user.get_full_name }}
-											</labe>
-										</td>
-										<td></td>
-										<td>{{ team_member.user.rating_total|floatformat:2 }}</td>
-										<td>1</td>
-										<td>{% if team_member.user.profile.gender == 'F' %}1{% endif %}</td>
-										<td>{% if team_member.user.profile.gender == 'M' %}1{% endif %}</td>
-										<td>{{ team_member.attendance_total }}</td>
-										<td></td>
-										<td>{{ baggage_group.grouper }}</td>
-									</tr>
-								{% endfor %}
-							{% endfor %}
-						</tbody>
-					{% endfor %}
-				</table>
+              {% for baggage_group in baggage_list %}
+                {% for team_member in baggage_group.list %}
+                  <tr class="team_member" data-baggage-id="{{ baggage_group.grouper }}" data-gender="{{ team_member.user.profile.gender }}" data-rating-total="{{ team_member.user.rating_total|floatformat:2 }}" data-attendance-total="{{ team_member.attendance_total|floatformat:2 }}">
+                    <td>
+                      <input class="team_member_input" name="team_member_{{ team.id }}" value="{{ team_member.user.id }}" type="hidden" />
+                      <label>
+                        <input class="team_member_captain_input" name="team_member_captain_{{ team.id }}" {% if team_member.captain %}checked="checked"{% endif %} value="{{ team_member.user.id }}" type="checkbox" />
+                        {{ team_member.user.get_full_name }}
+                      </labe>
+                    </td>
+                    <td></td>
+                    <td>{{ team_member.user.rating_total|floatformat:2 }}</td>
+                    <td>1</td>
+                    <td>{% if team_member.user.profile.gender == 'F' %}1{% endif %}</td>
+                    <td>{% if team_member.user.profile.gender == 'M' %}1{% endif %}</td>
+                    <td>{{ team_member.attendance_total }}</td>
+                    <td></td>
+                    <td>{{ baggage_group.grouper }}</td>
+                  </tr>
+                {% endfor %}
+              {% endfor %}
+            </tbody>
+          {% endfor %}
+        </table>
 
-				<h4>Unassigned Registrations</h4>
+        <h4>Unassigned Registrations</h4>
 
-				<table class="table table-condensed table-striped">
-					<thead>
-						<tr class="team_stats_0">
-							<th rowspan="2"></th>
-							<th>Rating Average</th>
-							<th>Rating Total</th>
-							<th>Players</th>
-							<th>Females</th>
-							<th>Males</th>
-							<th>Absence Total</th>
-							<th>Absence Average</th>
-						</tr>
-					</thead>
-					<tbody id="team_0" class="sortable_table sortable_table_connected">
-						{% regroup unassigned_registrations by baggage_id as baggage_list %}
+        <table class="table table-condensed table-striped">
+          <thead>
+            <tr class="team_stats_0">
+              <th rowspan="2"></th>
+              <th>Rating Average</th>
+              <th>Rating Total</th>
+              <th>Players</th>
+              <th>Females</th>
+              <th>Males</th>
+              <th>Absence Total</th>
+              <th>Absence Average</th>
+            </tr>
+          </thead>
+          <tbody id="team_0" class="sortable_table sortable_table_connected">
+            {% regroup unassigned_registrations by baggage_id as baggage_list %}
 
-						{% for baggage_group in baggage_list %}
-							{% for unassigned_registration in baggage_group.list %}
-								<tr class="team_member" data-baggage-id="{{ baggage_group.grouper }}" data-gender="{{ unassigned_registration.user.profile.gender }}" data-rating-total="{{ unassigned_registration.user.rating_total|floatformat:2 }}" data-attendance-total="{{ unassigned_registration.attendance|floatformat:2 }}">
-									<td>
-										<input class="team_member_input" name="team_member_0" value="{{ unassigned_registration.user.id }}" type="hidden" />
-										<label>
-											<input class="team_member_captain_input" name="team_member_captain_0" value="{{ unassigned_registration.user.id }}" type="checkbox" />
-											{{ unassigned_registration.user.get_full_name }}
-										</labe>
-									</td>
-									<td></td>
-									<td>{{ unassigned_registration.user.rating_total|floatformat:2 }}</td>
-									<td>1</td>
-									<td>{% if unassigned_registration.user.profile.gender == 'F' %}1{% endif %}</td>
-									<td>{% if unassigned_registration.user.profile.gender == 'M' %}1{% endif %}</td>
-									<td>{{ unassigned_registration.attendance_total }}</td>
-									<td></td>
-									<td>{{ baggage_group.grouper }}</td>
-								</tr>
-							{% endfor %}
-						{% endfor %}
-					</tbody>
-				</table>
+            {% for baggage_group in baggage_list %}
+              {% for unassigned_registration in baggage_group.list %}
+                <tr class="team_member" data-baggage-id="{{ baggage_group.grouper }}" data-gender="{{ unassigned_registration.user.profile.gender }}" data-rating-total="{{ unassigned_registration.user.rating_total|floatformat:2 }}" data-attendance-total="{{ unassigned_registration.attendance|floatformat:2 }}">
+                  <td>
+                    <input class="team_member_input" name="team_member_0" value="{{ unassigned_registration.user.id }}" type="hidden" />
+                    <label>
+                      <input class="team_member_captain_input" name="team_member_captain_0" value="{{ unassigned_registration.user.id }}" type="checkbox" />
+                      {{ unassigned_registration.user.get_full_name }}
+                    </labe>
+                  </td>
+                  <td></td>
+                  <td>{{ unassigned_registration.user.rating_total|floatformat:2 }}</td>
+                  <td>1</td>
+                  <td>{% if unassigned_registration.user.profile.gender == 'F' %}1{% endif %}</td>
+                  <td>{% if unassigned_registration.user.profile.gender == 'M' %}1{% endif %}</td>
+                  <td>{{ unassigned_registration.attendance_total }}</td>
+                  <td></td>
+                  <td>{{ baggage_group.grouper }}</td>
+                </tr>
+              {% endfor %}
+            {% endfor %}
+          </tbody>
+        </table>
 
-				<div class="control">
-					<input value="Save Changes" name="save_teams" class="button button-success" type="submit" />
-					<input value="Publish Teams" name="publish_teams" class="button button-success" type="submit" />
-					<input value="Hide Teams" name="hide_teams" class="button button-error" type="submit" />
-					<input value="Delete Teams" name="delete_teams" class="button button-error" type="submit" />
-				</div>
-			{% else %}
-				<table class="form_table">
-					<tr>
-						<td><label for="num_teams_input">Number of Teams</label></td>
-						<td><input id="num_teams_input" name="num_teams" value="0" type="text" /></td>
-					</tr>
-				</table>
+        <input value="Save Changes" name="save_teams" class="button button-success" type="submit" />
+        <input value="Publish Teams" name="publish_teams" class="button button-success" type="submit" />
+        <input value="Hide Teams" name="hide_teams" class="button button-error" type="submit" />
+        <input value="Delete Teams" name="delete_teams" class="button button-error" type="submit" />
+      {% else %}
+        <div class="form-field form-field-inline">
+          <label class="form-field-label" for="num_teams_input">
+            Number of Teams
+          </label>
 
-				<input value="Generate Teams" name="generate_teams" class="button button-success" type="submit" />
-				<a class="button button-link" href="{% url 'teamgeneration'  %}">Cancel</a>
-			{% endif %}
+          <div class="form-field-input">
+            <input id="num_teams_input" name="num_teams" value="0" type="text">
+          </div>
+        </div>
 
-			{% if players %}
-				<table class="table table-condensed table-striped">
-					<thead>
-						<tr>
-							{% if not teams %}
-								<th>Team Captain</th>
-							{% endif %}
-							<th>Name</th>
-							<th>Gender</th>
-							<th>Rating</th>
-							<th>Absences</th>
-							<th>Baggage</th>
-							<th>Team</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for player in players %}
-							<tr>
-								{% if not teams %}
-									<td>
-										<select name="player_captain_{{ player.user.id }}">
-											{% for i in 17|get_range %}
-												<option value="{{ i }}">{{ i }}</option>
-											{% endfor %}
-										</select>
-									</td>
-								{% endif %}
-								<td>
-									{{ player.user.get_full_name }}
-								</td>
-								<td>{{ player.user.profile.gender }}</td>
-								<td title="{{ player.rating_totals|pprint }}">{{ player.rating_total|floatformat:2 }}</td>
-								<td>{{ player.attendance }}</td>
-								<td>{{ player.baggage_id }}</td>
-								<td>{{ player.team_id }}</td>
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
-			{% endif %}
-		</form>
-	{% endif %}
+        <input value="Generate Teams" name="generate_teams" class="button button-success" type="submit" />
+        <a class="button button-link" href="{% url 'teamgeneration'  %}">Cancel</a>
+      {% endif %}
+    </form>
+
+    {% if players %}
+      <table class="table table-condensed table-striped">
+        <thead>
+          <tr>
+            {% if not teams %}
+              <th>Team Captain</th>
+            {% endif %}
+            <th>Name</th>
+            <th>Gender</th>
+            <th>Rating</th>
+            <th>Absences</th>
+            <th>Baggage</th>
+            <th>Team</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for player in players %}
+            <tr>
+              {% if not teams %}
+                <td>
+                  <select name="player_captain_{{ player.user.id }}">
+                    {% for i in 17|get_range %}
+                      <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                  </select>
+                </td>
+              {% endif %}
+              <td>
+                {{ player.user.get_full_name }}
+              </td>
+              <td>{{ player.user.profile.gender }}</td>
+              <td title="{{ player.rating_totals|pprint }}">{{ player.rating_total|floatformat:2 }}</td>
+              <td>{{ player.attendance }}</td>
+              <td>{{ player.baggage_id }}</td>
+              <td>{{ player.team_id }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  {% endif %}
 {% endblock %}

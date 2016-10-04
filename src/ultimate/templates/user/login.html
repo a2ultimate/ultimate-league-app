@@ -24,20 +24,30 @@
 </div>
 {% endif %}
 
-<form method="post" action="{% url 'auth_log_in' %}">{% csrf_token %}
-  <table class="form_table">
-    <tr>
-      <td><label for="id_username">Email Address</label></td>
-      <td>{{ form.username }}</td>
-    </tr>
-    <tr>
-      <td><label for="id_password">Password</label></td>
-      <td>{{ form.password }}</td>
-    </tr>
-  </table>
+<form class="form" method="post" action="{% url 'auth_log_in' %}">{% csrf_token %}
+  <input type="hidden" name="next" value="{{ next }}" />
+
+  <div class="form-field form-field-table">
+    <label class="form-field-label" for="{{ form.username.id_for_label }}">
+      Email Address
+    </label>
+
+    <div class="form-field-input">
+      {{ form.username }}
+    </div>
+  </div>
+
+  <div class="form-field form-field-table">
+    <label class="form-field-label" for="{{ form.password.id_for_label }}">
+      Password
+    </label>
+
+    <div class="form-field-input">
+      {{ form.password }}
+    </div>
+  </div>
 
   <input class="button button-success" type="submit" value="Log In" />
-  <input type="hidden" name="next" value="{{ next }}" />
 </form>
 
 <h4>Forgot your password?</h4>

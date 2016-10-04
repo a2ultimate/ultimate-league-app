@@ -45,6 +45,11 @@ th {
   border-top: 0.125rem solid $color-light-gray;
 }
 
+.table-centered th,
+.table-centered td {
+  text-align: center;
+}
+
 .table-condensed th,
 .table-condensed td {
   padding: 0.25rem;

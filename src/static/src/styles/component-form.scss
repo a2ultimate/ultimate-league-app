@@ -1,26 +1,107 @@
-fieldset {
-  margin: 0.75rem 0.5rem 1.125rem;
-  padding: 0;
-
-  border: 0;
-}
-
-legend {
-  font-size: 1.125rem;
-  line-height: 2.25rem;
-}
-
-fieldset > legend {
-  padding-right: 0.75rem;
-}
-
 .form {
   margin-bottom: 1rem;
 }
 
+.form-field {
+  padding-bottom: 1rem;
 
+  &.form-field-hidden {
+    display: none;
+  }
 
+  &.form-field-highlighted {
+    margin: 0 0 1rem;
+    padding: 1rem 0.5rem;
 
+    background-color: $color-light-gray;
+
+    + .form-field-highlighted {
+      margin-top: -1rem;
+      padding-top: 0;
+    }
+  }
+
+  &.form-field-table {
+    @include outer-container();
+  }
+}
+
+.form-field-label {
+  margin: 0 0 0.125rem;
+  padding-left: 0.125rem;
+
+  .form-field-inline &,
+  .form-field-table & {
+    display: inline-block;
+
+    padding: 0.75rem 0;
+  }
+
+  .form-field-table & {
+    @include span-columns(3);
+  }
+}
+
+.form-field-input {
+  margin: 0 0 0.125rem;
+
+  .form-field-inline & {
+    display: inline-block;
+  }
+
+  .form-field-table & {
+    @include span-columns(4);
+  }
+
+  > input,
+  > select,
+  > textarea {
+    .form-field-error & {
+      margin: 0 0 0.25rem;
+
+      border-color: $color-danger;
+    }
+
+    .form-field-highlighted & {
+      border-color: $color-gray;
+    }
+  }
+}
+
+.form-field-input-errors {
+  padding-left: 0.125rem;
+
+  color: $color-danger;
+}
+
+.form-field-input-errors-list {
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.form-field-help {
+  padding-left: 0.125rem;
+
+  color: $color-gray;
+
+  .form-field-error & {
+    margin-top: 0.3125rem;
+  }
+
+  .form-field-inline &,
+  .form-field-table & {
+    display: inline-block;
+
+    margin: 0;
+    padding: 0.75rem 0;
+  }
+
+  .form-field-table & {
+    @include span-columns(3);
+  }
+}
 
 
 .radio,
@@ -48,6 +129,7 @@ fieldset > legend {
 .checkbox input[type='checkbox'] {
   float: left;
 
+  margin-top: 0.0625rem;
   margin-left: -1.25rem;
 }
 
@@ -56,37 +138,8 @@ fieldset > legend {
   margin-top: 0.5rem;
 }
 
-
-
-
-
-
-
-// form {
-//   margin: 0.75rem 0;
-// }
-
-.errorlist {
-  margin: 0 0 0.5rem;
-
-  color: #e74c3c;
-}
-
-legend + .errorlist {
-  margin-top: -0.625rem;
-}
-
-.form_table {
-  margin: 0 0 0.75rem;
-}
-
-.form_table th,
-.form_table td {
-  padding: 0.75rem;
-}
-
-.form_table_highlight {
-  background-color: #eceff1;
+label {
+  margin: 0;
 }
 
 input[type=checkbox],
@@ -122,8 +175,8 @@ textarea[readonly] {
 input:not([type]),
 textarea {
   box-sizing: border-box;
-  width: 12rem;
-  padding: 0.625rem 0 0.6875rem 0.625rem;
+  width: 14rem;
+  padding: 0.625rem 0.625rem 0.6875rem 0.625rem;
 
   transition: border-color 150ms ease;
   vertical-align: middle;
@@ -141,28 +194,19 @@ textarea {
   }
 
   &::placeholder {
-    color: $color-light-gray;
+    color: $color-gray;
   }
+}
+
+select {
+  height: 2.625rem;
+
+  border-radius: $border-radius;
 }
 
 select[multiple='multiple'] {
   min-height: 6rem;
-  padding-right: 0.625rem;
-}
+  padding: 0.4375rem 0.625rem;
 
-.control {
-  margin: 0.75rem 0.5rem 1.125rem;
-}
-
-.control-inline {
-  display: inline-block;
-
-  margin-right: 0.75rem;
-
-  &:last-child {
-    margin-right: 0;
-  }
-}
-
-.control-group {
+  border-radius: $border-radius;
 }

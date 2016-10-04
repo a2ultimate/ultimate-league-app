@@ -34,7 +34,9 @@
 
 // pages
 @import 'page-home';
+@import 'page-schedule-generation';
 
 // legacy
+@import '_print';
 @import 'legacy/legacy';
 // @import 'legacy/jquery-ui-1.10.0.custom.min';

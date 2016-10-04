@@ -1,0 +1,23 @@
+.schedule-generation-page-form-fields {
+  margin-bottom: 1rem;
+
+  @include outer-container();
+}
+
+.schedule-generation-page-form-fields-input {
+  @include span-columns(6);
+
+  > select {
+    display: block;
+
+    width: 100%;
+  }
+}
+
+.schedule-generation-page-form-fields-help {
+  padding-left: 1rem;
+
+  color: $color-gray;
+
+  @include span-columns(6);
+}

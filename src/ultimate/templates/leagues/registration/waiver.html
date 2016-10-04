@@ -17,8 +17,8 @@
 	<p>If I am under 18 years of age, I certify that my parent/legal guardian has read and accepted this waiver.</p>
 
 	<form method="post">{% csrf_token %}
-		<input class="button button_success" type="submit" value="Accept" name="waiver_accept" />
-		<input class="button button_error" type="submit" value="Decline" name="waiver_decline" />
+		<input class="button button-success" type="submit" value="Accept" name="waiver_accept" />
+		<input class="button button-danger" type="submit" value="Decline" name="waiver_decline" />
 	</form>
 
 {% endblock %}

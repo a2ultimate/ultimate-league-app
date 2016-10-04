@@ -31,7 +31,7 @@
 			{% if registration.is_complete and not registration.league.waitlist_start_date|is_past_deadline and not registration.waitlist %}
 				{% if registration.baggage_size > 1 %}
 					<form method="POST">{% csrf_token %}
-						<input class="button button_error" type="submit" name="leave_group" value="Leave Group" />
+						<input class="button button-error" type="submit" name="leave_group" value="Leave Group" />
 					</form>
 				{% endif %}
 
@@ -40,11 +40,9 @@
 						<h3>Add Another Player To Your Group</h3>
 						<p>You have room for {{ league.baggage|subtract:registration.baggage_size }} more players in your group. Enter the email of the player you would like to add below.</p>
 
-						<div class="control">
-							<input name="email" type="text" />
-						</div>
+						<input name="email" type="text" />
 
-						<input class="button button_success" name="add_group" value="Add Player" type="submit" />
+						<input class="button button-success" name="add_group" value="Add Player" type="submit" />
 					{% else %}
 						<h3>Your group is full for this league.</h3>
 					{% endif %}

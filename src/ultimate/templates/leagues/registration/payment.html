@@ -27,7 +27,7 @@
 				<strong>{{ registration.coupon.code }}</strong>
 				good for <em>{{ registration.coupon.display_value }}</em>.
 
-				<button class="button button_info" name="remove_coupon" type="submit">
+				<button class="button button-info" name="remove_coupon" type="submit">
 					Remove It?
 				</button>
 			</p>
@@ -36,7 +36,7 @@
 		<form method="post">{% csrf_token %}
 			<p>Do you have a coupon code?</p>
 			<input name="coupon_code" type="text">
-			<button class="button button_success" type="submit">
+			<button class="button button-success" type="submit">
 				Submit
 			</button>
 		</form>
@@ -52,9 +52,9 @@
 	</p>
 
 	<form method="post">{% csrf_token %}
-		<input class="button button_success" type="submit" name="pay_type" value="Paypal">
+		<input class="button button-success" type="submit" name="pay_type" value="Paypal">
 		{% if league.checks_accepted %}
-			<input class="button button_success" type="submit" name="pay_type" value="Check">
+			<input class="button button-success" type="submit" name="pay_type" value="Check">
 		{% endif %}
 	</form>
 
