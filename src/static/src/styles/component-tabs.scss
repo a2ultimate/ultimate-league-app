@@ -3,8 +3,6 @@
 
   border-bottom: 0.1875rem solid $color-dark-gray;
 
-  font-family: $font-family-lato-medium;
-
   + .breadcrumbs {
     margin-top: -0.75rem;
   }
@@ -45,6 +43,8 @@
   .tab.tab-selected & {
     color: $color-white;
     background-color: $color-dark-gray;
+
+    font-family: $font-family-lato-medium;
 
     &:hover {
       background-color: $color-dark-gray-dark;

@@ -1,0 +1,27 @@
+.status-dot {
+  display: inline-block;
+
+  width: 1rem;
+  height: 1rem;
+
+  vertical-align: -0.125rem;
+
+  border-radius: 50%;
+  background-color: $color-primary;
+}
+
+.status-dot-error {
+  background-color: $color-danger;
+}
+
+.status-dot-info {
+  background-color: $color-info;
+}
+
+.status-dot-success {
+  background-color: $color-success;
+}
+
+.status-dot-warning {
+  background-color: $color-warning;
+}

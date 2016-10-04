@@ -1,28 +1,40 @@
 {% extends "layout/layout_user.html" %}
 
 {% block content %}
-	{% include "layout/account_tabs.html" with selected_tab="junta" %}
+  {% include "layout/account_tabs.html" with selected_tab="junta" %}
 
-	<ul class="header-list">
-		<li>
-			<a href="{% url 'captainstatus'  %}"><h4 class="header-list-header">Captain Status</h4></a>
-		</li>
-		<li>
-			<a href="{% url 'gamereports'  %}"><h4 class="header-list-header">Game Reports</h4></a>
-		</li>
-		<li>
-			<a href="{% url 'leagueresults'  %}"><h4 class="header-list-header">League Results</h4></a>
-		</li>
-		<li>
-			<a href="{% url 'registrationexport'  %}"><h4 class="header-list-header">Registration Export</h4></a>
-		</li>
-		{% if request.user.is_superuser %}
-			<li>
-				<a href="{% url 'teamgeneration'  %}"><h4 class="header-list-header">Team Generation</h4></a>
-			</li>
-			<li>
-				<a href="{% url 'schedulegeneration'  %}"><h4 class="header-list-header">Schedule Generation</h4></a>
-			</li>
-		{% endif %}
-	</ul>
+  <ul class="selection-list">
+    <li class="selection-list-item">
+      <a class="selection-list-item-link" href="{% url 'captainstatus' %}">
+        Captain Status
+      </a>
+    </li>
+    <li class="selection-list-item">
+      <a class="selection-list-item-link" href="{% url 'gamereports' %}">
+        Game Reports
+      </a>
+    </li>
+    <li class="selection-list-item">
+      <a class="selection-list-item-link" href="{% url 'leagueresults' %}">
+        League Results
+      </a>
+    </li>
+    <li class="selection-list-item">
+      <a class="selection-list-item-link" href="{% url 'registrationexport' %}">
+        Registration Export
+      </a>
+    </li>
+    {% if request.user.is_superuser %}
+      <li class="selection-list-item">
+        <a class="selection-list-item-link" href="{% url 'teamgeneration' %}">
+          Team Generation
+        </a>
+      </li>
+      <li class="selection-list-item">
+        <a class="selection-list-item-link" href="{% url 'schedulegeneration' %}">
+          Schedule Generation
+        </a>
+      </li>
+    {% endif %}
+  </ul>
 {% endblock %}

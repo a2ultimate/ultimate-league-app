@@ -63,7 +63,7 @@
       <tbody>
         {% for game_date in game_dates %}
           <tr class="{% if game_date.date == next_game_date %}active{% endif %}">
-            <th class="text_right">
+            <th class="">
               <div>{{ game_date.date|date:"M" }}</div>
               <div>{{ game_date.date|date:"jS" }}</div>
             </th>
@@ -122,7 +122,7 @@
                 <div>
                   {% if team.email and user.is_authenticated%}
                   {% if user|is_on_team:team or user.is_superuser %}
-                    <a class="pull_right" style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}">Email Team</a>
+                    <a style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}">Email Team</a>
                   {% endif %}
                   {% endif %}
 
@@ -148,7 +148,7 @@
                   <li class="team_member">
                     {% if forloop.first and user.is_authenticated %}
                     {% if user.is_superuser or user|is_on_team:team or user|is_division_captain:league %}
-                      <a class="pull_right" href="mailto:{% for captain in team.get_captains %}{{ captain.user.email }},{% endfor %}">Email Captains</a>
+                      <a href="mailto:{% for captain in team.get_captains %}{{ captain.user.email }},{% endfor %}">Email Captains</a>
                     {% endif %}
                     {% endif %}
 

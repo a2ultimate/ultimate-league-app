@@ -12,29 +12,27 @@
 		{% for team in captain_teams %}
 			<li>
 				<h4 class="header-list-header">
-					<div class="pull_right">{{ team.name }}</div>
-					<div>{{ team.league.year }} {{ team.league.season_title|smart_title }} {{ team.league.night_title|smart_title }}</div>
+					<div class="header-list-header-left">{{ team }}</div>
+					<div class="header-list-header-right">{{ team.league.year }} {{ team.league.season_title|smart_title }} {{ team.league.night_title|smart_title }}</div>
 				</h4>
 
 				<ul class="header-list-inner">
 					<li>
 						<a href="{% url 'captaineditteam' teamid=team.id  %}">
-							<span class="status pull_left"></span>
 							Change Team Name or Color
 						</a>
 					</li>
 					<li>
 						<a href="{% url 'captain_team_export' teamid=team.id  %}">
-							<span class="status pull_left"></span>
 							Export Team Information
 						</a>
 					</li>
 					<li>
 						<a href="{% url 'playersurvey' teamid=team.id  %}">
 							{% if team.league|get_player_survey_status:user %}
-								<span class="status state_success pull_left"></span>
+								<span class="status-dot status-dot-success"></span>
 							{% else %}
-								<span class="status state_error pull_left"></span>
+								<span class="status-dot status-dot-error"></span>
 							{% endif %}
 							Fill Out Player Survey
 						</a>
@@ -45,16 +43,16 @@
 					{% for game in team.get_past_games %}
 						<li>
 							{% if game|report_complete_for_team:user %}
-								<span class="status state_success pull_left"></span>
+								<span class="status-dot status-dot-success"></span>
 							{% else %}
-								<span class="status state_error pull_left"></span>
+								<span class="status-dot status-dot-error"></span>
 							{% endif %}
 							<a href="{% url 'gamereport' teamid=team.id gameid=game.id  %}">
 								On {{ game.date|date:"m/d" }} vs. {{ game|get_game_opponent_team_name:user}}
 							</a>
 						</li>
 					{% empty %}
-						<div class="text_center">No games found</div>
+						<h4>No Games Found</h4>
 					{% endfor %}
 				</ul>
 			</li>

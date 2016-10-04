@@ -1,31 +1,3 @@
-.center_margin {
-  margin: 0 auto;
-}
-
-.text_center {
-  text-align: center;
-}
-
-.text_right {
-  text-align: right;
-}
-
-.text_middle {
-  vertical-align: center;
-}
-
-.pull_left {
-  float: left;
-}
-
-.pull_right {
-  float: right;
-}
-
-.none_found {
-  color: #95A5A6;
-}
-
 /* SORTABLE PLUGIN */
 
 li.sortable-placeholder,
@@ -96,43 +68,6 @@ tr.sortable-placeholder td {
 .slide_selector .slider_description .right {
   float: right;
   text-align: right;
-}
-
-.status {
-  border-radius: 50%;
-  display: block;
-  height: 12px;
-  margin: 0.2em 6px;
-  width: 12px;
-}
-
-
-
-
-
-/* CAPTAIN / INDEX */
-
-.team_list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.team_list_header {
-  background: #ECF0F1;
-  border-radius: 2px;
-  margin: 0;
-  padding: 8px 6px;
-}
-
-.team_list > li > ul {
-  list-style: none;
-  margin: 18px 0;
-  padding: 0;
-}
-
-.team_list > li > ul > li {
-  padding: 2px;
 }
 
 

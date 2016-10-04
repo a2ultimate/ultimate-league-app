@@ -43,7 +43,7 @@
 				</div>
 			</div>
 
-			<table class="teams_table table-fixed">
+			<table class="teams_table table-centered table-fixed">
 				<tr>
 					{% for team in next_game.get_teams %}
 						<td class="team_container">
@@ -60,7 +60,7 @@
 									<div>
 										{% if team.email and user.is_authenticated%}
 										{% if user|is_on_team:team or user.is_superuser %}
-											<a class="pull_right" style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}">Email Team</a>
+											<a style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}">Email Team</a>
 										{% endif %}
 										{% endif %}
 
@@ -86,7 +86,7 @@
 										<li class="team_member">
 											{% if forloop.first and user.is_authenticated %}
 											{% if user.is_superuser or user|is_on_team:team or user|is_division_captain:team.league %}
-												<a class="pull_right" href="mailto:{% for captain in team.get_captains %}{{ captain.user.email }},{% endfor %}">Email Captains</a>
+												<a href="mailto:{% for captain in team.get_captains %}{{ captain.user.email }},{% endfor %}">Email Captains</a>
 											{% endif %}
 											{% endif %}
 
@@ -106,7 +106,7 @@
 								</ul>
 
 								{% if request.user|in_group:"junta" %}
-									<div class="team_notes text_center">
+									<div class="team_notes">
 										{{ team.get_members|length }} Player{{ team.get_members|length|pluralize }},
 										{{ team.get_male_members|length }} Male{{ team.get_male_members|length|pluralize }},
 										{{ team.get_female_members|length }} Female{{ team.get_female_members|length|pluralize }}
@@ -118,7 +118,7 @@
 						{% if forloop.counter|divisibleby:"2" %}
 							</tr><tr>
 						{% else %}
-							<td class="divider text_center">
+							<td class="divider">
 								<h1>vs</h1>
 							</td>
 						{% endif %}

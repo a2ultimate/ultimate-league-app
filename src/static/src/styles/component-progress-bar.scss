@@ -1,75 +1,96 @@
-.progress_bar {
-  background: #BDC3C7;
-  border-radius: 6px;
-  margin: 36px 26px 18px 2px;
-  padding: 0;
+.progress-bar {
   position: relative;
-  text-align: left;
   z-index: 1;
+
+  margin: 2.25rem 1.625rem 1.125rem 0.125rem;
+  padding: 0;
+
+  text-align: left;
+
+  border-radius: $border-radius;
+  background-color: $color-light-gray-dark;
 }
 
-.progress_bar_labeled {
-  margin-bottom: 32px;
+.progress-bar-labeled {
+  margin-bottom: 2.5rem;
 }
 
-.progress_bar > .progress {
-  background-color: #95A5A6;
-  border-radius: 6px;
+.progress-bar-progress {
+  z-index: 2;
+
   display: block;
-  height: 14px;
+
+  width: 100%;
+  height: 1rem;
   margin: 0;
   padding: 0;
-  width: 100%;
-  z-index: 2;
+
+  border-radius: $border-radius;
+  background-color: $color-gray;
 }
 
-.progress_bar > .tick {
-  background-color: #95A5A6;
-  border: 4px solid #F5F5F5;
-  border-radius: 50%;
-  display: block;
-  height: 28px;
-  margin-left: -14px;
-  margin-top: -14px;
+.progress-bar-tick {
   position: absolute;
+  z-index: 1;
   top: 50%;
-  width: 28px;
-  z-index: 1;
-}
 
-.progress_bar > .tick_label {
   display: block;
-  font-size: 13px;
-  font-weight: bold;
-  letter-spacing: 1px;
-  margin-left: -10%;
+
+  width: 2rem;
+  height: 2rem;
+  margin-top: -1rem;
+  margin-left: -1rem;
+
+  border: 0.25rem solid #f9f9f9;
+  border-radius: 50%;
+  background-color: $color-light-gray;
+}
+
+.progress-bar-tick-label {
   position: absolute;
-  text-align: center;
-  top: 26px;
-  width: 20%;
   z-index: 1;
+  top: 1.625rem;
+
+  display: block;
+
+  width: 20%;
+  margin-left: -10%;
+
+  text-align: center;
 }
 
-.progress_bar > .progress.error,
-.progress_bar > .tick.error {
-  background-color: #E74C3C;
+.progress-bar-progress-error {
+  background-color: $color-danger;
 }
 
-.progress_bar > .progress.info,
-.progress_bar > .tick.info {
-  background-color: #3498DB;
+.progress-bar-progress-info {
+  background-color: $color-info;
 }
 
-.progress_bar > .progress.success,
-.progress_bar > .tick.success {
-  background-color: #2ECC71;
+.progress-bar-progress-success {
+  background-color: $color-success;
 }
 
-.progress_bar > .progress.warning,
-.progress_bar > .tick.warning {
-  background-color: #F1C40F;
+.progress-bar-progress-warning {
+  background-color: $color-warning;
 }
 
-.progress_bar > .tick.active {
-  background-color: #3498DB;
+.progress-bar-tick-error {
+  border-color: $color-danger;
+}
+
+.progress-bar-tick-info {
+  border-color: $color-info;
+}
+
+.progress-bar-tick-success {
+  border-color: $color-success;
+}
+
+.progress-bar-tick-warning {
+  border-color: $color-warning;
+}
+
+.progress-bar-tick-active {
+  background-color: $color-primary;
 }

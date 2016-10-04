@@ -15,10 +15,10 @@
 	{% else %}
 		{% include "layout/league_header.html" with league=league header="Captain Status" only %}
 
-		<table class="table table-striped">
+		<table class="table table-centered table-striped">
 			<thead>
 				<tr>
-					<th>Captain</th>
+					<th></th>
 					{% regroup league.get_games by date as games %}
 					{% for game_date in games %}
 						<th>{{ game_date.grouper|date:"m/d" }}</th>
@@ -31,24 +31,24 @@
 				{% ifchanged captain.team %}{% if not forloop.first %}</tbody>{% endif %}{% endifchanged %}
 				{% ifchanged captain.team %}<tbody>{% endifchanged %}
 					<tr>
-						<td>
+						<th>
 							{{ captain.user.get_full_name }}
-						</td>
+						</th>
 						{% for game in league|get_user_games:captain.user %}
 							<td>
 								{% if game|report_complete_for_user:captain.user %}
-									<span class="status state_success center_margin" title="Score report submitted"></span>
+									<span class="status-dot status-dot-success" title="Score report submitted"></span>
 								{% else %}
-									<span class="status state_error center_margin" title="No score report submitted"></span>
+									<span class="status-dot status-dot-error" title="No score report submitted"></span>
 								{% endif %}
 							</td>
 						{% endfor %}
-						<td class="text_center">{{ league|get_num_reports_for_user:captain.user }}</td>
+						<td>{{ league|get_num_reports_for_user:captain.user }}</td>
 						<td>
 							{% if league|get_player_survey_status:captain.user %}
-								<span class="status state_success center_margin" title="Player survey submitted"></span>
+								<span class="status-dot status-dot-success" title="Player survey submitted"></span>
 							{% else %}
-								<span class="status state_error center_margin" title="No player survey submitted"></span>
+								<span class="status-dot status-dot-error" title="No player survey submitted"></span>
 							{% endif %}
 						</td>
 					</tr>

@@ -2,101 +2,103 @@
 {% load teams %}
 
 {% block content %}
-	{% include "layout/account_tabs.html" with selected_tab="captain" %}
+  {% include "layout/account_tabs.html" with selected_tab="captain" %}
 
   <div class="breadcrumbs">
-  	<ul class="breadcrumbs-list">
-  		<li class="breadcrumb">
+    <ul class="breadcrumbs-list">
+      <li class="breadcrumb">
         <a href="{% url 'captain' %}">Captain Resources</a>
       </li>
-  		<li class="breadcrumb">
+      <li class="breadcrumb">
         <a href="{% url 'playersurvey' teamid=team.id %}">Player Survey</a>
       </li>
-  	</ul>
+    </ul>
   </div>
 
-	<h1>Player Survey</h1>
+  <h1>Player Survey</h1>
 
-	<p>
-		Please complete the following form to the best of your ability.
-		The team formation process relies heavily on the accuracy of
-		these answers, as they will be used to help balance teams.
-	</p>
+  <p>
+    Please complete the following form to the best of your ability.
+    The team formation process relies heavily on the accuracy of
+    these answers, as they will be used to help balance teams.
+  </p>
 
-	<p>
-		If you do not feel that you are able to rate a player (e.g.
-		you were unable to evaluate them due to absences), please
-		check the "Not Sure" box.
-	</p>
+  <p>
+    If you do not feel that you are able to rate a player (e.g.
+    you were unable to evaluate them due to absences), please
+    check the "Not Sure" box.
+  </p>
 
-	<p>
-		<strong>Note:</strong> This information is only used by league
-		administrators. Your answers will never be shared or
-		made public.
-	</p>
+  <p>
+    <strong>Note:</strong> This information is only used by league
+    administrators. Your answers will never be shared or
+    made public.
+  </p>
 
-	<hr />
+  <hr />
 
-	<h2>Player Rating Values</h2>
+  <h2>Player Rating Values</h2>
 
-	<h3>Strategy</h3>
-	<ul>
-		{% for value, text in ratings_choices.strategy %}
-			<li>{{ value }} - {{ text }}</li>
-		{% endfor %}
-	</ul>
+  <h3>Strategy</h3>
+  <ul>
+    {% for value, text in ratings_choices.strategy %}
+      <li>{{ value }} - {{ text }}</li>
+    {% endfor %}
+  </ul>
 
-	<h3>Throwing</h3>
-	<ul>
-		{% for value, text in ratings_choices.throwing %}
-			<li>{{ value }} - {{ text }}</li>
-		{% endfor %}
-	</ul>
+  <h3>Throwing</h3>
+  <ul>
+    {% for value, text in ratings_choices.throwing %}
+      <li>{{ value }} - {{ text }}</li>
+    {% endfor %}
+  </ul>
 
-	<h3>Athleticism</h3>
-	<ul>
-		{% for value, text in ratings_choices.athleticism %}
-			<li>{{ value }} - {{ text }}</li>
-		{% endfor %}
-	</ul>
+  <h3>Athleticism</h3>
+  <ul>
+    {% for value, text in ratings_choices.athleticism %}
+      <li>{{ value }} - {{ text }}</li>
+    {% endfor %}
+  </ul>
 
-	<form class="form" method="post" action="{% url 'playersurvey' teamid=team.id  %}">{% csrf_token %}
-		{{ formset.management_form }}
+  <form class="form" method="post" action="{% url 'playersurvey' teamid=team.id  %}">{% csrf_token %}
+    {{ formset.management_form }}
 
-		<table class="table table-striped">
-			<tr>
-				<td></td>
-				<th class="text_center">Strategy</th>
-				<th class="text_center">Throwing</th>
-				<th class="text_center">Athleticism</th>
-				<th class="text_center">Spirit</th>
-				<th class="text_center">Not Sure</th>
-			</tr>
-			{% for row in survey %}
-				<tr>
-					<th>
-						<div>
-							{{ row.user.get_full_name }}
-							{% for hidden in row.form.hidden_fields %}
-								{{ hidden }}
-							{% endfor %}
-						</div>
-					</th>
-					{% for field in row.form.visible_fields %}
-						<td class="text_center">
-							<div class="{% if field.errors %}state_error{% endif %}">
-								{{ field }}
-								{% if not forloop.last %}
-									<div class="small strong">{{ row.user|get_average:field.label }}</div>
-								{% endif %}
-							</div>
-						</td>
-					{% endfor %}
-				</tr>
-			{% endfor %}
-		</table>
+    <table class="table table-centered table-striped">
+      <tbody>
+        <tr>
+          <td></td>
+          <th>Strategy</th>
+          <th>Throwing</th>
+          <th>Athleticism</th>
+          <th>Spirit</th>
+          <th>Not Sure</th>
+        </tr>
+        {% for row in survey %}
+          <tr>
+            <th>
+              <div>
+                {{ row.user.get_full_name }}
+                {% for hidden in row.form.hidden_fields %}
+                  {{ hidden }}
+                {% endfor %}
+              </div>
+            </th>
+            {% for field in row.form.visible_fields %}
+              <td>
+                <div class="{% if field.errors %}state_error{% endif %}">
+                  {{ field }}
+                  {% if not forloop.last %}
+                    <div class="small strong">{{ row.user|get_average:field.label }}</div>
+                  {% endif %}
+                </div>
+              </td>
+            {% endfor %}
+          </tr>
+        </tbody>
+      {% endfor %}
+    </table>
 
-		<input class="button button-success" type="submit" value="Update" />
-		<a class="button button-link" href="{% url 'playersurvey' teamid=team.id %}">Cancel</a>
-	</form>
+    <input class="button button-success" type="submit" value="Update" />
+    <a class="button button-link" href="{% url 'playersurvey' teamid=team.id %}">Cancel</a>
+  </form>
 {% endblock %}

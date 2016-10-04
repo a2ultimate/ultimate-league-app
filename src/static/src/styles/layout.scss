@@ -132,7 +132,7 @@ body {
 
       color: $color-dark-gray;
 
-      font-family: $font-family-lato-bold;
+      font-family: $font-family-lato-semibold;
 
       &:active,
       &:hover {
@@ -184,7 +184,7 @@ body {
 
       color: $color-white;
 
-      font-family: $font-family-lato-regular;
+      font-family: $font-family-lato;
     }
   }
 
@@ -272,6 +272,8 @@ body {
   width: 2rem;
   height: 2rem;
   margin: 0 0.25rem;
+
+  border-radius: $border-radius;
 }
 
 .content-left-links {
@@ -373,7 +375,7 @@ body {
 .footer-content {
   padding: 0.1875rem;
 
-  font-size: 0.9375rem;
-
   text-align: center;
+
+  font-size: 0.9375rem;
 }
