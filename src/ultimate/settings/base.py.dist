@@ -160,12 +160,12 @@ ANNOUNCEMENTS_GROUP_ADDRESS = ''
 # Paypal Info
 PAYPAL_RECEIVER_EMAIL = ''
 PAYPAL_TEST = True      # Testing mode on
-PAYPAL_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
-PAYPAL_SUBSCRIPTION_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
-PAYPAL_DONATION_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
-PAYPAL_SANDBOX_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
-PAYPAL_SUBSCRIPTION_SANDBOX_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
-PAYPAL_DONATION_SANDBOX_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
+PAYPAL_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
+PAYPAL_SUBSCRIPTION_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
+PAYPAL_DONATION_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
+PAYPAL_SANDBOX_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
+PAYPAL_SUBSCRIPTION_SANDBOX_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
+PAYPAL_DONATION_SANDBOX_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
 
 
 # PYBB - http://www.pybbm.org/

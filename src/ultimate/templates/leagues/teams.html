@@ -6,220 +6,142 @@
 {% load utility %}
 
 {% block content %}
+<div class="page-division-teams">
 
-  {% include "layout/league_header.html" with league=league only %}
+  {% include 'layout/league_header.html' with league=league only %}
 
-  {% include "layout/league_tabs.html" with selected_tab="teams" %}
+  {% include 'layout/league_tabs.html' with selected_tab='teams' %}
 
-  {% if game_dates|length %}
-    <table id="schedule_table" class="table table-fixed table-striped">
-      <thead>
-        <tr>
-          <td></td>
-          {% regroup columns by field as field_list %}
-          {% for field in field_list %}
-            <th class="text_center" colspan="{{ field.list|length }}">
-              {{ field.grouper }}
-
-              {% if field.grouper.driving_link %}
-                <small>
-                  &middot;
-                  <a href="{{ field.grouper.driving_link }}" target="_blank">
-                    Directions
-                  </a>
-                </small>
-              {% endif %}
-
-              {% if field.grouper.layout_link %}
-                <small>
-                  &middot;
-                  <a href="{% static field.grouper.layout_link %}" target="_blank">
-                    Layout
-                  </a>
-                </small>
-              {% endif %}
-            </th>
-          {% endfor %}
-        </tr>
-        <tr>
-          <td></td>
-          {% regroup columns by start as start_list %}
-          {% for start in start_list %}
-            <th class="text_center" colspan="{{ start.list|length }}">
-              {{ start.grouper|date:'h:iA'|lower }}
-            </th>
-          {% endfor %}
-        </tr>
-        <tr>
-          <td></td>
-          {% regroup columns by field_name as field_name_list %}
-          {% for field_name in field_name_list %}
-              <th class="text_center" colspan="{{ field_name.list|length }}">
-                {{ field_name.grouper.name }}
-              </th>
-          {% endfor %}
-        </tr>
-      </thead>
-      <tbody>
-        {% for game_date in game_dates %}
-          <tr class="{% if game_date.date == next_game_date %}active{% endif %}">
-            <th class="">
-              <div>{{ game_date.date|date:"M" }}</div>
-              <div>{{ game_date.date|date:"jS" }}</div>
-            </th>
-            {% for game in game_date.games %}
-              <td class="text_center">
-                {% if game %}
-                  {% if game in user_games %}
-                    {% for team in game.get_teams %}
-                      <a href="#team_roster_{{ team.id }}" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
-                        {{ team.id }}
-                      </a>
-                    {% empty %}
-                      TBA
-                    {% endfor %}
-                  {% else %}
-                    {% for team in game.get_teams %}
-                      <div>{{ team.id }}</div>
-                    {% empty %}
-                      TBA
-                    {% endfor %}
-                  {% endif %}
-                {% endif %}
-              </td>
-            {% endfor %}
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  <div class="page-division-teams-schedule">
+    {% if game_dates|length %}
+    {% include '_partials/schedule_table.html' with league=league columns=columns game_dates=game_dates user_games=user_games next_game_date=next_game_date only %}
 
     {% if league.schedule_note %}
-      <p class="schedule-note">
-        {{ league.schedule_note }}
-      </p>
+    <p class="page-division-teams-schedule-notes">
+      {{ league.schedule_note }}
+    </p>
     {% endif %}
-  {% else %}
-    <h3 class="none_found text_center">
+    {% else %}
+    <h4>
       Schedules are not yet available
-    </h3>
-  {% endif %}
+    </h4>
+    {% endif %}
+  </div>
 
-  {% if teams %}
-    <table class="teams_table table-fixed">
-      <tr>
-        {% for team in teams %}
-          <td id="team_roster_{{ team.id }}">
-            <div class="team">
-              <div class="team_info" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
-                <div class="team_name" style="font-size: {{ team.name|get_team_name_font_size }}px;">
-                  {% if team.name %}
-                    {{ team.name }}
-                  {% else %}
-                    Team {{ team.id }}
-                  {% endif %}
-                </div>
+  <div class="page-division-teams-teams">
+    <div class="page-division-teams-teams-row">
+      {% for team in teams %}
+      <div class="page-division-teams-teams-row-team team" id="team-roster-{{ team.id }}">
+        <div class="team_info" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
+          <div class="team_name" style="font-size: {{ team.name|get_team_name_font_size }}px;">
+            {% if team.name %}
+              {{ team.name }}
+            {% else %}
+              Team {{ team.id }}
+            {% endif %}
+          </div>
 
-                <div>
-                  {% if team.email and user.is_authenticated%}
-                  {% if user|is_on_team:team or user.is_superuser %}
-                    <a style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}">Email Team</a>
-                  {% endif %}
-                  {% endif %}
+          <div>
+            {% if team.email and user.is_authenticated%}
+            {% if user|is_on_team:team or user.is_superuser %}
+              <a style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}">Email Team</a>
+            {% endif %}
+            {% endif %}
 
-                  <div>
-                    {% if team.name %}
-                      Team {{ team.id }}
-                      {% if team.color %}
-                        -
-                      {% endif %}
-                    {% endif %}
+            <div>
+              {% if team.name %}
+                Team {{ team.id }}
+                {% if team.color %}
+                  -
+                {% endif %}
+              {% endif %}
 
-                    {{ team.color }}
+              {{ team.color }}
 
-                    {% if not team.name and not team.color %}
-                      &nbsp;
-                    {% endif %}
-                  </div>
-                </div>
-              </div>
-
-              <ul class="team_members">
-                {% for team_member in team.get_members %}
-                  <li class="team_member">
-                    {% if forloop.first and user.is_authenticated %}
-                    {% if user.is_superuser or user|is_on_team:team or user|is_division_captain:league %}
-                      <a href="mailto:{% for captain in team.get_captains %}{{ captain.user.email }},{% endfor %}">Email Captains</a>
-                    {% endif %}
-                    {% endif %}
-
-                    {% if team_member.captain %}
-                      <span class="strong">
-                    {% endif %}
-
-                    {{ team_member.user.get_full_name }}
-
-                    {% if team_member.captain %}
-                      </span>
-                    {% endif %}
-
-                    <em>{{ team_member.user.profile.nickname }}</em>
-                  </li>
-                {% endfor %}
-              </ul>
-
-              {% if request.user|in_group:"junta" %}
-                <div class="team_notes text_center">
-                  <h5>Admin Only</h5>
-                  {{ team.get_members|length }} Player{{ team.get_members|length|pluralize }},
-                  {{ team.get_male_members|length }} Male{{ team.get_male_members|length|pluralize }},
-                  {{ team.get_female_members|length }} Female{{ team.get_female_members|length|pluralize }}
-                </div>
+              {% if not team.name and not team.color %}
+                &nbsp;
               {% endif %}
             </div>
-          </td>
-
-          {% if forloop.counter|divisibleby:2 %}
-            </tr><tr>
-          {% endif %}
-        {% endfor %}
-      </tr>
-    </table>
-
-    {% if request.user|in_group:"junta" %}
-      <div class="page-teams-admin-notes">
-        <div class="page-teams-admin-notes-title">
-          Admin Only
+          </div>
         </div>
 
-        <div class="page-teams-admin-notes-content">
-          <dl>
-            <dt>Division Email Address:</dt>
-            <dd>
-              {% if league.division_email %}
-                <a href="mailto:{{ league.division_email }}">
-                  {{ league.division_email }}
-                </a>
-              {% else %}
-                None
+        <ul class="team_members">
+          {% for team_member in team.get_members %}
+            <li class="team_member">
+              {% if forloop.first and user.is_authenticated %}
+              {% if user.is_superuser or user|is_on_team:team or user|is_division_captain:league %}
+                <a href="mailto:{% for captain in team.get_captains %}{{ captain.user.email }},{% endfor %}">Email Captains</a>
               {% endif %}
-            </dd>
-            <dt>Division Captains Email Address:</dt>
-            <dd>
-              {% if league.division_captains_email %}
-                <a href="mailto:{{ league.division_captains_email }}">
-                  {{ league.division_captains_email }}
-                </a>
-              {% else %}
-                None
               {% endif %}
-            </dd>
-          </dl>
-        </div>
+
+              {% if team_member.captain %}
+                <span class="strong">
+              {% endif %}
+
+              {{ team_member.user.get_full_name }}
+
+              {% if team_member.captain %}
+                </span>
+              {% endif %}
+
+              <em>{{ team_member.user.profile.nickname }}</em>
+            </li>
+          {% endfor %}
+        </ul>
+
+        {% if request.user|in_group:'junta' %}
+          <div class="team_notes text_center">
+            <h5>Admin Only</h5>
+            {{ team.get_members|length }} Player{{ team.get_members|length|pluralize }},
+            {{ team.get_male_members|length }} Male{{ team.get_male_members|length|pluralize }},
+            {{ team.get_female_members|length }} Female{{ team.get_female_members|length|pluralize }}
+          </div>
+        {% endif %}
       </div>
-    {% endif %}
-  {% else %}
-    <h3 class="none_found text_center">
-      Teams are not yet available
-    </h3>
+
+      {% if forloop.counter|divisibleby:2 %}
+      </div><div class="page-division-teams-teams-row">
+      {% endif %}
+      {% empty %}
+      <h4>
+        Teams are not yet available
+      </h4>
+      {% endfor %}
+    </div>
+  </div>
+
+
+  {% if teams and request.user|in_group:'junta' %}
+    <div class="page-division-teams-notes">
+      <div class="page-division-teams-notes-title">
+        Admin Only
+      </div>
+
+      <div class="page-division-teams-notes-content">
+        <dl>
+          <dt>Division Email Address:</dt>
+          <dd>
+            {% if league.division_email %}
+              <a href="mailto:{{ league.division_email }}">
+                {{ league.division_email }}
+              </a>
+            {% else %}
+              None
+            {% endif %}
+          </dd>
+          <dt>Division Captains Email Address:</dt>
+          <dd>
+            {% if league.division_captains_email %}
+              <a href="mailto:{{ league.division_captains_email }}">
+                {{ league.division_captains_email }}
+              </a>
+            {% else %}
+              None
+            {% endif %}
+          </dd>
+        </dl>
+      </div>
+    </div>
   {% endif %}
+</div>
 {% endblock %}

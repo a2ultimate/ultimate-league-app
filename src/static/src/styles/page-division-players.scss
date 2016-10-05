@@ -1,0 +1,24 @@
+.page-division-players-notes {
+  overflow: hidden;
+
+  border-radius: $border-radius;
+  background-color: $color-light-gray;
+}
+
+.page-division-players-notes-title {
+  padding: 1rem 0;
+
+  text-align: center;
+  text-transform: uppercase;
+
+  color: $color-white;
+  background-color: $color-gray;
+}
+
+.page-division-players-notes-content {
+  padding: 0.5rem 1rem 1rem;
+}
+
+.page-division-players-notes-content dl dd {
+  margin-bottom: 1rem;
+}

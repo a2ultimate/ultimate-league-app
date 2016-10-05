@@ -151,7 +151,7 @@ require('./jquery-ui.js');
 
 
 $(function() {
-	var $alerts = $('#alerts_container');
+	var $alerts = $('.alerts');
 	$alerts.on('click', function () {
 		$alerts.slideUp('slow');
 	});
@@ -159,7 +159,7 @@ $(function() {
 	if ($alerts.length) {
 		setTimeout(function () {
 			$alerts.slideUp('slow');
-		}, 10000);
+		}, 12000);
 	}
 
 	$('.sortable_table').sortable({

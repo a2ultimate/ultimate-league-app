@@ -102,67 +102,18 @@ def teams(request, year, season, division):
 	else:
 		user_games = None
 
-	columns = {}
-
-	for game in games:
-		game_field = game.field_name.field.pk
-		game_start = game.start.time() if game.start else game.start
-		game_field_name = game.field_name.pk
-		column_id = '{}_{}_{}'.format(game_field, game_start, game_field_name)
-
-		if column_id not in columns:
-			columns[column_id] = {
-				'id': column_id,
-				'field': game.field_name.field,
-				'start': game.start.time() if game.start else None,
-				'field_name': game.field_name,
-				}
-
-	columns = columns.values()
-	columns.sort(key=lambda k: k['field_name'].name)
-	columns.sort(key=lambda k: k['start'])
-	columns.sort(key=lambda k: k['field'].name)
-
-	num_columns = len(columns)
-	current_column_index = 0
-	current_date = getattr(games.first(), 'date', None)
-	game_dates = {}
-	game_dates[current_date] = []
-
-	for game in games:
-		if current_date != game.date:
-			game_dates[game.date] = []
-
-			while current_column_index < num_columns:
-				game_dates[current_date].append(None)
-				current_column_index += 1
-
-			current_date = game.date
-			current_column_index = 0
-
-		game_field = game.field_name.field.pk
-		game_start = game.start.time() if game.start else game.start
-		game_field_name = game.field_name.pk
-		column_id = '{}_{}_{}'.format(game_field, game_start, game_field_name)
-
-		while columns[current_column_index]['id'] != column_id:
-			game_dates[current_date].append(None)
-			current_column_index += 1
-
-		game_dates[current_date].append(game)
-		current_column_index += 1
-
-	game_dates = [{'date': i, 'games': game_dates[i]} for i in sorted(game_dates)]
+	columns = league.get_game_locations(games=games)
+	game_dates = league.get_game_dates(games=games, game_locations=columns)
 
 	return render_to_response('leagues/teams.html',
 	{
 		'league': league,
 
+		'next_game_date': next_game_date,
+		'user_games': user_games,
+
 		'columns': columns,
 		'game_dates': game_dates,
-
-		'user_games': user_games,
-		'next_game_date': next_game_date,
 
 		'teams': Team.objects.filter(league=league, hidden=False)
 			.prefetch_related('teammember_set')
@@ -310,7 +261,7 @@ def registration(request, year, season, division, section=None):
 			else:
 				success = False
 				section = 'attendance'
-				
+
 				if league.type == 'league':
 					messages.error(request, 'You must provide a valid attendance and captaining rating to continue.')
 				else:

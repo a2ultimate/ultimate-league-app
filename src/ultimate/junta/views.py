@@ -51,19 +51,21 @@ def captainstatus(request, year=None, season=None, division=None):
 @login_required
 @user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='junta').exists())
 def leagueresults(request, year=None, season=None, division=None):
-	league = None
-	field_names = None
 	leagues = None
+	league = None
+	game_report = None
+	game_locations = None
+	game_dates = None
 	team_records = None
-
 
 	if year and season and division:
 		league = get_object_or_404(League, year=year, season=season, night=division)
-		field_names = league.get_field_names()
-		teams = league.get_teams()
+		games = league.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
+		game_locations = league.get_game_locations(games=games)
+		game_dates = league.get_game_dates(games=games, game_locations=game_locations)
 
 		team_records = {}
-		for team in teams:
+		for team in league.get_teams():
 			team_records[team.id] = team.get_record_list()
 
 	else:
@@ -71,10 +73,12 @@ def leagueresults(request, year=None, season=None, division=None):
 
 	return render_to_response('junta/leagueresults.html',
 		{
-			'field_names': field_names,
-			'league': league,
 			'leagues': leagues,
-			'team_records': team_records
+			'league': league,
+			'game_report': game_report,
+			'game_locations': game_locations,
+			'game_dates': game_dates,
+			'team_records': team_records,
 		},
 		context_instance=RequestContext(request))
 
@@ -82,11 +86,11 @@ def leagueresults(request, year=None, season=None, division=None):
 @login_required
 @user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='junta').exists())
 def gamereports(request, year=None, season=None, division=None, game_id=None, team_id=None):
-	field_names = None
-	game_report = None
-	games = None
-	league = None
 	leagues = None
+	league = None
+	game_report = None
+	game_locations = None
+	game_dates = None
 
 	if year and season and division:
 		league = get_object_or_404(League, year=year, season=season, night=division)
@@ -98,19 +102,20 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
 			game_report = game.get_report_for_team(team).get()
 
 		else:
-			field_names = league.get_field_names()
-			games = league.get_games()
+			games = league.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
+			game_locations = league.get_game_locations(games=games)
+			game_dates = league.get_game_dates(games=games, game_locations=game_locations)
 
 	else:
 		leagues = League.objects.all().order_by('-league_start_date')
 
 	return render_to_response('junta/gamereports.html',
 		{
-			'field_names': field_names,
-			'games': games,
-			'game_report': game_report,
+			'leagues': leagues,
 			'league': league,
-			'leagues': leagues
+			'game_report': game_report,
+			'game_locations': game_locations,
+			'game_dates': game_dates,
 		},
 		context_instance=RequestContext(request))
 

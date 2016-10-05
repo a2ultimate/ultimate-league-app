@@ -1,4 +1,4 @@
-{% extends "layout/layout_user.html" %}
+{% extends 'layout/layout_user.html' %}
 
 {% load math %}
 {% load leagues %}
@@ -6,146 +6,144 @@
 {% load utility %}
 
 {% block content %}
+<div class="page-division-players">
+  {% include "layout/league_header.html" with league=league only %}
 
-	{% include "layout/league_header.html" with league=league only %}
+  {% include "layout/league_tabs.html" with selected_tab="players" %}
 
-	{% include "layout/league_tabs.html" with selected_tab="players" %}
+  {% if not league.is_after_registration_start and not request.user|in_group:"junta" %}
+    <h4>
+      Players are not yet available
+    </h4>
+  {% else %}
+    {% if user_registration.is_complete and user_registration.league.baggage > 1 and not user_registration.waitlist and not user_registration.league.waitlist_start_date|is_past_deadline %}
+      <p>To add someone to your group, you need to know their email address.</p>
+      <p>You may <a href="{% url 'league_group' year=league.year season=league.season division=league.night %}">form a baggage group here</a>.</p>
+    {% endif %}
 
-	{% if not league.is_after_registration_start and not request.user|in_group:"junta" %}
-		<h3 class="none_found text_center">
-			Players are not yet available
-		</h3>
-	{% else %}
-		{% if user_registration.is_complete and user_registration.league.baggage > 1 and not user_registration.waitlist and not user_registration.league.waitlist_start_date|is_past_deadline %}
-			<p>To add someone to your group, you need to know their email address.</p>
-			<p>You may <a href="{% url 'league_group' year=league.year season=league.season division=league.night  %}">form a baggage group here</a>.</p>
-		{% endif %}
+    <h5>Name not on the list?</h5>
+    <ul>
+      <li>Did you pay by check? If so, maybe we don't have your check yet.</li>
+      <li>Anything else? <a href="mailto:registration@annarborultimate.org">Email us at registration@annarborultimate.org.</a></li>
+    </ul>
 
-		<h4>Name not on the list?</h4>
-		<ul>
-			<li>Did you pay by check? If so, maybe we don't have your check yet.</li>
-			<li>Anything else? Email <span class="email">registration.at.annarborultimate.org</span></li>
-		</ul>
+    {% if waitlist_registrations|length %}
+    <h4>Waitlist</h4>
 
-		{% if waitlist_registrations|length %}
-			<h3>Waitlist</h3>
+    <ol>
+      {% for registration in waitlist_registrations %}
+        <li>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></li>
+      {% endfor %}
+    </ol>
+    {% endif %}
 
-			<ol>
-				{% for registration in waitlist_registrations %}
-					<li>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></li>
-				{% endfor %}
-			</ol>
-		{% endif %}
+    <div id="league_players">
+      <h6>
+        There are {{ registrations_remaining }} of {{ league.max_players }} spaces available.
+        {% if registrations_remaining <= 0 %}
+          New registrations will be added to the waitlist.
+        {% endif %}
+      </h6>
 
-		<div id="league_players">
-			<h4>
-				There are {{ registrations_remaining }} of {{ league.max_players }} spaces available.
-				{% if registrations_remaining <= 0 %}
-					New registrations will be added to the waitlist.
-				{% endif %}
-			</h4>
+      <table class="table table-striped">
+        <tbody>
+        {% regroup complete_registrations|dictsort:"baggage.id" by baggage as baggage_group %}
+        {% for baggage in baggage_group|groups_sort %}
+          {% if not forloop.counter|divisibleby:'2' %}
+            <tr>
+          {% endif %}
 
-			<table class="table table-striped">
-				<tbody>
-				{% regroup complete_registrations|dictsort:"baggage.id" by baggage as baggage_group %}
-				{% for baggage in baggage_group|groups_sort %}
-					{% if not forloop.counter|divisibleby:'2' %}
-						<tr>
-					{% endif %}
+          <td class="col-span-6">
+            {% for registration in baggage.list %}
+              <div>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></div>
+            {% endfor %}
+          </td>
 
-					<td class="col-span-6">
-						{% for registration in baggage.list %}
-							<div>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></div>
-						{% endfor %}
-					</td>
+          {% if forloop.counter|divisibleby:'2' %}
+            </tr>
+          {% endif %}
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
 
-					{% if forloop.counter|divisibleby:'2' %}
-						</tr>
-					{% endif %}
-				{% endfor %}
-				</tbody>
-			</table>
-		</div>
+    {% if request.user|in_group:"junta" %}
+    <div class="page-division-players-notes">
+      <h5 class="page-division-players-notes-title">
+        Admin Only
+      </h5>
 
-		{% if request.user|in_group:"junta" %}
-			{% if unassigned_registrations|length %}
-				<hr />
-				<h2>Unassigned Registrations ({{ unassigned_registrations|length }})</h2>
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>Name</th>
-							<th>Status</th>
-							<th>Last Updated</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for registration in unassigned_registrations|dictsort:"progress"|dictsort:"registered" %}
-							<tr>
-								<td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></td>
-								<td>{{ registration.status }}</td>
-								<td>{{ registration.registered|date:"Y/m/d h:iA" }}</td>
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
-			{% endif %}
+      <div class="page-division-players-notes-content">
+        {% if unassigned_registrations|length %}
+        <h4>Unassigned Registrations ({{ unassigned_registrations|length }})</h4>
+        <table class="table table-condensed">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Status</th>
+              <th>Last Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for registration in unassigned_registrations|dictsort:"progress"|dictsort:"registered" %}
+              <tr>
+                <td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></td>
+                <td>{{ registration.status }}</td>
+                <td>{{ registration.registered|date:"Y/m/d h:iA" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
 
-			{% if incomplete_registrations|length %}
-				<hr />
-				<h2>Incomplete Registrations ({{ incomplete_registrations|length }})</h2>
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>Name</th>
-							<th>Status</th>
-							<th>Last Updated</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for registration in incomplete_registrations|dictsort:"progress"|dictsort:"updated" %}
-							<tr>
-								<td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></td>
-								<td>{{ registration.status }}</td>
-								<td>{{ registration.updated|date:"Y/m/d h:iA" }}</td>
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
-			{% endif %}
+        {% if incomplete_registrations|length %}
+        <h4>Incomplete Registrations ({{ incomplete_registrations|length }})</h4>
+        <table class="table table-condensed">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Status</th>
+              <th>Last Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for registration in incomplete_registrations|dictsort:'progress'|dictsort:'updated' %}
+              <tr>
+                <td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></td>
+                <td>{{ registration.status }}</td>
+                <td>{{ registration.updated|date:'Y/m/d h:iA' }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
 
-			{% if refunded_registrations|length %}
-				<hr />
-				<h2>Refunded Registrations ({{ refunded_registrations|length }})</h2>
-				<table class="table table-striped">
-					<tbody>
-						{% for registration in refunded_registrations|dictsort:"updated" %}
-							<tr>
-								<td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></td>
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
-			{% endif %}
+        {% if refunded_registrations|length %}
+        <h4>Refunded Registrations ({{ refunded_registrations|length }})</h4>
+        <table class="table table-condensed">
+          <tbody>
+            {% for registration in refunded_registrations|dictsort:'updated' %}
+              <tr>
+                <td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
 
-			<div class="page-players-admin-notes">
-				<div class="page-players-admin-notes-title">
-					Admin Only
-				</div>
-
-				<div class="page-players-admin-notes-content">
-					<dl>
-						<dt>Complete Registrations:</dt>
-						<dd>{{ complete_registrations|length }}</dd>
-						<dt>Female Registrations:</dt>
-						<dd>{{ registrations_female }}</dd>
-						<dt>Male Registrations:</dt>
-						<dd>{{ registrations_male }}</dd>
-						<dt>Minor Registrations:</dt>
-						<dd>{{ registrations_minor }}</dd>
-					</dl>
-				</div>
-			</div>
-		{% endif %}
-	{% endif %}
+        <dl>
+        <dt>Complete Registrations:</dt>
+        <dd>{{ complete_registrations|length }}</dd>
+        <dt>Female Registrations:</dt>
+        <dd>{{ registrations_female }}</dd>
+        <dt>Male Registrations:</dt>
+        <dd>{{ registrations_male }}</dd>
+        <dt>Minor Registrations:</dt>
+        <dd>{{ registrations_minor }}</dd>
+      </dl>
+      </div>
+    </div>
+    {% endif %}
+  {% endif %}
+</div>
 {% endblock %}

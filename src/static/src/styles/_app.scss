@@ -26,6 +26,7 @@
 @import 'component-list';
 @import 'component-message';
 @import 'component-progress-bar';
+@import 'component-schedule-table';
 @import 'component-social';
 @import 'component-status-dot';
 @import 'component-table';
@@ -35,8 +36,11 @@
 @import 'layout';
 
 // pages
+@import 'page-division-players';
+@import 'page-division-teams';
 @import 'page-home';
 @import 'page-schedule-generation';
+@import 'page-user-index';
 
 // legacy
 @import '_print';

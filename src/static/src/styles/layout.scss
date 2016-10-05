@@ -236,7 +236,7 @@ body {
 
   border-right: 0.125rem solid $color-secondary;
 
-  @include span-columns(3);
+  @include span-columns(3, 'block-collapse');
 }
 
 .content-left-logo {
@@ -352,14 +352,11 @@ body {
 .content-left-leagues-list-element-divisions-list-element-links-list-element-link {
 }
 
-.content-left-leagues-list-element-divisions-list-element-links-list-element-link {
-}
-
 .content-right {
   margin-bottom: 1rem;
   padding: 0 0 0.5rem 1rem;
 
-  @include span-columns(9);
+  @include span-columns(9, 'block-collapse');
 }
 
 .footer {

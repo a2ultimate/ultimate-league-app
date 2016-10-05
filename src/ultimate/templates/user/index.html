@@ -8,200 +8,203 @@
 {% load utility %}
 
 {% block content %}
-	{% include "layout/account_tabs.html" with selected_tab="user" %}
+<div class="page-user-index">
+  {% include "layout/account_tabs.html" with selected_tab="user" %}
 
-	{% if next_game and next_game.get_teams|length %}
-		<div id="next_game">
-			<div class="next_game_info">
-				<p>Your Next Game Is On:</p>
-				<div id="next_game_date">{{ next_game.date|date:"l F dS, Y" }}</div>
-				{% if next_game.start %}
-					<div id="next_game_time">{{ next_game.start|date:'g:iA'|lower }}</div>
-				{% else %}
-					<div id="next_game_time">{{ next_game.league.times }}</div>
-				{% endif %}
-				<div id="next_game_field">
-					at {{ next_game.field_name.field.name }} {{ next_game.field_name.name }}
+  {% if next_game and next_game.get_teams|length %}
 
-					{% if next_game.field_name.field.driving_link %}
-						<small>
-							&middot;
-							<a href="{{ next_game.field_name.field.driving_link }}" target="_blank">
-								Directions
-							</a>
-						</small>
-					{% endif %}
+    <div class="page-user-index-next-game">
+      <div class="page-user-index-next-game-info">
+        <p>Your Next Game Is On:</p>
+        <div class="page-user-index-next-game-info-date">{{ next_game.date|date:"l F dS, Y" }}</div>
+        {% if next_game.start %}
+          <div class="page-user-index-next-game-info-time">{{ next_game.start|date:'g:iA'|lower }}</div>
+        {% else %}
+          <div class="page-user-index-next-game-info-time">{{ next_game.league.times }}</div>
+        {% endif %}
+        <div class="page-user-index-next-game-info-field">
+          at {{ next_game.field_name.field.name }} {{ next_game.field_name.name }}
 
-					{% if next_game.field_name.field.layout_link %}
-						<small>
-							&middot;
-							<a href="{% static next_game.field_name.field.layout_link %}" target="_blank">
-								Layout
-							</a>
-						</small>
-					{% endif %}
-				</div>
-			</div>
+          {% if next_game.field_name.field.driving_link %}
+            <small>
+              &middot;
+              <a href="{{ next_game.field_name.field.driving_link }}" target="_blank">
+                Directions
+              </a>
+            </small>
+          {% endif %}
 
-			<table class="teams_table table-centered table-fixed">
-				<tr>
-					{% for team in next_game.get_teams %}
-						<td class="team_container">
-							<div class="team">
-								<div class="team_info" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
-									<div class="team_name" style="font-size: {{ team.name|get_team_name_font_size }}px;">
-										{% if team.name %}
-											{{ team.name }}
-										{% else %}
-											Team {{ team.id }}
-										{% endif %}
-									</div>
+          {% if next_game.field_name.field.layout_link %}
+            <small>
+              &middot;
+              <a href="{% static next_game.field_name.field.layout_link %}" target="_blank">
+                Layout
+              </a>
+            </small>
+          {% endif %}
+        </div>
+      </div>
 
-									<div>
-										{% if team.email and user.is_authenticated%}
-										{% if user|is_on_team:team or user.is_superuser %}
-											<a style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}">Email Team</a>
-										{% endif %}
-										{% endif %}
+      <table class="teams_table table-centered table-fixed">
+        <tr>
+          {% for team in next_game.get_teams %}
+            <td class="team_container">
+              <div class="team">
+                <div class="team_info" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
+                  <div class="team_name" style="font-size: {{ team.name|get_team_name_font_size }}px;">
+                    {% if team.name %}
+                      {{ team.name }}
+                    {% else %}
+                      Team {{ team.id }}
+                    {% endif %}
+                  </div>
 
-										<div>
-											{% if team.name %}
-												Team {{ team.id }}
-												{% if team.color %}
-													-
-												{% endif %}
-											{% endif %}
+                  <div>
+                    {% if team.email and user.is_authenticated%}
+                    {% if user|is_on_team:team or user.is_superuser %}
+                      <a style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}">Email Team</a>
+                    {% endif %}
+                    {% endif %}
 
-											{{ team.color }}
+                    <div>
+                      {% if team.name %}
+                        Team {{ team.id }}
+                        {% if team.color %}
+                          -
+                        {% endif %}
+                      {% endif %}
 
-											{% if not team.name and not team.color %}
-												&nbsp;
-											{% endif %}
-										</div>
-									</div>
-								</div>
+                      {{ team.color }}
 
-								<ul class="team_members">
-									{% for team_member in team.get_members %}
-										<li class="team_member">
-											{% if forloop.first and user.is_authenticated %}
-											{% if user.is_superuser or user|is_on_team:team or user|is_division_captain:team.league %}
-												<a href="mailto:{% for captain in team.get_captains %}{{ captain.user.email }},{% endfor %}">Email Captains</a>
-											{% endif %}
-											{% endif %}
+                      {% if not team.name and not team.color %}
+                        &nbsp;
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
 
-											{% if team_member.captain %}
-												<span class="strong">
-											{% endif %}
+                <ul class="team_members">
+                  {% for team_member in team.get_members %}
+                    <li class="team_member">
+                      {% if forloop.first and user.is_authenticated %}
+                      {% if user.is_superuser or user|is_on_team:team or user|is_division_captain:team.league %}
+                        <a href="mailto:{% for captain in team.get_captains %}{{ captain.user.email }},{% endfor %}">Email Captains</a>
+                      {% endif %}
+                      {% endif %}
 
-											{{ team_member.user.get_full_name }}
+                      {% if team_member.captain %}
+                        <span class="strong">
+                      {% endif %}
 
-											{% if team_member.captain %}
-												</span>
-											{% endif %}
+                      {{ team_member.user.get_full_name }}
 
-											<em>{{ team_member.user.profile.nickname }}</em>
-										</li>
-									{% endfor %}
-								</ul>
+                      {% if team_member.captain %}
+                        </span>
+                      {% endif %}
 
-								{% if request.user|in_group:"junta" %}
-									<div class="team_notes">
-										{{ team.get_members|length }} Player{{ team.get_members|length|pluralize }},
-										{{ team.get_male_members|length }} Male{{ team.get_male_members|length|pluralize }},
-										{{ team.get_female_members|length }} Female{{ team.get_female_members|length|pluralize }}
-									</div>
-								{% endif %}
-							</div>
-						</td>
+                      <em>{{ team_member.user.profile.nickname }}</em>
+                    </li>
+                  {% endfor %}
+                </ul>
 
-						{% if forloop.counter|divisibleby:"2" %}
-							</tr><tr>
-						{% else %}
-							<td class="divider">
-								<h1>vs</h1>
-							</td>
-						{% endif %}
-					{% endfor %}
-				</tr>
-			</table>
-		</div>
-	{% else %}
-		<h5>You have no upcoming games.</h5>
-	{% endif %}
+                {% if request.user|in_group:"junta" %}
+                  <div class="team_notes">
+                    {{ team.get_members|length }} Player{{ team.get_members|length|pluralize }},
+                    {{ team.get_male_members|length }} Male{{ team.get_male_members|length|pluralize }},
+                    {{ team.get_female_members|length }} Female{{ team.get_female_members|length|pluralize }}
+                  </div>
+                {% endif %}
+              </div>
+            </td>
 
-	{% if following_game and following_game.get_teams|length %}
-		<p id="following_game">
-			The following game is
+            {% if forloop.counter|divisibleby:"2" %}
+              </tr><tr>
+            {% else %}
+              <td class="divider">
+                <h1>vs</h1>
+              </td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+      </table>
+    </div>
+  {% else %}
+    <h5>You have no upcoming games.</h5>
+  {% endif %}
 
-			{% if following_game.start %}
-				at <strong>{{ following_game.start|date:'g:iA'|lower }}</strong>
-				on <strong>{{ following_game.date|date:"l F dS, Y" }}</strong><br />
-			{% else %}
-				on <strong>{{ following_game.date|date:"l F dS, Y" }}</strong>
-				from <strong>{{ following_game.league.times }}</strong><br />
-			{% endif %}
+  {% if following_game and following_game.get_teams|length %}
+    <p class="page-user-index-following-game">
+      Following that, you have a game
 
-			at <strong>{{ following_game.field_name.field.name }} {{ following_game.field_name.name }}</strong>
-		</p>
-	{% endif %}
+      {% if following_game.start %}
+        at <strong>{{ following_game.start|date:'g:iA'|lower }}</strong>
+        on <strong>{{ following_game.date|date:"l F dS, Y" }}</strong><br />
+      {% else %}
+        on <strong>{{ following_game.date|date:"l F dS, Y" }}</strong>
+        from <strong>{{ following_game.league.times }}</strong><br />
+      {% endif %}
 
-	<h2>Profile</h2>
-	<p>
-		<a href="{% url 'editprofile'  %}">Edit Profile</a>
-	</p>
-	<p>
-		<a href="{% url 'editratings'  %}">Edit Ratings</a>
-	</p>
+      at <strong>{{ following_game.field_name.field.name }} {{ following_game.field_name.name }}</strong>.
+    </p>
+  {% endif %}
 
-	<h2>Registrations</h2>
-	{% if registrations %}
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th>League</th>
-					<th colspan="2">Status</th>
-					<th>Group</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for league in current_leagues %}
-					{% for registration in league|league_registrations:user %}
-						<tr>
-							<td>
-								<a href="{% url 'league_registration' year=registration.league.year season=registration.league.season division=registration.league.night  %}">
-									{{ registration.league.season_title|smart_title }}
-									{{ registration.league.year }}
-									{{ registration.league.night|smart_title }}
-								</a>
-							</td>
-							<td>{{ registration.progress }}%</td>
-							<td>{{ registration.status }}</td>
-							<td>
-								{% for baggage_reg in registration.baggage.get_registrations %}
-									<div>{{ baggage_reg.user.get_full_name }}</div>
-								{% empty %}
-									No group
-								{% endfor %}
+  <h2>Profile</h2>
+  <p>
+    <a href="{% url 'editprofile'  %}">Edit Profile</a>
+  </p>
+  <p>
+    <a href="{% url 'editratings'  %}">Edit Ratings</a>
+  </p>
 
-								{% if registration.is_complete and registration.league.baggage > 1 and not registration.waitlist and not registration.league.waitlist_start_date|is_past_deadline %}
-									<div><a href="{% url 'league_group' year=league.year season=league.season division=league.night  %}">Edit Group</a></div>
-								{% endif %}
-							</td>
-						</tr>
-					{% endfor %}
-				{% endfor%}
-			</tbody>
-		</table>
+  <h2>Registrations</h2>
+  {% if registrations %}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>League</th>
+          <th colspan="2">Status</th>
+          <th>Group</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for league in current_leagues %}
+          {% for registration in league|league_registrations:user %}
+            <tr>
+              <td>
+                <a href="{% url 'league_registration' year=registration.league.year season=registration.league.season division=registration.league.night  %}">
+                  {{ registration.league.season_title|smart_title }}
+                  {{ registration.league.year }}
+                  {{ registration.league.night|smart_title }}
+                </a>
+              </td>
+              <td>{{ registration.progress }}%</td>
+              <td>{{ registration.status }}</td>
+              <td>
+                {% for baggage_reg in registration.baggage.get_registrations %}
+                  <div>{{ baggage_reg.user.get_full_name }}</div>
+                {% empty %}
+                  No group
+                {% endfor %}
 
-		<p id="user_registrations_note">
-			PayPaly payments occasionally take some time to clear. Try reloading after a few minutes have passed.
-			<br />
-			If you used the echeck feature of paypal it may take up to a week to clear.
-			<br />
-			If paying by check, the status will remain unconfirmed until your check is received and processed.
-		</p>
-	{% else %}
-		<p class="none_found">No registrations found</p>
-	{% endif %}
+                {% if registration.is_complete and registration.league.baggage > 1 and not registration.waitlist and not registration.league.waitlist_start_date|is_past_deadline %}
+                  <div><a href="{% url 'league_group' year=league.year season=league.season division=league.night  %}">Edit Group</a></div>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        {% endfor%}
+      </tbody>
+    </table>
+
+    <p class="page-user-index-registrations-note">
+      PayPal payments occasionally take some time to clear. Try reloading after a few minutes have passed.
+      <br />
+      If you used the e-check feature of Paypal it may take up to a week to clear.
+      <br />
+      If paying by check, the status will remain unconfirmed until your check is received and deposited.
+    </p>
+  {% else %}
+    <h5>No Registrations Found</h5>
+  {% endif %}
+</div>
 {% endblock %}

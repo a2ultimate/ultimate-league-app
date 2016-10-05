@@ -1,4 +1,4 @@
-{% extends "layout/layout_user.html" %}
+{% extends 'layout/layout_user.html' %}
 
 {% load leagues %}
 {% load staticfiles %}
@@ -6,7 +6,7 @@
 
 {% block content %}
 	{% if not season %}
-		{% include "_partials/league_list.html" with leagues=leagues link_view="league_summary" only %}
+		{% include '_partials/league_list.html' with leagues=leagues link_view='league_summary' only %}
 	{% else %}
 		{% with league=leagues|first %}
 			<h1>
@@ -32,8 +32,8 @@
 
 			{% if not league.is_after_registration_start %}
 				<h4>
-					Registration opens on {{ league.reg_start_date|date:"l, F jS" }}
-					at {{ league.reg_start_date|date:"g:iA"|lower }}
+					Registration opens on {{ league.reg_start_date|date:'l, F jS' }}
+					at {{ league.reg_start_date|date:'g:iA'|lower }}
 				</h4>
 			{% endif %}
 
@@ -55,7 +55,7 @@
 					</td>
 					<td>
 						<a href="{% url 'league_teams' year=league.year season=league.season division=league.night %}">
-							Teams & Schedules
+							Teams and Schedules
 						</a>
 					</td>
 				</tr>
@@ -170,9 +170,9 @@
 					<tr>
 						<td colspan="3">
 							{% if league|is_waitlist:user %}
-								<a class="button button-info" href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Join Waitlist</a>
+								<a class="button button-info" href="{% url 'league_registration' year=league.year season=league.season division=league.night %}">Join Waitlist</a>
 							{% else %}
-								<a class="button button-success" href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register Now</a>
+								<a class="button button-success" href="{% url 'league_registration' year=league.year season=league.season division=league.night %}">Register Now</a>
 							{% endif %}
 						</td>
 					</tr>

@@ -1,0 +1,71 @@
+.page-division-teams {
+}
+
+.page-division-teams-schedule {
+  margin-bottom: 2rem;
+}
+
+.page-division-teams-schedule-notes {
+  margin-bottom: 1rem;
+  padding: 1rem;
+
+  text-align: center;
+
+  border-radius: $border-radius;
+  background-color: $color-light-gray;
+}
+
+.page-division-teams-teams {
+  margin-bottom: 2rem;
+  @include outer-container();
+}
+
+.page-division-teams-teams-row {
+  @include row();
+}
+
+.page-division-teams-teams-row-team {
+  @include span-columns(6);
+}
+
+.page-division-teams-teams-table td {
+  padding: 0 16px 12px 0;
+
+  vertical-align: top;
+}
+
+.page-division-teams-teams-table td:last-child {
+  padding-right: 0;
+}
+
+.page-division-teams-teams-table .divider {
+  width: 8%;
+  max-width: 8%;
+
+  vertical-align: middle;
+}
+
+.page-division-teams-notes {
+  overflow: hidden;
+
+  border-radius: $border-radius;
+  background-color: $color-light-gray;
+}
+
+.page-division-teams-notes-title {
+  padding: 1rem 0;
+
+  text-align: center;
+  text-transform: uppercase;
+
+  color: $color-white;
+  background-color: $color-gray;
+}
+
+.page-division-teams-notes-content {
+  padding: 0.5rem 1rem 1rem;
+}
+
+.page-division-teams-notes-content dl dd {
+  margin-bottom: 1rem;
+}

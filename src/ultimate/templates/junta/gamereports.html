@@ -1,118 +1,44 @@
-{% extends "layout/layout_user.html" %}
+{% extends 'layout/layout_user.html' %}
 
 {% load games %}
 {% load leagues %}
+{% load staticfiles %}
 {% load utility %}
 
 {% block content %}
 
-  {% include "layout/account_tabs.html" with selected_tab="junta" %}
+  {% include 'layout/account_tabs.html' with selected_tab='junta' %}
 
   {% if leagues %}
     <h1>Game Reports</h1>
 
-    {% include "_partials/league_list.html" with leagues=leagues link_view="gamereports_league" only %}
+    {% include '_partials/league_list.html' with leagues=leagues link_view='gamereports_league' only %}
 
   {% elif game_report %}
-    {% include "layout/league_header.html" with league=league header="Game Reports" only %}
+    {% include 'layout/league_header.html' with league=league header='Game Reports' only %}
 
-    <h2>Game Report for {{ game_report.team }}</h2>
+    <h4>Game Report for {{ game_report.team }}</h4>
 
     {% for game_report_comment in game_report.gamereportcomment_set.all %}
       <dl>
+        <dt>Submitter</dt>
+        <dd>{{ game_report_comment.submitted_by }}</dd>
         <dt>Spirit</dt>
         <dd>{{ game_report_comment.spirit }}</dd>
         <dt>Comment</dt>
-        <dd>{{ game_report_comment.comment }}</dd>
-        <dt>Submitter</dt>
-        <dd>{{ game_report_comment.submitted_by }}</dd>
+        <dd>{{ game_report_comment.comment|default:'<em>None</em>' }}</dd>
       </dl>
     {% endfor %}
 
   {% else %}
-    {% include "layout/league_header.html" with league=league header="Game Reports" only %}
+    {% include 'layout/league_header.html' with league=league header='Game Reports' only %}
 
-    {% if games|length %}
-      <table id="schedule_table" class="table table-centered table-fixed table-striped">
-        <thead>
-          <tr>
-            <td></td>
-            {% regroup field_names by field as fields %}
-            {% for field in fields %}
-              <th colspan="{{ field.list|length }}">
-                <h4>
-                  {{ field.grouper }}
-
-                  {% if field.grouper.driving_link %}
-                    <small>
-                      &middot;
-                      <a href="{{ field.grouper.driving_link }}" target="_blank">
-                        Directions
-                      </a>
-                    </small>
-                  {% endif %}
-
-                  {% if field.grouper.layout_link %}
-                    <small>
-                      &middot;
-                      <a href="{% static field.grouper.layout_link %}" target="_blank">
-                        Layout
-                      </a>
-                    </small>
-                  {% endif %}
-                </h4>
-              </th>
-            {% endfor %}
-          </tr>
-
-          <tr>
-            <td></td>
-            {% for field_name in field_names %}
-              <th>{{ field_name.name }}</th>
-            {% endfor %}
-          </tr>
-        </thead>
-
-        <tbody>
-          {% regroup games|dictsort:"field_name.field"|dictsort:"field_name.name"|dictsort:"date" by date as games_list %}
-          {% for date in games_list %}
-            <tr class="{% if date.grouper == next_game_date %}active{% endif %}">
-              <th class="">
-                <div>{{ date.grouper|date:"M" }}</div>
-                <div>{{ date.grouper|date:"jS" }}</div>
-              </th>
-
-              {% for field_name in field_names %}
-                <td>
-                  {% for game in date.list|slice:":forloop.counter" %}
-                    {% ifequal game.field_name field_name %}
-                      {% for team in game.get_teams %}
-                        <div>
-                          {% if game|get_report_for_team:team %}
-                            <a href="{% url 'gamereports_game' year=league.year season=league.season division=league.night game_id=game.id team_id=team.id  %}">
-                              {{ team.id }}
-                            </a>
-                          {% else %}
-                            {{ team.id }}
-                          {% endif %}
-                        </div>
-                      {% empty %}
-                        TBA
-                      {% endfor %}
-                    {% endifequal %}
-                  {% empty %}
-                    -
-                  {% endfor %}
-                </td>
-              {% endfor %}
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    {% if game_dates|length %}
+      {% include '_partials/schedule_table.html' with league=league columns=game_locations game_dates=game_dates user_games=user_games next_game_date=next_game_date link_game_report=1 only %}
     {% else %}
-      <h3>
+      <h4>
         Schedules are not yet available
-      </h3>
+      </h4>
     {% endif %}
 
   {% endif %}

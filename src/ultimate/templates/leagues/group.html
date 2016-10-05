@@ -19,32 +19,32 @@
 		<p>You are currently on the wait list and are ineligible to form a group.</p>
 	{% else %}
 
-		<h3>Your current group is{% if not registration.baggage.get_registrations %} empty.{% else %}:{% endif %}</h3>
+		<h5>Your current group is{% if not registration.baggage.get_registrations %} empty.{% else %}:{% endif %}</h5>
 
 		<ol>
 			{% for baggage_reg in registration.baggage.get_registrations %}
-				<li>{{ baggage_reg.user.get_full_name }}</li>
+			<li>{{ baggage_reg.user.get_full_name }}</li>
 			{% endfor %}
 		</ol>
 
 		{% if league.baggage > 1 %}
 			{% if registration.is_complete and not registration.league.waitlist_start_date|is_past_deadline and not registration.waitlist %}
 				{% if registration.baggage_size > 1 %}
-					<form method="POST">{% csrf_token %}
-						<input class="button button-error" type="submit" name="leave_group" value="Leave Group" />
+					<form class="form" method="post">{% csrf_token %}
+						<input class="button button-danger" type="submit" name="leave_group" value="Leave Group">
 					</form>
 				{% endif %}
 
-				<form method="POST">{% csrf_token %}
+				<form class="form" method="post">{% csrf_token %}
 					{% if registration.baggage_size < league.baggage %}
-						<h3>Add Another Player To Your Group</h3>
+						<h5>Add Another Player To Your Group</h5>
 						<p>You have room for {{ league.baggage|subtract:registration.baggage_size }} more players in your group. Enter the email of the player you would like to add below.</p>
 
-						<input name="email" type="text" />
+						<input name="email" type="text">
 
-						<input class="button button-success" name="add_group" value="Add Player" type="submit" />
+						<input class="button button-success" name="add_group" value="Add Player" type="submit">
 					{% else %}
-						<h3>Your group is full for this league.</h3>
+						<h5>Your group is full for this league.</h5>
 					{% endif %}
 				</form>
 			{% else %}

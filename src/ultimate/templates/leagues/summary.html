@@ -6,14 +6,14 @@
 
 {% block content %}
 
-	{% include "layout/league_header.html" with league=league only %}
+	{% include 'layout/league_header.html' with league=league only %}
 
-	{% include "layout/league_tabs.html" with selected_tab="summary" %}
+	{% include 'layout/league_tabs.html' with selected_tab='summary' %}
 
 	{% if not league.is_after_registration_start %}
 		<h3>
-			Registration opens on {{ league.reg_start_date|date:"l, F jS" }}
-			at {{ league.reg_start_date|date:"g:iA"|lower }}
+			Registration opens on {{ league.reg_start_date|date:'l, F jS' }}
+			at {{ league.reg_start_date|date:'g:iA'|lower }}
 		</h3>
 	{% endif %}
 
@@ -24,18 +24,18 @@
 	<table class="table table-striped-header">
 		<tr>
 			<td>
-				<a href="{% url 'league_details' year=league.year season=league.season division=league.night  %}">
+				<a href="{% url 'league_details' year=league.year season=league.season division=league.night %}">
 					Detailed Info
 				</a>
 			</td>
 			<td>
-				<a href="{% url 'league_players' year=league.year season=league.season division=league.night  %}">
+				<a href="{% url 'league_players' year=league.year season=league.season division=league.night %}">
 					Players
 				</a>
 			</td>
 			<td>
-				<a href="{% url 'league_teams' year=league.year season=league.season division=league.night  %}">
-					Teams & Schedules
+				<a href="{% url 'league_teams' year=league.year season=league.season division=league.night %}">
+					Teams and Schedules
 				</a>
 			</td>
 		</tr>
@@ -156,9 +156,9 @@
 			<tr>
 				<td colspan="3">
 					{% if league|is_waitlist:user %}
-						<a class="button button-info" href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Join Waitlist</a>
+						<a class="button button-info" href="{% url 'league_registration' year=league.year season=league.season division=league.night %}">Join Waitlist</a>
 					{% else %}
-						<a class="button button-success" href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register Now</a>
+						<a class="button button-success" href="{% url 'league_registration' year=league.year season=league.season division=league.night %}">Register Now</a>
 					{% endif %}
 				</td>
 			</tr>
