@@ -2,38 +2,44 @@
 
 li.sortable-placeholder,
 tr.sortable-placeholder td {
-  background: #1ABC9C;
-  height: 32px;
+  height: 2rem;
+
+  background: $color-turquoise;
 }
 
 .slide_selector {
-  margin: 16px 0;
+  margin: 1rem 0;
 }
 
 .slide_selector label {
+  vertical-align: -0.125rem;
+  letter-spacing: 0.0625rem;
+
   font-weight: 300;
-  letter-spacing: 1px;
-  vertical-align: -2px;
 }
 
 .slide_selector input {
-  background: transparent;
-  border: none;
   float: right;
-  font-size: 24px;
+
+  width: 4rem;
+  margin-right: 0.75rem;
+
+  border: none;
+  background: transparent;
+
+  font-size: 1.5rem;
   font-weight: bold;
-  margin-right: 12px;
-  width: 50px;
 }
 
 .slide_selector .slider_errors {
-  color: #E74C3C;
+  color: $color-danger;
+
   font-weight: bold;
 }
 
 .slide_selector .slider {
-  margin: 12px auto;
-  width: 500px;
+  width: 31.25rem;
+  margin: 0.75rem auto;
 }
 
 .slide_selector .ui-slider-handle {
@@ -51,231 +57,23 @@ tr.sortable-placeholder td {
 }
 
 .slide_selector .slider_description {
+  width: 37.5rem;
+  min-height: 2.5rem;
   margin: 0 auto;
-  min-height: 40px;
-  width: 600px;
 }
 
 .slide_selector.slider_description div {
-  width: 250px;
+  width: 16rem;
 }
 
 .slide_selector .slider_description .left {
   float: left;
+
   text-align: left;
 }
 
 .slide_selector .slider_description .right {
   float: right;
+
   text-align: right;
-}
-
-
-/* CAPTAIN / GAME REPORT */
-
-#game_report_form .score_input input {
-  padding: 8px 8px 9px;
-  text-align: center;
-  width: 54px;
-}
-
-#game_report_comment textarea {
-  height: 80px;
-  width: 100%;
-}
-
-
-/*  LEAGUE / PLAYERS */
-
-.page-players-admin-notes {
-  background-color: #ECF0F1;
-}
-
-.page-players-admin-notes-title {
-  text-transform: uppercase;
-  background-color: #95A5A6;
-  color: #FFFFFF;
-  font-weight: 400;
-  text-align: center;
-  padding: 12px 0;
-}
-
-.page-players-admin-notes-content {
-  padding: 8px 12px 16px;
-}
-
-.page-players-admin-notes-content dl dd {
-  margin-bottom: 12px;
-}
-
-
-/*  LEAGUE / TEAMS */
-
-#schedule_table {
-  letter-spacing: 1px;
-}
-
-#schedule_table thead th {
-  border-right: 2px solid #ECF0F1;
-}
-
-#schedule_table thead th:last-child {
-  border-right: 0;
-}
-
-#schedule_table tr th:first-child,
-#schedule_table tr td:first-child {
-  width: 8%;
-}
-
-#schedule_table tbody tr.active th,
-#schedule_table tbody tr.active td {
-  background-color: #BDC1C5;
-  color: #FFFFFF;
-  font-weight: 400;
-}
-
-#schedule_table td > a {
-  display: block;
-}
-
-#schedule_table .game_win {
-  background-color: #2ECC71;
-  color: #FFFFFF;
-}
-
-#schedule_table .game_loss {
-  background-color: #E74C3C;
-  color: #FFFFFF;
-}
-
-#schedule_table .game_tie {
-  background-color: #F1C40F;
-  color: #FFFFFF;
-}
-
-#schedule_table hr {
-  background-color: #95A5A6;
-  border: 0;
-  height: 2px;
-  margin: 2px 0;
-  padding: 0;
-}
-
-.schedule-note {
-  font-style: italic;
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-.teams_table {
-  width: 100%;
-}
-
-.teams_table td {
-  padding: 0 16px 12px 0;
-  vertical-align: top;
-}
-
-.teams_table td:last-child {
-  padding-right: 0;
-}
-
-.teams_table .divider {
-  max-width: 8%;
-  vertical-align: middle;
-  width: 8%;
-}
-
-.team {
-  background: #ECF0F1;
-  padding: 0 0 8px;
-}
-
-.team_info {
-  padding: 12px;
-}
-
-.team_info a:hover {
-  text-decoration: underline;
-}
-
-.team_name {
-  font-size: 24px;
-  font-weight: bold;
-  padding: 0 0 4px;
-}
-
-.team_members {
-  list-style: none;
-  margin: 0;
-  padding: 12px;
-}
-
-.team_notes {
-  color: #BDC1C5;
-  font-size: 13px;
-  letter-spacing: 1px;
-  list-style: none;
-  padding: 8px 0 4px;
-  text-transform: uppercase;
-}
-
-.team_notes h5 {
-  color: #BDC1C5;
-  font-size: 10px;
-  margin-bottom: 4px;
-  margin-top: 0;
-}
-
-.page-teams-admin-notes {
-  background-color: #ECF0F1;
-}
-
-.page-teams-admin-notes-title {
-  text-transform: uppercase;
-  background-color: #95A5A6;
-  color: #FFFFFF;
-  font-weight: 400;
-  text-align: center;
-  padding: 12px 0;
-}
-
-.page-teams-admin-notes-content {
-  padding: 8px 12px 16px;
-}
-
-.page-teams-admin-notes-content dl dd {
-  margin-bottom: 12px;
-}
-
-/* USER PAGE */
-
-.next_game_info {
-  text-align: center;
-}
-
-#next_game_date {
-  font-size: 22px;
-  font-weight: bold;
-}
-
-#next_game_time {
-  font-size: 18px;
-  margin-bottom: 8px;
-  font-weight: bold;
-}
-
-#next_game_field {
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 18px;
-}
-
-#following_game {
-  text-align: center;
-}
-
-#user_registrations_note {
-  color: #95A5A6;
 }

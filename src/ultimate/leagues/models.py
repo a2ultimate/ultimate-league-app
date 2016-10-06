@@ -811,32 +811,55 @@ class Team(models.Model):
 
 	@property
 	def css_background_color(self):
-		color = '#95A5A6'
+		color = '#95a5a6'
 		if 'black' in self.color.lower():
-			color = '#2C3E50'
+			color = '#34495e'
 		if 'blue' in self.color.lower():
-			color = '#3498DB'
+			color = '#3498db'
 		if 'green' in self.color.lower():
-			color = '#2ECC71'
+			color = '#2ecc71'
 		if 'orange' in self.color.lower():
-			color = '#E67E22'
+			color = '#e67e22'
 		if 'pink' in self.color.lower():
-			color = '#EE6FA0'
+			color = '#ee6fa0'
 		if 'purple' in self.color.lower():
-			color = '#9B59B6'
+			color = '#9b59b6'
 		if 'red' in self.color.lower():
-			color = '#E74C3C'
+			color = '#e74c3c'
 		if 'yellow' in self.color.lower():
-			color = '#F1C40F'
+			color = '#f1c40f'
 		if 'white' in self.color.lower():
-			color = '#FFFFFF'
+			color = '#ffffff'
+		return color
+
+	@property
+	def css_background_color_dark(self):
+		color = '#7f8c8d'
+		if 'black' in self.color.lower():
+			color = '#2c3e50'
+		if 'blue' in self.color.lower():
+			color = '#2980b9'
+		if 'green' in self.color.lower():
+			color = '#27ae60'
+		if 'orange' in self.color.lower():
+			color = '#d35400'
+		if 'pink' in self.color.lower():
+			color = '#c7507e'
+		if 'purple' in self.color.lower():
+			color = '#8e44ad'
+		if 'red' in self.color.lower():
+			color = '#c0392b'
+		if 'yellow' in self.color.lower():
+			color = '#d7ad04'
+		if 'white' in self.color.lower():
+			color = '#f9f9f9'
 		return color
 
 	@property
 	def css_text_color(self):
-		color = '#FFFFFF'
+		color = '#ffffff'
 		if 'white' in self.color.lower():
-			color = '#2C3E50'
+			color = '#34495e'
 		return color
 
 	def contains_user(self, user):

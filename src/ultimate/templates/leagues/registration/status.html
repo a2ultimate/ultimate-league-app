@@ -15,17 +15,17 @@
 
 	{% if registration.is_complete %}
 		<h3>
-			Your registration is <strong class="text_success">complete</strong>.
+			Your registration is <strong>complete</strong>.
 
 			{% if registration.waitlist %}
-				However, you are on the <strong class="text_warning">waitlist</strong>.
+				However, you are on the <strong>waitlist</strong>.
 			{% elif league.baggage > 1 and not league.waitlist_start_date|is_past_deadline %}
 				You may <a href="{% url 'league_group' year=league.year season=league.season division=league.night  %}">form a baggage group here</a>.
 			{% endif %}
 		</h3>
 	{% elif registration.is_refunded %}
 		<h3>
-			Your registration has been <strong class="text_error">refunded</strong>.
+			Your registration has been <strong>refunded</strong>.
 		</h3>
 
 		<p>
@@ -39,7 +39,7 @@
 		</p>
 	{% else %}
 		<h3>
-			Your registration is <strong class="text_error">not complete</strong>.
+			Your registration is <strong>not complete</strong>.
 		</h3>
 
 		{% if league.is_waitlist %}

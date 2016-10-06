@@ -1,160 +1,100 @@
-{% extends "layout/layout_user.html" %}
+{% extends 'layout/layout_user.html' %}
 {% load teams %}
 {% load utility %}
 
 {% block content %}
-  {% include "layout/account_tabs.html" with selected_tab="captain" %}
+  <div class="page-game-report">
+    {% include 'layout/account_tabs.html' with selected_tab='captain' %}
 
-  <div class="breadcrumbs">
-    <ul class="breadcrumbs-list">
-      <li class="breadcrumb">
-        <a href="{% url 'captain'  %}">
-          Captain Resources
-        </a>
-      </li>
-      <li class="breadcrumb breadcrumb-active">
-        {{ team.league|smart_title }}
-      </li>
-      <li class="breadcrumb breadcrumb-active">
-        Game Report
-      </li>
-    </ul>
-  </div>
-
-  <h1>Game Report for {{ game.date|date:"l, F jS" }}</h1>
-
-  <form id="game_report_form" method="post">{% csrf_token %}
-    {{ score_formset.management_form }}
-
-    <table class="teams_table table-fixed">
-      <tr>
-        <td class="team_container">
-          <div class="team">
-            <div class="team_info" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
-              <div class="team_name" style="font-size: {{ team.name|get_team_name_font_size }}px;">
-                {% if team.name %}
-                  {{ team.name }}
-                {% else %}
-                  Team {{ team.id }}
-                {% endif %}
-              </div>
-
-              <div>Team {{ team.id }}{% if team.color %} - {{ team.color }}{% endif %}</div>
-            </div>
-
-            <div class="team_members">
-              {{ score_us_form.id }}
-              {{ score_us_form.team }}
-              {% if score_us_form.score.errors %}
-                <p class="text_error">
-                {% for error in score_us_form.score.errors %}
-                  {{ error }}<br />
-                {% endfor %}
-                </p>
-              {% endif %}
-              <div class="score_input">
-                {{ score_us_form.score }} points
-              </div>
-            </div>
-          </div>
-        </td>
-
-        <td class="divider">
-          <h1>vs</h1>
-        </td>
-
-        {% with team=game|get_game_opponent_team:user %}
-          <td class="team_container">
-            <div class="team">
-              <div class="team_info" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }}">
-                <div class="team_name" style="font-size: {{ team.name|get_team_name_font_size }}px;">
-                  {% if team.name %}
-                    {{ team.name }}
-                  {% else %}
-                    Team {{ team.id }}
-                  {% endif %}
-                </div>
-
-                <div>
-                  {% if team.name %}
-                    Team {{ team.id }}
-                    {% if team.color %}
-                      -
-                    {% endif %}
-                  {% endif %}
-
-                  {{ team.color }}
-
-                  {% if not team.name and not team.color %}
-                    &nbsp;
-                  {% endif %}
-                </div>
-              </div>
-
-              <div class="team_members">
-                {{ score_them_form.id }}
-                {{ score_them_form.team }}
-                {% if score_them_form.score.errors %}
-                  <p class="text_error">
-                  {% for error in score_them_form.score.errors %}
-                    {{ error }}<br />
-                  {% endfor %}
-                  </p>
-                {% endif %}
-                <div class="score_input">
-                  {{ score_them_form.score }} points
-                </div>
-              </div>
-            </div>
-          </td>
-        {% endwith %}
-      </tr>
-    </table>
-
-    <h2>How would you rate the spirit of the game?</h2>
-    <p>
-      {% if comment_form.spirit.errors %}
-        <p class="text_error">
-        {% for error in comment_form.spirit.errors %}
-          {{ error }}<br />
-        {% endfor %}
-        </p>
-      {% endif %}
-      {{ comment_form.spirit }}
-    </p>
-
-    <h2>Who was there for your team?</h2>
-    <table class="form_table">
-      {% for team_member in team.get_members|dictsort:"user.last_name" %}
-        {% if not forloop.counter|divisibleby:'2' %}
-          <tr>
-        {% endif %}
-
-        <td>
-          <div class="checkbox">
-            <label for="user_{{ team_member.user.id }}">
-              <input type="checkbox" id="user_{{ team_member.user.id }}" name="user_{{ team_member.user.id }}" {% if team_member.user.id in attendance %}checked{% endif %} />
-              {{ team_member.user.get_full_name }}
-              <em>{{ team_member.user.profile.nickname }}</em>
-            </label>
-          </div>
-        </td>
-
-        {% if forloop.counter|divisibleby:'2' %}
-          </tr>
-        {% endif %}
-      {% endfor %}
-    </table>
-
-    <div id="game_report_comment">
-      <h2 title="This will remain private and will not be shared with your co-captain">
-        Anything else? <a class="small" href="{% url 'comments'  %}" target="_blank">(help)</a>
-      </h2>
-      {{ comment_form.comment.errors }}
-      {{ comment_form.comment }}
+    <div class="breadcrumbs">
+      <ul class="breadcrumbs-list">
+        <li class="breadcrumb">
+          <a href="{% url 'captain' %}">
+            Captain Resources
+          </a>
+        </li>
+        <li class="breadcrumb breadcrumb-active">
+          {{ team.league|smart_title }}
+        </li>
+        <li class="breadcrumb breadcrumb-active">
+          Game Report
+        </li>
+      </ul>
     </div>
 
-    <input class="button button-success" type="submit" value="Submit Report">
-  </form>
+    <h1>Game Report for {{ game.date|date:"l, F jS" }}</h1>
 
+    <form class="form" method="post">{% csrf_token %}
+      {{ score_formset.management_form }}
+
+      <div class="page-game-report-scores">
+        <h4>What was the score?</h4>
+        <div class="team-card-game">
+          <div class="team-card-game-team">
+
+            {% include 'captain/gamereport_team_card.html' with team=team score_form=score_us_form only %}
+
+          </div>
+
+          <div class="team-card-game-divider">vs</div>
+
+          <div class="team-card-game-team">
+
+            {% with team=game|get_game_opponent_team:user %}
+              {% include 'captain/gamereport_team_card.html' with team=team score_form=score_them_form only %}
+            {% endwith %}
+            
+          </div>
+        </div>
+      </div>
+
+      <div class="page-game-report-spirit">
+        <h4>How would you rate the spirit of the game?</h4>
+        <p>
+          {% if comment_form.spirit.errors %}
+            <p>
+              {% for error in comment_form.spirit.errors %}
+                {{ error }}<br />
+              {% endfor %}
+            </p>
+          {% endif %}
+          {{ comment_form.spirit }}
+        </p>
+      </div>
+
+      <div class="page-game-report-attendance">
+        <h4>Who was there for your team?</h4>
+        <div class="page-game-report-attendance-table">
+          <div class="page-game-report-attendance-row">
+            {% for team_member in team.get_members %}
+              <div class="page-game-report-attendance-row-element">
+                <div class="checkbox">
+                  <label class="page-game-report-attendance-row-element-label" for="user_{{ team_member.user.id }}">
+                    <input type="checkbox" id="user_{{ team_member.user.id }}" name="user_{{ team_member.user.id }}" {% if team_member.user.id in attendance %}checked{% endif %}>
+                    {{ team_member.user.get_full_name }}
+                    <em>{{ team_member.user.profile.nickname }}</em>
+                  </label>
+                </div>
+              </div>
+
+              {% if forloop.counter|divisibleby:'3' %}
+                </div><div class="page-game-report-attendance-row">
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="page-game-report-comment">
+        <h4 title="This will remain private and will not be shared with your co-captain">
+          Anything else? <a href="{% url 'comments' %}" target="_blank"><small>(help)</small></a>
+        </h4>
+        {{ comment_form.comment.errors }}
+        {{ comment_form.comment }}
+      </div>
+
+      <input class="button button-success" type="submit" value="Submit Report">
+      <a class="button button-link" href="{% url 'captain' %}">Back</a>
+    </form>
+  </div>
 {% endblock %}

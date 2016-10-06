@@ -1,0 +1,16 @@
+{% extends '_partials/team_card.html' %}
+
+{% block team_card_content %}
+  {{ score_form.id }}
+  {{ score_form.team }}
+  {% if score_form.score.errors %}
+    <p>
+      {% for error in score_form.score.errors %}
+        {{ error }}<br />
+      {% endfor %}
+    </p>
+  {% endif %}
+  <div class="page-game-report-form-scores-input">
+    {{ score_form.score }} points
+  </div>
+{% endblock %}

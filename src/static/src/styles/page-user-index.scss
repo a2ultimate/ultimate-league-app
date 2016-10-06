@@ -1,26 +1,21 @@
 .page-user-index-next-game {
-
 }
 
 .page-user-index-next-game-info {
   text-align: center;
+
+  font-family: $font-family-lato-semibold;
 }
 
 .page-user-index-next-game-info-date {
-  font-size: 1.5rem;
-  font-weight: bold;
+  margin-bottom: 0.25rem;
+
+  font-size: 1.25rem;
 }
 
-.page-user-index-next-game-info-time {
-  margin-bottom: .5rem;
-
-  font-weight: bold;
-}
 
 .page-user-index-next-game-info-field {
-  margin-bottom: 1rem;
-
-  font-family: $font-family-lato-bold;
+  margin-bottom: 0.75rem;
 }
 
 .page-user-index-following-game {

@@ -5,7 +5,7 @@
 }
 
 .schedule-table thead th {
-  & + & {
+  + th {
     border-left: 0.125rem solid $color-light-gray;
   }
 }
@@ -18,11 +18,10 @@
 }
 
 .schedule-table-date-next {
-  a,
   th,
   td {
-    color: $color-white !important;
-    background-color: $color-gray;
+    color: $color-white;
+    background-color: $color-gray !important;
   }
 }
 
@@ -30,8 +29,14 @@
   display: block;
 
   width: 100%;
+}
 
-  color: $color-primary !important;
+a.schedule-table-game-team-link {
+  color: $color-primary;
+
+  .schedule-table-date-next & {
+    color: $color-white;
+  }
 }
 
 .schedule-table-game-result-win {

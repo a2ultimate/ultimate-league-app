@@ -1,4 +1,7 @@
 body {
+  position: relative;
+  z-index: 1;
+
   margin: 0;
   padding: 0;
 
@@ -19,7 +22,7 @@ body {
 
   padding: 0.75rem 0;
 
-  background: #ffffff;
+  background-color: $color-white;
 }
 
 .header-inner {
@@ -92,6 +95,7 @@ body {
 
 .nav {
   position: relative;
+  z-index: 3;
 
   background-color: $color-light-gray;
 }
@@ -219,6 +223,9 @@ body {
 }
 
 .content-wrapper {
+  position: relative;
+  z-index: 2;
+
   padding-top: 1rem;
 
   background-color: #f9f9f9;

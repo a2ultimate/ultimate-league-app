@@ -1,0 +1,140 @@
+.team-card {
+  overflow: hidden;
+
+  border-radius: $border-radius;
+}
+
+.team-card-header {
+  background-color: $color-gray;
+}
+
+.team-card-header-name {
+  padding: 1rem;
+
+  background-color: $color-gray;
+
+  font-family: $font-family-lato-bold;
+  font-size: 1.25rem;
+}
+
+.team-card-header-info {
+  padding: 0.5rem 1rem;
+
+  border-top-left-radius: $border-radius;
+  border-top-right-radius: $border-radius;
+  background-color: $color-gray-dark;
+
+  font-size: 0.875rem;
+
+  @include outer-container();
+}
+
+.team-card-header-info-color {
+  @include span-columns(8);
+}
+
+.team-card-header-info-email {
+  @include span-columns(4);
+  .team-card-header-info-color + & {
+    text-align: right;
+  }
+}
+
+.team-card-content {
+  padding: 0.5rem 1.5rem 1rem;
+
+  background-color: $color-light-gray;
+}
+
+.team-card-content-members {
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.team-card-content-members-member {
+  padding-bottom: 0.125rem;
+}
+
+.team-card-content-members-member-email {
+  float: right;
+
+  font-size: 0.875rem;
+}
+
+.team-card-footer {
+  background-color: $color-light-gray;
+}
+
+.team-card-footer-heading {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+
+  text-align: center;
+  text-transform: uppercase;
+
+  color: $color-light-gray;
+  background-color: $color-gray;
+
+  font-size: 0.75rem;
+}
+
+.team-card-footer-content {
+  padding: 0 1rem 1rem;
+
+  text-align: center;
+
+  color: $color-gray;
+}
+
+
+
+
+.team-card-game {
+  position: relative;
+  z-index: 1;
+
+  margin-bottom: 1rem;
+
+  @include outer-container();
+}
+
+.team-card-game-divider {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+
+  width: 4rem;
+  height: 4rem;
+  margin: -2rem 0 0 -2rem;
+
+  text-align: center;
+  text-transform: uppercase;
+
+  color: $color-white;
+  border-radius: 50%;
+  background-color: $color-light-gray-dark;
+
+  font-family: $font-family-lato-black;
+  font-size: 1.5rem;
+  line-height: 4rem;
+}
+
+.team-card-game-team {
+  position: relative;
+  z-index: 1;
+
+  padding: 0 1rem;
+
+  @include span-columns(6);
+
+  &:first-child {
+    padding-left: 0;
+  }
+
+  &:last-child {
+    padding-right: 0;
+  }
+}

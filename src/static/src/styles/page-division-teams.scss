@@ -17,10 +17,13 @@
 
 .page-division-teams-teams {
   margin-bottom: 2rem;
+
   @include outer-container();
 }
 
 .page-division-teams-teams-row {
+  margin-bottom: 1rem;
+
   @include row();
 }
 
@@ -58,7 +61,7 @@
   text-align: center;
   text-transform: uppercase;
 
-  color: $color-white;
+  color: $color-light-gray;
   background-color: $color-gray;
 }
 
