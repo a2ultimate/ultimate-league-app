@@ -37,8 +37,8 @@
 		</form>
 	{% else %}
 		<form class="form" method="post">{% csrf_token %}
-			<p>Do you have a coupon code?</p>
-			<input name="coupon_code" type="text">
+			<h5><label for="coupon-code-input">Do you have a coupon code?</label></h5>
+			<input name="coupon_code" id="coupon-code-input" type="text">
 			<button class="button button-success" type="submit">
 				Submit
 			</button>
