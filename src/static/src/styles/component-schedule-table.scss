@@ -25,13 +25,14 @@
   }
 }
 
-.schedule-table-game-team-link {
+.schedule-table-game-team-link,
+.schedule-table-game-team-jump {
   display: block;
 
   width: 100%;
 }
 
-a.schedule-table-game-team-link {
+a.schedule-table-game-team-jump {
   color: $color-primary;
 
   .schedule-table-date-next & {

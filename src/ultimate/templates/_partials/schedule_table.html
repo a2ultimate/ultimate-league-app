@@ -63,9 +63,9 @@
                 {% if link_game_report %}
                   <a class="schedule-table-game-team-link" href="{% url 'gamereports_game' year=league.year season=league.season division=league.night game_id=game.id team_id=team.id %}">
                 {% elif show_game_result %}
-                  <div class="schedule-table-game-team-link">
+                  <div>
                 {% else %}
-                  <a class="schedule-table-game-team-link" href="#team-roster-{{ team.id }}"{% if game in user_games %} style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }};"{% endif %}>
+                  <a class="schedule-table-game-team-jump" href="#team-roster-{{ team.id }}"{% if game in user_games %} style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }};"{% endif %}>
                 {% endif %}
 
                 {% if show_game_result %}

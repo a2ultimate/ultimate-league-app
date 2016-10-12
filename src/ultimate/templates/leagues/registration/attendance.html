@@ -24,7 +24,7 @@
 
   <div id="attendance" class="slider" data-slider-max="{{ league.get_num_game_events }}">
     <label for="id_attendance">
-      <h5>There {{ league.get_num_game_events|pluralize:'is,are' }} {{ league.get_num_game_events }} game{{ league.get_num_game_events|pluralize }}. How many games will you miss?</h5>
+      <h3>There {{ league.get_num_game_events|pluralize:'is,are' }} {{ league.get_num_game_events }} game{{ league.get_num_game_events|pluralize }}. How many games will you miss?</h3>
     </label>
     {{ attendance_form.attendance }}
     <div class="slider-element"></div>
@@ -38,7 +38,7 @@
   {% if league.type == 'league' %}
     <div id="captain" class="slider" data-slider-min="0" data-slider-max="4">
       <label for="id_captain">
-        <h5>Would you like to captain a team?</h5>
+        <h3>Would you like to captain a team?</h3>
       </label>
       <p>
         The Ann Arbor Ultimate captains' committee uses the following values to determine captains

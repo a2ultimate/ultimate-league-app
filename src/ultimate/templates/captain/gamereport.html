@@ -28,7 +28,7 @@
       {{ score_formset.management_form }}
 
       <div class="page-game-report-scores">
-        <h4>What was the score?</h4>
+        <h3>What was the score?</h3>
         <div class="team-card-game">
           <div class="team-card-game-team">
 
@@ -43,13 +43,13 @@
             {% with team=game|get_game_opponent_team:user %}
               {% include 'captain/gamereport_team_card.html' with team=team score_form=score_them_form only %}
             {% endwith %}
-            
+
           </div>
         </div>
       </div>
 
       <div class="page-game-report-spirit">
-        <h4>How would you rate the spirit of the game?</h4>
+        <h3>How would you rate the spirit of the game?</h3>
         <p>
           {% if comment_form.spirit.errors %}
             <p>
@@ -63,7 +63,7 @@
       </div>
 
       <div class="page-game-report-attendance">
-        <h4>Who was there for your team?</h4>
+        <h3>Who was there for your team?</h3>
         <div class="page-game-report-attendance-table">
           <div class="page-game-report-attendance-row">
             {% for team_member in team.get_members %}
@@ -86,9 +86,9 @@
       </div>
 
       <div class="page-game-report-comment">
-        <h4 title="This will remain private and will not be shared with your co-captain">
+        <h3 title="This will remain private and will not be shared with your co-captain">
           Anything else? <a href="{% url 'comments' %}" target="_blank"><small>(help)</small></a>
-        </h4>
+        </h3>
         {{ comment_form.comment.errors }}
         {{ comment_form.comment }}
       </div>

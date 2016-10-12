@@ -15,23 +15,23 @@
   {% include '_partials/league_tabs.html' with selected_tab='players' %}
 
   {% if not league.is_after_registration_start and not request.user|in_group:'junta' %}
-    <h4>
+    <h3>
       Players are not yet available
-    </h4>
+    </h3>
   {% else %}
     {% if user_registration.is_complete and user_registration.league.baggage > 1 and not user_registration.waitlist and not user_registration.league.waitlist_start_date|is_past_deadline %}
       <p>To add someone to your group, you need to know their email address.</p>
       <p>You may <a href="{% url 'league_group' year=league.year season=league.season division=league.night %}">form a baggage group here</a>.</p>
     {% endif %}
 
-    <h5>Name not on the list?</h5>
+    <h4>Name not on the list?</h4>
     <ul>
       <li>Did you pay by check? If so, maybe we don't have your check yet.</li>
       <li>Anything else? <a href="mailto:registration@annarborultimate.org">Email us at registration@annarborultimate.org.</a></li>
     </ul>
 
     {% if waitlist_registrations|length %}
-    <h4>Waitlist</h4>
+    <h3>Waitlist</h3>
 
     <ol>
       {% for registration in waitlist_registrations %}
@@ -41,12 +41,12 @@
     {% endif %}
 
     <div id="league_players">
-      <h6>
+      <h5>
         There are {{ registrations_remaining }} of {{ league.max_players }} spaces available.
         {% if registrations_remaining <= 0 %}
           New registrations will be added to the waitlist.
         {% endif %}
-      </h6>
+      </h5>
 
       <table class="table table-striped">
         <tbody>
@@ -72,13 +72,13 @@
 
     {% if request.user|in_group:'junta' %}
     <div class="page-division-players-notes">
-      <h5 class="page-division-players-notes-title">
+      <h4 class="page-division-players-notes-title">
         Admin Only
-      </h5>
+      </h4>
 
       <div class="page-division-players-notes-content">
         {% if unassigned_registrations|length %}
-        <h4>Unassigned Registrations ({{ unassigned_registrations|length }})</h4>
+        <h3>Unassigned Registrations ({{ unassigned_registrations|length }})</h3>
         <table class="table table-condensed">
           <thead>
             <tr>
@@ -100,7 +100,7 @@
         {% endif %}
 
         {% if incomplete_registrations|length %}
-        <h4>Incomplete Registrations ({{ incomplete_registrations|length }})</h4>
+        <h3>Incomplete Registrations ({{ incomplete_registrations|length }})</h3>
         <table class="table table-condensed">
           <thead>
             <tr>
@@ -122,7 +122,7 @@
         {% endif %}
 
         {% if refunded_registrations|length %}
-        <h4>Refunded Registrations ({{ refunded_registrations|length }})</h4>
+        <h3>Refunded Registrations ({{ refunded_registrations|length }})</h3>
         <table class="table table-condensed">
           <tbody>
             {% for registration in refunded_registrations|dictsort:'updated' %}

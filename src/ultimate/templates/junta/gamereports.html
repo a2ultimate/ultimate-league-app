@@ -17,7 +17,7 @@
   {% elif game_report %}
     <h1>{% include '_partials/division_header.html' with league=league header='Game Reports' only %}</h1>
 
-    <h4>Game Report for {{ game_report.team }}</h4>
+    <h2>Game Report for {{ game_report.team }}</h2>
 
     {% for game_report_comment in game_report.gamereportcomment_set.all %}
       <dl>
