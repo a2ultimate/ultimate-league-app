@@ -1,6 +1,7 @@
 var $ = require('jquery'),
-    sortable = require('html5sortable'),
-    jQueryUi = require('jquery-ui');
+    sortable = require('html5sortable');
+
+require('jquery-ui/ui/widgets/slider');
 
 $(function() {
     var $alerts = $('.alerts');
