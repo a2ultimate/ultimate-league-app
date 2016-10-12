@@ -10,22 +10,27 @@
 
   {% include '_partials/account_tabs.html' with selected_tab='junta' %}
 
+  <div class="breadcrumbs">
+    <ul class="breadcrumbs-list">
+      <li class="breadcrumb">
+        <a href="{% url 'junta' %}">Junta Resources</a>
+      </li>
+      <li class="breadcrumb">
+        <a href="{% url 'teamgeneration' %}">Team Generation</a>
+      </li>
+      {% if league %}
+      <li class="breadcrumb">
+        <a href="{% url 'teamgeneration_league' year=league.year season=league.season division=league.night %}">{{ league.season_title|smart_title }} {{ league.year }} {{ league.night|smart_title }}</a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+
   {% if leagues %}
     <h1>Team Generation</h1>
 
     {% include '_partials/league_list.html' with leagues=leagues link_view='teamgeneration_league' only %}
   {% else %}
-    <div class="breadcrumbs">
-      <ul class="breadcrumbs-list">
-        <li class="breadcrumb">
-          <a href="{% url 'teamgeneration' %}">Team Generation</a>
-        </li>
-        <li class="breadcrumb">
-          <a href="{% url 'teamgeneration_league' year=league.year season=league.season division=league.night %}">{{ league.season_title|smart_title }} {{ league.year }} {{ league.night|smart_title }}</a>
-        </li>
-      </ul>
-    </div>
-
     <h1>{% include '_partials/division_header.html' with league=league header='Team Generation' only %}</h1>
 
     <form class="form" method="post">{% csrf_token %}

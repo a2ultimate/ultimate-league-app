@@ -9,6 +9,22 @@
 {% block content %}
 	{% include '_partials/account_tabs.html' with selected_tab='junta' %}
 
+  <div class="breadcrumbs">
+    <ul class="breadcrumbs-list">
+      <li class="breadcrumb">
+        <a href="{% url 'junta' %}">Junta Resources</a>
+      </li>
+      <li class="breadcrumb">
+        <a href="{% url 'leagueresults' %}">League Results</a>
+      </li>
+      {% if league %}
+      <li class="breadcrumb">
+        <a href="{% url 'leagueresults_league' year=league.year season=league.season division=league.night %}">{{ league.season_title|smart_title }} {{ league.year }} {{ league.night|smart_title }}</a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+
 	{% if leagues %}
 		<h1>League Results</h1>
 

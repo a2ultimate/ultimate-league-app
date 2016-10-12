@@ -89,17 +89,19 @@ def leagueresults(request, year=None, season=None, division=None):
 def gamereports(request, year=None, season=None, division=None, game_id=None, team_id=None):
 	leagues = None
 	league = None
-	game_report = None
+	game = None
+	team = None
+	game_reports = None
 	game_locations = None
 	game_dates = None
 
 	if year and season and division:
 		league = get_object_or_404(League, year=year, season=season, night=division)
 
-		if game_id:
+		if game_id and team_id:
 			game = get_object_or_404(Game, id=game_id)
 			team = get_object_or_404(Team, id=team_id)
-			game_report = get_object_or_404(GameReport, team__id=team_id, game__id=game_id)
+			game_reports = GameReport.objects.filter(team__id=team_id, game__id=game_id)
 
 		else:
 			games = league.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
@@ -113,7 +115,9 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
 		{
 			'leagues': leagues,
 			'league': league,
-			'game_report': game_report,
+			'game': game,
+			'team': team,
+			'game_reports': game_reports,
 			'game_locations': game_locations,
 			'game_dates': game_dates,
 		},

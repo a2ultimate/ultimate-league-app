@@ -9,25 +9,54 @@
 
   {% include '_partials/account_tabs.html' with selected_tab='junta' %}
 
+  <div class="breadcrumbs">
+    <ul class="breadcrumbs-list">
+      <li class="breadcrumb">
+        <a href="{% url 'junta' %}">Junta Resources</a>
+      </li>
+      <li class="breadcrumb">
+        <a href="{% url 'gamereports' %}">Game Reports</a>
+      </li>
+      {% if league %}
+      <li class="breadcrumb">
+        <a href="{% url 'gamereports_league' year=league.year season=league.season division=league.night %}">{{ league.season_title|smart_title }} {{ league.year }} {{ league.night|smart_title }}</a>
+      </li>
+      {% endif %}
+      {% if game_reports %}
+      <li class="breadcrumb">Team {{ team.id }}</li>
+      {% endif %}
+    </ul>
+  </div>
+
   {% if leagues %}
     <h1>Game Reports</h1>
 
     {% include '_partials/league_list.html' with leagues=leagues link_view='gamereports_league' only %}
 
-  {% elif game_report %}
+  {% elif game_reports %}
     <h1>{% include '_partials/division_header.html' with league=league header='Game Reports' only %}</h1>
 
-    <h2>Game Report for {{ game_report.team }}</h2>
+    <h2>Game Report for {{ team }}</h2>
 
-    {% for game_report_comment in game_report.gamereportcomment_set.all %}
-      <dl>
-        <dt>Submitter</dt>
-        <dd>{{ game_report_comment.submitted_by }}</dd>
-        <dt>Spirit</dt>
-        <dd>{{ game_report_comment.spirit }}</dd>
-        <dt>Comment</dt>
-        <dd>{{ game_report_comment.comment|default:'<em>None</em>' }}</dd>
-      </dl>
+    {% for game_report in game_reports %}
+
+      {% for game_report_comment in game_report.gamereportcomment_set.all %}
+        <dl>
+          <dt>Submitter</dt>
+          <dd>{{ game_report_comment.submitted_by }}</dd>
+          <dt>Spirit</dt>
+          <dd>{{ game_report_comment.spirit }}</dd>
+          <dt>Comment</dt>
+          <dd>{{ game_report_comment.comment|default:'<em>None</em>' }}</dd>
+        </dl>
+
+        {% if not forloop.last %}
+          <hr>
+        {% endif %}
+      {% endfor %}
+
+    {% empty %}
+      <h3>No game reports found</h3>
     {% endfor %}
 
   {% else %}
