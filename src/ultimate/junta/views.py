@@ -15,6 +15,7 @@ from django.template import RequestContext
 
 from ultimate.forms import ScheduleGenerationForm
 
+from ultimate.captain.models import GameReport
 from ultimate.junta.models import *
 from ultimate.leagues.models import *
 from ultimate.user.models import *
@@ -98,8 +99,7 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
 		if game_id:
 			game = get_object_or_404(Game, id=game_id)
 			team = get_object_or_404(Team, id=team_id)
-
-			game_report = game.get_report_for_team(team).get()
+			game_report = get_object_or_404(GameReport, team__id=team_id, game__id=game_id)
 
 		else:
 			games = league.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')

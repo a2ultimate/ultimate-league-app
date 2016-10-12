@@ -10,7 +10,7 @@
         <a href="{% url 'captain' %}">Captain Resources</a>
       </li>
       <li class="breadcrumb">
-        <a href="{% url 'playersurvey' teamid=team.id %}">Player Survey</a>
+        <a href="{% url 'playersurvey' team_id=team.id %}">Player Survey</a>
       </li>
     </ul>
   </div>
@@ -60,7 +60,7 @@
     {% endfor %}
   </ul>
 
-  <form class="form" method="post" action="{% url 'playersurvey' teamid=team.id  %}">{% csrf_token %}
+  <form class="form" method="post" action="{% url 'playersurvey' team_id=team.id  %}">{% csrf_token %}
     {{ formset.management_form }}
 
     <table class="table table-centered table-striped">
@@ -99,6 +99,6 @@
     </table>
 
     <input class="button button-success" type="submit" value="Update" />
-    <a class="button button-link" href="{% url 'playersurvey' teamid=team.id %}">Cancel</a>
+    <a class="button button-link" href="{% url 'playersurvey' team_id=team.id %}">Cancel</a>
   </form>
 {% endblock %}

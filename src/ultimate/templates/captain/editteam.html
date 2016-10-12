@@ -14,7 +14,7 @@
       </a>
     </li>
     <li class="breadcrumb">
-      <a href="{% url 'captaineditteam' teamid=team.id %}">
+      <a href="{% url 'captaineditteam' team_id=team.id %}">
         Edit Team Information
       </a>
     </li>
@@ -23,7 +23,7 @@
 
 <h1>Update Your Team Information</h1>
 
-<form method="post" action="{% url 'captaineditteam' teamid=team.id %}">{% csrf_token %}
+<form method="post" action="{% url 'captaineditteam' team_id=team.id %}">{% csrf_token %}
   {% for hidden in form.hidden_fields %}
     {{ hidden }}
   {% endfor %}
@@ -54,6 +54,6 @@
   {% endfor %}
 
   <input class="button button-success" type="submit" value="Update" />
-  <a class="button button-link" href="{% url 'captaineditteam' teamid=team.id %}">Cancel</a>
+  <a class="button button-link" href="{% url 'captaineditteam' team_id=team.id %}">Cancel</a>
 </form>
 {% endblock %}
