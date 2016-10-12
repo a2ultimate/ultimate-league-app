@@ -5,13 +5,16 @@
 {% load user_roles %}
 {% load utility %}
 
+{% block title %}{% include '_partials/division_header.html' with league=league header='Players' hide_state=1 only %}| {{ block.super }}{% endblock %}
+{% block og_title %}{% include '_partials/division_header.html' with league=league header='Players' hide_state=1 only %}| {{ block.super }}{% endblock %}
+
 {% block content %}
 <div class="page-division-players">
-  {% include "layout/league_header.html" with league=league only %}
+  <h1>{% include '_partials/division_header.html' with league=league only %}</h1>
 
-  {% include "layout/league_tabs.html" with selected_tab="players" %}
+  {% include '_partials/league_tabs.html' with selected_tab='players' %}
 
-  {% if not league.is_after_registration_start and not request.user|in_group:"junta" %}
+  {% if not league.is_after_registration_start and not request.user|in_group:'junta' %}
     <h4>
       Players are not yet available
     </h4>
@@ -47,7 +50,7 @@
 
       <table class="table table-striped">
         <tbody>
-        {% regroup complete_registrations|dictsort:"baggage.id" by baggage as baggage_group %}
+        {% regroup complete_registrations|dictsort:'baggage.id' by baggage as baggage_group %}
         {% for baggage in baggage_group|groups_sort %}
           {% if not forloop.counter|divisibleby:'2' %}
             <tr>
@@ -67,7 +70,7 @@
       </table>
     </div>
 
-    {% if request.user|in_group:"junta" %}
+    {% if request.user|in_group:'junta' %}
     <div class="page-division-players-notes">
       <h5 class="page-division-players-notes-title">
         Admin Only
@@ -85,11 +88,11 @@
             </tr>
           </thead>
           <tbody>
-            {% for registration in unassigned_registrations|dictsort:"progress"|dictsort:"registered" %}
+            {% for registration in unassigned_registrations|dictsort:'progress'|dictsort:'registered' %}
               <tr>
                 <td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></td>
                 <td>{{ registration.status }}</td>
-                <td>{{ registration.registered|date:"Y/m/d h:iA" }}</td>
+                <td>{{ registration.registered|date:'Y/m/d h:iA' }}</td>
               </tr>
             {% endfor %}
           </tbody>

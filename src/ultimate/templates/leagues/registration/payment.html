@@ -1,14 +1,17 @@
-{% extends "layout/layout_user.html" %}
+{% extends 'layout/layout_user.html' %}
 
 {% load utility %}
 
+{% block title %}{% include '_partials/division_header.html' with league=league header='Registration' hide_state=1 only %}| {{ block.super }}{% endblock %}
+{% block og_title %}{% include '_partials/division_header.html' with league=league header='Registration' hide_state=1 only %}| {{ block.super }}{% endblock %}
+
 {% block content %}
 
-	{% include "layout/league_header.html" with league=league only %}
+	<h1>{% include '_partials/division_header.html' with league=league only %}</h1>
 
-	{% include "layout/league_tabs.html" with selected_tab="registration" %}
+	{% include '_partials/league_tabs.html' with selected_tab='registration' %}
 
-	{% include "leagues/registration/_progress.html" with league=league registration=registration section=section tick_percentage=tick_percentage only %}
+	{% include 'leagues/registration/_progress.html' with league=league registration=registration section=section tick_percentage=tick_percentage only %}
 
 	<h2>How would you like to pay?</h2>
 
@@ -21,7 +24,7 @@
 	</p>
 
 	{% if registration.coupon %}
-		<form method="post">{% csrf_token %}
+		<form class="form" method="post">{% csrf_token %}
 			<p>
 				You have entered a coupon code
 				<strong>{{ registration.coupon.code }}</strong>
@@ -33,7 +36,7 @@
 			</p>
 		</form>
 	{% else %}
-		<form method="post">{% csrf_token %}
+		<form class="form" method="post">{% csrf_token %}
 			<p>Do you have a coupon code?</p>
 			<input name="coupon_code" type="text">
 			<button class="button button-success" type="submit">
@@ -51,7 +54,7 @@
 		</ul>
 	</p>
 
-	<form method="post">{% csrf_token %}
+	<form class="form" method="post">{% csrf_token %}
 		<input class="button button-success" type="submit" name="pay_type" value="Paypal">
 		{% if league.checks_accepted %}
 			<input class="button button-success" type="submit" name="pay_type" value="Check">

@@ -9,7 +9,7 @@
 
 {% block content %}
 <div class="page-user-index">
-  {% include "layout/account_tabs.html" with selected_tab="user" %}
+  {% include "_partials/account_tabs.html" with selected_tab="user" %}
 
   {% if next_game and next_game.get_teams|length %}
     <h2>My Next Game</h2>

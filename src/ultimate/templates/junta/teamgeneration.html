@@ -1,4 +1,4 @@
-{% extends "layout/layout_user.html" %}
+{% extends 'layout/layout_user.html' %}
 
 {% load games %}
 {% load leagues %}
@@ -8,7 +8,7 @@
 
 {% block content %}
 
-  {% include 'layout/account_tabs.html' with selected_tab='junta' %}
+  {% include '_partials/account_tabs.html' with selected_tab='junta' %}
 
   {% if leagues %}
     <h1>Team Generation</h1>
@@ -26,7 +26,7 @@
       </ul>
     </div>
 
-    {% include 'layout/league_header.html' with league=league header='Team Generation' only %}
+    <h1>{% include '_partials/division_header.html' with league=league header='Team Generation' only %}</h1>
 
     <form class="form" method="post">{% csrf_token %}
       {% if teams %}

@@ -1,15 +1,18 @@
-{% extends "layout/layout_user.html" %}
+{% extends 'layout/layout_user.html' %}
 
 {% load leagues %}
 {% load utility %}
 
+{% block title %}{% include '_partials/division_header.html' with league=league header='Registration' hide_state=1 only %}| {{ block.super }}{% endblock %}
+{% block og_title %}{% include '_partials/division_header.html' with league=league header='Registration' hide_state=1 only %}| {{ block.super }}{% endblock %}
+
 {% block content %}
 
-	{% include "layout/league_header.html" with league=league only %}
+	<h1>{% include '_partials/division_header.html' with league=league only %}</h1>
 
-	{% include "layout/league_tabs.html" with selected_tab="registration" %}
+	{% include '_partials/league_tabs.html' with selected_tab='registration' %}
 
-	{% include "leagues/registration/_progress.html" with league=league registration=registration section=section tick_percentage=tick_percentage only %}
+	{% include 'leagues/registration/_progress.html' with league=league registration=registration section=section tick_percentage=tick_percentage only %}
 
 	<h2>Registration Status</h2>
 
@@ -76,7 +79,7 @@
 		{% if not registration.is_complete %}
 			{% if league.paypal_price > 0 or league.check_price > 0 %}
 				{% if registration.coupon %}
-					<form method="post">{% csrf_token %}
+					<form class="form" method="post">{% csrf_token %}
 						<p>
 							You have entered a coupon code
 							<strong>{{ registration.coupon.code }}</strong>
@@ -89,7 +92,7 @@
 					</form>
 				{% else %}
 					<p>Do you have a coupon code?</p>
-					<form method="post">{% csrf_token %}
+					<form class="form" method="post">{% csrf_token %}
 						<input name="coupon_code" type="text">
 						<button class="button button-success" type="submit">
 							Submit
@@ -125,7 +128,7 @@
 							<a href="mailto:registration@annarborultimate.org">registration@annarborultimate.org</a>.
 						</p>
 					{% else %}
-						<form method="post">{% csrf_token %}
+						<form class="form" method="post">{% csrf_token %}
 							<button class="button button-success" name="process_registration" type="submit">Process Registration</button>
 						</form>
 					{% endif %}
@@ -138,7 +141,7 @@
 					{{ league.mail_check_address|safe }}
 				{% endif %}
 
-				<form method="post">{% csrf_token %}
+				<form class="form" method="post">{% csrf_token %}
 					{% if registration.check_price > 0 and registration.pay_type != 'check' and league.checks_accepted %}
 						<button class="button button-info" name="pay_type" value="check" type="submit">Switch Payment Type to Check</button>
 					{% endif %}

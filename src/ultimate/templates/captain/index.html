@@ -6,7 +6,7 @@
 {% load utility %}
 
 {% block content %}
-	{% include "layout/account_tabs.html" with selected_tab="captain" %}
+	{% include "_partials/account_tabs.html" with selected_tab="captain" %}
 
 	<ul class="header-list">
 		{% for team in captain_teams %}

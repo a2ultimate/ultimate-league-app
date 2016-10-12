@@ -6,14 +6,14 @@
 
 {% block content %}
 
-	{% include "layout/account_tabs.html" with selected_tab="junta" %}
+	{% include "_partials/account_tabs.html" with selected_tab="junta" %}
 
 	{% if leagues %}
 		<h1>Captain Status</h1>
 
 		{% include "_partials/league_list.html" with leagues=leagues link_view="captainstatus_league" only %}
 	{% else %}
-		{% include "layout/league_header.html" with league=league header="Captain Status" only %}
+		{% include "_partials/division_header.html" with league=league header="Captain Status" only %}
 
 		<table class="table table-centered table-striped">
 			<thead>
