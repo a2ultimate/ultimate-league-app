@@ -2,7 +2,7 @@
 
 import math
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
@@ -197,7 +197,7 @@ class AddPostView(PostEditMixin, generic.CreateView):
             self.user = request.user
         else:
             if defaults.PYBB_ENABLE_ANONYMOUS_POST:
-                self.user, new = User.objects.get_or_create(username=defaults.PYBB_ANONYMOUS_USERNAME)
+                self.user, new = get_user_model().objects.get_or_create(username=defaults.PYBB_ANONYMOUS_USERNAME)
             else:
                 from django.contrib.auth.views import redirect_to_login
                 return redirect_to_login(request.get_full_path())
@@ -234,7 +234,7 @@ class EditPostView(PostEditMixin, generic.UpdateView):
 
 
 class UserView(generic.DetailView):
-    model = User
+    model = get_user_model()
     template_name = 'pybb/user.html'
     context_object_name = 'target_user'
 
@@ -355,7 +355,7 @@ class OpenTopicView(TopicActionBaseView):
 
 @login_required
 def block_user(request, username):
-    user = get_object_or_404(User, username=username)
+    user = get_object_or_404(get_user_model(), username=username)
     if not perms.may_block_user(request.user, user):
         raise PermissionDenied
     user.is_active = False

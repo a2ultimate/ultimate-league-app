@@ -3,6 +3,7 @@ from datetime import datetime
 import re
 
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
@@ -114,12 +115,12 @@ def playersurvey(request, teamid):
 	if not bool(team.teammember_set.filter(user=request.user, captain=True)[0:1].count()):
 		raise Http403
 
-	team_member_users = User.objects.filter(teammember__team=team).exclude(id=request.user.id) \
-		.extra(select={'average_experience':'SELECT COALESCE(AVG(player_ratings.experience), 0) FROM player_ratings WHERE player_ratings.user_id = auth_user.id AND player_ratings.experience != 0'}) \
-		.extra(select={'average_strategy':'SELECT COALESCE(AVG(player_ratings.strategy), 0) FROM player_ratings WHERE player_ratings.user_id = auth_user.id AND player_ratings.strategy != 0'}) \
-		.extra(select={'average_throwing':'SELECT COALESCE(AVG(player_ratings.throwing), 0) FROM player_ratings WHERE player_ratings.user_id = auth_user.id AND player_ratings.throwing != 0'}) \
-		.extra(select={'average_athleticism':'SELECT COALESCE(AVG(player_ratings.athleticism), 0) FROM player_ratings WHERE player_ratings.user_id = auth_user.id AND player_ratings.athleticism != 0'}) \
-		.extra(select={'average_spirit':'SELECT COALESCE(AVG(player_ratings.spirit), 0) FROM player_ratings WHERE player_ratings.user_id = auth_user.id AND player_ratings.spirit != 0'}) \
+	team_member_users = get_user_model().objects.filter(teammember__team=team).exclude(id=request.user.id) \
+		.extra(select={'average_experience':'SELECT COALESCE(AVG(player_ratings.experience), 0) FROM player_ratings WHERE player_ratings.user_id = user_user.id AND player_ratings.experience != 0'}) \
+		.extra(select={'average_strategy':'SELECT COALESCE(AVG(player_ratings.strategy), 0) FROM player_ratings WHERE player_ratings.user_id = user_user.id AND player_ratings.strategy != 0'}) \
+		.extra(select={'average_throwing':'SELECT COALESCE(AVG(player_ratings.throwing), 0) FROM player_ratings WHERE player_ratings.user_id = user_user.id AND player_ratings.throwing != 0'}) \
+		.extra(select={'average_athleticism':'SELECT COALESCE(AVG(player_ratings.athleticism), 0) FROM player_ratings WHERE player_ratings.user_id = user_user.id AND player_ratings.athleticism != 0'}) \
+		.extra(select={'average_spirit':'SELECT COALESCE(AVG(player_ratings.spirit), 0) FROM player_ratings WHERE player_ratings.user_id = user_user.id AND player_ratings.spirit != 0'}) \
 		.distinct()
 
 	try:

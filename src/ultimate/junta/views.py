@@ -6,6 +6,7 @@ from math import floor
 import re
 
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.transaction import atomic
 from django.http import HttpResponseRedirect, HttpResponse
@@ -423,7 +424,7 @@ def teamgeneration(request, year=None, season=None, division=None):
 				# reorganize new teams so that they can be saved
 				for team in teams_object:
 					new_teams.append({
-						'captains': list(User.objects.get(id=user_id) for user_id in captain_users.keys()),
+						'captains': list(get_user_model().objects.get(id=user_id) for user_id in captain_users.keys()),
 						'team_id': None,
 						'users': [player['user'] for player in team['players']]
 					})
@@ -437,7 +438,7 @@ def teamgeneration(request, year=None, season=None, division=None):
 						if team_id:
 							team = filter(lambda k: k['team_id'] == team_id, new_teams)
 
-							users = list(User.objects.get(id=user_id) for user_id in request.POST.getlist(key))
+							users = list(get_user_model().objects.get(id=user_id) for user_id in request.POST.getlist(key))
 
 							if team:
 								team[0]['users'] = users
@@ -453,7 +454,7 @@ def teamgeneration(request, year=None, season=None, division=None):
 						if team_id:
 							team = filter(lambda k: k['team_id'] == team_id, new_teams)
 
-							captains = list(User.objects.get(id=user_id) for user_id in request.POST.getlist(key))
+							captains = list(get_user_model().objects.get(id=user_id) for user_id in request.POST.getlist(key))
 
 							if team:
 								team[0]['captains'] = captains

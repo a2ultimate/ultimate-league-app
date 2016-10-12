@@ -2,6 +2,8 @@
 
 import time, datetime
 
+
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User, Permission
 from django.core import mail
 from django.core.urlresolvers import reverse
@@ -22,7 +24,7 @@ __author__ = 'zeus'
 class SharedTestModule(object):
 
     def create_user(self):
-        self.user = User.objects.create_user('zeus', 'zeus@localhost', 'zeus')
+        self.user = get_user_model().objects.create_user('zeus', 'zeus@localhost', 'zeus')
 
     def login_client(self, username='zeus', password='zeus'):
         self.client.login(username=username, password=password)
@@ -185,7 +187,7 @@ class FeaturesTest(TestCase, SharedTestModule):
         response = self.client.get(reverse('pybb:topic_latest'))
         self.assertListEqual(list(response.context['topic_list']), [topic_1, topic_2, topic_3])
 
-        topic_1.user = User.objects.create_user('another', 'another@localhost', 'another')
+        topic_1.user = get_user_model().objects.create_user('another', 'another@localhost', 'another')
         topic_1.save()
         response = self.client.get(reverse('pybb:topic_latest'))
         self.assertListEqual(list(response.context['topic_list']), [topic_2, topic_3])
@@ -289,12 +291,12 @@ class FeaturesTest(TestCase, SharedTestModule):
         self.assertEqual(response.status_code, 200)
 
     def test_user_blocking(self):
-        user = User.objects.create_user('test', 'test@localhost', 'test')
+        user = get_user_model().objects.create_user('test', 'test@localhost', 'test')
         self.user.is_superuser = True
         self.user.save()
         self.login_client()
         self.assertEqual(self.client.get(reverse('pybb:block_user', args=[user.email]), follow=True).status_code, 200)
-        user = User.objects.get(username=user.email)
+        user = get_user_model().objects.get(username=user.email)
         self.assertFalse(user.is_active)
 
     def test_headline(self):
@@ -455,7 +457,7 @@ class AnonymousTest(TestCase, SharedTestModule):
         self.ORIG_PYBB_ANONYMOUS_USERNAME = defaults.PYBB_ANONYMOUS_USERNAME
         defaults.PYBB_ENABLE_ANONYMOUS_POST = True
         defaults.PYBB_ANONYMOUS_USERNAME = 'Anonymous'
-        self.user = User.objects.create_user('Anonymous', 'Anonymous@localhost', 'Anonymous')
+        self.user = get_user_model().objects.create_user('Anonymous', 'Anonymous@localhost', 'Anonymous')
         self.category = Category.objects.create(name='foo')
         self.forum = Forum.objects.create(name='xfoo', description='bar', category=self.category)
         self.topic = Topic.objects.create(name='etopic', forum=self.forum, user=self.user)
@@ -519,7 +521,7 @@ class PreModerationTest(TestCase, SharedTestModule):
         self.assertNotContains(response, 'test premoderation')
 
         # But visible by superuser (with permissions)
-        user = User.objects.create_user('admin', 'zeus@localhost', 'admin')
+        user = get_user_model().objects.create_user('admin', 'zeus@localhost', 'admin')
         user.is_superuser = True
         user.save()
         client.login(username='admin', password='admin')
@@ -528,7 +530,7 @@ class PreModerationTest(TestCase, SharedTestModule):
         self.assertContains(response, 'test premoderation')
 
         # user with names stats with allowed can post without premoderation
-        user = User.objects.create_user('allowed_zeus', 'zeus@localhost', 'allowed_zeus')
+        user = get_user_model().objects.create_user('allowed_zeus', 'zeus@localhost', 'allowed_zeus')
         client.login(username='allowed_zeus', password='allowed_zeus')
         response = client.get(add_post_url)
         values = self.get_form_values(response)
