@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import Permission
 from django.conf import settings
 from django.db.models import ObjectDoesNotExist
 from django.db.models.signals import post_save, post_delete
@@ -39,4 +39,4 @@ def setup_signals():
     post_save.connect(post_saved, sender=Post)
     post_delete.connect(post_deleted, sender=Post)
     if defaults.PYBB_AUTO_USER_PERMISSIONS:
-        post_save.connect(user_saved, sender=User)
+        post_save.connect(user_saved, sender=settings.AUTH_USER_MODEL)

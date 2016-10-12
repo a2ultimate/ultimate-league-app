@@ -1,9 +1,10 @@
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import ugettext_lazy as _
 
-from ultimate.user.models import *
+from ultimate.user.models import Player, PlayerRatings
 
 
 class PlayerInline(admin.StackedInline):
@@ -62,5 +63,5 @@ class PlayerRatingsAdmin(admin.ModelAdmin):
     submitted_by_details.allow_tags = True
 
 
-admin.site.register(User, UserAdmin)
+admin.site.register(get_user_model(), UserAdmin)
 admin.site.register(PlayerRatings, PlayerRatingsAdmin)
