@@ -93,7 +93,7 @@
 
 .team-card-game {
   position: relative;
-  z-index: 1;
+  z-index: $z-team-card-game;
 
   margin-bottom: 1rem;
 
@@ -102,7 +102,7 @@
 
 .team-card-game-divider {
   position: absolute;
-  z-index: 2;
+  z-index: $z-team-card-game-divider;
   top: 50%;
   left: 50%;
 
@@ -124,7 +124,7 @@
 
 .team-card-game-team {
   position: relative;
-  z-index: 1;
+  z-index: $z-team-card-game-team;
 
   padding: 0 1rem;
 

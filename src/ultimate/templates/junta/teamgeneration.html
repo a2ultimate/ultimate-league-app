@@ -30,7 +30,7 @@
 
     <form class="form" method="post">{% csrf_token %}
       {% if teams %}
-        <table id="team_stats_table" class="table table-striped">
+        <table id="team-stats-table" class="table table-striped">
           <thead>
             <th></th>
             <th>Rating Total</th>
@@ -43,15 +43,15 @@
           </thead>
           <tbody>
             {% for team in teams %}
-              <tr class="team_stats_{{ team.id }}">
+              <tr class="team-stats-{{ team.id }}">
                 <th>Team {{ team.id }}</td>
-                <td class="team_rating_total">{{ team.rating_total|floatformat:2 }}</td>
-                <td class="team_rating_average">{{ team.rating_average|floatformat:2 }}</td>
-                <td class="team_size">{{ team.get_members|length }}</td>
-                <td class="team_size_female">{{ team.get_female_members|length }}</td>
-                <td class="team_size_male">{{ team.get_male_members|length }}</td>
-                <td class="team_attendance_total">{{ team.attendance_total|floatformat:2 }}</td>
-                <td class="team_attendance_average">{{ team.attendance_average|floatformat:2 }}</td>
+                <td class="team-rating-total">{{ team.rating_total|floatformat:2 }}</td>
+                <td class="team-rating-average">{{ team.rating_average|floatformat:2 }}</td>
+                <td class="team-size">{{ team.get_members|length }}</td>
+                <td class="team-size-female">{{ team.get_female_members|length }}</td>
+                <td class="team-size-male">{{ team.get_male_members|length }}</td>
+                <td class="team-attendance-total">{{ team.attendance_total|floatformat:2 }}</td>
+                <td class="team-attendance-average">{{ team.attendance_average|floatformat:2 }}</td>
               </tr>
             {% endfor %}
           </tbody>
@@ -60,7 +60,7 @@
         <table class="table table-condensed table-striped">
           {% for team in teams %}
             <thead>
-              <tr class="team_stats_{{ team.id }}">
+              <tr class="team-stats-{{ team.id }}">
                 <th rowspan="2">Team {{ team.id }}</th>
                 <th>Rating Average</th>
                 <th>Rating Total</th>
@@ -70,29 +70,29 @@
                 <th>Absence Total</th>
                 <th>Absence Average</th>
               </tr>
-              <tr class="team_stats_{{ team.id }}">
-                <td class="team_rating_average">{{ team.rating_average|floatformat:2 }}</td>
-                <td class="team_rating_total">{{ team.rating_total|floatformat:2 }}</td>
-                <td class="team_size">{{ team.get_members|length }}</td>
-                <td class="team_size_female">{{ team.get_female_members|length }}</td>
-                <td class="team_size_male">{{ team.get_male_members|length }}</td>
-                <td class="team_attendance_total">{{ team.attendance_total|floatformat:2 }}</td>
-                <td class="team_attendance_average">{{ team.attendance_average|floatformat:2 }}</td>
+              <tr class="team-stats-{{ team.id }}">
+                <td class="team-rating-average">{{ team.rating_average|floatformat:2 }}</td>
+                <td class="team-rating-total">{{ team.rating_total|floatformat:2 }}</td>
+                <td class="team-size">{{ team.get_members|length }}</td>
+                <td class="team-size-female">{{ team.get_female_members|length }}</td>
+                <td class="team-size-male">{{ team.get_male_members|length }}</td>
+                <td class="team-attendance-total">{{ team.attendance_total|floatformat:2 }}</td>
+                <td class="team-attendance-average">{{ team.attendance_average|floatformat:2 }}</td>
                 <td></td>
               </tr>
             </thead>
-            <tbody id="team_{{ team.id }}" class="sortable_table sortable_table_connected">
+            <tbody id="team-{{ team.id }}" class="sortable-table sortable-table-connected">
               {% regroup team.get_members_with_baggage by baggage_id as baggage_list %}
 
               {% for baggage_group in baggage_list %}
                 {% for team_member in baggage_group.list %}
-                  <tr class="team_member" data-baggage-id="{{ baggage_group.grouper }}" data-gender="{{ team_member.user.profile.gender }}" data-rating-total="{{ team_member.user.rating_total|floatformat:2 }}" data-attendance-total="{{ team_member.attendance_total|floatformat:2 }}">
+                  <tr class="team-member" data-baggage-id="{{ baggage_group.grouper }}" data-gender="{{ team_member.user.profile.gender }}" data-rating-total="{{ team_member.user.rating_total|floatformat:2 }}" data-attendance-total="{{ team_member.attendance_total|floatformat:2 }}">
                     <td>
-                      <input class="team_member_input" name="team_member_{{ team.id }}" value="{{ team_member.user.id }}" type="hidden" />
+                      <input class="team-member-input" name="team_member_{{ team.id }}" value="{{ team_member.user.id }}" type="hidden" />
                       <label>
-                        <input class="team_member_captain_input" name="team_member_captain_{{ team.id }}" {% if team_member.captain %}checked="checked"{% endif %} value="{{ team_member.user.id }}" type="checkbox" />
+                        <input class="team-member-captain-input" name="team_member_captain_{{ team.id }}" {% if team_member.captain %}checked="checked"{% endif %} value="{{ team_member.user.id }}" type="checkbox" />
                         {{ team_member.user.get_full_name }}
-                      </labe>
+                      </label>
                     </td>
                     <td></td>
                     <td>{{ team_member.user.rating_total|floatformat:2 }}</td>
@@ -113,7 +113,7 @@
 
         <table class="table table-condensed table-striped">
           <thead>
-            <tr class="team_stats_0">
+            <tr class="team-stats-0">
               <th rowspan="2"></th>
               <th>Rating Average</th>
               <th>Rating Total</th>
@@ -124,18 +124,18 @@
               <th>Absence Average</th>
             </tr>
           </thead>
-          <tbody id="team_0" class="sortable_table sortable_table_connected">
+          <tbody id="team_0" class="sortable-table sortable-table-connected">
             {% regroup unassigned_registrations by baggage_id as baggage_list %}
 
             {% for baggage_group in baggage_list %}
               {% for unassigned_registration in baggage_group.list %}
-                <tr class="team_member" data-baggage-id="{{ baggage_group.grouper }}" data-gender="{{ unassigned_registration.user.profile.gender }}" data-rating-total="{{ unassigned_registration.user.rating_total|floatformat:2 }}" data-attendance-total="{{ unassigned_registration.attendance|floatformat:2 }}">
+                <tr class="team-member" data-baggage-id="{{ baggage_group.grouper }}" data-gender="{{ unassigned_registration.user.profile.gender }}" data-rating-total="{{ unassigned_registration.user.rating_total|floatformat:2 }}" data-attendance-total="{{ unassigned_registration.attendance|floatformat:2 }}">
                   <td>
-                    <input class="team_member_input" name="team_member_0" value="{{ unassigned_registration.user.id }}" type="hidden" />
+                    <input class="team-member-input" name="team_member_0" value="{{ unassigned_registration.user.id }}" type="hidden" />
                     <label>
-                      <input class="team_member_captain_input" name="team_member_captain_0" value="{{ unassigned_registration.user.id }}" type="checkbox" />
+                      <input class="team-member-captain-input" name="team_member_captain-0" value="{{ unassigned_registration.user.id }}" type="checkbox" />
                       {{ unassigned_registration.user.get_full_name }}
-                    </labe>
+                    </label>
                   </td>
                   <td></td>
                   <td>{{ unassigned_registration.user.rating_total|floatformat:2 }}</td>

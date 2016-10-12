@@ -1,6 +1,6 @@
 .progress-bar {
   position: relative;
-  z-index: 1;
+  z-index: $z-progress-bar;
 
   margin: 2.25rem 1.625rem 1.125rem 0.125rem;
   padding: 0;
@@ -16,7 +16,8 @@
 }
 
 .progress-bar-progress {
-  z-index: 2;
+  position: relative;
+  z-index: $z-progress-bar-progress;
 
   display: block;
 
@@ -31,7 +32,7 @@
 
 .progress-bar-tick {
   position: absolute;
-  z-index: 1;
+  z-index: $z-progress-bar-tick;
   top: 50%;
 
   display: block;
@@ -48,7 +49,6 @@
 
 .progress-bar-tick-label {
   position: absolute;
-  z-index: 1;
   top: 1.625rem;
 
   display: block;

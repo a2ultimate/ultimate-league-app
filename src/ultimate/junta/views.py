@@ -470,6 +470,9 @@ def teamgeneration(request, year=None, season=None, division=None):
 									'users': []
 								})
 
+				messages.success(request, 'Teams were successfully saved.')
+				return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
+
 			if 'publish_teams' in request.POST:
 				teams.update(hidden=False)
 

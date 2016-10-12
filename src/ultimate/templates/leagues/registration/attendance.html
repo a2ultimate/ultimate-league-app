@@ -1,59 +1,61 @@
-{% extends "layout/layout_user.html" %}
+{% extends 'layout/layout_user.html' %}
 
 {% load utility %}
 
 {% block content %}
 
-{% include "layout/league_header.html" with league=league only %}
+{% include 'layout/league_header.html' with league=league only %}
 
-{% include "layout/league_tabs.html" with selected_tab="registration" %}
+{% include 'layout/league_tabs.html' with selected_tab='registration' %}
 
-{% include "leagues/registration/_progress.html" with league=league registration=registration section=section tick_percentage=tick_percentage only %}
+{% include 'leagues/registration/_progress.html' with league=league registration=registration section=section tick_percentage=tick_percentage only %}
 
 {% if league.type == 'league' %}
-	<h2>Attendance and Captaining</h2>
+  <h2>Attendance and Captaining</h2>
 {% else %}
-	<h2>Attendance</h2>
+  <h2>Attendance</h2>
 {% endif %}
 
-<form method="post">{% csrf_token %}
-	{{ attendance_form.id }}
+<form class="form" method="post">{% csrf_token %}
+  {{ attendance_form.id }}
 
-	<div id="attendance" class="slide_selector" data-slider-max="{{ league.get_num_game_events }}">
-		<label for="id_attendance"><h3>There {{ league.get_num_game_events|pluralize:"is,are" }} {{ league.get_num_game_events }} game{{ league.get_num_game_events|pluralize }}. How many games will you miss?</h3></label>
-		{{ attendance_form.attendance }}
-		<div class="slider_errors">{{ attendance_form.attendance.errors }}</div>
-		<div class="slider"></div>
-		<div class="slider_description">
-			<div class="left">I will not miss any games.</div>
-			<div class="right">I will miss all the games (?!).</div>
-		</div>
-	</div>
+  <div id="attendance" class="slider" data-slider-max="{{ league.get_num_game_events }}">
+    <label for="id_attendance">
+      <h5>There {{ league.get_num_game_events|pluralize:'is,are' }} {{ league.get_num_game_events }} game{{ league.get_num_game_events|pluralize }}. How many games will you miss?</h5>
+    </label>
+    {{ attendance_form.attendance }}
+    <div class="slider-element"></div>
+    <div class="slider-errors">{{ attendance_form.attendance.errors }}</div>
+    <div class="slider-description">
+      <div class="slider-description-left">I will not miss any games.</div>
+      <div class="slider-description-right">I will miss all the games (?!).</div>
+    </div>
+  </div>
 
-	{% if league.type == 'league' %}
-		<div id="captain" class="slide_selector" data-slider-min="0" data-slider-max="4">
-			<label for="id_captain"><h3>Would you like to captain a team?</h3></label>
-			<p>
-				The Ann Arbor Ultimate captains' committee uses the following values to determine captains
-				for league. In general, the higher your value, the more willing you are to captain.
-			</p>
-			{{ attendance_form.captain }}
-			<div class="slider_errors">{{ attendance_form.captain.errors }}</div>
-			<div class="slider"></div>
-		</div>
+  {% if league.type == 'league' %}
+    <div id="captain" class="slider" data-slider-min="0" data-slider-max="4">
+      <label for="id_captain">
+        <h5>Would you like to captain a team?</h5>
+      </label>
+      <p>
+        The Ann Arbor Ultimate captains' committee uses the following values to determine captains
+        for league. In general, the higher your value, the more willing you are to captain.
+      </p>
+      {{ attendance_form.captain }}
+      <div class="slider-element"></div>
+      <div class="slider-errors">{{ attendance_form.captain.errors }}</div>
+    </div>
 
-		<ul>
-			<li>0 - I refuse to captain.</li>
-			<li>1 - I will captain if absolutely necessary.</li>
-			<li>2 - I am willing to captain.</li>
-			<li>3 - I would like to captain.</li>
-			<li>4 - I will be very sad if I don't get to captain.</li>
-		</ul>
-	{% endif %}
+    <ul>
+      <li>0 - I refuse to captain.</li>
+      <li>1 - I will captain if absolutely necessary.</li>
+      <li>2 - I am willing to captain.</li>
+      <li>3 - I would like to captain.</li>
+      <li>4 - I will be very sad if I don't get to captain.</li>
+    </ul>
+  {% endif %}
 
-	<p>
-		<input class="button button-success" type="submit" value="Submit" name="submit">
-	</p>
+  <input class="button button-success" type="submit" value="Submit" name="submit">
 </form>
 
 {% endblock %}

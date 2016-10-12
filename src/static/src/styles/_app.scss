@@ -2,7 +2,7 @@
 @import '_colors';
 @import '_fonts';
 @import '_variables';
-// @import '_z-index';
+@import '_z-index';
 
 // normalize
 @import '~normalize.css/normalize.css';
@@ -27,7 +27,9 @@
 @import 'component-message';
 @import 'component-progress-bar';
 @import 'component-schedule-table';
+@import 'component-slider';
 @import 'component-social';
+@import 'component-sortable';
 @import 'component-status-dot';
 @import 'component-table';
 @import 'component-tabs';
@@ -46,5 +48,4 @@
 
 // legacy
 @import '_print';
-@import 'legacy/legacy';
-// @import 'legacy/jquery-ui-1.10.0.custom.min';
+@import 'legacy/jquery-ui-1.10.0.custom.min';

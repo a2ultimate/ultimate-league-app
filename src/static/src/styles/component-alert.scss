@@ -1,6 +1,6 @@
 .alerts {
   position: fixed;
-  z-index: 5;
+  z-index: $z-body-alerts;
   top: 0;
   left: 50%;
 
