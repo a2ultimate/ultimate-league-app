@@ -153,9 +153,9 @@ textarea[disabled],
 textarea[readonly] {
   cursor: default;
 
-  color: #cad2d3;
+  color: $color-gray;
   border-color: transparent;
-  background-color: #ededed;
+  background-color: $color-light-gray;
 }
 
 [type='color'],

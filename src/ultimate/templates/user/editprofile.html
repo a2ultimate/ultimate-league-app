@@ -1,4 +1,4 @@
-{% extends "layout/layout_user.html" %}
+{% extends 'layout/layout_user.html' %}
 
 {% block content %}
 
@@ -15,6 +15,17 @@
       <a class="tab-link" href="{% url 'editratings'  %}">
         Edit Ratings
       </a>
+    </li>
+  </ul>
+</div>
+
+<div class="breadcrumbs">
+  <ul class="breadcrumbs-list">
+    <li class="breadcrumb">
+      <a href="{% url 'user' %}">My Account</a>
+    </li>
+    <li class="breadcrumb">
+       Profile
     </li>
   </ul>
 </div>
