@@ -6,6 +6,8 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var autoprefixer = require('autoprefixer');
 
+require('es6-promise').polyfill();
+
 module.exports = {
   entry: {
     main:[

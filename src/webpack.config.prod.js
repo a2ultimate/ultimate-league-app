@@ -7,6 +7,8 @@ var ManifestPlugin = require('webpack-manifest-plugin');
 
 var autoprefixer = require('autoprefixer');
 
+require('es6-promise').polyfill();
+
 module.exports = {
   entry: {
     main: path.resolve(__dirname, 'static/src/main.js'),
@@ -97,12 +99,10 @@ module.exports = {
       // STYLES
       {
         test: /\.css$/,
-        // loader: 'style!css!postcss',
         loader: ExtractTextPlugin.extract('style', 'css!postcss'),
       },
       {
         test: /\.scss$/,
-        // loader: 'style!css!postcss!sass',
         loader: ExtractTextPlugin.extract('style', 'css!postcss!sass'),
       },
 
