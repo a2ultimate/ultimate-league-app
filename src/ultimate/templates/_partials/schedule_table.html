@@ -5,7 +5,7 @@
   <thead>
     <tr>
       <td></td>
-      {% regroup columns by field as field_list %}
+      {% regroup game_locations by field as field_list %}
       {% for field in field_list %}
         <th colspan="{{ field.list|length }}">
           {{ field.grouper }}
@@ -32,7 +32,7 @@
     </tr>
     <tr>
       <td></td>
-      {% regroup columns by start as start_list %}
+      {% regroup game_locations by start as start_list %}
       {% for start in start_list %}
         <th colspan="{{ start.list|length }}">
           {{ start.grouper|date:'h:iA'|lower }}
@@ -41,7 +41,7 @@
     </tr>
     <tr>
       <td></td>
-      {% regroup columns by field_name as field_name_list %}
+      {% regroup game_locations by field_name as field_name_list %}
       {% for field_name in field_name_list %}
           <th colspan="{{ field_name.list|length }}">
             {{ field_name.grouper.name }}
