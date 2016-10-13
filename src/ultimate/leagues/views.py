@@ -102,8 +102,8 @@ def teams(request, year, season, division):
 	else:
 		user_games = None
 
-	columns = league.get_game_locations(games=games)
-	game_dates = league.get_game_dates(games=games, game_locations=columns)
+	game_locations = league.get_game_locations(games=games)
+	game_dates = league.get_game_dates(games=games, game_locations=game_locations)
 
 	return render_to_response('leagues/teams.html',
 	{
@@ -112,7 +112,7 @@ def teams(request, year, season, division):
 		'next_game_date': next_game_date,
 		'user_games': user_games,
 
-		'columns': columns,
+		'game_locations': game_locations,
 		'game_dates': game_dates,
 
 		'teams': Team.objects.filter(league=league, hidden=False)

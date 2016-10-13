@@ -35,7 +35,7 @@
     <h1>{% include '_partials/division_header.html' with league=league header='Schedule Generation' only %}</h1>
 
     {% if game_locations|length %}
-      {% include '_partials/schedule_table.html' with league=league columns=game_locations game_dates=game_dates only %}
+      {% include '_partials/schedule_table.html' with league=league game_locations=game_locations game_dates=game_dates only %}
     {% else %}
       <table class="table table-centered table-striped">
         <tbody>

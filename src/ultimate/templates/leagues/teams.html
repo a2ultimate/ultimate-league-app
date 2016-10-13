@@ -17,7 +17,7 @@
 
   <div class="page-division-teams-schedule">
     {% if game_locations|length %}
-      {% include '_partials/schedule_table.html' with league=league columns=columns game_dates=game_dates user_games=user_games next_game_date=next_game_date only %}
+      {% include '_partials/schedule_table.html' with league=league game_locations=game_locations game_dates=game_dates user_games=user_games next_game_date=next_game_date only %}
 
       {% if league.schedule_note %}
       <p class="page-division-teams-schedule-notes">
