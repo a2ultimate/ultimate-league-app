@@ -19,6 +19,7 @@ body {
 // HEADER
 
 .header {
+  position: relative;
   z-index: $z-body-header;
 
   padding: 0.75rem 0;
@@ -27,8 +28,9 @@ body {
 }
 
 .header-inner {
-  width: 62rem;
-  margin: 0 auto;
+  position: relative;
+
+  @include outer-container(62rem);
 }
 
 .header-inner-top {
@@ -39,6 +41,10 @@ body {
 
 .header-inner-top-banner {
   position: relative;
+
+  display: inline-block;
+
+  padding-left: 0.1875rem;
 
   &:active {
     top: 0.0625rem;
@@ -101,8 +107,9 @@ body {
 }
 
 .nav-inner {
-  width: 62rem;
-  margin: 0 auto;
+  position: relative;
+
+  @include outer-container(62rem);
 }
 
 .nav-inner-left {
@@ -232,6 +239,8 @@ body {
 }
 
 .content-inner {
+  position: relative;
+
   padding: 0 0.5rem;
 
   @include outer-container(62rem);
@@ -367,6 +376,7 @@ body {
 }
 
 .footer {
+  position: relative;
   z-index: $z-body-footer;
 
   padding: 1rem 0;
@@ -377,9 +387,13 @@ body {
 }
 
 .footer-inner {
+  position: relative;
+
   padding: 0.1875rem;
 
   text-align: center;
 
   font-size: 0.9375rem;
+
+  @include outer-container(62rem);
 }
