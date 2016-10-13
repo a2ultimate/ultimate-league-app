@@ -2,7 +2,7 @@ body {
   position: relative;
   z-index: $z-body;
 
-  min-width: 62rem;
+  min-width: 61.25rem; // TODO get rid of this to go responsive
   margin: 0;
   padding: 0;
 
