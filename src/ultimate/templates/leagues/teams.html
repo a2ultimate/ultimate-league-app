@@ -16,18 +16,18 @@
   {% include '_partials/league_tabs.html' with selected_tab='teams' %}
 
   <div class="page-division-teams-schedule">
-    {% if game_dates|length %}
-    {% include '_partials/schedule_table.html' with league=league columns=columns game_dates=game_dates user_games=user_games next_game_date=next_game_date only %}
+    {% if game_locations|length %}
+      {% include '_partials/schedule_table.html' with league=league columns=columns game_dates=game_dates user_games=user_games next_game_date=next_game_date only %}
 
-    {% if league.schedule_note %}
-    <p class="page-division-teams-schedule-notes">
-      {{ league.schedule_note }}
-    </p>
-    {% endif %}
+      {% if league.schedule_note %}
+      <p class="page-division-teams-schedule-notes">
+        {{ league.schedule_note }}
+      </p>
+      {% endif %}
     {% else %}
-    <h4>
-      Schedules are not yet available
-    </h4>
+      <h4>
+        Schedules are not yet available
+      </h4>
     {% endif %}
   </div>
 

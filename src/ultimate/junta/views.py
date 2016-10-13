@@ -2,7 +2,7 @@ import copy
 import csv
 from datetime import timedelta
 from itertools import groupby
-from math import floor
+from math import ceil, floor
 import re
 
 from django.contrib import messages
@@ -542,14 +542,22 @@ def teamgeneration(request, year=None, season=None, division=None):
 @atomic
 @user_passes_test(lambda u: u.is_superuser)
 def schedulegeneration(request, year=None, season=None, division=None):
-    league = None
     leagues = None
+    league = None
+    games = None
+    game_locations = None
+    game_dates = None
+
     form = None
     schedule = None
     num_necessary_fields = 0
 
     if year and season and division:
         league = get_object_or_404(League, year=year, season=season, night=division)
+        games = league.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
+        game_locations = league.get_game_locations(games=games)
+        game_dates = league.get_game_dates(games=games, game_locations=game_locations)
+
         num_events = league.get_num_game_events()
 
         schedule = []
@@ -575,60 +583,66 @@ def schedulegeneration(request, year=None, season=None, division=None):
                 schedule_teams = [team for game in games for team in sorted(game, key=lambda k: k.id)]
                 schedule.append(schedule_teams)
 
-        num_necessary_fields = num_teams / 2 / league.num_time_slots
+        num_necessary_fields = int(ceil(1.0 * num_teams / 2 / league.num_time_slots))
 
         if request.method == 'POST':
-            form = ScheduleGenerationForm(request.POST)
-            field_names = request.POST.getlist('field_names')
-            num_field_names = len(field_names)
+            if 'generate_schedule' in request.POST:
+                form = ScheduleGenerationForm(request.POST)
+                field_names = request.POST.getlist('field_names')
+                num_field_names = len(field_names)
 
-            if form.is_valid() and num_field_names >= num_necessary_fields:
-                start_datetime = datetime.combine(datetime.min, league.start_time)
+                if form.is_valid() and num_field_names >= num_necessary_fields:
+                    start_datetime = datetime.combine(datetime.min, league.start_time)
 
-                if league.start_time <= league.end_time:
-                    end_datetime = datetime.combine(datetime.min, league.end_time)
+                    if league.start_time <= league.end_time:
+                        end_datetime = datetime.combine(datetime.min, league.end_time)
+                    else:
+                        end_datetime = datetime.combine(datetime.min + timedelta(days=1), league.end_time)
+
+                    time_delta = end_datetime - start_datetime
+                    time_slot_delta = time_delta / league.num_time_slots
+                    num_time_slots = league.num_time_slots
+
+                    event_date = league.league_start_date
+                    field_names = FieldNames.objects.filter(pk__in=field_names)
+
+                    for event in schedule:
+                        event_datetime = datetime.combine(event_date, league.start_time)
+
+                        for i, team in enumerate(event):
+                            if i % 2 == 0:
+                                game = Game()
+                                game.date = event_date
+                                game.start = event_datetime
+                                game.field_name = field_names[(i / 2) % num_field_names]
+                                game.league = league
+                                game.save()
+
+                            game_team = GameTeams()
+                            game_team.game = game
+                            game_team.team = team
+                            game_team.save()
+
+                            # if no new game/will create new game on next loop
+                            if not i % 2 == 0:
+                                # if out of fields for timeslot
+                                if ((i / 2) + 1) % num_field_names == 0:
+                                    event_datetime += time_slot_delta
+
+                        event_date = event_date + timedelta(days=7)
+
+                    messages.success(request, 'Schedule was successfully generated.')
+                    return HttpResponseRedirect(reverse('schedulegeneration'))
                 else:
-                    end_datetime = datetime.combine(datetime.min + timedelta(days=1), league.end_time)
+                    if num_field_names >= num_necessary_fields:
+                        messages.error(request, 'There was an issue with the form you submitted.')
+                    else:
+                        messages.error(request, 'You must pick enough fields to cover the number of games for an event.')
+            elif 'clear_schedule' in request.POST:
+                Game.objects.filter(league=league).delete()
 
-                time_delta = end_datetime - start_datetime
-                time_slot_delta = time_delta / league.num_time_slots
-                num_time_slots = league.num_time_slots
-
-                event_date = league.league_start_date
-                field_names = FieldNames.objects.filter(pk__in=field_names)
-
-                for event in schedule:
-                    event_datetime = datetime.combine(event_date, league.start_time)
-
-                    for i, team in enumerate(event):
-                        if i % 2 == 0:
-                            game = Game()
-                            game.date = event_date
-                            game.start = event_datetime
-                            game.field_name = field_names[(i / 2) % num_field_names]
-                            game.league = league
-                            game.save()
-
-                        game_team = GameTeams()
-                        game_team.game = game
-                        game_team.team = team
-                        game_team.save()
-
-                        # if no new game/will create new game on next loop
-                        if not i % 2 == 0:
-                            # if out of fields for timeslot
-                            if ((i / 2) + 1) % num_field_names == 0:
-                                event_datetime += time_slot_delta
-
-                    event_date = event_date + timedelta(days=7)
-
-                messages.success(request, 'Schedule was successfully generated.')
+                messages.success(request, 'Schedule was successfully cleared.')
                 return HttpResponseRedirect(reverse('schedulegeneration'))
-            else:
-                if num_field_names >= num_necessary_fields:
-                    messages.error(request, 'There was an issue with the form you submitted.')
-                else:
-                    messages.error(request, 'You must pick enough fields to cover the number of games for an event.')
         else:
             form = ScheduleGenerationForm()
 
@@ -640,8 +654,11 @@ def schedulegeneration(request, year=None, season=None, division=None):
 
     return render_to_response('junta/schedulegeneration.html',
         {
-            'league': league,
             'leagues': leagues,
+            'league': league,
+            'game_locations': game_locations,
+            'game_dates': game_dates,
+
             'form': form,
             'schedule': schedule,
             'num_necessary_fields': num_necessary_fields,

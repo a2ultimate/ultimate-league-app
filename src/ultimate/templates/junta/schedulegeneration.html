@@ -32,25 +32,29 @@
   {% else %}
     <h1>{% include '_partials/division_header.html' with league=league header='Schedule Generation' only %}</h1>
 
-    <table class="table table-centered table-striped">
-      <tbody>
-        {% for event in schedule %}
-          <tr>
-            {% for team in event %}
-              {% if forloop.counter0|divisibleby:'2' %}
-                <td>
-              {% endif %}
+    {% if game_locations|length %}
+      {% include '_partials/schedule_table.html' with league=league columns=game_locations game_dates=game_dates only %}
+    {% else %}
+      <table class="table table-centered table-striped">
+        <tbody>
+          {% for event in schedule %}
+            <tr>
+              {% for team in event %}
+                {% if forloop.counter0|divisibleby:'2' %}
+                  <td>
+                {% endif %}
 
-              <div>{{ team.id }}</div>
+                <div>{{ team.id }}</div>
 
-              {% if not forloop.counter0|divisibleby:'2' %}
-                </td>
-              {% endif %}
-            {% endfor %}
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+                {% if not forloop.counter0|divisibleby:'2' %}
+                  </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
 
 
     {% for field in league.get_fields %}
@@ -90,7 +94,8 @@
         </div>
       </div>
 
-      <input class="button button-success" type="submit" value="Submit Schedule">
+      <input class="button button-success" type="submit" name="generate_schedule" value="Generate Schedule">
+      <input class="button button-danger" type="submit" name="clear_schedule" value="Clear Schedule">
       <a class="button button-link" href="{% url 'schedulegeneration'  %}">Cancel</a>
     </form>
   {% endif %}
