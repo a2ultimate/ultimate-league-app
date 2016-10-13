@@ -1,6 +1,7 @@
 {% extends 'layout/layout_user.html' %}
 
 {% load games %}
+{% load i18n %}
 {% load leagues %}
 {% load staticfiles %}
 {% load utility %}
@@ -28,15 +29,34 @@
   </div>
 
   {% if leagues %}
+
     <h1>Schedule Generation</h1>
 
     {% include '_partials/league_list.html' with leagues=leagues link_view='schedulegeneration_league' only %}
+
   {% else %}
+
     <h1>{% include '_partials/division_header.html' with league=league header='Schedule Generation' only %}</h1>
 
     {% if game_locations|length %}
+
       {% include '_partials/schedule_table.html' with league=league game_locations=game_locations game_dates=game_dates only %}
+
+      <p>
+        There is aleady a schedule created for this division. You must first clear the existing one to create a new one.
+      </p>
+
+      <div class="message message-danger">
+        {% trans 'This can not be undone and can mess some stuff up. Make sure you know what you are doing.' %}
+      </div>
+
+      <form class="form" method="post">{% csrf_token %}
+        <input class="button button-danger" type="submit" name="clear_schedule" value="Clear Schedule">
+        <a class="button button-link" href="{% url 'schedulegeneration'  %}">Cancel</a>
+      </form>
+
     {% else %}
+
       <table class="table table-centered table-striped">
         <tbody>
           {% for event in schedule %}
@@ -56,49 +76,52 @@
           {% endfor %}
         </tbody>
       </table>
-    {% endif %}
 
+      <p>
+        {% for field in league.get_fields %}
+          {% if field.field.layout_link %}
+            <a href="{% static field.field.layout_link %}" target="_blank">
+              <img src="{% static field.field.layout_link %}" height="300px">
+            </a>
+          {% endif %}
+        {% endfor %}
+      </p>
 
-    {% for field in league.get_fields %}
-      {% if field.field.layout_link %}
-        <a href="{% static field.field.layout_link %}" target="_blank">
-          <img src="{% static field.field.layout_link %}" height="300px">
-        </a>
-      {% endif %}
-    {% endfor %}
+      <p>
+        There {{ league.num_time_slots|pluralize:'is,are' }} {{ league.num_time_slots }} time slot{{ league.num_time_slots|pluralize }}, so you will have to
+        choose at least {{ num_necessary_fields }} field{{ num_necessary_fields|pluralize }} to play on. You may add
+        exceptions and make changes in the admin interface after the schedule
+        is created.
+      </p>
 
-    <p>
-      There {{ league.num_time_slots|pluralize:'is,are' }} {{ league.num_time_slots }} time slot{{ league.num_time_slots|pluralize }}, so you will have to
-      choose at least {{ num_necessary_fields }} field{{ num_necessary_fields|pluralize }} to play on. You may add
-      exceptions and make changes in the admin interface after the schedule
-      is created.
-    </p>
+      <form class="form" method="post">{% csrf_token %}
+        {% for hidden in form.hidden_fields %}
+          {{ hidden }}
+        {% endfor %}
 
-    <form class="form" method="post">{% csrf_token %}
-      {% for hidden in form.hidden_fields %}
-        {{ hidden }}
-      {% endfor %}
+        <div class="schedule-generation-page-form-fields">
+          <div class="schedule-generation-page-form-fields-input">
+            {{ form.field_names }}
 
-      <div class="schedule-generation-page-form-fields">
-        <div class="schedule-generation-page-form-fields-input">
-          {{ form.field_names }}
-
-          <div class="form-field-input-errors">
-            <ul class="form-field-input-errors-list">
-              {% for error in field.errors %}
-                <li>{{ error|escape }}</li>
-              {% endfor %}
-            </ul>
+            <div class="form-field-input-errors">
+              <ul class="form-field-input-errors-list">
+                {% for error in field.errors %}
+                  <li>{{ error|escape }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          <div class="schedule-generation-page-form-fields-help">
+            {{ form.field_names.help_text }}
           </div>
         </div>
-        <div class="schedule-generation-page-form-fields-help">
-          {{ form.field_names.help_text }}
-        </div>
-      </div>
 
-      <input class="button button-success" type="submit" name="generate_schedule" value="Generate Schedule">
-      <input class="button button-danger" type="submit" name="clear_schedule" value="Clear Schedule">
-      <a class="button button-link" href="{% url 'schedulegeneration'  %}">Cancel</a>
-    </form>
+        <input class="button button-success" type="submit" name="generate_schedule" value="Generate Schedule">
+        <a class="button button-link" href="{% url 'schedulegeneration'  %}">Cancel</a>
+      </form>
+
+    {% endif %}
+
   {% endif %}
+
 {% endblock %}

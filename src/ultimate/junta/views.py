@@ -632,7 +632,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
                         event_date = event_date + timedelta(days=7)
 
                     messages.success(request, 'Schedule was successfully generated.')
-                    return HttpResponseRedirect(reverse('schedulegeneration'))
+                    return HttpResponseRedirect(reverse('schedulegeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
                 else:
                     if num_field_names >= num_necessary_fields:
                         messages.error(request, 'There was an issue with the form you submitted.')
@@ -642,7 +642,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
                 Game.objects.filter(league=league).delete()
 
                 messages.success(request, 'Schedule was successfully cleared.')
-                return HttpResponseRedirect(reverse('schedulegeneration'))
+                return HttpResponseRedirect(reverse('schedulegeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
         else:
             form = ScheduleGenerationForm()
 
