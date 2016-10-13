@@ -69,8 +69,6 @@ body {
 .header-inner-top-links-list-element {
   display: inline-block;
 
-  font-family: $font-family-lato-bold;
-
   &:after {
     display: inline-block;
     // padding: 0 0.5rem;
@@ -91,6 +89,8 @@ body {
   display: inline-block;
 
   padding: 0 0.75rem;
+
+  font-family: $font-family-lato-semibold;
 }
 
 .nav {
