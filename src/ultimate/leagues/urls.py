@@ -3,7 +3,8 @@ from django.conf.urls import patterns, url, include
 
 from ultimate.leagues.signals import *
 
-payment_callback_regex = r'^registration/payment/' + getattr(settings, 'PAYPAL_CALLBACK_SECRET', 'notification/callback/for/a2ultimate/secret/')
+payment_callbacks = getattr(settings, 'PAYPAL_CALLBACKS', [])
+payment_callback_regex = r'^registration/payment/(' + '|'.join(payment_callbacks) + ')'
 
 urlpatterns = patterns('ultimate.leagues.views',
 	(r'^(?P<year>\d{4})/$', 'index', {}, 'league_index_year'),
@@ -21,5 +22,4 @@ urlpatterns = patterns('ultimate.leagues.views',
 	(r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/registration-complete/$', 'registrationcomplete', {}, 'league_registration_complete'),
 
 	(payment_callback_regex, include('paypal.standard.ipn.urls')),
-
 )

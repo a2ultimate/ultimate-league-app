@@ -166,6 +166,10 @@ PAYPAL_DONATION_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
 PAYPAL_SANDBOX_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
 PAYPAL_SUBSCRIPTION_SANDBOX_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
 PAYPAL_DONATION_SANDBOX_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
+PAYPAL_CALLBACKS = [
+  'an/example/url/',
+  'change/me/',
+]
 
 
 # PYBB - http://www.pybbm.org/
