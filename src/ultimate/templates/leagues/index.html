@@ -4,8 +4,8 @@
 {% load staticfiles %}
 {% load utility %}
 
-{% block title %}{% include '_partials/league_header.html' with league=league only %} | {{ block.super }}{% endblock %}
-{% block og_title %}{% include '_partials/league_header.html' with league=league only %} | {{ block.super }}{% endblock %}
+{% block title %}{% include '_partials/league_header.html' with league=leagues|first only %} &middot; {{ block.super }}{% endblock %}
+{% block og_title %}{% include '_partials/league_header.html' with league=leagues|first only %} &middot; {{ block.super }}{% endblock %}
 
 {% block content %}
 	{% if not season %}

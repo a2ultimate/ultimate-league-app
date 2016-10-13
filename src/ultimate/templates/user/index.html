@@ -1,4 +1,4 @@
-{% extends "layout/layout_user.html" %}
+{% extends 'layout/layout_user.html' %}
 
 {% load leagues %}
 {% load league_registrations %}
@@ -7,11 +7,11 @@
 {% load user_roles %}
 {% load utility %}
 
-{% block title %}My Account | {{ block.super }}{% endblock %}
+{% block title %}My Account &middot; {{ block.super }}{% endblock %}
 
 {% block content %}
 <div class="page-user-index">
-  {% include "_partials/account_tabs.html" with selected_tab="user" %}
+  {% include '_partials/account_tabs.html' with selected_tab='user' %}
 
   {% if next_game and next_game.get_teams|length %}
     <h2>My Next Game</h2>
@@ -19,7 +19,7 @@
     <div class="page-user-index-next-game">
       <div class="page-user-index-next-game-info">
         <div class="page-user-index-next-game-info-date">
-          {{ next_game.date|date:"l F jS, Y" }}
+          {{ next_game.date|date:'l F jS, Y' }}
           {% if next_game.start %}
             {{ next_game.start|date:'g:iA'|lower }}
           {% else %}
@@ -63,25 +63,25 @@
         {% endfor %}
       </div>
     </div>
+
+    {% if following_game and following_game.get_teams|length %}
+      <p class="page-user-index-following-game">
+        Following that, you have a game
+
+        {% if following_game.start %}
+          at <strong>{{ following_game.start|date:'g:iA'|lower }}</strong>
+          on <strong>{{ following_game.date|date:"l F jS, Y" }}</strong><br />
+        {% else %}
+          on <strong>{{ following_game.date|date:'l F jS, Y' }}</strong>
+          from <strong>{{ following_game.league.times }}</strong><br />
+        {% endif %}
+
+        at <strong>{{ following_game.field_name.field.name }} {{ following_game.field_name.name }}</strong>.
+      </p>
+    {% endif %}
+
+    <hr>
   {% endif %}
-
-  {% if following_game and following_game.get_teams|length %}
-    <p class="page-user-index-following-game">
-      Following that, you have a game
-
-      {% if following_game.start %}
-        at <strong>{{ following_game.start|date:'g:iA'|lower }}</strong>
-        on <strong>{{ following_game.date|date:"l F jS, Y" }}</strong><br />
-      {% else %}
-        on <strong>{{ following_game.date|date:"l F jS, Y" }}</strong>
-        from <strong>{{ following_game.league.times }}</strong><br />
-      {% endif %}
-
-      at <strong>{{ following_game.field_name.field.name }} {{ following_game.field_name.name }}</strong>.
-    </p>
-  {% endif %}
-
-  <hr>
 
   <h2>My Profile</h2>
   <p>

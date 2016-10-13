@@ -24,6 +24,7 @@
   border-top-right-radius: $border-radius;
   background-color: $color-gray-dark;
 
+  font-family: $font-family-lato-medium;
   font-size: 0.875rem;
 
   @include outer-container();
