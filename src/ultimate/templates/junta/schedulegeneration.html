@@ -1,9 +1,11 @@
-{% extends "layout/layout_user.html" %}
+{% extends 'layout/layout_user.html' %}
 
 {% load games %}
 {% load leagues %}
 {% load staticfiles %}
 {% load utility %}
+
+{% block title %}Schedule Generation | Junta Resources | {{ block.super }}{% endblock %}
 
 {% block content %}
 

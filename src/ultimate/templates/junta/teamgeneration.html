@@ -6,6 +6,8 @@
 {% load user_roles %}
 {% load utility %}
 
+{% block title %}Team Generation | Junta Resources | {{ block.super }}{% endblock %}
+
 {% block content %}
 
   {% include '_partials/account_tabs.html' with selected_tab='junta' %}

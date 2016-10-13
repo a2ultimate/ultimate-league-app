@@ -2,6 +2,8 @@
 {% load teams %}
 {% load utility %}
 
+{% block title %}Game Report | Captain Resources | {{ block.super }}{% endblock %}
+
 {% block content %}
   <div class="page-game-report">
     {% include '_partials/account_tabs.html' with selected_tab='captain' %}

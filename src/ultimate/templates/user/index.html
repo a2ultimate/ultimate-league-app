@@ -7,6 +7,8 @@
 {% load user_roles %}
 {% load utility %}
 
+{% block title %}My Account | {{ block.super }}{% endblock %}
+
 {% block content %}
 <div class="page-user-index">
   {% include "_partials/account_tabs.html" with selected_tab="user" %}

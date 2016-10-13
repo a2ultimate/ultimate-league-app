@@ -1,4 +1,6 @@
-{% extends "layout/layout_home.html" %}
+{% extends 'layout/layout_home.html' %}
+
+{% block title %}Page Not Found | {{ block.super }}{% endblock %}
 
 {% block content %}
 	<h1>404 Page Not Found</h1>

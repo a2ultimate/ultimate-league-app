@@ -4,11 +4,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    {% include "layout/head.html" %}
+    <title>{% block title %}Ann Arbor Ultimate (A2U){% endblock %}</title>
+    <meta property="og:title" content="{% block og_title %}Ann Arbor Ultimate (A2U){% endblock %}">
+
+    {% include 'layout/head.html' %}
   </head>
 
   <body>
-    {% include "layout/header.html" %}
+    {% include 'layout/header.html' %}
 
     <div class="content-wrapper">
       <div class="content">
@@ -42,6 +45,6 @@
       </div>
     </div>
 
-    {% include "layout/footer.html" %}
+    {% include 'layout/footer.html' %}
   </body>
 </html>

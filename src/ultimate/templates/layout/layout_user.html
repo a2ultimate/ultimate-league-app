@@ -9,7 +9,7 @@
     <title>{% block title %}Ann Arbor Ultimate (A2U){% endblock %}</title>
     <meta property="og:title" content="{% block og_title %}Ann Arbor Ultimate (A2U){% endblock %}">
 
-    {% include 'layout/head.html' with title=block.super.title %}
+    {% include 'layout/head.html' %}
   </head>
 
   <body>
@@ -64,25 +64,25 @@
                                 {% if league|is_open:user %}
                                   {% if league|is_waitlist:user %}
                                     <li class="content-left-leagues-list-element-divisions-list-element-links-list-element">
-                                      <a class="content-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register for Waitlist</a>
+                                      <a class="content-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_registration' year=league.year season=league.season division=league.night %}">Register for Waitlist</a>
                                     </li>
                                   {% else %}
                                     <li class="content-left-leagues-list-element-divisions-list-element-links-list-element">
-                                      <a class="content-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">Register</a>
+                                      <a class="content-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_registration' year=league.year season=league.season division=league.night %}">Register</a>
                                     </li>
                                   {% endif %}
                                 {% endif %}
                                 <li class="content-left-leagues-list-element-divisions-list-element-links-list-element">
-                                  <a class="content-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_summary' year=league.year season=league.season division=league.night  %}">Summary</a>
+                                  <a class="content-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_summary' year=league.year season=league.season division=league.night %}">Summary</a>
                                 </li>
                                 <li class="content-left-leagues-list-element-divisions-list-element-links-list-element">
-                                  <a class="content-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_details' year=league.year season=league.season division=league.night  %}">Detailed Info</a>
+                                  <a class="content-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_details' year=league.year season=league.season division=league.night %}">Detailed Info</a>
                                 </li>
                                 <li class="content-left-leagues-list-element-divisions-list-element-links-list-element">
-                                  <a class="content-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_players' year=league.year season=league.season division=league.night  %}">Players</a>
+                                  <a class="content-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_players' year=league.year season=league.season division=league.night %}">Players</a>
                                 </li>
                                 <li class="content-left-leagues-list-element-divisions-list-element-links-list-element">
-                                  <a class="content-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_teams' year=league.year season=league.season division=league.night  %}">Teams and Schedules</a>
+                                  <a class="content-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_teams' year=league.year season=league.season division=league.night %}">Teams and Schedules</a>
                                 </li>
                               </ul>
                             </div>
@@ -118,6 +118,6 @@
       </div>
     </div>
 
-    {% include "layout/footer.html" %}
+    {% include 'layout/footer.html' %}
   </body>
 </html>
