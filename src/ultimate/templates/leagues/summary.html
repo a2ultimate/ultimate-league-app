@@ -13,11 +13,16 @@
 
 	{% include '_partials/league_tabs.html' with selected_tab='summary' %}
 
-	{% if not league.is_after_registration_start %}
-		<h3>
-			Registration opens on {{ league.reg_start_date|date:'l, F jS' }}
-			at {{ league.reg_start_date|date:'g:iA'|lower }}
-		</h3>
+	{% if league.state == 'closed' or league.state == 'preview' or not league.is_after_registration_start %}
+		<div class="message message-small message-info">
+			Registration is currently closed for this division.
+			{% if league.state == 'open' %}
+				It will open on {{ league.reg_start_date|date:'l, F jS' }}
+				at {{ league.reg_start_date|date:'g:iA'|lower }}.
+			{% elif league.state == 'preview' %}
+				It is currently in preview mode.
+			{% endif %}
+		</div>
 	{% endif %}
 
 	{% if league.summary_info %}

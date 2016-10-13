@@ -8,6 +8,14 @@
   border-radius: $border-radius;
   background-color: $color-light-gray;
 
+  &.message-small {
+    padding: 0.5rem;
+
+    border-width: 0.125rem;
+
+    font-size: $font-size-sm;
+  }
+
   &.message-success {
     color: $color-white;
     border-color: $color-success-dark;
