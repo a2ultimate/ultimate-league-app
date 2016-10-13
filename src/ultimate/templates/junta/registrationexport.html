@@ -1,15 +1,28 @@
-{% extends "layout/layout_user.html" %}
+{% extends 'layout/layout_user.html' %}
 
 {% load games %}
 {% load leagues %}
 {% load utility %}
 
+{% block title %}Registration Export | Junta Resources | {{ block.super }}{% endblock %}
+
 {% block content %}
 
-	{% include "layout/account_tabs.html" with selected_tab="junta" %}
+	{% include '_partials/account_tabs.html' with selected_tab='junta' %}
+
+  <div class="breadcrumbs">
+    <ul class="breadcrumbs-list">
+      <li class="breadcrumb">
+        <a href="{% url 'junta' %}">Junta Resources</a>
+      </li>
+      <li class="breadcrumb">
+        <a href="{% url 'registrationexport' %}">Registation Export</a>
+      </li>
+    </ul>
+  </div>
 
 	<h1>Registration Export</h1>
 
-	{% include "_partials/league_list.html" with leagues=leagues link_view="registrationexport_league" only %}
+	{% include '_partials/league_list.html' with leagues=leagues link_view='registrationexport_league' only %}
 
 {% endblock %}

@@ -1,0 +1,108 @@
+.button {
+  display: inline-block;
+
+  padding: 0.75rem 1.5rem;
+
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 150ms ease;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  text-decoration: none;
+
+  color: $color-white !important;
+  border: 0;
+  border-radius: $border-radius;
+  background-color: $color-primary;
+
+  font-family: $font-family-lato-semibold;
+  font-size: 1.0625rem;
+
+  appearance: none;
+  -webkit-font-smoothing: antialiased;
+
+  &:active {
+    text-decoration: none;
+  }
+
+  &:focus,
+  &:hover {
+    text-decoration: none;
+
+    color: $color-white !important;
+    background-color: $color-primary-dark;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.5;
+  }
+
+  &.button-primary {
+    background-color: $color-primary;
+
+    &:hover {
+      background-color: $color-primary-dark;
+    }
+  }
+
+  &.button-secondary {
+  }
+
+  &.button-success {
+    background-color: $color-success;
+
+    &:hover {
+      background-color: $color-success-dark;
+    }
+  }
+
+  &.button-warning {
+    background-color: $color-warning;
+
+    &:hover {
+      background-color: $color-warning-dark;
+    }
+  }
+
+  &.button-danger {
+    background-color: $color-danger;
+
+    &:hover {
+      background-color: $color-danger-dark;
+    }
+  }
+
+  &.button-info {
+    background-color: $color-info;
+
+    &:hover {
+      background-color: $color-info-dark;
+    }
+  }
+
+  &.button-link {
+    padding: 0.75rem 0.5rem;
+
+    color: $color-blue !important;
+    background-color: transparent;
+
+    &:active {
+      position: relative;
+      top: 1px;
+    }
+
+    &:hover {
+      color: $color-blue-dark !important;
+      background-color: transparent;
+    }
+  }
+
+  &.button-block {
+    display: block;
+
+    width: 100%;
+  }
+}

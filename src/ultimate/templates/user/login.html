@@ -1,16 +1,12 @@
-{% extends "layout/layout_home.html" %}
+{% extends 'layout/layout_home.html' %}
 
 {% load i18n %}
 
+{% block title %}Log In | {{ block.super }}{% endblock %}
+
 {% block content %}
 
-<h1>{% trans 'Log In' %}</h1>
-
-{% if form.errors %}
-<p>
-  {% trans 'Your email and password did not match. Please try again.' %}
-</p>
-{% endif %}
+<h1>{% trans 'Log in to Ann Arbor Ultimate' %}</h1>
 
 {% if next %}
 {% if user.is_authenticated %}
@@ -24,26 +20,46 @@
 {% endif %}
 {% endif %}
 
-<form method="post" action="{% url 'auth_log_in' %}">{% csrf_token %}
-  <table class="form_table">
-    <tr>
-      <td><label for="id_username">Email</label></td>
-      <td>{{ form.username }}</td>
-    </tr>
-    <tr>
-      <td><label for="id_password">Password</label></td>
-      <td>{{ form.password }}</td>
-    </tr>
-  </table>
+{% if form.errors %}
+<div class="message message-danger">
+  {% trans 'Your username and password did not match. Please try again.' %}
+</div>
+{% endif %}
 
-  <input class="button button_success" type="submit" value="Log In" />
+<form class="form" method="post" action="{% url 'auth_log_in' %}">{% csrf_token %}
   <input type="hidden" name="next" value="{{ next }}" />
+
+  <div class="form-field form-field-table">
+    <label class="form-field-label" for="{{ form.username.id_for_label }}">
+      Email Address
+    </label>
+
+    <div class="form-field-input">
+      {{ form.username }}
+    </div>
+  </div>
+
+  <div class="form-field form-field-table">
+    <label class="form-field-label" for="{{ form.password.id_for_label }}">
+      Password
+    </label>
+
+    <div class="form-field-input">
+      {{ form.password }}
+    </div>
+  </div>
+
+  <input class="button button-success" type="submit" value="Log In" />
 </form>
 
-<h2>Forgot Your Password?</h2>
-Go ahead and <a href="{% url 'password_reset' %}">reset your password</a>.
+<h3>Forgot your password?</h3>
+<p>
+  Go ahead and <a href="{% url 'password_reset' %}">reset your password</a>.
+</p>
 
-<h2>Don't Have An Account?</h2>
-What are you waiting for? <a href="{% url 'registration_register' %}">Create an account</a>now!
+<h3>Don't have an account?</h3>
+<p>
+  What are you waiting for? <a href="{% url 'registration_register' %}">Create an account</a> now!
+</p>
 
 {% endblock %}

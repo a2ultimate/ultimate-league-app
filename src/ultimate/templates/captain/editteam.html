@@ -1,38 +1,61 @@
-{% extends "layout/layout_user.html" %}
+{% extends 'layout/layout_user.html' %}
+
 {% load teams %}
 
+{% block title %}Edit Team | Captain Resources | {{ block.super }}{% endblock %}
+
 {% block content %}
-	{% include "layout/account_tabs.html" with selected_tab="captain" %}
 
-	<ul class="breadcrumbs">
-		<li><a href="{% url 'captain'  %}">Captain Resources</a></li>
-		<li><a href="{% url 'captaineditteam' teamid=team.id  %}">Edit Team Information</a></li>
-	</ul>
+{% include '_partials/account_tabs.html' with selected_tab='captain' %}
 
-	<h1>Update Your Team Information</h1>
+<div class="breadcrumbs">
+  <ul class="breadcrumbs-list">
+    <li class="breadcrumb">
+      <a href="{% url 'captain' %}">
+        Captain Resources
+      </a>
+    </li>
+    <li class="breadcrumb">
+      <a href="{% url 'captaineditteam' team_id=team.id %}">
+        Edit Team Information
+      </a>
+    </li>
+  </ul>
+</div>
 
-	<form method="post" action="{% url 'captaineditteam' teamid=team.id  %}">{% csrf_token %}
-		<div class="hidden">
-			{% for hidden in form.hidden_fields %}
-				{{ hidden }}
-			{% endfor %}
-		</div>
+<h1>Update Your Team Information</h1>
 
-		<table class="form_table">
-			{% for field in form.visible_fields %}
-				<tr>
-					<td>{{ field.label_tag }}</td>
-					<td>{{ field }}</td>
-				</tr>
-				{% if field.errors %}
-					<tr>
-						<td colspan="2">{{ field.errors }}</td>
-					</tr>
-				{% endif %}
-			{% endfor %}
-		</table>
+<form method="post" action="{% url 'captaineditteam' team_id=team.id %}">{% csrf_token %}
+  {% for hidden in form.hidden_fields %}
+    {{ hidden }}
+  {% endfor %}
 
-		<input class="button button_success" type="submit" value="Update" />
-		<a class="form_cancel" href="{% url 'captaineditteam' teamid=team.id  %}">cancel</a>
-	</form>
+  {% for field in form.visible_fields %}
+    <div class="form-field form-field-table{% if field.errors %} form-field-error{% endif %}">
+      <label class="form-field-label" for="{{ field.id_for_label }}">
+        {{ field.label }}
+      </label>
+
+      <div class="form-field-input">
+        {{ field }}
+
+        {% if field.errors %}
+        <div class="form-field-input-errors">
+          <ul class="form-field-input-errors-list">
+            {% for error in field.errors %}
+              <li>{{ error|escape }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+      <div class="form-field-help">
+        {{ field.help_text }}
+      </div>
+    </div>
+  {% endfor %}
+
+  <input class="button button-success" type="submit" value="Update" />
+  <a class="button button-link" href="{% url 'captaineditteam' team_id=team.id %}">Cancel</a>
+</form>
 {% endblock %}

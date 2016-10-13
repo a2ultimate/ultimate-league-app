@@ -1,0 +1,89 @@
+a {
+  transition: background 0.15s ease-in-out, color 0.15s ease-in-out;
+  text-decoration: none;
+
+  color: $color-blue;
+}
+
+a:focus,
+a:hover {
+  transition: background 0.15s ease-in-out, color 0.15s ease-in-out;
+  text-decoration: underline;
+
+  color: $color-blue-dark;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+  margin-bottom: $headings-margin-bottom;
+
+  color: $headings-color;
+
+  font-family: $headings-font-family;
+  font-weight: $headings-font-weight;
+  line-height: $headings-line-height;
+}
+
+h1,
+.h1 {
+  font-size: $font-size-h1;
+}
+h2,
+.h2 {
+  font-size: $font-size-h2;
+}
+h3,
+.h3 {
+  font-size: $font-size-h3;
+}
+h4,
+.h4 {
+  font-size: $font-size-h4;
+}
+h5,
+.h5 {
+  font-size: $font-size-h5;
+}
+h6,
+.h6 {
+  font-size: $font-size-h6;
+}
+
+small,
+.small {
+  font-size: $small-font-size;
+}
+
+strong {
+  font-family: $font-family-lato-bold;
+}
+
+dl {
+  margin-bottom: 1rem;
+}
+
+dt {
+  font-family: $font-family-lato-semibold;
+}
+
+dd {
+  margin-left: 0.5rem;
+}
+
+hr {
+  margin-top: $spacer-y;
+  margin-bottom: $spacer-y;
+
+  border: 0;
+  border-top: $hr-border-width solid $hr-border-color;
+}

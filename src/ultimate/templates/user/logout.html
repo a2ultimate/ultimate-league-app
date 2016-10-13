@@ -1,7 +1,9 @@
-{% extends "layout/layout_home.html" %}
+{% extends 'layout/layout_home.html' %}
+
+{% block title %}Log Out | {{ block.super }}{% endblock %}
 
 {% block content %}
 
-You are logged out. <a href="{% url 'auth_log_in'  %}">Log in?</a>
+You are logged out. <a href="{% url 'auth_log_in' %}">Log In?</a>
 
 {% endblock %}

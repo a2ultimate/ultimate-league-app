@@ -1,14 +1,15 @@
-{% extends "layout/layout_user.html" %}
+{% extends 'layout/layout_user.html' %}
 
 {% load utility %}
 
+{% block title %}{% include '_partials/division_header.html' with league=league header='Details' hide_state=1 only %}| {{ block.super }}{% endblock %}
+{% block og_title %}{% include '_partials/division_header.html' with league=league header='Details' hide_state=1 only %}| {{ block.super }}{% endblock %}
+
 {% block content %}
 
-	{% include "layout/league_header.html" with league=league only %}
+	<h1>{% include '_partials/division_header.html' with league=league only %}</h1>
 
-	{% include "layout/league_tabs.html" with selected_tab="details" %}
+	{% include '_partials/league_tabs.html' with selected_tab='details' %}
 
-	<div id="league_details">
-		{{ league.detailed_info|safe }}
-	</div>
+	{{ league.detailed_info|safe }}
 {% endblock %}

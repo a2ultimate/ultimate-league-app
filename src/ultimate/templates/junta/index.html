@@ -1,28 +1,42 @@
-{% extends "layout/layout_user.html" %}
+{% extends 'layout/layout_user.html' %}
+
+{% block title %}Junta Resources | {{ block.super }}{% endblock %}
 
 {% block content %}
-	{% include "layout/account_tabs.html" with selected_tab="junta" %}
+  {% include '_partials/account_tabs.html' with selected_tab='junta' %}
 
-	<ul class="flat_list">
-		<li>
-			<a href="{% url 'captainstatus'  %}"><h3>Captain Status</h3></a>
-		</li>
-		<li>
-			<a href="{% url 'gamereports'  %}"><h3>Game Reports</h3></a>
-		</li>
-		<li>
-			<a href="{% url 'leagueresults'  %}"><h3>League Results</h3></a>
-		</li>
-		<li>
-			<a href="{% url 'registrationexport'  %}"><h3>Registration Export</h3></a>
-		</li>
-		{% if request.user.is_superuser %}
-			<li>
-				<a href="{% url 'teamgeneration'  %}"><h3>Team Generation</h3></a>
-			</li>
-			<li>
-				<a href="{% url 'schedulegeneration'  %}"><h3>Schedule Generation</h3></a>
-			</li>
-		{% endif %}
-	</ul>
+  <ul class="selection-list">
+    <li class="selection-list-item">
+      <a class="selection-list-item-link" href="{% url 'captainstatus' %}">
+        Captain Status
+      </a>
+    </li>
+    <li class="selection-list-item">
+      <a class="selection-list-item-link" href="{% url 'gamereports' %}">
+        Game Reports
+      </a>
+    </li>
+    <li class="selection-list-item">
+      <a class="selection-list-item-link" href="{% url 'leagueresults' %}">
+        League Results
+      </a>
+    </li>
+    <li class="selection-list-item">
+      <a class="selection-list-item-link" href="{% url 'registrationexport' %}">
+        Registration Export
+      </a>
+    </li>
+    {% if request.user.is_superuser %}
+      <li class="selection-list-item">
+        <a class="selection-list-item-link" href="{% url 'teamgeneration' %}">
+          Team Generation
+        </a>
+      </li>
+      <li class="selection-list-item">
+        <a class="selection-list-item-link" href="{% url 'schedulegeneration' %}">
+          Schedule Generation
+        </a>
+      </li>
+    {% endif %}
+  </ul>
 {% endblock %}

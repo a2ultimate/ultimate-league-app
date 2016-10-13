@@ -10,14 +10,6 @@ def is_on_team(user, team):
 
 
 @register.filter
-def get_team_name_font_size(name):
-	if len(name) <= 17:
-		return 24
-	else:
-		return 20
-
-
-@register.filter
 def get_game_opponent_team(game, user):
 	try:
 		return game.get_user_opponent(user)

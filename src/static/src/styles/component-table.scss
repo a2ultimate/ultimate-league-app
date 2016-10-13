@@ -1,0 +1,72 @@
+table {
+  margin-bottom: 1rem;
+
+  border-collapse: collapse;
+}
+
+th {
+  text-align: left;
+
+  font-family: $font-family-lato-semibold;
+
+  thead > tr > & {
+    vertical-align: bottom;
+  }
+}
+
+td {
+}
+
+tr,
+td,
+th {
+  vertical-align: middle;
+}
+
+.table {
+  width: 100%;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem;
+
+  border-top: 0.0625rem solid $color-light-gray;
+}
+
+.table thead:first-child tr:first-child th,
+.table thead:first-child tr:first-child td,
+.table tbody:first-child tr:first-child th,
+.table tbody:first-child tr:first-child td {
+  border-top: 0;
+}
+
+.table tbody + tbody {
+  border-top: 0.125rem solid $color-light-gray;
+}
+
+.table-centered thead th,
+.table-centered td {
+  text-align: center;
+}
+
+.table-condensed th,
+.table-condensed td {
+  padding: 0.25rem;
+
+  font-size: 0.875rem;
+}
+
+.table-fixed {
+  table-layout: fixed;
+}
+
+.table-striped > tbody tr:nth-of-type(odd),
+.table-striped > tbody tr:nth-of-type(odd) > th,
+.table-striped > tbody tr:nth-of-type(odd) > td {
+  background-color: $color-light-gray;
+}
+
+.table-striped-header th {
+  background-color: $color-light-gray;
+}

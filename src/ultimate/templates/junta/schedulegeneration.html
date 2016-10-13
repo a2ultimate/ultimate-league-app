@@ -1,80 +1,104 @@
-{% extends "layout/layout_user.html" %}
+{% extends 'layout/layout_user.html' %}
 
 {% load games %}
 {% load leagues %}
+{% load staticfiles %}
 {% load utility %}
+
+{% block title %}Schedule Generation | Junta Resources | {{ block.super }}{% endblock %}
 
 {% block content %}
 
-	{% include "layout/account_tabs.html" with selected_tab="junta" %}
+  {% include '_partials/account_tabs.html' with selected_tab='junta' %}
 
-	{% if leagues %}
-		<h1>Schedule Generation</h1>
+  <div class="breadcrumbs">
+    <ul class="breadcrumbs-list">
+      <li class="breadcrumb">
+        <a href="{% url 'junta' %}">Junta Resources</a>
+      </li>
+      <li class="breadcrumb">
+        <a href="{% url 'schedulegeneration' %}">Schedule Generation</a>
+      </li>
+      {% if league %}
+      <li class="breadcrumb">
+        <a href="{% url 'schedulegeneration_league' year=league.year season=league.season division=league.night %}">{{ league.season_title|smart_title }} {{ league.year }} {{ league.night|smart_title }}</a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
 
-		{% include "_partials/league_list.html" with leagues=leagues link_view="schedulegeneration_league" only %}
-	{% else %}
-		{% include "layout/league_header.html" with league=league header="Schedule Generation" only %}
+  {% if leagues %}
+    <h1>Schedule Generation</h1>
 
-		<table class="table table-striped">
-			<tbody>
-				{% for event in schedule %}
-					<tr>
-						{% for team in event %}
-							{% if forloop.counter0|divisibleby:"2" %}
-								<td class="text_center">
-							{% endif %}
+    {% include '_partials/league_list.html' with leagues=leagues link_view='schedulegeneration_league' only %}
+  {% else %}
+    <h1>{% include '_partials/division_header.html' with league=league header='Schedule Generation' only %}</h1>
 
-							<div>{{ team.id }}</div>
+    {% if game_locations|length %}
+      {% include '_partials/schedule_table.html' with league=league columns=game_locations game_dates=game_dates only %}
+    {% else %}
+      <table class="table table-centered table-striped">
+        <tbody>
+          {% for event in schedule %}
+            <tr>
+              {% for team in event %}
+                {% if forloop.counter0|divisibleby:'2' %}
+                  <td>
+                {% endif %}
 
-							{% if not forloop.counter0|divisibleby:"2" %}
-								</td>
-							{% endif %}
-						{% endfor %}
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
+                <div>{{ team.id }}</div>
+
+                {% if not forloop.counter0|divisibleby:'2' %}
+                  </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
 
 
-		{% for field in league.get_fields %}
-			{% if field.field.layout_link %}
-				<a href="{{ STATIC_URL }}{{ field.field.layout_link }}" target="_blank">
-					<img src="{{ STATIC_URL }}{{ field.field.layout_link }}" height="300px">
-				</a>
-			{% endif %}
-		{% endfor %}
+    {% for field in league.get_fields %}
+      {% if field.field.layout_link %}
+        <a href="{% static field.field.layout_link %}" target="_blank">
+          <img src="{% static field.field.layout_link %}" height="300px">
+        </a>
+      {% endif %}
+    {% endfor %}
 
-		<p>
-			There are {{ league.num_time_slots }} time slots, so you will have to
-			choose at least {{ num_necessary_fields }} fields to play on. You may add
-			exceptions and make changes in the admin interface after the schedule
-			is created.
-		</p>
+    <p>
+      There {{ league.num_time_slots|pluralize:'is,are' }} {{ league.num_time_slots }} time slot{{ league.num_time_slots|pluralize }}, so you will have to
+      choose at least {{ num_necessary_fields }} field{{ num_necessary_fields|pluralize }} to play on. You may add
+      exceptions and make changes in the admin interface after the schedule
+      is created.
+    </p>
 
-		<form class="wide_form" method="post">{% csrf_token %}
-			<div class="field_wrapper">
-				{% for hidden in form.hidden_fields %}
-					{{ hidden }}
-				{% endfor %}
-			</div>
+    <form class="form" method="post">{% csrf_token %}
+      {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+      {% endfor %}
 
-			<table class="form_table">
-				{% for field in form.visible_fields %}
-					<tr>
-						<td>{{ field.label_tag }}</td>
-						<td class="wide_input">{{ field }}</td>
-						<td>{{ field.help_text }}</td>
-					</tr>
-					{% if field.errors %}
-						<tr>
-							<td colspan="3">{{ field.errors }}</td>
-						</tr>
-					{% endif %}
-				{% endfor %}
-			</table>
+      <div class="schedule-generation-page-form-fields">
+        <div class="schedule-generation-page-form-fields-input">
+          {{ form.field_names }}
 
-			<input class="button button_success" type="submit" value="Submit Schedule">
-			<a href="{% url 'schedulegeneration'  %}">Cancel</a>
-		</form>
-	{% endif %}
+          <div class="form-field-input-errors">
+            <ul class="form-field-input-errors-list">
+              {% for error in field.errors %}
+                <li>{{ error|escape }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        <div class="schedule-generation-page-form-fields-help">
+          {{ form.field_names.help_text }}
+        </div>
+      </div>
+
+      <input class="button button-success" type="submit" name="generate_schedule" value="Generate Schedule">
+      <input class="button button-danger" type="submit" name="clear_schedule" value="Clear Schedule">
+      <a class="button button-link" href="{% url 'schedulegeneration'  %}">Cancel</a>
+    </form>
+  {% endif %}
 {% endblock %}

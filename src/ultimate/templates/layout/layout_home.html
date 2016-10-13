@@ -1,30 +1,50 @@
-{% load url from future %}
-
+{% load staticfiles %}
 {% load utility %}
 
-{% include "layout/header.html" %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %}Ann Arbor Ultimate (A2U){% endblock %}</title>
+    <meta property="og:title" content="{% block og_title %}Ann Arbor Ultimate (A2U){% endblock %}">
 
-<div id="content_container" class="clearfix">
-	<div id="sidebar">
-		<p class="text_center">
-			<img src="{{ STATIC_URL }}images/logo.svg" width="180">
-		</p>
+    {% include 'layout/head.html' %}
+  </head>
 
-		<ul class="social_icons text_center">
-			<li><a class="social_icon social_icon_twitter" href="http://twitter.com/a2ultimate" target="_blank">Twitter</a></li>
-			<li><a class="social_icon social_icon_facebook" href="https://www.facebook.com/annarborultimate" target="_blank">Facebook</a></li>
-		</ul>
+  <body>
+    {% include 'layout/header.html' %}
 
-		{% autoescape off %}
-			<ul>
-				{{ menu_items_home_sidebar|prepare_menu_items|unordered_list }}
-			</ul>
-		{% endautoescape %}
-	</div>
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="content-left">
+          <div class="content-left-logo">
+            <img class="content-left-logo-image" src="{% static 'images/assets/logo.svg' %}">
+          </div>
 
-	<div id="content">
-		{% block content %}{% endblock %}
-	</div>
-</div>
+          <div class="content-left-social">
+            <ul class="content-left-social-list">
+              <li class="content-left-social-list-element">
+                <a class="content-left-social-list-element-link social-icon social-icon-twitter" href="http://twitter.com/a2ultimate" target="_blank">Twitter</a>
+              </li>
+              <li class="content-left-social-list-element">
+                <a class="content-left-social-list-element-link social-icon social-icon-facebook" href="https://www.facebook.com/annarborultimate" target="_blank">Facebook</a>
+              </li>
+            </ul>
+          </div>
 
-{% include "layout/footer.html" %}
+          <div class="content-left-links">
+            <ul class="content-left-links-list">
+              {% autoescape off %}
+                {{ menu_items_home_sidebar|prepare_menu_items|unordered_list }}
+              {% endautoescape %}
+            </ul>
+          </div>
+        </div>
+        <div class="content-right">
+          {% block content %}{% endblock %}
+        </div>
+      </div>
+    </div>
+
+    {% include 'layout/footer.html' %}
+  </body>
+</html>

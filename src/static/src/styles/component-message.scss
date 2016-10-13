@@ -1,0 +1,50 @@
+.message {
+  margin-bottom: 1rem;
+  padding: 1rem;
+
+  color: $color-gray;
+  border: 0.1875rem solid transparent;
+  border-color: $color-light-gray-dark;
+  border-radius: 0.125rem;
+  background-color: $color-light-gray;
+
+  &.message-success {
+    color: $color-white;
+    border-color: $color-success-dark;
+    background-color: $color-success;
+
+    hr {
+      border-top-color: $color-success-dark;
+    }
+  }
+
+  &.message-warning {
+    color: $color-white;
+    border-color: $color-warning-dark;
+    background-color: $color-warning;
+
+    hr {
+      border-top-color: $color-warning-dark;
+    }
+  }
+
+  &.message-danger {
+    color: $color-white;
+    border-color: $color-danger-dark;
+    background-color: $color-danger;
+
+    hr {
+      border-top-color: $color-danger-dark;
+    }
+  }
+
+  &.message-info {
+    color: $color-white;
+    border-color: $color-info-dark;
+    background-color: $color-info;
+
+    hr {
+      border-top-color: $color-info-dark;
+    }
+  }
+}

@@ -1,55 +1,69 @@
-{% extends "layout/layout_home.html" %}
+{% extends 'layout/layout_home.html' %}
+
+{% load i18n %}
+
+{% block title %}Create Account | {{ block.super }}{% endblock %}
 
 {% block content %}
 
-<h1>Create an Account</h1>
+<h1>{% trans 'Create an Ann Arbor Ultimate Account' %}</h1>
 
-<form class="sign-up-form" method="post">{% csrf_token %}
-	{% for hidden in form.hidden_fields %}
-		{{ hidden }}
-	{% endfor %}
+<p>
+  {% trans 'Please complete the following form. All fields are required.' %}
+</p>
 
-	{% for field in form.visible_fields %}
-		{% if not field.name == 'captcha' %}
-			<div class="sign-up-form-field{% if field.name in 'blank,honeypot' %} sign-up-form-field-hidden{% endif %}">
-				<label class="sign-up-form-field-label" for="{{ field.id_for_label }}">
-					{{ field.label }}
-				</label>
+<form class="form" method="post">{% csrf_token %}
+  {% for hidden in form.hidden_fields %}
+    {{ hidden }}
+  {% endfor %}
 
-				<div class="sign-up-form-field-content">
-					<div class="sign-up-form-field-content-input{% if field.errors %} sign-up-form-field-content-input-error{% endif %}">{{ field }}</div>
-					<div class="sign-up-form-field-content-help">{{ field.help_text }}</div>
-					{% if field.errors %}
-						<div class="sign-up-form-field-content-errors">
-							<ul class="sign-up-form-field-content-errors-list">
-								{% for error in field.errors %}
-									<li>{{ error|escape }}</li>
-								{% endfor %}
-							</ul>
-						</div>
-					{% endif %}
-				</div>
-			</div>
-		{% endif %}
-	{% endfor %}
+  {% for field in form.visible_fields %}
+    {% if not field.name == 'captcha' %}
+      <div class="form-field form-field-table{% if field.name in 'blank,honeypot' %} form-field-hidden{% endif %}{% if field.errors %} form-field-error{% endif %}">
+        <label class="form-field-label" for="{{ field.id_for_label }}">
+          {{ field.label }}
+        </label>
 
-	<div class="sign-up-form-field sign-up-form-field-captcha">
-		<label class="sign-up-form-field-captcha-label" for="{{ form.captcha.id_for_label }}">{{ form.captcha.label }}</label>
-		<div class="sign-up-form-field-captcha-content{% if form.captcha.errors %} sign-up-form-field-captcha-content-error{% endif %}">
-			{{ form.captcha }}
-		</div>
-		{% if form.captcha.errors %}
-			<div class="sign-up-form-field-content-errors">
-				<ul class="sign-up-form-field-content-errors-list">
-					{% for error in form.captcha.errors %}
-						<li>{{ error|escape }}</li>
-					{% endfor %}
-				</ul>
-			</div>
-		{% endif %}
-	</div>
+        <div class="form-field-input">
+          {{ field }}
 
-	<input class="button button_success" type="submit" value="Create Account">
+          {% if field.errors %}
+          <div class="form-field-input-errors">
+            <ul class="form-field-input-errors-list">
+              {% for error in field.errors %}
+                <li>{{ error|escape }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+        </div>
+        <div class="form-field-help">
+          {{ field.help_text }}
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  <div class="form-field form-field-block form-field-highlighted{% if form.captcha.errors %} form-field-error{% endif %}">
+    <label class="form-field-label" for="{{ form.captcha.id_for_label }}">
+      {{ form.captcha.label }}
+    </label>
+    <div class="form-field-input">
+      {{ form.captcha }}
+
+      {% if form.captcha.errors %}
+      <div class="form-field-input-errors">
+        <ul class="form-field-input-errors-list">
+          {% for error in form.captcha.errors %}
+            <li>{{ error|escape }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <button class="button button-success" type="submit">Create Account</button>
 </form>
 
 {% endblock %}

@@ -1,132 +1,79 @@
-{% extends "layout/layout_user.html" %}
+{% extends 'layout/layout_user.html' %}
 
 {% load games %}
 {% load leagues %}
 {% load math %}
+{% load staticfiles %}
 {% load utility %}
 
+{% block title %}League Results | Junta Resources | {{ block.super }}{% endblock %}
+
 {% block content %}
-	{% include "layout/account_tabs.html" with selected_tab="junta" %}
+	{% include '_partials/account_tabs.html' with selected_tab='junta' %}
+
+  <div class="breadcrumbs">
+    <ul class="breadcrumbs-list">
+      <li class="breadcrumb">
+        <a href="{% url 'junta' %}">Junta Resources</a>
+      </li>
+      <li class="breadcrumb">
+        <a href="{% url 'leagueresults' %}">League Results</a>
+      </li>
+      {% if league %}
+      <li class="breadcrumb">
+        <a href="{% url 'leagueresults_league' year=league.year season=league.season division=league.night %}">{{ league.season_title|smart_title }} {{ league.year }} {{ league.night|smart_title }}</a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
 
 	{% if leagues %}
 		<h1>League Results</h1>
 
-		{% include "_partials/league_list.html" with leagues=leagues link_view="leagueresults_league" only %}
+		{% include '_partials/league_list.html' with leagues=leagues link_view='leagueresults_league' only %}
 	{% else %}
 
-		{% include "layout/league_header.html" with league=league header="Results" only %}
+		<h1>{% include '_partials/division_header.html' with league=league header='Results' only %}</h1>
 
-		{% if league.get_games|length %}
-			<table id="schedule_table" class="table table-striped">
-				<thead>
-					<tr>
-						<td></td>
-						{% regroup field_names by field as fields %}
-						{% for field in fields %}
-							<th class="text_center" colspan="{{ field.list|length }}">
-								<h4>
-									{{ field.grouper }}
+    {% if game_dates|length %}
+      {% include '_partials/schedule_table.html' with league=league columns=game_locations game_dates=game_dates user_games=user_games next_game_date=next_game_date show_game_result=1 only %}
 
-									{% if field.grouper.driving_link %}
-										<small>
-											&middot;
-											<a href="{{ field.grouper.driving_link }}" target="_blank">
-												Directions
-											</a>
-										</small>
-									{% endif %}
-
-									{% if field.grouper.layout_link %}
-										<small>
-											&middot;
-											<a href="{{ STATIC_URL }}{{ field.grouper.layout_link }}" target="_blank">
-												Layout
-											</a>
-										</small>
-									{% endif %}
-								</h4>
-							</th>
-						{% endfor %}
-					</tr>
-
-					<tr>
-						<td></td>
-						{% for field_name in field_names %}
-							<th class="text_center">{{ field_name.name }}</th>
-						{% endfor %}
-					</tr>
-				</thead>
-
-				<tbody>
-					{% regroup league.get_games|dictsort:"field_name.field"|dictsort:"field_name.name"|dictsort:"date" by date as games_list %}
-					{% for date in games_list %}
-						<tr class="{% if date.grouper|time_until_days < 7 and date.grouper|time_until_days >= 0 %}active{% endif %}">
-							<th class="text_right">
-								<div>{{ date.grouper|date:"M" }}</div>
-								<div>{{ date.grouper|date:"jS" }}</div>
-							</th>
-
-							{% for field_name in field_names %}
-								<td class="text_center">
-									{% for game in date.list|slice:":forloop.counter" %}
-										{% ifequal game.field_name field_name %}
-											{% for team in game.get_teams %}
-												{% for report in game|get_report_for_team:team %}
-													<div class="game_{{ report|get_result:team }}">
-														{{ team.id }}
-														{{ report|get_report_scores_formatted }}
-													</div>
-												{% empty %}
-													<div>{{ team.id }}</div>
-												{% endfor %}
-											{% empty %}
-												TBA
-											{% endfor %}
-										{% endifequal %}
-									{% empty %}
-										-
-									{% endfor %}
-								</td>
-							{% endfor %}
-						</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-
-			<div class="text_center">
-				<a href="{% url 'league_teams' year=league.year season=league.season division=league.night  %}">Go to Teams & Schedules</a>
-			</div>
-		{% else %}
-			<div class="text_center">The schedule for this league has not yet been completed.</div>
-		{% endif %}
+      <p>
+        <a href="{% url 'league_teams' year=league.year season=league.season division=league.night %}">Go to Teams and Schedules</a>
+      </p>
+    {% else %}
+      <h4>
+        Schedules are not yet available
+      </h4>
+    {% endif %}
 
 		{% if team_records|length %}
-			<table class="table table-striped">
+			<table class="table table-centered table-striped">
 				<thead>
 					<tr>
 						<th>Team Number</th>
-						<th class="text_center">Wins</th>
-						<th class="text_center">Losses</th>
-						<th class="text_center">Ties</th>
-						<th class="text_center">Conflicts</th>
-						<th class="text_center">Blanks</th>
-						<th class="text_center">Points For</th>
-						<th class="text_center">Points Against</th>
-						<th class="text_center">Point Differential</th>
+						<th>Wins</th>
+						<th>Losses</th>
+						<th>Ties</th>
+						<th>Conflicts</th>
+						<th>Blanks</th>
+						<th>Points For</th>
+						<th>Points Against</th>
+						<th>Point Differential</th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for team_id, team_record in team_records.items %}
 						<tr>
 							<td>{{ team_id }}</td>
-							<td class="text_center">{{ team_record.wins }}</td>
-							<td class="text_center">{{ team_record.losses }}</td>
-							<td class="text_center">{{ team_record.ties }}</td>
-							<td class="text_center">{{ team_record.conflicts }}</td>
-							<td class="text_center">{{ team_record.blanks }}</td>
-							<td class="text_center">{{ team_record.points_for }}</td>
-							<td class="text_center">{{ team_record.points_against }}</td>
-							<td class="text_center">{{ team_record.points_for|subtract:team_record.points_against }}</td>
+							<td>{{ team_record.wins }}</td>
+							<td>{{ team_record.losses }}</td>
+							<td>{{ team_record.ties }}</td>
+							<td>{{ team_record.conflicts }}</td>
+							<td>{{ team_record.blanks }}</td>
+							<td>{{ team_record.points_for }}</td>
+							<td>{{ team_record.points_against }}</td>
+							<td>{{ team_record.points_for|subtract:team_record.points_against }}</td>
 						</tr>
 					{% endfor %}
 				</tbody>

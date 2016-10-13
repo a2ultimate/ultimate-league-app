@@ -1,0 +1,56 @@
+.schedule-table {
+  overflow: hidden;
+
+  border-radius: $border-radius;
+}
+
+.schedule-table thead th {
+  + th {
+    border-left: 0.125rem solid $color-light-gray;
+  }
+}
+
+.schedule-table tr th:first-child,
+.schedule-table tr td:first-child {
+  width: 4rem;
+
+  text-align: right;
+}
+
+.schedule-table-date-next {
+  th,
+  td {
+    color: $color-white;
+    background-color: $color-gray !important;
+  }
+}
+
+.schedule-table-game-team-link,
+.schedule-table-game-team-jump {
+  display: block;
+
+  width: 100%;
+}
+
+a.schedule-table-game-team-jump {
+  color: $color-primary;
+
+  .schedule-table-date-next & {
+    color: $color-white;
+  }
+}
+
+.schedule-table-game-result-win {
+  color: $color-white;
+  background-color: $color-success;
+}
+
+.schedule-table-game-result-loss {
+  color: $color-white;
+  background-color: $color-danger;
+}
+
+.schedule-table-game-result-tie {
+  color: $color-white;
+  background-color: $color-warning;
+}

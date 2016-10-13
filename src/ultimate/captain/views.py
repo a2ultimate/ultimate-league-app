@@ -30,8 +30,8 @@ def index(request):
 
 
 @login_required
-def editteam(request, teamid):
-	team = get_object_or_404(Team, id=teamid)
+def editteam(request, team_id):
+	team = get_object_or_404(Team, id=team_id)
 
 	if not bool(team.teammember_set.filter(user=request.user, captain=True)[0:1].count()):
 		raise Http403
@@ -41,7 +41,7 @@ def editteam(request, teamid):
 		if form.is_valid():
 			form.save()
 			messages.success(request, 'Your team information was updated successfully.')
-			return HttpResponseRedirect(reverse('captaineditteam', kwargs={'teamid':team.id}))
+			return HttpResponseRedirect(reverse('captaineditteam', kwargs={'team_id':team.id}))
 		else:
 			messages.error(request, 'There was an error on the form you submitted.')
 	else:
@@ -53,8 +53,8 @@ def editteam(request, teamid):
 
 
 @login_required
-def exportteam(request, teamid):
-	team = get_object_or_404(Team, id=teamid)
+def exportteam(request, team_id):
+	team = get_object_or_404(Team, id=team_id)
 
 	if not bool(team.teammember_set.filter(user=request.user, captain=True)[0:1].count()):
 		raise Http403
@@ -109,8 +109,8 @@ def exportteam(request, teamid):
 
 @atomic
 @login_required
-def playersurvey(request, teamid):
-	team = get_object_or_404(Team, id=teamid)
+def playersurvey(request, team_id):
+	team = get_object_or_404(Team, id=team_id)
 
 	if not bool(team.teammember_set.filter(user=request.user, captain=True)[0:1].count()):
 		raise Http403
@@ -157,7 +157,7 @@ def playersurvey(request, teamid):
 					ratings_row.save()
 
 			messages.success(request, 'Your player survey was updated successfully.')
-			return HttpResponseRedirect(reverse('playersurvey', kwargs={'teamid': teamid}))
+			return HttpResponseRedirect(reverse('playersurvey', kwargs={'team_id': team_id}))
 		else:
 			messages.error(request, 'There was an error on the form you submitted.')
 
@@ -196,9 +196,9 @@ def playersurvey(request, teamid):
 
 @login_required
 @atomic
-def gamereport(request, teamid, gameid):
-	team = get_object_or_404(Team, id=teamid)
-	game = get_object_or_404(Game, id=gameid)
+def gamereport(request, team_id, game_id):
+	team = get_object_or_404(Team, id=team_id)
+	game = get_object_or_404(Game, id=game_id)
 
 	if not bool(team.teammember_set.filter(user=request.user, captain=True)[0:1].count()) or \
 		not bool(game.gameteams_set.filter(team__teammember__user=request.user, team__teammember__captain=True)[0:1].count()):
@@ -206,7 +206,7 @@ def gamereport(request, teamid, gameid):
 		raise Http403
 
 	try:
-		game_report = GameReport.objects.get(team__id=teamid, game__id=gameid)
+		game_report = GameReport.objects.get(team__id=team_id, game__id=game_id)
 
 		try:
 			game_report_comment = GameReportComment.objects.get(report=game_report, submitted_by=request.user)
@@ -269,7 +269,7 @@ def gamereport(request, teamid, gameid):
 				attendanceRecord.save()
 
 			messages.success(request, 'Your game report was updated successfully.')
-			return HttpResponseRedirect(reverse('gamereport', kwargs={'gameid':gameid, 'teamid':teamid}))
+			return HttpResponseRedirect(reverse('gamereport', kwargs={'game_id':game_id, 'team_id':team_id}))
 
 	else:
 		comment_form = GameReportCommentForm(instance=game_report_comment)

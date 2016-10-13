@@ -1,60 +1,60 @@
-{% extends "layout/layout_user.html" %}
+{% extends 'layout/layout_user.html' %}
 
 {% load leagues %}
 {% load games %}
 {% load teams %}
 {% load utility %}
 
-{% block content %}
-	{% include "layout/account_tabs.html" with selected_tab="captain" %}
+{% block title %}Captain Resources | {{ block.super }}{% endblock %}
 
-	<ul class="flat_list">
+{% block content %}
+	{% include '_partials/account_tabs.html' with selected_tab='captain' %}
+
+	<ul class="header-list">
 		{% for team in captain_teams %}
 			<li>
-				<h3>
-					<div class="pull_right">{{ team.name }}</div>
-					<div>{{ team.league.year }} {{ team.league.season_title|smart_title }} {{ team.league.night_title|smart_title }}</div>
+				<h3 class="header-list-header">
+					<div class="header-list-header-left">{{ team }}</div>
+					<div class="header-list-header-right">{{ team.league.year }} {{ team.league.season_title|smart_title }} {{ team.league.night_title|smart_title }}</div>
 				</h3>
 
-				<ul>
+				<ul class="header-list-inner">
 					<li>
-						<a href="{% url 'captaineditteam' teamid=team.id  %}">
-							<span class="status pull_left"></span>
+						<a href="{% url 'captaineditteam' team_id=team.id  %}">
 							Change Team Name or Color
 						</a>
 					</li>
 					<li>
-						<a href="{% url 'captain_team_export' teamid=team.id  %}">
-							<span class="status pull_left"></span>
+						<a href="{% url 'captain_team_export' team_id=team.id  %}">
 							Export Team Information
 						</a>
 					</li>
 					<li>
-						<a href="{% url 'playersurvey' teamid=team.id  %}">
+						<a href="{% url 'playersurvey' team_id=team.id  %}">
 							{% if team.league|get_player_survey_status:user %}
-								<span class="status state_success pull_left"></span>
+								<span class="status-dot status-dot-success"></span>
 							{% else %}
-								<span class="status state_error pull_left"></span>
+								<span class="status-dot status-dot-error"></span>
 							{% endif %}
 							Fill Out Player Survey
 						</a>
 					</li>
 				</ul>
 
-				<ul>
+				<ul class="header-list-inner">
 					{% for game in team.get_past_games %}
 						<li>
 							{% if game|report_complete_for_team:user %}
-								<span class="status state_success pull_left"></span>
+								<span class="status-dot status-dot-success"></span>
 							{% else %}
-								<span class="status state_error pull_left"></span>
+								<span class="status-dot status-dot-error"></span>
 							{% endif %}
-							<a href="{% url 'gamereport' teamid=team.id gameid=game.id  %}">
-								On {{ game.date|date:"m/d" }} vs. {{ game|get_game_opponent_team_name:user}}
+							<a href="{% url 'gamereport' team_id=team.id game_id=game.id  %}">
+								On {{ game.date|date:'m/d' }} vs. {{ game|get_game_opponent_team_name:user}}
 							</a>
 						</li>
 					{% empty %}
-						<div class="text_center">No games found</div>
+						<h3>No Games Found</h3>
 					{% endfor %}
 				</ul>
 			</li>

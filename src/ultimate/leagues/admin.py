@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib import admin
+from django.contrib.auth import get_user_model
 from django.db.models import Max, Q
 
 from paypal.standard.ipn.models import PayPalIPN
@@ -17,6 +18,14 @@ class CouponAdmin(admin.ModelAdmin):
 	def save_model(self, request, obj, form, change):
 		obj.created_by = request.user
 		obj.save()
+
+
+class FieldAdmin(admin.ModelAdmin):
+	save_as = True
+	save_on_top = True
+
+	list_display = ('name', 'layout_link', 'driving_link',)
+	list_editable = ('name', 'layout_link', 'driving_link',)
 
 
 class FieldNameAdmin(admin.ModelAdmin):
@@ -152,9 +161,9 @@ class TeamMemberInline(admin.TabularInline):
 
 			if request._team_obj_:
 				registration_user_ids = Registrations.objects.filter(league__id=request._team_obj_.league.id).values_list('user', flat=True)
-				kwargs['queryset'] = User.objects.filter(id__in=registration_user_ids).order_by('last_name', 'email')
+				kwargs['queryset'] = get_user_model().objects.filter(id__in=registration_user_ids).order_by('last_name', 'email')
 			else:
-				kwargs['queryset'] = User.objects.filter().order_by('last_name', 'email')
+				kwargs['queryset'] = get_user_model().objects.filter().order_by('last_name', 'email')
 
 			return db_field.formfield(**kwargs)
 
@@ -177,7 +186,7 @@ class TeamAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Coupon, CouponAdmin)
-admin.site.register(Field)
+admin.site.register(Field, FieldAdmin)
 admin.site.register(FieldNames, FieldNameAdmin)
 admin.site.register(Game, GameAdmin)
 admin.site.register(League, LeagueAdmin)

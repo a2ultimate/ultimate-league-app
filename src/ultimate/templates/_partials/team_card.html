@@ -1,0 +1,90 @@
+{% load teams %}
+{% load user_roles %}
+
+<div class="team-card">
+  <div class="team-card-header" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }};">
+    <div class="team-card-header-name" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }};">
+      {% if team.name %}
+        {{ team.name }}
+      {% else %}
+        Team {{ team.id }}
+      {% endif %}
+    </div>
+
+    {% if not hide_info %}
+      <div class="team-card-header-info" style="background-color: {{ team.css_background_color_dark }}; color: {{ team.css_text_color }};">
+        {% if not hide_color %}
+          <div class="team-card-header-info-color">
+            {% if team.name %}
+              Team {{ team.id }}
+              {% if team.color %}
+                -
+              {% endif %}
+            {% endif %}
+
+            {{ team.color }}
+
+            {% if not team.name and not team.color %}
+              &nbsp;
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {% if not hide_email %}
+          <div class="team-card-header-info-email">
+            {% if team.email and user.is_authenticated %}
+            {% if user|is_on_team:team or user.is_superuser or user|in_group:'junta' %}
+              <a style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}">Email Team</a>
+            {% endif %}
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="team-card-content">
+    {% block team_card_content %}
+      <ul class="team-card-content-members">
+        {% for team_member in team.get_members %}
+          <li class="team-card-content-members-member">
+            {% if team_member.captain %}
+              <strong>
+            {% endif %}
+
+            {{ team_member.user.get_full_name }}
+
+            {% if team_member.captain %}
+              </strong>
+            {% endif %}
+
+            <em>{{ team_member.user.profile.nickname }}</em>
+
+            {% if forloop.first and user.is_authenticated %}
+            {% if user.is_superuser or user|is_on_team:team or user|is_division_captain:league %}
+              <a class="team-card-content-members-member-email" href="mailto:{% for captain in team.get_captains %}{{ captain.user.email }},{% endfor %}">
+                Email Captains</a>
+            {% endif %}
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endblock %}
+  </div>
+
+  <div class="team-card-footer">
+    {% block team_card_footer %}
+      {% if user.is_superuser or user|in_group:'junta' %}
+        <div class="team-card-footer-heading">
+          Admin Only
+        </div>
+
+        <div class="team-card-footer-content">
+          {{ team.get_members|length }} Player{{ team.get_members|length|pluralize }},
+          {{ team.get_male_members|length }} Male{{ team.get_male_members|length|pluralize }},
+          {{ team.get_female_members|length }} Female{{ team.get_female_members|length|pluralize }}
+        </div>
+      {% endif %}
+    {% endblock %}
+  </div>
+</div>

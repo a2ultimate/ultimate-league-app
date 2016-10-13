@@ -1,0 +1,40 @@
+.breadcrumbs {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+
+  color: $color-gray;
+  border-bottom-right-radius: $border-radius;
+  border-bottom-left-radius: $border-radius;
+  background-color: $color-light-gray;
+}
+
+.breadcrumbs-list {
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.breadcrumb {
+  display: inline-block;
+
+  &::after {
+    display: inline-block;
+
+    padding: 0 0.3125rem;
+
+    content: '/';
+
+    color: $color-gray;
+  }
+
+  &:last-child {
+    &::after {
+      display: none;
+    }
+  }
+
+  .breadcrumb-active {
+    color: $color-gray;
+  }
+}
