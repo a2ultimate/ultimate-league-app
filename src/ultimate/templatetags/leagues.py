@@ -1,12 +1,21 @@
 from datetime import datetime
 from django import template
 
+from ultimate.leagues.models import League
+
 register = template.Library()
 
 
 @register.filter
-def sort_by_league_start_date_weekday(leagues):
-	return sorted(leagues, key=lambda k: k.league_start_date.strftime('%w'))
+def sort_by_league_start_date_weekday(divisions):
+
+    leagues = filter(lambda k: k.type == League.LEAGUE_TYPE_LEAGUE, divisions)
+    leagues.sort(key=lambda k: k.league_start_date.strftime('%w'))
+
+    other_divisions = filter(lambda k: k.type != League.LEAGUE_TYPE_LEAGUE, divisions)
+    other_divisions.sort(key=lambda k: k.league_start_date)
+
+    return leagues + other_divisions
 
 
 @register.filter

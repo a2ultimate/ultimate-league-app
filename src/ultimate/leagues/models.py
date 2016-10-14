@@ -53,23 +53,33 @@ class League(models.Model):
 		(STATE_PREVIEW,	'Preview - visible only to admins, registration conditionally open only to admins'),
 	)
 
+	LEAGUE_GENDER_MENS = 'mens'
+	LEAGUE_GENDER_MIXED = 'mixed'
+	LEAGUE_GENDER_OPEN = 'open'
+	LEAGUE_GENDER_WOMENS = 'womens'
 	LEAGUE_GENDER_CHOICES = (
-		('mens', 'Men\'s'),
-		('mixed', 'Mixed'),
-		('open', 'Open'),
-		('womens', 'Women\'s'),
+		(LEAGUE_GENDER_MENS, 'Men\'s'),
+		(LEAGUE_GENDER_MIXED, 'Mixed'),
+		(LEAGUE_GENDER_OPEN, 'Open'),
+		(LEAGUE_GENDER_WOMENS, 'Women\'s'),
 	)
 
+	LEAGUE_LEVEL_COMPETITIVE = 'comp'
+	LEAGUE_LEVEL_RECREATIONAL = 'rec'
+	LEAGUE_LEVEL_YOUTH = 'youth'
 	LEAGUE_LEVEL_CHOICES = (
-		('comp', 'Competitive'),
-		('rec', 'Recreational'),
-		('youth', 'Youth'),
+		(LEAGUE_LEVEL_COMPETITIVE, 'Competitive'),
+		(LEAGUE_LEVEL_RECREATIONAL, 'Recreational'),
+		(LEAGUE_LEVEL_YOUTH, 'Youth'),
 	)
 
+	LEAGUE_TYPE_EVENT = 'event'
+	LEAGUE_TYPE_LEAGUE = 'league'
+	LEAGUE_TYPE_TOURNAMENT = 'tournament'
 	LEAGUE_TYPE_CHOICES = (
-		('event', 'Event'),
-		('league', 'League'),
-		('tournament', 'Tournament'),
+		(LEAGUE_TYPE_EVENT, 'Event'),
+		(LEAGUE_TYPE_LEAGUE, 'League'),
+		(LEAGUE_TYPE_TOURNAMENT, 'Tournament'),
 	)
 
 	night = models.CharField(max_length=32, help_text='lower case, no special characters, e.g. "sunday", "tuesday and thursday", "end of season tournament"')
