@@ -64,18 +64,20 @@
       Your attendance response indicates you will miss <strong>{{ registration.attendance }}</strong> out of <strong>{{ league.get_num_game_events }}</strong> games.
     </p>
 
-    <p>
-      {% if registration.captain >= 0 %}
-        Your captaining response is <strong>"{{ registration.get_captain_display }}"</strong>
-      {% else %}
-        You have not submitted a captain response.
-      {% endif %}
-    </p>
+    {% if league.type == 'league' %}
+      <p>
+        {% if registration.captain >= 0 %}
+          Your captaining response is <strong>"{{ registration.get_captain_display }}"</strong>
+        {% else %}
+          You have not submitted a captain response.
+        {% endif %}
+      </p>
+    {% endif %}
 
     <p>
       At any time, you can
       <a href="{% url 'league_registration_section' year=league.year season=league.season division=league.night section='attendance' %}">
-        change your attendance or captaining rating</a>.
+        change your attendance{% if league.type == 'league' %} or captaining{% endif %} rating</a>.
     </p>
 
     <hr />
