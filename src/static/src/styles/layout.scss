@@ -2,6 +2,7 @@ body {
   position: relative;
   z-index: $z-body;
 
+  min-width: 61.25rem; // TODO get rid of this to go responsive
   margin: 0;
   padding: 0;
 
@@ -18,6 +19,7 @@ body {
 // HEADER
 
 .header {
+  position: relative;
   z-index: $z-body-header;
 
   padding: 0.75rem 0;
@@ -26,8 +28,9 @@ body {
 }
 
 .header-inner {
-  width: 62rem;
-  margin: 0 auto;
+  position: relative;
+
+  @include outer-container(62rem);
 }
 
 .header-inner-top {
@@ -38,6 +41,10 @@ body {
 
 .header-inner-top-banner {
   position: relative;
+
+  display: inline-block;
+
+  padding-left: 0.1875rem;
 
   &:active {
     top: 0.0625rem;
@@ -71,7 +78,6 @@ body {
 
   &:after {
     display: inline-block;
-    // padding: 0 0.5rem;
 
     content: '\00b7';
 
@@ -101,8 +107,9 @@ body {
 }
 
 .nav-inner {
-  width: 62rem;
-  margin: 0 auto;
+  position: relative;
+
+  @include outer-container(62rem);
 }
 
 .nav-inner-left {
@@ -222,7 +229,7 @@ body {
   }
 }
 
-.content-wrapper {
+.content {
   position: relative;
   z-index: $z-body-content-wrapper;
 
@@ -231,13 +238,15 @@ body {
   background-color: #f9f9f9;
 }
 
-.content {
+.content-inner {
+  position: relative;
+
   padding: 0 0.5rem;
 
   @include outer-container(62rem);
 }
 
-.content-left {
+.content-inner-left {
   margin-bottom: 1rem;
   padding: 0 1rem 0.5rem;
 
@@ -246,34 +255,34 @@ body {
   @include span-columns(3, 'block-collapse');
 }
 
-.content-left-logo {
+.content-inner-left-logo {
   margin-bottom: 1rem;
 
   text-align: center;
 }
 
-.content-left-logo-image {
+.content-inner-left-logo-image {
   width: 12rem;
 }
 
-.content-left-social {
+.content-inner-left-social {
   margin-bottom: 1.5rem;
 
   text-align: center;
 }
 
-.content-left-social-list {
+.content-inner-left-social-list {
   margin: 0;
   padding: 0;
 
   list-style: none;
 }
 
-.content-left-social-list-element {
+.content-inner-left-social-list-element {
   display: inline-block;
 }
 
-.content-left-social-list-element-link {
+.content-inner-left-social-list-element-link {
   display: block;
 
   width: 2rem;
@@ -283,10 +292,10 @@ body {
   border-radius: $border-radius;
 }
 
-.content-left-links {
+.content-inner-left-links {
 }
 
-.content-left-links-list {
+.content-inner-left-links-list {
   margin: 0;
   padding: 0;
 
@@ -307,59 +316,59 @@ body {
   }
 }
 
-.content-left-leagues {
+.content-inner-left-leagues {
 }
 
-.content-left-leagues-list {
+.content-inner-left-leagues-list {
   margin: 0;
   padding: 0;
 
   list-style: none;
 }
 
-.content-left-leagues-list-element {
+.content-inner-left-leagues-list-element {
   margin-bottom: 2rem;
 }
 
-.content-left-leagues-list-element-header {
+.content-inner-left-leagues-list-element-header {
 }
 
-.content-left-leagues-list-element-divisions {
+.content-inner-left-leagues-list-element-divisions {
 }
 
-.content-left-leagues-list-element-divisions-list {
+.content-inner-left-leagues-list-element-divisions-list {
   margin: 0;
   padding: 0;
 
   list-style: none;
 }
 
-.content-left-leagues-list-element-divisions-list-element {
+.content-inner-left-leagues-list-element-divisions-list-element {
   margin-bottom: 0.5rem;
 }
 
-.content-left-leagues-list-element-divisions-list-element-header {
+.content-inner-left-leagues-list-element-divisions-list-element-header {
 }
 
-.content-left-leagues-list-element-divisions-list-element-links {
+.content-inner-left-leagues-list-element-divisions-list-element-links {
   margin-left: 0.25rem;
 }
 
-.content-left-leagues-list-element-divisions-list-element-links-list {
+.content-inner-left-leagues-list-element-divisions-list-element-links-list {
   margin: 0;
   padding: 0;
 
   list-style: none;
 }
 
-.content-left-leagues-list-element-divisions-list-element-links-list-element {
+.content-inner-left-leagues-list-element-divisions-list-element-links-list-element {
   margin-bottom: 0.25rem;
 }
 
-.content-left-leagues-list-element-divisions-list-element-links-list-element-link {
+.content-inner-left-leagues-list-element-divisions-list-element-links-list-element-link {
 }
 
-.content-right {
+.content-inner-right {
   margin-bottom: 1rem;
   padding: 0 0 0.5rem 1rem;
 
@@ -367,6 +376,7 @@ body {
 }
 
 .footer {
+  position: relative;
   z-index: $z-body-footer;
 
   padding: 1rem 0;
@@ -376,10 +386,14 @@ body {
   border-top-right-radius: 0.125rem;
 }
 
-.footer-content {
+.footer-inner {
+  position: relative;
+
   padding: 0.1875rem;
 
   text-align: center;
 
   font-size: 0.9375rem;
+
+  @include outer-container(62rem);
 }

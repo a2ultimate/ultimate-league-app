@@ -4,8 +4,8 @@
 {% load staticfiles %}
 {% load utility %}
 
-{% block title %}{% include '_partials/league_header.html' with league=league only %} | {{ block.super }}{% endblock %}
-{% block og_title %}{% include '_partials/league_header.html' with league=league only %} | {{ block.super }}{% endblock %}
+{% block title %}{% include '_partials/league_header.html' with league=leagues|first only %} &middot; {{ block.super }}{% endblock %}
+{% block og_title %}{% include '_partials/league_header.html' with league=leagues|first only %} &middot; {{ block.super }}{% endblock %}
 
 {% block content %}
 	{% if not season %}
@@ -14,10 +14,10 @@
 		{% with league=leagues|first %}
 			<h1>{% include '_partials/league_header.html' with league=league only %}</h1>
 
-			<p>
+			<h5>
 				Ann Arbor Ultimate is very excited to present {{ league.season_title|smart_title }} League {{ year }}.
 				There {{ leagues|pluralize:'is,are' }} <strong>{{ leagues|length }}</strong> division{{ leagues|pluralize }}.
-			</p>
+			</h5>
 		{% endwith %}
 
 		{% for league in leagues %}
@@ -31,11 +31,16 @@
 				{% endif %}
 			</h2>
 
-			{% if not league.is_after_registration_start %}
-				<h4>
-					Registration opens on {{ league.reg_start_date|date:'l, F jS' }}
-					at {{ league.reg_start_date|date:'g:iA'|lower }}
-				</h4>
+			{% if league.state == 'closed' or league.state == 'preview' or not league.is_after_registration_start %}
+				<div class="message message-small">
+					Registration is currently closed for this division.
+					{% if league.state == 'open' %}
+						It will open on {{ league.reg_start_date|date:'l, F jS' }}
+						at {{ league.reg_start_date|date:'g:iA'|lower }}.
+					{% elif league.state == 'preview' %}
+						It is currently in preview mode.
+					{% endif %}
+				</div>
 			{% endif %}
 
 			{% if league.summary_info %}

@@ -5,7 +5,7 @@
 {% load staticfiles %}
 {% load utility %}
 
-{% block title %}Game Reports | Junta Resources | {{ block.super }}{% endblock %}
+{% block title %}Game Reports &middot; Junta Resources &middot; {{ block.super }}{% endblock %}
 
 {% block content %}
 
@@ -66,6 +66,10 @@
 
     {% if game_dates|length %}
       {% include '_partials/schedule_table.html' with league=league game_locations=game_locations game_dates=game_dates user_games=user_games next_game_date=next_game_date link_game_report=1 only %}
+
+      <form class="form" method="post">{% csrf_token %}
+        <input class="button button-success" type="submit" name="export" value="Export All">
+      </form>
     {% else %}
       <h4>
         Schedules are not yet available

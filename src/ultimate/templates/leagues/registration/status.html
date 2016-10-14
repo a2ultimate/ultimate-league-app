@@ -3,8 +3,8 @@
 {% load leagues %}
 {% load utility %}
 
-{% block title %}{% include '_partials/division_header.html' with league=league header='Registration' hide_state=1 only %}| {{ block.super }}{% endblock %}
-{% block og_title %}{% include '_partials/division_header.html' with league=league header='Registration' hide_state=1 only %}| {{ block.super }}{% endblock %}
+{% block title %}Registration &middot; {% include '_partials/division_header.html' with league=league hide_state=1 only %} &middot; {{ block.super }}{% endblock %}
+{% block og_title %}Registration &middot; {% include '_partials/division_header.html' with league=league hide_state=1 only %} &middot; {{ block.super }}{% endblock %}
 
 {% block content %}
 
@@ -146,10 +146,10 @@
         {% endif %}
 
         <form class="form" method="post">{% csrf_token %}
-          {% if registration.check_price > 0 and registration.pay_type != 'check' and league.checks_accepted %}
+          {% if league.checks_accepted and registration.check_price > 0 and registration.pay_type != 'check' %}
             <button class="button button-info" name="pay_type" value="check" type="submit">Switch Payment Type to Check</button>
           {% endif %}
-          {% if registration.paypal_price > 0 and registration.pay_type != 'paypal' %}
+          {% if league.checks_accepted and registration.paypal_price > 0 and registration.pay_type != 'paypal' %}
             <button class="button button-info" name="pay_type" value="paypal" type="submit">Switch Payment Type to PayPal</button>
           {% endif %}
         </form>

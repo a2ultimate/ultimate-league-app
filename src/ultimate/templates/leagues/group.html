@@ -5,8 +5,8 @@
 {% load teams %}
 {% load utility %}
 
-{% block title %}{% include '_partials/division_header.html' with league=league header='Grouping' hide_state=1 only %}| {{ block.super }}{% endblock %}
-{% block og_title %}{% include '_partials/division_header.html' with league=league header='Grouping' hide_state=1 only %}| {{ block.super }}{% endblock %}
+{% block title %}Group &middot; {% include '_partials/division_header.html' with league=league hide_state=1 only %} &middot; {{ block.super }}{% endblock %}
+{% block og_title %}Group &middot; {% include '_partials/division_header.html' with league=league hide_state=1 only %} &middot; {{ block.super }}{% endblock %}
 
 {% block content %}
 
