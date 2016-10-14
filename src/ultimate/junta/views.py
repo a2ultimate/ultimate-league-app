@@ -15,7 +15,7 @@ from django.template import RequestContext
 
 from ultimate.forms import ScheduleGenerationForm
 
-from ultimate.captain.models import GameReport
+from ultimate.captain.models import GameReport, GameReportComment
 from ultimate.junta.models import *
 from ultimate.leagues.models import *
 from ultimate.user.models import *
@@ -104,9 +104,39 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
             game_reports = GameReport.objects.filter(team__id=team_id, game__id=game_id)
 
         else:
-            games = league.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
-            game_locations = league.get_game_locations(games=games)
-            game_dates = league.get_game_dates(games=games, game_locations=game_locations)
+            if request.method == 'POST':
+                if 'export' in request.POST:
+                    response = HttpResponse(content_type='text/csv')
+                    response['Content-Disposition'] = 'attachment; filename="' + league.__unicode__() + '.csv"'
+
+                    writer = csv.writer(response)
+                    writer.writerow([
+                        'Date',
+                        'Email',
+                        'First Name',
+                        'Last Name',
+                        'Spirit',
+                        'Comment',
+                        ])
+
+                    game_report_comments = GameReportComment.objects.filter(report__team__league=league, report__game__league=league).order_by('report__game__start')
+                    for game_report_comment in game_report_comments:
+
+                        writer.writerow([
+                            game_report_comment.report.game.start,
+                            game_report_comment.submitted_by.email,
+                            game_report_comment.submitted_by.first_name,
+                            game_report_comment.submitted_by.last_name,
+                            game_report_comment.spirit,
+                            game_report_comment.comment.encode('ascii', 'ignore'),
+                            ])
+
+                    return response
+
+            else:
+                games = league.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
+                game_locations = league.get_game_locations(games=games)
+                game_dates = league.get_game_dates(games=games, game_locations=game_locations)
 
     else:
         leagues = League.objects.all().order_by('-league_start_date')
