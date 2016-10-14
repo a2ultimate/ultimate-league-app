@@ -521,17 +521,17 @@ class Registrations(models.Model):
 					status = 'Attendance Completed'
 
 					if self.league.check_price == 0 and self.league.paypal_price == 0:
-						status = 'Registration Completed'
+						status = 'Registration Complete'
 
 					else:
 						if self.pay_type == 'check' and not self.check_complete:
 							status = 'Waiting for Check'
 						elif self.pay_type == 'check' and self.check_complete:
-							status = 'Check Completed'
-						elif self.pay_type == 'paypal' and not self.paypal_complete:
+							status = 'Check Complete'
+						elif self.pay_type != 'check' and not self.paypal_complete:
 							status = 'Waiting for Paypal'
-						elif self.pay_type == 'paypal' and self.paypal_complete:
-							status = 'Paypal Completed'
+						elif self.pay_type != 'check' and self.paypal_complete:
+							status = 'Paypal Complete'
 						elif self.payment_complete:
 							status = 'Payment Complete'
 		return status
@@ -602,12 +602,10 @@ class Registrations(models.Model):
 		if not self.waiver_complete:
 			return False
 
-		if self.attendance is None or \
-			self.captain is None:
-
+		if self.attendance is None:
 			return False
 
-		if self.league.check_price > 0 and \
+		if self.league.check_price > 0 or \
 			self.league.paypal_price > 0:
 
 			if not self.check_complete and \
