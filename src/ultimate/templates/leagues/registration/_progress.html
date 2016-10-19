@@ -17,19 +17,19 @@
   {% endif %}
 
   {% if registration_progress >= tick_percentage|multiply_by:'0' %}
-    <a class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'1' }}%" href="{% url 'league_registration_section' year=league.year season=league.season division=league.night section='conduct' %}">Code of Conduct</a>
+    <a class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'1' }}%" href="{% url 'league_registration_section' year=league.year season=league.season|slugify division=league.night|slugify section='conduct' %}">Code of Conduct</a>
   {% else %}
     <span class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'1' }}%">Code of Conduct</span>
   {% endif %}
 
   {% if registration_progress >= tick_percentage|multiply_by:'1' %}
-    <a class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'2' }}%" href="{% url 'league_registration_section' year=league.year season=league.season division=league.night section='waiver' %}">Waiver</a>
+    <a class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'2' }}%" href="{% url 'league_registration_section' year=league.year season=league.season|slugify division=league.night|slugify section='waiver' %}">Waiver</a>
   {% else %}
     <span class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'2' }}%">Waiver</span>
   {% endif %}
 
   {% if registration_progress >= tick_percentage|multiply_by:'2' %}
-    <a class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'3' }}%" href="{% url 'league_registration_section' year=league.year season=league.season division=league.night section='attendance' %}">Attendance</a>
+    <a class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'3' }}%" href="{% url 'league_registration_section' year=league.year season=league.season|slugify division=league.night|slugify section='attendance' %}">Attendance</a>
   {% else %}
     <span class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'3' }}%">Attendance</span>
   {% endif %}
@@ -37,13 +37,13 @@
   {% if league.checks_accepted and league.check_price > 0 %}
 
     {% if registration_progress >= tick_percentage|multiply_by:'3' %}
-      <a class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'4' }}%" href="{% url 'league_registration_section' year=league.year season=league.season division=league.night section='pay_type' %}">Payment Type</a>
+      <a class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'4' }}%" href="{% url 'league_registration_section' year=league.year season=league.season|slugify division=league.night|slugify section='pay_type' %}">Payment Type</a>
     {% else %}
       <span class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'4' }}%">Payment Type</span>
     {% endif %}
 
     {% if registration_progress >= tick_percentage|multiply_by:'4' %}
-      <a class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'5' }}%" href="{% url 'league_registration_section' year=league.year season=league.season division=league.night section='status' %}">Status</a>
+      <a class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'5' }}%" href="{% url 'league_registration_section' year=league.year season=league.season|slugify division=league.night|slugify section='status' %}">Status</a>
     {% else %}
       <span class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'5' }}%">Status</span>
     {% endif %}
@@ -51,7 +51,7 @@
   {% else %}
 
     {% if registration_progress >= tick_percentage|multiply_by:'3' %}
-      <a class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'4' }}%" href="{% url 'league_registration_section' year=league.year season=league.season division=league.night section='status' %}">Status</a>
+      <a class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'4' }}%" href="{% url 'league_registration_section' year=league.year season=league.season|slugify division=league.night|slugify section='status' %}">Status</a>
     {% else %}
       <span class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'4' }}%">Status</span>
     {% endif %}

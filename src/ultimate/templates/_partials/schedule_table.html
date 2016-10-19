@@ -61,7 +61,7 @@
             {% if game %}
               {% for team in game.get_teams %}
                 {% if link_game_report %}
-                  <a class="schedule-table-game-team-link" href="{% url 'gamereports_game' year=league.year season=league.season division=league.night game_id=game.id team_id=team.id %}">
+                  <a class="schedule-table-game-team-link" href="{% url 'gamereports_game' year=league.year season=league.season|slugify division=league.night|slugify game_id=game.id team_id=team.id %}">
                 {% elif show_game_result %}
                   <div>
                 {% else %}

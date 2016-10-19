@@ -4,29 +4,29 @@
   <ul class="tabs-list">
     {% if league|is_open:user or selected_tab == 'registration' %}
     <li class="tab {% if selected_tab == 'registration' %} tab-selected{% endif %}">
-      <a class="tab-link" href="{% url 'league_registration' year=league.year season=league.season division=league.night  %}">
+      <a class="tab-link" href="{% url 'league_registration' year=league.year season=league.season|slugify division=league.night|slugify  %}">
         Registration
       </a>
     </li>
     {% endif %}
 
     <li class="tab{% if selected_tab == 'summary' %} tab-selected{% endif %}">
-      <a class="tab-link" href="{% url 'league_summary' year=league.year season=league.season division=league.night  %}">
+      <a class="tab-link" href="{% url 'league_summary' year=league.year season=league.season|slugify division=league.night|slugify  %}">
         Summary
       </a>
     </li>
     <li class="tab{% if selected_tab == 'details' %} tab-selected{% endif %}">
-      <a class="tab-link" href="{% url 'league_details' year=league.year season=league.season division=league.night  %}">
+      <a class="tab-link" href="{% url 'league_details' year=league.year season=league.season|slugify division=league.night|slugify  %}">
         Detailed Info
       </a>
     </li>
     <li class="tab{% if selected_tab == 'players' %} tab-selected{% endif %}">
-      <a class="tab-link" href="{% url 'league_players' year=league.year season=league.season division=league.night  %}">
+      <a class="tab-link" href="{% url 'league_players' year=league.year season=league.season|slugify division=league.night|slugify  %}">
         Players
       </a>
     </li>
     <li class="tab{% if selected_tab == 'teams' %} tab-selected{% endif %}">
-      <a class="tab-link" href="{% url 'league_teams' year=league.year season=league.season division=league.night  %}">
+      <a class="tab-link" href="{% url 'league_teams' year=league.year season=league.season|slugify division=league.night|slugify  %}">
         Teams and Schedules
       </a>
     </li>

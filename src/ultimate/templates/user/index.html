@@ -106,7 +106,7 @@
           {% for registration in league|league_registrations:user %}
             <tr>
               <td>
-                <a href="{% url 'league_registration' year=registration.league.year season=registration.league.season division=registration.league.night %}">
+                <a href="{% url 'league_registration' year=registration.league.year season=registration.league.season|slugify division=registration.league.night|slugify %}">
                   {{ registration.league.season_title|smart_title }}
                   {{ registration.league.year }}
                   {{ registration.league.night|smart_title }}
@@ -121,7 +121,7 @@
                 {% endfor %}
 
                 {% if registration.is_complete and registration.league.baggage > 1 and not registration.waitlist and not registration.league.waitlist_start_date|is_past_deadline %}
-                  <div><a href="{% url 'league_group' year=league.year season=league.season division=league.night %}">Edit Group</a></div>
+                  <div><a href="{% url 'league_group' year=league.year season=league.season|slugify division=league.night|slugify %}">Edit Group</a></div>
                 {% endif %}
               </td>
             </tr>
