@@ -35,7 +35,7 @@
 
     {% include '_partials/league_list.html' with leagues=leagues link_view='gamereports_league' only %}
 
-  {% elif game_reports %}
+  {% elif league and game and team %}
     <h1>{% include '_partials/division_header.html' with league=league header='Game Reports' only %}</h1>
 
     <h2>Game Report for {{ team }}</h2>
@@ -58,7 +58,9 @@
       {% endfor %}
 
     {% empty %}
-      <h3>No game reports found</h3>
+      <div class="message">
+        No game reports were found.
+      </div>
     {% endfor %}
 
   {% else %}

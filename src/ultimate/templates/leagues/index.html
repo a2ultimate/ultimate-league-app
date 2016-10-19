@@ -14,10 +14,12 @@
 		{% with league=leagues|first %}
 			<h1>{% include '_partials/league_header.html' with league=league only %}</h1>
 
-			<h5>
+			<h4>
 				Ann Arbor Ultimate is very excited to present {{ league.season_title|smart_title }} League {{ year }}.
 				There {{ leagues|pluralize:'is,are' }} <strong>{{ leagues|length }}</strong> division{{ leagues|pluralize }}.
-			</h5>
+			</h4>
+
+			<hr>
 		{% endwith %}
 
 		{% for league in leagues %}

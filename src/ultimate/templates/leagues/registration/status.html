@@ -17,9 +17,9 @@
   <h2>Registration Status</h2>
 
   {% if registration.is_complete %}
-    <h3>
+    <h4>
       Your registration is <strong>complete</strong>.
-    </h3>
+    </h4>
 
     <hr>
 
@@ -31,9 +31,9 @@
       {% endif %}
     </p>
   {% elif registration.is_refunded %}
-    <h3>
+    <h4>
       Your registration has been <strong>refunded</strong>.
-    </h3>
+    </h4>
 
     <p>
       For PayPal, please allow up to a week for the refund process to complete. For check,
@@ -45,9 +45,9 @@
       <a href="mailto:registration@annarborultimate.org">email registration@annarborultimate.org</a>.
     </p>
   {% else %}
-    <h3>
+    <h4>
       Your registration is <strong>not complete</strong>.
-    </h3>
+    </h4>
 
     {% if league.is_waitlist %}
       <p>
@@ -97,9 +97,9 @@
             </p>
           </form>
         {% else %}
-          <h5>Do you have a coupon code?</h5>
           <form class="form" method="post">{% csrf_token %}
-            <input name="coupon_code" type="text">
+            <h4><label for="coupon-code-input">Do you have a coupon code?</label></h4>
+            <input name="coupon_code" id="coupon-code-input" type="text">
             <button class="button button-success" type="submit">
               Submit
             </button>

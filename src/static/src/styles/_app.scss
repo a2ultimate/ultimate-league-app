@@ -1,18 +1,19 @@
+// normalize
+@import '~normalize.css';
+
+// reboot
+@import '~bootstrap/scss/bootstrap-reboot';
+
+@import '~bourbon/app/assets/stylesheets/_bourbon';
+@import '~bourbon-neat/app/assets/stylesheets/_neat';
+
 // globals
 @import '_colors';
 @import '_fonts';
 @import '_variables';
 @import '_z-index';
 
-// normalize
-@import '~normalize.css/normalize.css';
-
-// reboot
-@import '_reboot';
-
-@import '~bourbon/app/assets/stylesheets/_bourbon';
-@import '~bourbon-neat/app/assets/stylesheets/_neat';
-
+// base
 @import '_base';
 
 // breakpoints
@@ -46,6 +47,8 @@
 @import 'page-schedule-generation';
 @import 'page-user-index';
 
-// legacy
+// print
 @import '_print';
+
+// legacy
 @import 'legacy/jquery-ui-1.10.0.custom.min';

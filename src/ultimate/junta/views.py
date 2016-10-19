@@ -54,7 +54,6 @@ def captainstatus(request, year=None, season=None, division=None):
 def leagueresults(request, year=None, season=None, division=None):
     leagues = None
     league = None
-    game_report = None
     game_locations = None
     game_dates = None
     team_records = None
@@ -76,7 +75,6 @@ def leagueresults(request, year=None, season=None, division=None):
         {
             'leagues': leagues,
             'league': league,
-            'game_report': game_report,
             'game_locations': game_locations,
             'game_dates': game_dates,
             'team_records': team_records,

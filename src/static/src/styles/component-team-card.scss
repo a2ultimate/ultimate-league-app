@@ -13,8 +13,8 @@
 
   background-color: $color-gray;
 
-  font-family: $font-family-lato-bold;
   font-size: 1.25rem;
+  font-weight: 700;
 }
 
 .team-card-header-info {
@@ -24,8 +24,8 @@
   border-top-right-radius: $border-radius;
   background-color: $color-gray-dark;
 
-  font-family: $font-family-lato-medium;
   font-size: 0.875rem;
+  font-weight: 500;
 
   @include outer-container();
 }
@@ -52,6 +52,8 @@
   padding: 0;
 
   list-style: none;
+
+  line-height: 1.25;
 }
 
 .team-card-content-members-member {
@@ -60,6 +62,8 @@
 
 .team-card-content-members-member-email {
   float: right;
+
+  margin-right: -0.5rem;
 
   font-size: 0.875rem;
 }
@@ -118,8 +122,8 @@
   border-radius: 50%;
   background-color: $color-light-gray-dark;
 
-  font-family: $font-family-lato-black;
   font-size: 1.5rem;
+  font-weight: 900;
   line-height: 4rem;
 }
 

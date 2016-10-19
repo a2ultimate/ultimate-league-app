@@ -272,6 +272,10 @@ class League(models.Model):
 	def is_after_price_increase(self):
 		return datetime.now() >= self.price_increase_start_date
 
+	@property
+	def is_after_waitlist_start(self):
+		return datetime.now() >= self.waitlist_start_date
+
 	def get_game_locations(self, games=None):
 		if games is None:
 			games = self.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
@@ -554,10 +558,10 @@ class Registrations(models.Model):
 			percentage += interval
 			if self.waiver_complete:
 				percentage += interval
-				if self.attendance is not None and self.captain is not None:
+				if self.attendance is not None:
 					percentage += interval
 
-					if self.league.check_price > 0 and \
+					if self.league.check_price > 0 or \
 						self.league.paypal_price > 0:
 
 						if self.league.checks_accepted and \
@@ -628,12 +632,15 @@ class Registrations(models.Model):
 		if not self.waiver_complete:
 			return False
 
-		if self.attendance is None or self.captain is None:
+		if self.attendance is None:
 			return False
 
-		if self.league.check_price > 0 and self.league.paypal_price > 0:
+		if self.league.check_price > 0 or self.league.paypal_price > 0:
 
-			if not self.check_complete and not self.paypal_complete:
+			if not self.check_complete and \
+				not self.paypal_complete and \
+				not self.payment_complete:
+
 				return False
 
 		if not self.refunded:

@@ -94,16 +94,16 @@ def players(request, year, season, division):
 
 def teams(request, year, season, division):
 	league = get_object_or_404(League, year=year, season=season, night=division)
+	user_games = None
+
 	games = league.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
+	game_locations = league.get_game_locations(games=games)
+	game_dates = league.get_game_dates(games=games, game_locations=game_locations)
+
 	next_game_date = getattr(games.filter(date__gte=date.today()).first(), 'date', None)
 
 	if request.user.is_authenticated():
-		user_games = league.get_user_games(request.user)
-	else:
-		user_games = None
-
-	game_locations = league.get_game_locations(games=games)
-	game_dates = league.get_game_dates(games=games, game_locations=game_locations)
+		user_games = games.filter(league=league, gameteams__team__teammember__user=request.user).order_by('date')
 
 	return render_to_response('leagues/teams.html',
 	{

@@ -3,6 +3,7 @@
 
 {% with registration.progress as registration_progress %}
 <div class="progress-bar progress-bar-labeled">
+  <div class="progress-bar-background"></div>
   <div class="progress-bar-progress progress-bar-progress-success" style="width: {{ registration_progress|add:tick_percentage|limit_ceil:'100' }}%;"></div>
 
   <div class="progress-bar-tick progress-bar-tick-{{ tick_percentage|multiply_by:'1'|get_registration_tick_color:registration }}{% if section == 'conduct' %} progress-bar-tick-active{% endif %}" style="left: {{ tick_percentage|multiply_by:'1' }}%;"></div>

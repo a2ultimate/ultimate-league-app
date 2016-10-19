@@ -10,13 +10,13 @@
 
 {% if next %}
 {% if user.is_authenticated %}
-<p>
+<div class="message message-danger">
   {% trans 'Your account does not have access to this page. To proceed, please log in with an account that has access.' %}
-</p>
+</div>
 {% else %}
-<p>
+<div class="message message-info">
   {% trans 'Please log in to see this page.' %}
-</p>
+</div>
 {% endif %}
 {% endif %}
 
