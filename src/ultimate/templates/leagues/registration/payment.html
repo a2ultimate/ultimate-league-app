@@ -7,60 +7,60 @@
 
 {% block content %}
 
-	<h1>{% include '_partials/division_header.html' with league=league only %}</h1>
+  <h1>{% include '_partials/division_header.html' with league=league only %}</h1>
 
-	{% include '_partials/league_tabs.html' with selected_tab='registration' %}
+  {% include '_partials/league_tabs.html' with selected_tab='registration' %}
 
-	{% include 'leagues/registration/_progress.html' with league=league registration=registration section=section tick_percentage=tick_percentage only %}
+  {% include 'leagues/registration/_progress.html' with league=league registration=registration section=section tick_percentage=tick_percentage only %}
 
-	<h2>How would you like to pay?</h2>
+  <h2>How would you like to pay?</h2>
 
-	<p>
-		{% if league.checks_accepted %}
-			The cost of this league varies depending on payment type. PayPal is preferred, but check is also acceptable.
-		{% else %}
-			This league only accepts payment through PayPal.
-		{% endif %}
-	</p>
+  <p>
+    {% if league.checks_accepted %}
+      The cost of this league varies depending on payment type. PayPal is preferred, but check is also acceptable.
+    {% else %}
+      This league only accepts payment through PayPal.
+    {% endif %}
+  </p>
 
-	{% if league.coupons_accepted %}
-		{% if registration.coupon %}
-			<form class="form" method="post">{% csrf_token %}
-				<p>
-					You have entered a coupon code
-					<strong>{{ registration.coupon.code }}</strong>
-					good for <em>{{ registration.coupon.display_value }}</em>.
+  {% if league.coupons_accepted %}
+    {% if registration.coupon %}
+      <form class="form" method="post">{% csrf_token %}
+        <p>
+          You have entered a coupon code
+          <strong>{{ registration.coupon.code }}</strong>
+          good for <em>{{ registration.coupon.display_value }}</em>.
 
-					<button class="button button-info" name="remove_coupon" type="submit">
-						Remove It?
-					</button>
-				</p>
-			</form>
-		{% else %}
-			<form class="form" method="post">{% csrf_token %}
-				<h4><label for="coupon-code-input">Do you have a coupon code?</label></h4>
-				<input name="coupon_code" id="coupon-code-input" type="text">
-				<button class="button button-success" type="submit">
-					Submit
-				</button>
-			</form>
-		{% endif %}
-	{% endif %}
+          <button class="button button-info" name="remove_coupon" type="submit">
+            Remove It?
+          </button>
+        </p>
+      </form>
+    {% else %}
+      <form class="form" method="post">{% csrf_token %}
+        <h4><label for="coupon-code-input">Do you have a coupon code?</label></h4>
+        <input name="coupon_code" id="coupon-code-input" type="text">
+        <button class="button button-success" type="submit">
+          Submit
+        </button>
+      </form>
+    {% endif %}
+  {% endif %}
 
-	<p>
-		<ul>
-			<li>${{ registration.paypal_price }} via PayPal</li>
-			{% if league.checks_accepted %}
-				<li>${{ registration.check_price }} via Check</li>
-			{% endif %}
-		</ul>
-	</p>
+  <p>
+    <ul>
+      <li>${{ registration.paypal_price }} via PayPal</li>
+      {% if league.checks_accepted %}
+        <li>${{ registration.check_price }} via Check</li>
+      {% endif %}
+    </ul>
+  </p>
 
-	<form class="form" method="post">{% csrf_token %}
-		<input class="button button-success" type="submit" name="pay_type" value="Paypal">
-		{% if league.checks_accepted %}
-			<input class="button button-success" type="submit" name="pay_type" value="Check">
-		{% endif %}
-	</form>
+  <form class="form" method="post">{% csrf_token %}
+    <input class="button button-success" type="submit" name="pay_type" value="Paypal">
+    {% if league.checks_accepted %}
+      <input class="button button-success" type="submit" name="pay_type" value="Check">
+    {% endif %}
+  </form>
 
 {% endblock %}

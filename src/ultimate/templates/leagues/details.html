@@ -7,9 +7,9 @@
 
 {% block content %}
 
-	<h1>{% include '_partials/division_header.html' with league=league only %}</h1>
+  <h1>{% include '_partials/division_header.html' with league=league only %}</h1>
 
-	{% include '_partials/league_tabs.html' with selected_tab='details' %}
+  {% include '_partials/league_tabs.html' with selected_tab='details' %}
 
-	{{ league.detailed_info|safe }}
+  {{ league.detailed_info|safe }}
 {% endblock %}

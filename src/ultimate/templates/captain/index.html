@@ -8,58 +8,58 @@
 {% block title %}Captain Resources &middot; {{ block.super }}{% endblock %}
 
 {% block content %}
-	{% include '_partials/account_tabs.html' with selected_tab='captain' %}
+  {% include '_partials/account_tabs.html' with selected_tab='captain' %}
 
-	<ul class="header-list">
-		{% for team in captain_teams %}
-			<li>
-				<h3 class="header-list-header">
-					<div class="header-list-header-left">{{ team }}</div>
-					<div class="header-list-header-right">{{ team.league.year }} {{ team.league.season_title|smart_title }} {{ team.league.night_title|smart_title }}</div>
-				</h3>
+  <ul class="header-list">
+    {% for team in captain_teams %}
+      <li>
+        <h3 class="header-list-header">
+          <div class="header-list-header-left">{{ team }}</div>
+          <div class="header-list-header-right">{{ team.league.year }} {{ team.league.season_title|smart_title }} {{ team.league.night_title|smart_title }}</div>
+        </h3>
 
-				<ul class="header-list-inner">
-					<li>
-						<a href="{% url 'captaineditteam' team_id=team.id %}">
-							Change Team Name or Color
-						</a>
-					</li>
-					<li>
-						<a href="{% url 'captain_team_export' team_id=team.id %}">
-							Export Team Information
-						</a>
-					</li>
-					<li>
-						<a href="{% url 'playersurvey' team_id=team.id %}">
-							{% if team.league|get_player_survey_status:user %}
-								<span class="status-dot status-dot-success"></span>
-							{% else %}
-								<span class="status-dot status-dot-error"></span>
-							{% endif %}
-							Fill Out Player Survey
-						</a>
-					</li>
-				</ul>
+        <ul class="header-list-inner">
+          <li>
+            <a href="{% url 'captaineditteam' team_id=team.id %}">
+              Change Team Name or Color
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'captain_team_export' team_id=team.id %}">
+              Export Team Information
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'playersurvey' team_id=team.id %}">
+              {% if team.league|get_player_survey_status:user %}
+                <span class="status-dot status-dot-success"></span>
+              {% else %}
+                <span class="status-dot status-dot-error"></span>
+              {% endif %}
+              Fill Out Player Survey
+            </a>
+          </li>
+        </ul>
 
-				<ul class="header-list-inner">
-					{% for game in team.get_past_games %}
-						<li>
-							{% if game|report_complete_for_team:user %}
-								<span class="status-dot status-dot-success"></span>
-							{% else %}
-								<span class="status-dot status-dot-error"></span>
-							{% endif %}
-							<a href="{% url 'gamereport' team_id=team.id game_id=game.id %}">
-								On {{ game.date|date:'m/d' }} vs. {{ game|get_game_opponent_team_name:user}}
-							</a>
-						</li>
-					{% empty %}
-						<div class="message">
-							No games were found.
-						</div>
-					{% endfor %}
-				</ul>
-			</li>
-		{% endfor %}
-	</ul>
+        <ul class="header-list-inner">
+          {% for game in team.get_past_games %}
+            <li>
+              {% if game|report_complete_for_team:user %}
+                <span class="status-dot status-dot-success"></span>
+              {% else %}
+                <span class="status-dot status-dot-error"></span>
+              {% endif %}
+              <a href="{% url 'gamereport' team_id=team.id game_id=game.id %}">
+                On {{ game.date|date:'m/d' }} vs. {{ game|get_game_opponent_team_name:user}}
+              </a>
+            </li>
+          {% empty %}
+            <div class="message">
+              No games were found.
+            </div>
+          {% endfor %}
+        </ul>
+      </li>
+    {% endfor %}
+  </ul>
 {% endblock %}
