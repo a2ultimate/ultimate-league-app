@@ -15,40 +15,46 @@
 
   {% include '_partials/league_tabs.html' with selected_tab='teams' %}
 
+  {% if not teams and not game_locations %}
+    <div class="message">
+      Teams and schedules are not yet available.
+    </div>
+  {% endif %}
+
   <div class="page-division-teams-schedule">
-    {% if game_locations|length %}
+    {% if game_locations %}
       {% include '_partials/schedule_table.html' with league=league game_locations=game_locations game_dates=game_dates user_games=user_games next_game_date=next_game_date only %}
 
       {% if league.schedule_note %}
-      <p class="page-division-teams-schedule-notes">
-        {{ league.schedule_note }}
-      </p>
+        <div class="message message-info">
+          <h4>Scheduling Note</h4>
+          {{ league.schedule_note }}
+        </div>
       {% endif %}
-    {% else %}
-      <h4>
-        Schedules are not yet available
-      </h4>
     {% endif %}
   </div>
 
-  <div class="page-division-teams-teams">
-    <div class="page-division-teams-teams-row">
-      {% for team in teams %}
-      <div class="page-division-teams-teams-row-team" id="team-roster-{{ team.id }}">
-        {% include '_partials/team_card.html' with team=team user=request.user only %}
-      </div>
-
-      {% if forloop.counter|divisibleby:2 %}
-      </div><div class="page-division-teams-teams-row">
-      {% endif %}
-      {% empty %}
-      <h4>
-        Teams are not yet available
-      </h4>
-      {% endfor %}
+  {% if game_locations and not teams %}
+    <div class="message">
+      Teams are not yet available.
     </div>
-  </div>
+  {% endif %}
 
+  <div class="page-division-teams-teams">
+    {% if teams %}
+      <div class="page-division-teams-teams-row">
+        {% for team in teams %}
+          <div class="page-division-teams-teams-row-team" id="team-roster-{{ team.id }}">
+            {% include '_partials/team_card.html' with team=team user=request.user only %}
+          </div>
+
+          {% if forloop.counter|divisibleby:2 %}
+            </div><div class="page-division-teams-teams-row">
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
 
   {% if teams and request.user.is_superuser or request.user|in_group:'junta' %}
     <div class="page-division-teams-notes">

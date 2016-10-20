@@ -54,7 +54,7 @@
                 <th>Team {{ team.id }}</td>
                 <td class="team-rating-total">{{ team.rating_total|floatformat:2 }}</td>
                 <td class="team-rating-average">{{ team.rating_average|floatformat:2 }}</td>
-                <td class="team-size">{{ team.get_members|length }}</td>
+                <td class="team-size">{{ team.teammember_set.all|length }}</td>
                 <td class="team-size-female">{{ team.get_female_members|length }}</td>
                 <td class="team-size-male">{{ team.get_male_members|length }}</td>
                 <td class="team-attendance-total">{{ team.attendance_total|floatformat:2 }}</td>
@@ -80,7 +80,7 @@
               <tr class="team-stats-{{ team.id }}">
                 <td class="team-rating-average">{{ team.rating_average|floatformat:2 }}</td>
                 <td class="team-rating-total">{{ team.rating_total|floatformat:2 }}</td>
-                <td class="team-size">{{ team.get_members|length }}</td>
+                <td class="team-size">{{ team.teammember_set.all|length }}</td>
                 <td class="team-size-female">{{ team.get_female_members|length }}</td>
                 <td class="team-size-male">{{ team.get_male_members|length }}</td>
                 <td class="team-attendance-total">{{ team.attendance_total|floatformat:2 }}</td>

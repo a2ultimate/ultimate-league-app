@@ -12,7 +12,7 @@ body {
 
   font-family: $font-family-lato;
   font-size: $font-size-root;
-  font-weight: normal;
+  font-weight: 400;
   font-style: normal;
 }
 
@@ -63,7 +63,7 @@ body {
 
   vertical-align: middle;
 
-  line-height: 2rem;
+  line-height: 2;
 }
 
 .header-inner-top-links-list {
@@ -96,7 +96,7 @@ body {
 
   padding: 0 0.75rem;
 
-  font-family: $font-family-lato-semibold;
+  font-weight: 600;
 }
 
 .nav {
@@ -143,7 +143,7 @@ body {
 
       color: $color-dark-gray;
 
-      font-family: $font-family-lato-semibold;
+      font-weight: 600;
 
       &:active,
       &:hover {
@@ -179,7 +179,7 @@ body {
   color: $color-white;
   background-color: $color-dark-gray;
 
-  line-height: normal;
+  line-height: 1.5;
 
   > li {
     &:hover {
@@ -194,8 +194,6 @@ body {
       text-decoration: none;
 
       color: $color-white;
-
-      font-family: $font-family-lato;
     }
   }
 
@@ -303,13 +301,13 @@ body {
 
   > li {
     > ul {
-      margin: 0 0 12px;
+      margin: 0 0 0.75rem;
       padding: 0;
 
       list-style: none;
 
       > li {
-        margin: 6px 0;
+        margin: 0;
         padding: 0;
       }
     }
@@ -351,7 +349,6 @@ body {
 }
 
 .content-inner-left-leagues-list-element-divisions-list-element-links {
-  margin-left: 0.25rem;
 }
 
 .content-inner-left-leagues-list-element-divisions-list-element-links-list {
@@ -362,7 +359,6 @@ body {
 }
 
 .content-inner-left-leagues-list-element-divisions-list-element-links-list-element {
-  margin-bottom: 0.25rem;
 }
 
 .content-inner-left-leagues-list-element-divisions-list-element-links-list-element-link {

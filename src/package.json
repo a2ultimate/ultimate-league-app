@@ -6,7 +6,7 @@
   "dependencies": {},
   "devDependencies": {
     "autoprefixer": "^6.3.6",
-    "bootstrap": "^3.3.6",
+    "bootstrap": "^4.0.0-alpha.5",
     "bourbon": "4.2.7",
     "bourbon-neat": "1.8.0",
     "css-loader": "^0.25.0",
@@ -22,7 +22,6 @@
     "normalize.css": "^5.0.0",
     "postcss-loader": "^0.13.0",
     "sass-loader": "^4.0.0",
-    "selectize": "^0.12.1",
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
     "webpack": "^1.12.14",

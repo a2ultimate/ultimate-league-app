@@ -4,83 +4,83 @@
 
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>{% block title %}{% endblock %}</title>
+  <head>
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %}</title>
 
-		{% render_bundle 'forum' 'css' %}
-		<link href="{% static 'pybb/css/pybb.css' %}" rel="stylesheet">
+    {% render_bundle 'forum' 'css' %}
+    <link href="{% static 'pybb/css/pybb.css' %}" rel="stylesheet">
 
-		<style>
-			body { padding-top: 60px; }
-		</style>
+    <style>
+      body { padding-top: 60px; }
+    </style>
 
-		{% if GOOGLE_ANALYTICS_TRACKERS %}
-			<script>
-				(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-				})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    {% if GOOGLE_ANALYTICS_TRACKERS %}
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-				{% for tracker in GOOGLE_ANALYTICS_TRACKERS %}
-					ga('create', '{{ tracker.id }}', 'auto', '{{ tracker.name }}');
-					ga('{{ tracker.name }}.send', 'pageview');
-				{% endfor %}
-			</script>
-		{% endif %}
-	</head>
+        {% for tracker in GOOGLE_ANALYTICS_TRACKERS %}
+          ga('create', '{{ tracker.id }}', 'auto', '{{ tracker.name }}');
+          ga('{{ tracker.name }}.send', 'pageview');
+        {% endfor %}
+      </script>
+    {% endif %}
+  </head>
 
-	<body>
-		<div class="navbar navbar-inverse navbar-fixed-top">
-			<div class="navbar-inner">
-				<div class="container">
-					<a class="brand" href="{% url 'pybb:index' %}">Ann Arbor Ultimate Forum</a>
-					<ul class="nav">
-						{% if request.user.is_authenticated %}
-							<li>
-								<a href="{% url 'auth_log_out' %}">{% trans 'Log Out' %}</a>
-							</li>
-						{% else %}
-							<li>
-								<a href="{% url 'auth_log_in' %}">{% trans 'Log In' %}</a>
-							</li>
-							<li>
-								<a href="{% url 'registration_register' %}">Create an Account</a>
-							</li>
-						{% endif %}
-					</ul>
-					<ul class="nav pull-right">
-						<li>
-							<a href="{% url 'home' %}">&larr; Return to annarborultimate.org</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</div>
+  <body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="{% url 'pybb:index' %}">Ann Arbor Ultimate Forum</a>
+          <ul class="nav">
+            {% if request.user.is_authenticated %}
+              <li>
+                <a href="{% url 'auth_log_out' %}">{% trans 'Log Out' %}</a>
+              </li>
+            {% else %}
+              <li>
+                <a href="{% url 'auth_log_in' %}">{% trans 'Log In' %}</a>
+              </li>
+              <li>
+                <a href="{% url 'registration_register' %}">Create an Account</a>
+              </li>
+            {% endif %}
+          </ul>
+          <ul class="nav pull-right">
+            <li>
+              <a href="{% url 'home' %}">&larr; Return to annarborultimate.org</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
 
-		<div class="container">
-			<div class="main-block">
-				{% if messages %}
-					<ul class="messages">
-						{% for message in messages %}
-							<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-						{% endfor %}
-					</ul>
-				{% endif %}
+    <div class="container">
+      <div class="main-block">
+        {% if messages %}
+          <ul class="messages">
+            {% for message in messages %}
+              <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
 
-				<div id="breadcrumb">
-					{% block breadcrumb %}
-						<a href="/">Main</a>
-					{% endblock breadcrumb %}
-				</div>
+        <div id="breadcrumb">
+          {% block breadcrumb %}
+            <a href="/">Main</a>
+          {% endblock breadcrumb %}
+        </div>
 
-				<div id="content">
-					{% block content %}
-					{% endblock content %}
-				</div>
-			</div>
-		</div> <!-- /container -->
+        <div id="content">
+          {% block content %}
+          {% endblock content %}
+        </div>
+      </div>
+    </div> <!-- /container -->
 
-		{% render_bundle 'forum' 'js' %}
-	</body>
+    {% render_bundle 'forum' 'js' %}
+  </body>
 </html>

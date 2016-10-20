@@ -12,7 +12,7 @@
           {% for announcement in announcements %}
           <li class="page-home-info-news-content-list-element">
             <div class="page-home-info-news-content-list-element-content">
-              {{ announcement.name|truncatewords:10 }}
+              {{ announcement.name }}
             </div>
             <div class="page-home-info-news-content-list-element-footer">
               {{ announcement.created|timesince }} ago

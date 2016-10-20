@@ -78,10 +78,10 @@
       </table>
 
       <p>
-        {% for field in league.get_fields %}
-          {% if field.field.layout_link %}
-            <a href="{% static field.field.layout_link %}" target="_blank">
-              <img src="{% static field.field.layout_link %}" height="300px">
+        {% for field in league.fields.all %}
+          {% if field.layout_link %}
+            <a href="{% static field.layout_link %}" target="_blank">
+              <img src="{% static field.layout_link %}" height="300px">
             </a>
           {% endif %}
         {% endfor %}

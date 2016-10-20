@@ -1,21 +1,21 @@
 {% load utility %}
 
 <ul class="header-list">
-	{% regroup leagues by season_year as season_years %}
+  {% regroup leagues by season_year as season_years %}
 
-	{% for season_year in season_years %}
-		<li>
-			<h4 class="header-list-header">{{ season_year.grouper|smart_title }}</h4>
+  {% for season_year in season_years %}
+    <li>
+      <h4 class="header-list-header">{{ season_year.grouper|smart_title }}</h4>
 
-			<ul class="header-list-inner">
-				{% for league in season_year.list|dictsort:'league_start_date' %}
-					<li>
-						<a href="{% url link_view year=league.year season=league.season division=league.night  %}">
-							{{ league.night|smart_title }}
-						</a>
-					</li>
-				{% endfor %}
-			</ul>
-		</li>
-	{% endfor %}
+      <ul class="header-list-inner">
+        {% for league in season_year.list|dictsort:'league_start_date' %}
+          <li>
+            <a href="{% url link_view year=league.year season=league.season division=league.night  %}">
+              {{ league.night|smart_title }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </li>
+  {% endfor %}
 </ul>

@@ -36,7 +36,7 @@
 		<h1>{% include '_partials/division_header.html' with league=league header='Results' only %}</h1>
 
     {% if game_dates|length %}
-      {% include '_partials/schedule_table.html' with league=league game_locations=game_locations game_dates=game_dates user_games=user_games next_game_date=next_game_date show_game_result=1 only %}
+      {% include '_partials/schedule_table.html' with league=league game_locations=game_locations game_dates=game_dates user_games=user_games next_game_date=next_game_date show_game_result=1 condensed=1 only %}
 
       <p>
         <a href="{% url 'league_teams' year=league.year season=league.season division=league.night %}">Go to Teams and Schedules</a>
@@ -63,9 +63,9 @@
 					</tr>
 				</thead>
 				<tbody>
-					{% for team_id, team_record in team_records.items %}
+					{% for team_record in team_records %}
 						<tr>
-							<td>{{ team_id }}</td>
+							<td>{{ team_record.team_id }}</td>
 							<td>{{ team_record.wins }}</td>
 							<td>{{ team_record.losses }}</td>
 							<td>{{ team_record.ties }}</td>

@@ -95,6 +95,10 @@ class AbstractUser(AbstractBaseUser, PermissionsMixin):
         """
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
+    @property
+    def is_junta(self):
+        return self.is_superuser or self.groups.filter(name='junta').exists()
+
 
 class User(AbstractUser):
 

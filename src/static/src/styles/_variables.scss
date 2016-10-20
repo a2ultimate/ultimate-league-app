@@ -1,33 +1,33 @@
-$spacer: 1rem !default;
-$spacer-x: 1rem !default;
-$spacer-y: 1rem !default;
-$border-width: 0.0625rem !default;
+$spacer: 1rem;
+$spacer-x: 1rem;
+$spacer-y: 1rem;
+$border-width: 0.0625rem;
 
-$border-radius: 0.25rem !default;
+$border-radius: 0.25rem;
 
-$font-size-root: 16px !default;
-$font-size-base: 1rem !default;
-$font-size-lg: 1.25rem !default;
-$font-size-sm: .875rem !default;
-$font-size-xs: .75rem !default;
+$font-size-root: 16px;
+$font-size-base: 1rem;
+$font-size-lg: 1.25rem;
+$font-size-sm: .875rem;
+$font-size-xs: .75rem;
 
-$line-height-base: 1.5 !default;
+$line-height-base: 1.25;
 
-$font-size-h1: 2rem !default;
-$font-size-h2: 1.5rem !default;
-$font-size-h3: 1.25rem !default;
-$font-size-h4: 1rem !default;
-$font-size-h5: 0.875rem !default;
-$font-size-h6: 0.75rem !default;
+$font-size-h1: 2rem;
+$font-size-h2: 1.5rem;
+$font-size-h3: 1.25rem;
+$font-size-h4: 1rem;
+$font-size-h5: 0.875rem;
+$font-size-h6: 0.75rem;
 
-$small-font-size: 80% !default;
+$small-font-size: 80%;
 
-$hr-border-color: rgba(0,0,0,.1) !default;
-$hr-border-width: $border-width !default;
+$hr-border-color: rgba(0,0,0,.1);
+$hr-border-width: $border-width;
 
 
-$headings-margin-bottom: ($spacer / 2) !default;
-$headings-font-family: $font-family-lato-semibold !default;
-$headings-font-weight: 500 !default;
-$headings-line-height: 1.1 !default;
-$headings-color: inherit !default;
+$headings-margin-bottom: ($spacer / 2);
+$headings-font-family: $font-family-lato;
+$headings-font-weight: 600;
+$headings-line-height: 1.1;
+$headings-color: inherit;

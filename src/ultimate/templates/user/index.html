@@ -70,7 +70,7 @@
 
         {% if following_game.start %}
           at <strong>{{ following_game.start|date:'g:iA'|lower }}</strong>
-          on <strong>{{ following_game.date|date:"l F jS, Y" }}</strong><br />
+          on <strong>{{ following_game.date|date:'l F jS, Y' }}</strong><br />
         {% else %}
           on <strong>{{ following_game.date|date:'l F jS, Y' }}</strong>
           from <strong>{{ following_game.league.times }}</strong><br />
@@ -85,10 +85,10 @@
 
   <h2>My Profile</h2>
   <p>
-    <a href="{% url 'editprofile'  %}">Edit Profile</a>
+    <a href="{% url 'editprofile' %}">Edit Profile</a>
   </p>
   <p>
-    <a href="{% url 'editratings'  %}">Edit Ratings</a>
+    <a href="{% url 'editratings' %}">Edit Ratings</a>
   </p>
 
   <h2>My Registrations</h2>
@@ -97,7 +97,7 @@
       <thead>
         <tr>
           <th>League</th>
-          <th colspan="2">Status</th>
+          <th>Status</th>
           <th>Group</th>
         </tr>
       </thead>
@@ -106,23 +106,22 @@
           {% for registration in league|league_registrations:user %}
             <tr>
               <td>
-                <a href="{% url 'league_registration' year=registration.league.year season=registration.league.season division=registration.league.night  %}">
+                <a href="{% url 'league_registration' year=registration.league.year season=registration.league.season division=registration.league.night %}">
                   {{ registration.league.season_title|smart_title }}
                   {{ registration.league.year }}
                   {{ registration.league.night|smart_title }}
                 </a>
               </td>
-              <td>{{ registration.progress }}%</td>
               <td>{{ registration.status }}</td>
               <td>
                 {% for baggage_reg in registration.baggage.get_registrations %}
                   <div>{{ baggage_reg.user.get_full_name }}</div>
                 {% empty %}
-                  No group
+                  No Group
                 {% endfor %}
 
                 {% if registration.is_complete and registration.league.baggage > 1 and not registration.waitlist and not registration.league.waitlist_start_date|is_past_deadline %}
-                  <div><a href="{% url 'league_group' year=league.year season=league.season division=league.night  %}">Edit Group</a></div>
+                  <div><a href="{% url 'league_group' year=league.year season=league.season division=league.night %}">Edit Group</a></div>
                 {% endif %}
               </td>
             </tr>

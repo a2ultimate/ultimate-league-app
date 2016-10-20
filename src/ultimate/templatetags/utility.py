@@ -12,18 +12,18 @@ register = template.Library()
 
 @register.filter()
 def groups_sort(groups):
-	groups.sort(key=lambda group: len(group['list']))
-	return groups
+    groups.sort(key=lambda group: len(group['list']))
+    return groups
 
 
 @register.filter
 def time_until_days(value):
-	try:
-		difference = value - date.today
-	except:
-		return value
+    try:
+        difference = value - date.today
+    except:
+        return value
 
-	return difference.days
+    return difference.days
 
 
 @register.filter(is_safe=True)
@@ -38,54 +38,54 @@ def smart_title(value):
 
 @register.filter(is_safe=True)
 def prepare_menu_items(menu_items):
-	# credit: http://stackoverflow.com/questions/5059401/make-a-python-nested-list-for-use-in-djangos-unordered-list
+    # credit: http://stackoverflow.com/questions/5059401/make-a-python-nested-list-for-use-in-djangos-unordered-list
 
-	from ultimate.index.models import StaticMenuItems
+    from ultimate.index.models import StaticMenuItems
 
-	lists = collections.defaultdict(list)
-	for menu_item in menu_items:
-		itemHtml = ''
+    lists = collections.defaultdict(list)
+    for menu_item in menu_items:
+        itemHtml = ''
 
-		if menu_item.type == 'external_link':
-			itemHtml += '<a href="' + menu_item.href + '" target="_blank">'
-		elif menu_item.type == 'internal_link':
-			itemHtml += '<a href="' + reverse(menu_item.href) + '">'
-		elif menu_item.type == 'static_link':
-			itemHtml += '<a href="' + settings.STATIC_URL + menu_item.href + '">'
-		elif menu_item.type == 'header':
-			itemHtml += '<h3>'
+        if menu_item.type == 'external_link':
+            itemHtml += '<a href="' + menu_item.href + '" target="_blank">'
+        elif menu_item.type == 'internal_link':
+            itemHtml += '<a href="' + reverse(menu_item.href) + '">'
+        elif menu_item.type == 'static_link':
+            itemHtml += '<a href="' + settings.STATIC_URL + menu_item.href + '">'
+        elif menu_item.type == 'header':
+            itemHtml += '<h2>'
 
-		itemHtml += menu_item.content
+        itemHtml += menu_item.content
 
-		if menu_item.type == 'external_link' or \
-			menu_item.type == 'internal_link' or \
-			menu_item.type == 'static_link':
+        if menu_item.type == 'external_link' or \
+            menu_item.type == 'internal_link' or \
+            menu_item.type == 'static_link':
 
-			itemHtml += '</a>'
-		elif menu_item.type == 'header':
-			itemHtml += '</h3>'
+            itemHtml += '</a>'
+        elif menu_item.type == 'header':
+            itemHtml += '</h2>'
 
-		parent_id = 0
+        parent_id = 0
 
-		try:
-			if menu_item.parent:
-				parent_id = menu_item.parent_id
-		except StaticMenuItems.DoesNotExist:
-			pass
+        try:
+            if menu_item.parent:
+                parent_id = menu_item.parent_id
+        except StaticMenuItems.DoesNotExist:
+            pass
 
-		lists[parent_id] += [itemHtml, lists[menu_item.id]]
+        lists[parent_id] += [itemHtml, lists[menu_item.id]]
 
 
-	for menu_item in menu_items:
-		if not lists[menu_item.id]:
-			parent_id = 0
+    for menu_item in menu_items:
+        if not lists[menu_item.id]:
+            parent_id = 0
 
-			try:
-				if menu_item.parent:
-					parent_id = menu_item.parent_id
-			except StaticMenuItems.DoesNotExist:
-				pass
+            try:
+                if menu_item.parent:
+                    parent_id = menu_item.parent_id
+            except StaticMenuItems.DoesNotExist:
+                pass
 
-			lists[parent_id].remove(lists[menu_item.id])
+            lists[parent_id].remove(lists[menu_item.id])
 
-	return lists[0]
+    return lists[0]

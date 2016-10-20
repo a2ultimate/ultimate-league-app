@@ -1,3 +1,7 @@
+body {
+  line-height: $line-height-base;
+}
+
 a {
   transition: background 0.15s ease-in-out, color 0.15s ease-in-out;
   text-decoration: none;
@@ -65,19 +69,7 @@ small,
 }
 
 strong {
-  font-family: $font-family-lato-bold;
-}
-
-dl {
-  margin-bottom: 1rem;
-}
-
-dt {
-  font-family: $font-family-lato-semibold;
-}
-
-dd {
-  margin-left: 0.5rem;
+  font-weight: 700;
 }
 
 hr {

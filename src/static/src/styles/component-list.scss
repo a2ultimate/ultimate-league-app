@@ -72,9 +72,14 @@
     content: '\203A';
     text-align: center;
 
-    font-family: $font-family-lato-light;
     font-size: 2rem;
+    font-weight: 300;
     font-weight: bold;
     line-height: 2rem;
   }
+}
+
+.no-spacing-list {
+  margin: 0;
+  padding: 0 0 0 1.1875rem;
 }

@@ -54,7 +54,6 @@ def captainstatus(request, year=None, season=None, division=None):
 def leagueresults(request, year=None, season=None, division=None):
     leagues = None
     league = None
-    game_report = None
     game_locations = None
     game_dates = None
     team_records = None
@@ -65,9 +64,11 @@ def leagueresults(request, year=None, season=None, division=None):
         game_locations = league.get_game_locations(games=games)
         game_dates = league.get_game_dates(games=games, game_locations=game_locations)
 
-        team_records = {}
-        for team in league.get_teams():
-            team_records[team.id] = team.get_record_list()
+        team_records = []
+        for team in league.team_set.all():
+            team_records.append(team.get_record_list())
+
+        team_records = sorted(team_records, key=lambda k: k['wins'], reverse=True)
 
     else:
         leagues = League.objects.all().order_by('-league_start_date')
@@ -76,7 +77,6 @@ def leagueresults(request, year=None, season=None, division=None):
         {
             'leagues': leagues,
             'league': league,
-            'game_report': game_report,
             'game_locations': game_locations,
             'game_dates': game_dates,
             'team_records': team_records,

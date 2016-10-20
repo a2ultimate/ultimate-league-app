@@ -46,7 +46,7 @@
   <div class="team-card-content">
     {% block team_card_content %}
       <ul class="team-card-content-members">
-        {% for team_member in team.get_members %}
+        {% for team_member in team.teammember_set.all %}
           <li class="team-card-content-members-member">
             {% if team_member.captain %}
               <strong>
@@ -80,7 +80,7 @@
         </div>
 
         <div class="team-card-footer-content">
-          {{ team.get_members|length }} Player{{ team.get_members|length|pluralize }},
+          {{ team.teammember_set.all|length }} Player{{ team.teammember_set.all|length|pluralize }},
           {{ team.get_male_members|length }} Male{{ team.get_male_members|length|pluralize }},
           {{ team.get_female_members|length }} Female{{ team.get_female_members|length|pluralize }}
         </div>
