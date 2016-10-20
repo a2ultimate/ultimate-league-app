@@ -15,7 +15,7 @@ def update_league_slug(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('leagues', '0002_league_season_slug'),
+        ('leagues', '0007_league_season_slug'),
     ]
 
     operations = [
