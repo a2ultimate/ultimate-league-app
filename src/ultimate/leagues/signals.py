@@ -1,4 +1,4 @@
-# index/signals.py
+# leagues/signals.py
 
 from datetime import datetime
 
