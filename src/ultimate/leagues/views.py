@@ -198,12 +198,9 @@ def registration(request, year, season, division, section=None):
 				},
 				context_instance=RequestContext(request))
 
-	num_steps = 3
-	if league.check_price > 0 and league.paypal_price > 0:
+	num_steps = 4
+	if league.checks_accepted:
 		num_steps = num_steps + 1
-
-		if league.checks_accepted:
-			num_steps = num_steps + 1
 
 	tick_percentage = 100.0 / num_steps
 
@@ -304,6 +301,9 @@ def registration(request, year, season, division, section=None):
 				else:
 					success = False
 					messages.error(request, 'You have entered an invalid coupon code.')
+			else:
+				success = False
+				messages.error(request, 'Coupon codes are not accepted for this division.')
 
 		if 'remove_coupon' in request.POST:
 			if registration.coupon:

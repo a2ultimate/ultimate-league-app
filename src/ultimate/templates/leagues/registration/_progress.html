@@ -9,7 +9,7 @@
   <div class="progress-bar-tick progress-bar-tick-{{ tick_percentage|multiply_by:'1'|get_registration_tick_color:registration }}{% if section == 'conduct' %} progress-bar-tick-active{% endif %}" style="left: {{ tick_percentage|multiply_by:'1' }}%;"></div>
   <div class="progress-bar-tick progress-bar-tick-{{ tick_percentage|multiply_by:'2'|get_registration_tick_color:registration }}{% if section == 'waiver' %} progress-bar-tick-active{% endif %}" style="left: {{ tick_percentage|multiply_by:'2' }}%;"></div>
   <div class="progress-bar-tick progress-bar-tick-{{ tick_percentage|multiply_by:'3'|get_registration_tick_color:registration }}{% if section == 'attendance' %} progress-bar-tick-active{% endif %}" style="left: {{ tick_percentage|multiply_by:'3' }}%;"></div>
-  {% if league.check_price > 0 and league.paypal_price > 0 and league.checks_accepted %}
+  {% if league.checks_accepted and league.check_price > 0 %}
     <div class="progress-bar-tick progress-bar-tick-{{ tick_percentage|multiply_by:'4'|get_registration_tick_color:registration }}{% if section == 'pay_type' %} progress-bar-tick-active{% endif %}" style="left: {{ tick_percentage|multiply_by:'4' }}%;"></div>
     <div class="progress-bar-tick progress-bar-tick-{{ tick_percentage|multiply_by:'5'|get_registration_tick_color:registration }}{% if section == 'status' %} progress-bar-tick-active{% endif %}" style="left: {{ tick_percentage|multiply_by:'5' }}%;"></div>
   {% else %}
@@ -34,7 +34,7 @@
     <span class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'3' }}%">Attendance</span>
   {% endif %}
 
-  {% if league.check_price > 0 and league.paypal_price > 0 and league.checks_accepted %}
+  {% if league.checks_accepted and league.check_price > 0 %}
 
     {% if registration_progress >= tick_percentage|multiply_by:'3' %}
       <a class="progress-bar-tick-label" style="left: {{ tick_percentage|multiply_by:'4' }}%" href="{% url 'league_registration_section' year=league.year season=league.season division=league.night section='pay_type' %}">Payment Type</a>

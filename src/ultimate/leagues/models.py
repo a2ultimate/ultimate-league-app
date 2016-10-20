@@ -518,43 +518,28 @@ class Registrations(models.Model):
 
 	@property
 	def status(self):
-		status = 'New'
 		if self.refunded:
-			status = 'Refunded'
-		elif self.conduct_complete:
-			status = 'Conduct Completed'
+			return 'Refunded'
+
+		status = 'Waiting for Conduct Waiver'
+		if self.conduct_complete:
+			status = 'Waiting for Liability Waiver'
 			if self.waiver_complete:
-				status = 'Waiver Completed'
+				status = 'Waiting for Attendance Entry'
 				if self.attendance != None:
-					status = 'Attendance Completed'
+					status = 'Waiting for Payment'
+					if self.check_complete or self.paypal_complete or self.payment_complete:
+						status = 'Complete'
 
-					if self.league.check_price == 0 and self.league.paypal_price == 0:
-						status = 'Registration Complete'
-
-					else:
-						if self.pay_type == 'check' and not self.check_complete:
-							status = 'Waiting for Check'
-						elif self.pay_type == 'check' and self.check_complete:
-							status = 'Check Complete'
-						elif self.pay_type != 'check' and not self.paypal_complete:
-							status = 'Waiting for Paypal'
-						elif self.pay_type != 'check' and self.paypal_complete:
-							status = 'Paypal Complete'
-						elif self.payment_complete:
-							status = 'Payment Complete'
 		return status
 
 	@property
 	def progress(self):
 		percentage = 0
-		num_steps = 3
+		num_steps = 4
 
-		if self.league.check_price > 0 and self.league.paypal_price > 0:
+		if self.league.checks_accepted:
 			num_steps = num_steps + 1
-
-			if self.league.checks_accepted:
-				num_steps = num_steps + 1
-
 
 		interval = 100.0 / num_steps
 
@@ -576,6 +561,9 @@ class Registrations(models.Model):
 							self.paypal_complete or \
 							self.payment_complete:
 							percentage += interval
+					else:
+						percentage += interval
+
 
 		return int(round(percentage))
 
@@ -587,30 +575,14 @@ class Registrations(models.Model):
 		if not self.waiver_complete:
 			return False
 
-		if self.attendance is None or \
-			self.captain is None:
-			return False
-
-		if self.check_complete or \
-			self.paypal_complete or \
-			self.payment_complete:
-
-			return False
-
-		if self.refunded:
+		if self.attendance is None:
 			return False
 
 		return True
 
 	@property
 	def is_complete(self):
-		if not self.conduct_complete:
-			return False
-
-		if not self.waiver_complete:
-			return False
-
-		if self.attendance is None:
+		if not self.is_ready_for_payment:
 			return False
 
 		if self.league.check_price > 0 or \
@@ -630,16 +602,11 @@ class Registrations(models.Model):
 
 	@property
 	def is_refunded(self):
-		if not self.conduct_complete:
+		if not self.is_ready_for_payment:
 			return False
 
-		if not self.waiver_complete:
-			return False
-
-		if self.attendance is None:
-			return False
-
-		if self.league.check_price > 0 or self.league.paypal_price > 0:
+		if self.league.check_price > 0 or \
+			self.league.paypal_price > 0:
 
 			if not self.check_complete and \
 				not self.paypal_complete and \
@@ -655,7 +622,7 @@ class Registrations(models.Model):
 	@property
 	def baggage_size(self):
 		if self.baggage:
-			return self.baggage.num_registrations
+			return self.baggage.size
 		return 0
 
 	@property
@@ -665,6 +632,12 @@ class Registrations(models.Model):
 		absence_weight = rating_total / num_events
 
 		return rating_total - ((self.attendance / 2) * absence_weight)
+
+	def get_team_id(self):
+		try:
+			return self.user.teammember_set.get(team__league=self.league).team.id
+		except ObjectDoesNotExist:
+			return None
 
 	@atomic
 	def add_to_baggage_group(self, email):
@@ -733,15 +706,6 @@ class Registrations(models.Model):
 
 		return True
 
-	def get_team_id(self):
-		try:
-			return self.user.teammember_set.get(team__league=self.league).team.id
-		except ObjectDoesNotExist:
-			return None
-
-	def __unicode__(self):
-		return '%d %s %s - %s %s' % (self.league.year, self.league.season, self.league.night, self.user, self.status)
-
 
 class Team(models.Model):
 	id = models.AutoField(primary_key=True)
@@ -755,41 +719,15 @@ class Team(models.Model):
 	class Meta:
 		db_table = u'team'
 
-	def sync_email_group(self, force=False):
-		group_address = '{}{}-{}-{}-{}@lists.annarborultimate.org'.format(
-			self.league.season,
-			self.league.league_start_date.strftime('%y'),
-			self.league.league_start_date.strftime('%a'),
-			self.league.level,
-			self.id,
-			).lower()
-		group_name = '{} {} {} {} Team {}'.format(
-			self.league.season.title(),
-			self.league.league_start_date.strftime('%Y'),
-			self.league.league_start_date.strftime('%A'),
-			self.league.display_level,
-			self.id,
-			)
+	def __unicode__(self):
+		name = 'Team %d' % (self.id)
 
-		from ultimate.utils.google_api import GoogleAppsApi
-		api = GoogleAppsApi()
-		group_id = api.prepare_group_for_sync(
-			group_name=group_name,
-			group_id=self.group_id,
-			group_email_address=group_address,
-			force=force)
+		if self.name:
+			name = name + ' - ' + self.name
+		if self.color:
+			return name + (' (%s)' % (self.color))
 
-		self.email = group_address
-		self.group_id = group_id
-
-		success_count = 0
-		for team_member in self.teammember_set.all():
-			if api.add_group_member(team_member.user.email, group_id=self.group_id, group_email_address=group_address):
-				success_count = success_count + 1
-
-		self.save()
-
-		return success_count, group_address
+		return name
 
 	@property
 	def attendance_total(self):

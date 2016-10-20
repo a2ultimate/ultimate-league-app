@@ -23,26 +23,28 @@
 		{% endif %}
 	</p>
 
-	{% if registration.coupon %}
-		<form class="form" method="post">{% csrf_token %}
-			<p>
-				You have entered a coupon code
-				<strong>{{ registration.coupon.code }}</strong>
-				good for <em>{{ registration.coupon.display_value }}</em>.
+	{% if league.coupons_accepted %}
+		{% if registration.coupon %}
+			<form class="form" method="post">{% csrf_token %}
+				<p>
+					You have entered a coupon code
+					<strong>{{ registration.coupon.code }}</strong>
+					good for <em>{{ registration.coupon.display_value }}</em>.
 
-				<button class="button button-info" name="remove_coupon" type="submit">
-					Remove It?
+					<button class="button button-info" name="remove_coupon" type="submit">
+						Remove It?
+					</button>
+				</p>
+			</form>
+		{% else %}
+			<form class="form" method="post">{% csrf_token %}
+				<h4><label for="coupon-code-input">Do you have a coupon code?</label></h4>
+				<input name="coupon_code" id="coupon-code-input" type="text">
+				<button class="button button-success" type="submit">
+					Submit
 				</button>
-			</p>
-		</form>
-	{% else %}
-		<form class="form" method="post">{% csrf_token %}
-			<h4><label for="coupon-code-input">Do you have a coupon code?</label></h4>
-			<input name="coupon_code" id="coupon-code-input" type="text">
-			<button class="button button-success" type="submit">
-				Submit
-			</button>
-		</form>
+			</form>
+		{% endif %}
 	{% endif %}
 
 	<p>
