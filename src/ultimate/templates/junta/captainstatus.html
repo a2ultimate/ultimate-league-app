@@ -37,7 +37,7 @@
 			<thead>
 				<tr>
 					<th></th>
-					{% regroup league.get_games by date as games %}
+					{% regroup league.game_set.all by date as games %}
 					{% for game_date in games %}
 						<th>{{ game_date.grouper|date:'m/d' }}</th>
 					{% endfor %}
@@ -45,7 +45,7 @@
 					<th>Survey</th>
 				</tr>
 			</thead>
-			{% for captain in league|get_league_captains_teammember %}
+			{% for captain in league|get_captains_teammember %}
 				{% ifchanged captain.team %}{% if not forloop.first %}</tbody>{% endif %}{% endifchanged %}
 				{% ifchanged captain.team %}<tbody>{% endifchanged %}
 					<tr>

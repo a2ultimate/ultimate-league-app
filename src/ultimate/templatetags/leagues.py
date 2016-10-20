@@ -45,14 +45,14 @@ def is_free(league):
 
 @register.filter
 # returns league captains as user objects
-def get_league_captains(league):
-	return league.get_league_captains()
+def get_captains(league):
+	return league.get_captains()
 
 
 @register.filter
 # returns league captains as teammember objects
-def get_league_captains_teammember(league):
-	return league.get_league_captains_teammember()
+def get_captains_teammember(league):
+	return league.get_captains_teammember()
 
 
 @register.filter

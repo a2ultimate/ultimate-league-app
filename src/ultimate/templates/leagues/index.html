@@ -96,24 +96,24 @@
 						Location
 					</th>
 				</tr>
-				{% for field in league.get_fields %}
+				{% for field in league.fields.all %}
 					<tr>
 						<td colspan="3">
-							{{ field.field.name }}
+							{{ field.name }}
 
-							{% if field.field.driving_link %}
+							{% if field.driving_link %}
 								<small>
 									&middot;
-									<a href="{{ field.field.driving_link }}" target="_blank">
+									<a href="{{ field.driving_link }}" target="_blank">
 										Directions
 									</a>
 								</small>
 							{% endif %}
 
-							{% if field.field.layout_link %}
+							{% if field.layout_link %}
 								<small>
 									&middot;
-									<a href="{% static field.field.layout_link %}" target="_blank">
+									<a href="{% static field.layout_link %}" target="_blank">
 										Layout
 									</a>
 								</small>

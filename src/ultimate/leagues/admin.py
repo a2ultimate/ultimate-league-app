@@ -71,15 +71,15 @@ class GameAdmin(admin.ModelAdmin):
 		return ', '.join(map(str, teams))
 
 
-class FieldLeagueInline(admin.TabularInline):
-	model = FieldLeague
+class LeagueFieldsInline(admin.TabularInline):
+	model = LeagueFields
 	extra = 1
 
 class LeagueAdmin(admin.ModelAdmin):
 	save_as = True
 	save_on_top = True
 
-	inlines = (FieldLeagueInline,)
+	inlines = (LeagueFieldsInline,)
 	list_display = ('id', 'year', 'season', 'night', 'gender', 'level', 'type', 'state',)
 	list_display_links = ('id',)
 	list_filter = ('year', 'season', 'night', 'gender', 'state', )

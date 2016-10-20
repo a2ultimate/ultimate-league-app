@@ -68,7 +68,7 @@
         <h3>Who was there for your team?</h3>
         <div class="page-game-report-attendance-table">
           <div class="page-game-report-attendance-row">
-            {% for team_member in team.get_members %}
+            {% for team_member in team.teammember_set.all %}
               <div class="page-game-report-attendance-row-element">
                 <div class="checkbox">
                   <label class="page-game-report-attendance-row-element-label" for="user_{{ team_member.user.id }}">

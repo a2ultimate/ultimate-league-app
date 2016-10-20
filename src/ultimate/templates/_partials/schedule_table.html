@@ -1,7 +1,7 @@
 {% load games %}
 {% load staticfiles %}
 
-<table class="schedule-table table table-centered table-fixed table-striped">
+<table class="schedule-table table table-centered{% if condensed %} table-condensed{% endif %} table-fixed table-striped">
   <thead>
     <tr>
       <td></td>

@@ -116,7 +116,7 @@ class League(models.Model):
 	mail_check_address = models.TextField(help_text='treasurer mailing address')
 	coupons_accepted = models.BooleanField(default=True)
 
-	field = models.ManyToManyField(Field, through='FieldLeague', help_text='Select the fields these games will be played at, use the green "+" icon if we\'re playing at a new field.')
+	fields = models.ManyToManyField(Field, through='leagues.LeagueFields', help_text='Select the fields these games will be played at, use the green "+" icon if we\'re playing at a new field.')
 
 	division_email = models.CharField(max_length=64, blank=True, null=True, help_text='email address for just this league')
 	division_email_group_id = models.CharField(max_length=128, blank=True, null=True)
@@ -127,6 +127,9 @@ class League(models.Model):
 
 	class Meta:
 		db_table = u'league'
+
+	def __unicode__(self):
+		return ('%s %d %s' % (self.season, self.year, self.night)).replace('_', ' ')
 
 	@property
 	def display_gender(self):
@@ -170,20 +173,49 @@ class League(models.Model):
 
 		return self.paypal_cost + self.check_cost_increase + self.late_cost_increase
 
-	def get_fields(self):
-		return FieldLeague.objects.filter(league=self)
+	@property
+	def is_after_registration_start(self):
+		return datetime.now() >= self.reg_start_date
 
-	def get_field_names(self):
-		return FieldNames.objects.filter(field__fieldleague__league=self, game__league=self).distinct().order_by('field__name', 'name')
+	@property
+	def is_after_price_increase(self):
+		return datetime.now() >= self.price_increase_start_date
 
-	def get_teams(self):
-		return Team.objects.filter(league=self, hidden=False)
+	@property
+	def is_after_waitlist_start(self):
+		return datetime.now() >= self.waitlist_start_date
 
-	def get_games(self):
-		return self.game_set.order_by('date',)
+	def is_visible(self, user=None):
+		if user and user.is_junta:
+			return self.state in ['closed', 'open', 'preview']
+
+		return self.state in ['closed', 'open']
+
+	def is_open(self, user=None):
+		if user and user.is_junta and self.state in ['open', 'preview']:
+			return True
+
+		# if the user is not a league admin and the league is "open" and falls between valid dates
+		return self.state in ['open'] and \
+			(datetime.now() >= self.reg_start_date) and \
+			(date.today() <= self.league_end_date)
+
+	def is_waitlist(self, user=None):
+		# if the league is open and its after the waitlist date or league is full
+		if not self.is_open(user):
+			return False
+
+		if datetime.now() < self.waitlist_start_date:
+			return False
+
+		if len(self.get_complete_registrations()) < self.max_players:
+			return False
+
+		return True
+
 
 	def get_user_games(self, user):
-		return Game.objects.filter(league=self, gameteams__team__teammember__user=user).order_by('date')
+		return self.game_set.filter(gameteams__team__teammember__user=user).order_by('date')
 
 	def get_num_game_events(self):
 		diff = self.league_end_date - self.league_start_date
@@ -196,85 +228,56 @@ class League(models.Model):
 
 		return num_games
 
-	def get_league_captains(self):
+	def get_captains(self):
 		return get_user_model().objects.filter(teammember__team__league=self, teammember__captain=1)
 
-	def get_league_captains_teammember(self):
+	def get_captains_teammember(self):
 		return TeamMember.objects.filter(team__league=self, captain=1).order_by('team')
 
 	def player_survey_complete_for_user(self, user):
 		return bool(user.teammember_set.get(team__league=self).team.player_survey_complete(user))
 
-	def get_registrations_for_user(self, user):
-		return Registrations.objects.filter(league=self, user=user)
-
 	def get_registrations(self):
-		registrations = self.registrations_set.filter(league=self).order_by('registered') \
+		return self.registrations_set.filter(league=self).order_by('registered') \
 			.prefetch_related('baggage') \
 			.prefetch_related('league') \
 			.prefetch_related('user') \
 			.prefetch_related('user__profile')
-		return registrations
 
-	def get_complete_registrations(self):
-		registrations = self.get_registrations()
+	def get_registrations_for_user(self, user):
+		return self.get_registrations().filter(user=user).order_by('registered')
+
+	def get_complete_registrations(self, registrations = None):
+		if not registrations:
+			registrations = self.get_registrations()
+
 		return [r for r in registrations if r.is_complete and not r.waitlist and not r.refunded]
 
-	def get_waitlist_registrations(self):
-		registrations = self.get_registrations()
+	def get_waitlist_registrations(self, registrations = None):
+		if not registrations:
+			registrations = self.get_registrations()
+
 		return [r for r in registrations if r.is_complete and r.waitlist and not r.refunded]
 
-	def get_incomplete_registrations(self):
-		registrations = self.get_registrations()
+	def get_incomplete_registrations(self, registrations = None):
+		if not registrations:
+			registrations = self.get_registrations()
+
 		return [r for r in registrations if not r.is_complete and not r.refunded]
 
-	def get_refunded_registrations(self):
-		registrations = self.get_registrations()
+	def get_refunded_registrations(self, registrations = None):
+		if not registrations:
+			registrations = self.get_registrations()
+
 		return [r for r in registrations if r.is_complete and r.refunded]
 
-	def get_unassigned_registrations(self):
+	def get_unassigned_registrations(self, registrations = None):
 		team_member_users = [t.user for t in TeamMember.objects.filter(team__league=self).prefetch_related('user')]
-		registrations = self.get_registrations().exclude(user__in=team_member_users)
+
+		if not registrations:
+			registrations = self.get_registrations().exclude(user__in=team_member_users)
+
 		return [r for r in registrations if r.is_complete and not r.refunded]
-
-	def is_visible(self, user=None):
-		if user and (user.is_superuser or user.groups.filter(name='junta').exists()):
-			return self.state in ['closed', 'open', 'preview']
-
-		return self.state in ['closed', 'open']
-
-	def is_open(self, user=None):
-		# if the user is a league admin and the league is "open" or "preview"
-		if user and \
-			(user.is_superuser or user.groups.filter(name='junta').exists()) and \
-			self.state in ['preview', 'open']:
-
-			return True
-
-		# if the user is not a league admin and the league is "open" and falls between valid dates
-		return self.state in ['open'] and \
-			(datetime.now() >= self.reg_start_date) and \
-			(date.today() <= self.league_end_date)
-
-	def is_waitlist(self, user=None):
-		# if the league is open and its after the waitlist date or league is full
-		return self.is_open(user) and \
-			( \
-				(datetime.now() >= self.waitlist_start_date) or \
-				(len(self.get_complete_registrations()) >= self.max_players) \
-			)
-
-	@property
-	def is_after_registration_start(self):
-		return datetime.now() >= self.reg_start_date
-
-	@property
-	def is_after_price_increase(self):
-		return datetime.now() >= self.price_increase_start_date
-
-	@property
-	def is_after_waitlist_start(self):
-		return datetime.now() >= self.waitlist_start_date
 
 	def get_game_locations(self, games=None):
 		if games is None:
@@ -429,17 +432,15 @@ class League(models.Model):
 
 		return success_count, group_address
 
-	def __unicode__(self):
-		return ('%s %d %s' % (self.season, self.year, self.night)).replace('_', ' ')
 
-
-class FieldLeague(models.Model):
+class LeagueFields(models.Model):
 	id = models.AutoField(primary_key=True)
 	league = models.ForeignKey('leagues.League')
 	field = models.ForeignKey('leagues.Field')
 
 	class Meta:
 		db_table = u'field_league'
+		verbose_name_plural = 'league fields'
 
 
 class Baggage(models.Model):
@@ -448,15 +449,15 @@ class Baggage(models.Model):
 	class Meta:
 		db_table = u'baggage'
 
+	def __unicode__(self):
+		return '%d' % (self.id)
+
 	@property
-	def num_registrations(self):
+	def size(self):
 		return self.registrations_set.all().count()
 
 	def get_registrations(self):
 		return self.registrations_set.all()
-
-	def __unicode__(self):
-		return '%d' % (self.id)
 
 
 class Registrations(models.Model):
@@ -497,6 +498,9 @@ class Registrations(models.Model):
 		db_table = u'registrations'
 		verbose_name_plural = 'registrations'
 		unique_together = ('user', 'league',)
+
+	def __unicode__(self):
+		return '%d %s %s - %s %s' % (self.league.year, self.league.season, self.league.night, self.user, self.status)
 
 	@property
 	def check_price(self):
@@ -697,7 +701,7 @@ class Registrations(models.Model):
 		if target_baggage == current_baggage:
 			return email + ' is already part of your baggage group.'
 
-		if (current_baggage_registrations.count() + target_baggage.num_registrations) > baggage_limit:
+		if (current_baggage_registrations.count() + target_baggage.size) > baggage_limit:
 			return 'Baggage group with ' + email + ' exceeds limit.'
 
 		for current_baggage_registration in current_baggage_registrations:
@@ -708,7 +712,7 @@ class Registrations(models.Model):
 
 		return True
 
-
+	@atomic
 	def leave_baggage_group(self):
 		if datetime.now() > self.league.waitlist_start_date:
 			return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
@@ -878,34 +882,28 @@ class Team(models.Model):
 		return color
 
 	def contains_user(self, user):
-		return bool(self.teammember_set.filter(user=user))
+		return self.teammember_set.filter(user=user).exists()
 
 	def get_captains(self):
 		return self.teammember_set.filter(captain=True)
-
-	def get_members(self):
-		return self.teammember_set.all()
 
 	def get_members_with_baggage(self):
 		return self.teammember_set.extra(select={'baggage_id':'SELECT baggage_id FROM registrations JOIN team ON team.league_id = registrations.league_id WHERE registrations.user_id = team_member.user_id AND team.id = team_member.team_id'}).order_by('baggage_id')
 
 	def get_male_members(self):
-		return TeamMember.objects.filter(team=self, user__profile__gender__iexact='M')
+		return self.teammember_set.filter(user__profile__gender__iexact='M')
 
 	def get_female_members(self):
-		return TeamMember.objects.filter(team=self, user__profile__gender__iexact='F')
-
-	def get_games(self):
-		return Game.objects.filter(gameteams__team=self)
+		return self.teammember_set.filter(user__profile__gender__iexact='F')
 
 	def get_past_games(self):
-		return self.get_games().filter(date__lte=date.today())
+		return self.game_set.all().filter(date__lte=date.today())
 
 	def get_record_list(self):
 		# return in format {wins, losses, ties, conflicts}
-		team_record = {'wins': 0, 'losses': 0, 'ties': 0, 'conflicts': 0, 'blanks': 0, 'points_for': 0, 'points_against': 0}
+		team_record = {'team_id': self.id, 'wins': 0, 'losses': 0, 'ties': 0, 'conflicts': 0, 'blanks': 0, 'points_for': 0, 'points_against': 0}
 
-		games = self.get_games()
+		games = self.game_set.all()
 		for game in games:
 
 			team_reports = game.gamereport_set.filter(team=self)
@@ -993,15 +991,41 @@ class Team(models.Model):
 		return bool(ratings_reports.count() > 0) and \
 			bool(ratings_reports.filter(num_ratings__gte=self.size - 1).count() > 0)
 
-	def __unicode__(self):
-		name = 'Team %d' % (self.id)
+	def sync_email_group(self, force=False):
+		group_address = '{}{}-{}-{}-{}@lists.annarborultimate.org'.format(
+			self.league.season,
+			self.league.league_start_date.strftime('%y'),
+			self.league.league_start_date.strftime('%a'),
+			self.league.level,
+			self.id,
+			).lower()
+		group_name = '{} {} {} {} Team {}'.format(
+			self.league.season.title(),
+			self.league.league_start_date.strftime('%Y'),
+			self.league.league_start_date.strftime('%A'),
+			self.league.display_level,
+			self.id,
+			)
 
-		if self.name:
-			name = name + ' - ' + self.name
-		if self.color:
-			return name + (' (%s)' % (self.color))
+		from ultimate.utils.google_api import GoogleAppsApi
+		api = GoogleAppsApi()
+		group_id = api.prepare_group_for_sync(
+			group_name=group_name,
+			group_id=self.group_id,
+			group_email_address=group_address,
+			force=force)
 
-		return name
+		self.email = group_address
+		self.group_id = group_id
+
+		success_count = 0
+		for team_member in self.teammember_set.all():
+			if api.add_group_member(team_member.user.email, group_id=self.group_id, group_email_address=group_address):
+				success_count = success_count + 1
+
+		self.save()
+
+		return success_count, group_address
 
 
 class TeamMember(models.Model):
@@ -1014,12 +1038,12 @@ class TeamMember(models.Model):
 		db_table = u'team_member'
 		ordering = ['-captain', 'user__last_name']
 
+	def __unicode__(self):
+		return '%s %s' % (self.user.first_name, self.user.last_name)
+
 	@property
 	def attendance_total(self):
 		return Registrations.objects.get(league=self.team.league, user=self.user).attendance
-
-	def __unicode__(self):
-		return '%s %s' % (self.user.first_name, self.user.last_name)
 
 
 class Game(models.Model):
@@ -1028,17 +1052,21 @@ class Game(models.Model):
 	start = models.DateTimeField(null=True)
 	field_name = models.ForeignKey('leagues.FieldNames')
 	league = models.ForeignKey('leagues.league')
+	teams = models.ManyToManyField('leagues.Team', through='leagues.GameTeams')
 
 	class Meta:
 		db_table = u'game'
 		ordering = ['-date', 'field_name']
 
+	def __unicode__(self):
+		return '{} {} {} {}'.format(self.league, self.date, self.start, self.field_name)
+
 	def get_teams(self):
-		return Team.objects.filter(gameteams__game=self, hidden=False)
+		return self.teams.filter(hidden=False)
 
 	def get_user_opponent(self, user):
 		try:
-			return Team.objects.filter(gameteams__game=self, hidden=False).exclude(teammember__user=user)[0:1].get()
+			return self.teams.exclude(teammember__user=user)[0:1].get()
 		except ObjectDoesNotExist:
 			return None
 
@@ -1051,9 +1079,6 @@ class Game(models.Model):
 	def report_complete_for_user(self, user):
 		return any(report.is_complete for report in self.gamereport_set.filter(last_updated_by=user, team__teammember__user=user, team__teammember__captain=1))
 
-	def __unicode__(self):
-		return '{} {} {} {}'.format(self.league, self.date, self.start, self.field_name)
-
 
 class GameTeams(models.Model):
 	id = models.AutoField(primary_key=True)
@@ -1062,6 +1087,7 @@ class GameTeams(models.Model):
 
 	class Meta:
 		db_table = u'game_teams'
+
 
 class Coupon(models.Model):
 	CODE_CHARACTERS = getattr(settings, 'COUPON_CODE_CHARACTERS', 'abcdefghijklmnopqrstuvwxyz')
@@ -1100,6 +1126,11 @@ class Coupon(models.Model):
 	def __unicode__(self):
 		return self.code
 
+	def save(self, *args, **kwargs):
+		if not self.code:
+			self.code = self._generate_code()
+		super(Coupon, self).save(*args, **kwargs)
+
 	@property
 	def display_value(self):
 		if self.type == self.COUPON_TYPE_AMOUNT:
@@ -1108,6 +1139,14 @@ class Coupon(models.Model):
 			return 'one free registration'
 		elif self.type == self.COUPON_TYPE_PERCENTAGE:
 			return '{}% off'.format(self.value)
+
+	def _generate_code(self):
+		while(1):
+			code = '-'.join(''.join(random.choice(self.CODE_CHARACTERS) for i in range(self.CODE_SEGMENT_LENGTH)) for j in range(self.CODE_SEGMENT_COUNT))
+			try:
+				Coupon.objects.get(code=code)
+			except ObjectDoesNotExist:
+				return code
 
 	def get_adjusted_price(self, price):
 		if self.type == self.COUPON_TYPE_AMOUNT:
@@ -1129,16 +1168,3 @@ class Coupon(models.Model):
 			pass
 
 		return True
-
-	def save(self, *args, **kwargs):
-		if not self.code:
-			self.code = self.generate_code()
-		super(Coupon, self).save(*args, **kwargs)
-
-	def generate_code(self):
-		while(1):
-			code = '-'.join(''.join(random.choice(self.CODE_CHARACTERS) for i in range(self.CODE_SEGMENT_LENGTH)) for j in range(self.CODE_SEGMENT_COUNT))
-			try:
-				Coupon.objects.get(code=code)
-			except ObjectDoesNotExist:
-				return code
