@@ -186,13 +186,13 @@ class League(models.Model):
         return datetime.now() >= self.waitlist_start_date
 
     def is_visible(self, user=None):
-        if user and user.is_junta:
+        if user and user.is_authenticated() and user.is_junta:
             return self.state in ['closed', 'open', 'preview']
 
         return self.state in ['closed', 'open']
 
     def is_open(self, user=None):
-        if user and user.is_junta and self.state in ['open', 'preview']:
+        if user and user.is_authenticated() and user.is_junta and self.state in ['open', 'preview']:
             return True
 
         # if the user is not a league admin and the league is "open" and falls between valid dates
