@@ -5,7 +5,7 @@
 {% load utility %}
 
 {% block title %}{{ first_division.season|smart_title }} League {{ year }} &middot; {{ block.super }}{% endblock %}
-{% block og_title %}Ann Arbor Ultimate {{ block.super }}{{ first_division.season|smart_title }} League {{ year }}{% endblock %}
+{% block og_title %}{{ block.super }} {{ year }} {{ first_division.season|smart_title }} League{% endblock %}
 
 {% block description %}Ann Arbor Ultimate is proud to present {{ first_division.season|smart_title }} League {{ year }}.{% endblock %}
 {% block og_description %}Ann Arbor Ultimate is proud to present {{ first_division.season|smart_title }} League {{ year }}.{% endblock %}
