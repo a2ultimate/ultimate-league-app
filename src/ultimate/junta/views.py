@@ -242,14 +242,14 @@ def registrationexport(request, year=None, season=None, division=None):
                     'rating_athleticism': registration.average_athleticism,
                     'rating_competitiveness': registration.average_competitiveness,
                     'rating_spirit': registration.average_spirit,
-                    'age': int(age),
+                    'age': int(0 if age is None else age),
                     'height': height_inches,
                     'num_teams': registration.num_teams,
                     'registration_status': registration.status.encode('ascii', 'ignore'),
                     'registration_timestamp': registration.registered,
                     'paypal_email': paypal_row.payer_email.encode('ascii', 'ignore') if paypal_row else paypal_row,
-                    'attendance': int(registration.attendance),
-                    'captaining': int(registration.captain),
+                    'attendance': int(0 if registration.attendance is None else registration.attendance),
+                    'captaining': int(0 if registration.captain is None else registration.captain),
                 })
 
         registration_list.sort(key=lambda k: k['last_name'].lower())
