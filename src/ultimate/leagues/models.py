@@ -93,6 +93,7 @@ class League(models.Model):
     level = models.CharField(max_length=32, choices=LEAGUE_LEVEL_CHOICES)
     type = models.CharField(max_length=32, choices=LEAGUE_TYPE_CHOICES)
 
+    tagline = models.TextField(blank=True, help_text='short tagline for description fields, e.g. SEO, Facebook, etc.')
     summary_info = models.TextField(help_text='notes for league, e.g. 50-50 league format, showcase league notes')
     detailed_info = models.TextField(help_text='details page text, use HTML')
 
