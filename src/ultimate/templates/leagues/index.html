@@ -4,8 +4,11 @@
 {% load staticfiles %}
 {% load utility %}
 
-{% block title %}{% include '_partials/league_header.html' with league=leagues|first only %} &middot; {{ block.super }}{% endblock %}
-{% block og_title %}{% include '_partials/league_header.html' with league=leagues|first only %} &middot; {{ block.super }}{% endblock %}
+{% block title %}{{ season|smart_title }} League {{ year }} &middot; {{ block.super }}{% endblock %}
+{% block og_title %}{{ season|smart_title }} League {{ year }} &middot; {{ block.super }}{% endblock %}
+
+{% block description %}Ann Arbor Ultimate is proud to present {{ season|smart_title }} League {{ year }}.{% endblock %}
+{% block og_description %}Ann Arbor Ultimate is proud to present {{ season|smart_title }} League {{ year }}.{% endblock %}
 
 {% block content %}
   {% if not season %}
@@ -15,7 +18,7 @@
       <h1>{% include '_partials/league_header.html' with league=league only %}</h1>
 
       <h4>
-        Ann Arbor Ultimate is very excited to present {{ league.season_title|smart_title }} League {{ year }}.
+        Ann Arbor Ultimate is proud to present {{ league.season_title|smart_title }} League {{ year }}.
         There {{ leagues|pluralize:'is,are' }} <strong>{{ leagues|length }}</strong> division{{ leagues|pluralize }}.
       </h4>
 

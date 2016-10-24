@@ -4,8 +4,24 @@
 {% load staticfiles %}
 {% load utility %}
 
-{% block title %}Summary &middot; {% include '_partials/division_header.html' with league=league hide_state=1 only %} &middot; {{ block.super }}{% endblock %}
-{% block og_title %}Summary &middot; {% include '_partials/division_header.html' with league=league hide_state=1 only %} &middot; {{ block.super }}{% endblock %}
+{% block title %}Summary &middot; {{ league.night_title|smart_title }} &middot; {{ league.season_title|smart_title }} League {{ league.year }} &middot; {{ block.super }}{% endblock %}
+{% block og_title %}Summary &middot; {{ league.night_title|smart_title }} &middot; {{ league.season_title|smart_title }} League {{ league.year }} &middot; {{ block.super }}{% endblock %}
+
+{% block description %}
+  {% if league.tagline %}
+    {{ league.tagline }}
+  {% else %}
+    Ann Arbor Ultimate is proud to present {{ league.season_title|smart_title }} League {{ league.year }}.
+  {% endif %}
+{% endblock %}
+
+{% block og_description %}
+  {% if league.tagline %}
+    {{ league.tagline }}
+  {% else %}
+    Ann Arbor Ultimate is proud to present {{ league.season_title|smart_title }} League {{ league.year }}.
+  {% endif %}
+{% endblock %}
 
 {% block content %}
 
