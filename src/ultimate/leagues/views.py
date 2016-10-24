@@ -20,9 +20,12 @@ from paypal.standard.forms import PayPalPaymentsForm
 
 def index(request, year=None, season=None):
     if year and season:
-        leagues = League.objects.filter(year=year, season=season).order_by('league_start_date')
+        print(year)
+        print(season)
+        leagues = League.objects.filter(Q(year=year), Q(season=season) | Q(season_slug=season)).order_by('league_start_date')
+        print(leagues)
     elif year:
-        leagues = League.objects.filter(year=year).order_by('-league_start_date')
+        leagues = League.objects.filter(Q(year=year)).order_by('-league_start_date')
     else:
         leagues = League.objects.all().order_by('-league_start_date')
 
