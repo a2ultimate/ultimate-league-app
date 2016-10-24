@@ -394,11 +394,11 @@ def registration(request, year, season, division, section=None):
 
             paypal_dict = {
                 'amount': registration.paypal_price,
-                'cancel_return': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration/',
+                'cancel_return': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season_slug) + '/' + str(league.night_slug) + '/registration/',
                 'invoice': registration.paypal_invoice_id,
-                'item_name': str(league.season).capitalize() + ' League ' + str(league.year) + ' - ' + str(league.night).capitalize(),
+                'item_name': str(league.season_title).capitalize() + ' League ' + str(league.year) + ' - ' + str(league.night_title).capitalize(),
                 'notify_url': baseUrl + '/leagues/registration/payment/' + getattr(settings, 'PAYPAL_CALLBACK_SECRET', 'notification/callback/for/a2ultimate/secret/'),
-                'return_url': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season) + '/' + str(league.night) + '/registration-complete/',
+                'return_url': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season_slug) + '/' + str(league.night_slug) + '/registration-complete/',
             }
 
             paypal_form = PayPalPaymentsForm(initial=paypal_dict)
