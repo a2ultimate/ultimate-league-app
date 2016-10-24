@@ -6,7 +6,7 @@
 {% load utility %}
 
 {% block title %}Players &middot; {{ league.night_title|smart_title }} &middot; {{ league.season_title|smart_title }} League {{ league.year }} &middot; {{ block.super }}{% endblock %}
-{% block og_title %}Players &middot; {{ league.night_title|smart_title }} &middot; {{ league.season_title|smart_title }} League {{ league.year }} &middot; {{ block.super }}{% endblock %}
+{% block og_title %}{{ block.super }} {{ league.night_title|smart_title }} {{ league.season_title|smart_title }} League {{ league.year }} Players{% endblock %}
 
 {% block content %}
 <div class="page-division-players">

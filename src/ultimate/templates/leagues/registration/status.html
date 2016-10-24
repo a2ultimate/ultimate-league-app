@@ -4,7 +4,7 @@
 {% load utility %}
 
 {% block title %}Registration &middot; {{ league.night_title|smart_title }} &middot; {{ league.season_title|smart_title }} League {{ league.year }} &middot; {{ block.super }}{% endblock %}
-{% block og_title %}Registration &middot; {{ league.night_title|smart_title }} &middot; {{ league.season_title|smart_title }} League {{ league.year }} &middot; {{ block.super }}{% endblock %}
+{% block og_title %}{{ block.super }} {{ league.night_title|smart_title }} {{ league.season_title|smart_title }} League {{ league.year }} Registration{% endblock %}
 
 {% block content %}
 
