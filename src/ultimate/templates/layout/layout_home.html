@@ -5,7 +5,10 @@
 <html>
   <head>
     <title>{% block title %}Ann Arbor Ultimate (A2U){% endblock %}</title>
+    <meta name="description" content="{% block description %}Ann Arbor Ultimate (A2U) is a nonprofit, volunteer organization dedicated to providing ultimate to players of all skill levels in the greater Ann Arbor area.{% endblock %}">
+
     <meta property="og:title" content="{% block og_title %}Ann Arbor Ultimate (A2U){% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Ann Arbor Ultimate (A2U) is a nonprofit, volunteer organization dedicated to providing ultimate to players of all skill levels in the greater Ann Arbor area.{% endblock %}">
 
     {% include 'layout/head.html' %}
   </head>

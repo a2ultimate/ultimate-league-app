@@ -4,8 +4,11 @@
 {% load staticfiles %}
 {% load utility %}
 
-{% block title %}Summary &middot; {% include '_partials/division_header.html' with league=league hide_state=1 only %} &middot; {{ block.super }}{% endblock %}
-{% block og_title %}Summary &middot; {% include '_partials/division_header.html' with league=league hide_state=1 only %} &middot; {{ block.super }}{% endblock %}
+{% block title %}Summary &middot; {{ league.night_title|smart_title }} &middot; {{ league.season_title|smart_title }} League {{ league.year }} &middot; {{ block.super }}{% endblock %}
+{% block og_title %}Summary &middot; {{ league.night_title|smart_title }} &middot; {{ league.season_title|smart_title }} League {{ league.year }} &middot; {{ block.super }}{% endblock %}
+
+{% block description %}Ann Arbor Ultimate is proud to present {{ league.season_title|smart_title }} League {{ league.year }}.{% endblock %}
+{% block og_description %}Ann Arbor Ultimate is proud to present {{ league.season_title|smart_title }} League {{ league.year }}.{% endblock %}
 
 {% block content %}
 
