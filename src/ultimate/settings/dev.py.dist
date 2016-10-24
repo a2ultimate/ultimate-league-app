@@ -33,6 +33,6 @@ DEBUG_TOOLBAR_CONFIG = {
 WEBPACK_LOADER = {
     'DEFAULT': {
         'BUNDLE_DIR_NAME': '',
-        'STATS_FILE': os.path.join(BASE_DIR, '../static/build/stats.json'),
+        'STATS_FILE': os.path.join(STATIC_ROOT, '../build/stats.json'),
     }
 }

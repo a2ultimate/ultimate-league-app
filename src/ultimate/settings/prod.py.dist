@@ -15,6 +15,6 @@ PAYPAL_CALLBACK_SECRET = 'replace/this/path/with/a/secret/'
 WEBPACK_LOADER = {
     'DEFAULT': {
         'BUNDLE_DIR_NAME': '',
-        'STATS_FILE': os.path.join(STATIC_ROOT, '../static/dist/stats.json'),
+        'STATS_FILE': os.path.join(STATIC_ROOT, '../build/stats.json'),
     }
 }
