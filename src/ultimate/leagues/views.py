@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
-from django.db.models import F
+from django.db.models import F, Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
@@ -41,7 +41,7 @@ def index(request, year=None, season=None):
 
 
 def summary(request, year, season, division):
-    league = get_object_or_404(League, year=year, season=season, night=division)
+    league = get_object_or_404(League, Q(year=year), Q(season=season) | Q(season_slug=season), Q(night=division) | Q(night_slug=division))
     return render_to_response('leagues/summary.html',
         {
             'league': league
@@ -50,7 +50,7 @@ def summary(request, year, season, division):
 
 
 def details(request, year, season, division):
-    league = get_object_or_404(League, year=year, season=season, night=division)
+    league = get_object_or_404(League, Q(year=year), Q(season=season) | Q(season_slug=season), Q(night=division) | Q(night_slug=division))
     return render_to_response('leagues/details.html',
         {
             'league': league
@@ -59,7 +59,7 @@ def details(request, year, season, division):
 
 
 def players(request, year, season, division):
-    league = get_object_or_404(League, year=year, season=season, night=division)
+    league = get_object_or_404(League, Q(year=year), Q(season=season) | Q(season_slug=season), Q(night=division) | Q(night_slug=division))
 
     user_registration = None
     if request.user.is_authenticated():
@@ -93,7 +93,7 @@ def players(request, year, season, division):
 
 
 def teams(request, year, season, division):
-    league = get_object_or_404(League, year=year, season=season, night=division)
+    league = get_object_or_404(League, Q(year=year), Q(season=season) | Q(season_slug=season), Q(night=division) | Q(night_slug=division))
     user_games = None
 
     games = league.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
@@ -126,7 +126,7 @@ def teams(request, year, season, division):
 @atomic
 @login_required
 def group(request, year, season, division):
-    league = get_object_or_404(League, year=year, season=season, night=division)
+    league = get_object_or_404(League, Q(year=year), Q(season=season) | Q(season_slug=season), Q(night=division) | Q(night_slug=division))
     registration = get_object_or_404(Registrations, league=league, user=request.user)
 
     if request.method == 'POST':
@@ -161,7 +161,7 @@ def group(request, year, season, division):
 @atomic
 @login_required
 def registration(request, year, season, division, section=None):
-    league = get_object_or_404(League, year=year, season=season, night=division)
+    league = get_object_or_404(League, Q(year=year), Q(season=season) | Q(season_slug=season), Q(night=division) | Q(night_slug=division))
 
     try:
         registration, created = Registrations.objects.get_or_create(user=request.user, league=league)

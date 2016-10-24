@@ -7,6 +7,7 @@ from django.db.transaction import atomic
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
+from django.template.defaultfilters import slugify
 
 from pybb.models import *
 
@@ -83,7 +84,9 @@ class League(models.Model):
     )
 
     night = models.CharField(max_length=32, help_text='lower case, no special characters, e.g. "sunday", "tuesday and thursday", "end of season tournament"')
+    night_slug = models.SlugField(editable=False)
     season = models.CharField(max_length=32, help_text='lower case, no special characters, e.g. "late fall", "winter"')
+    season_slug = models.SlugField(editable=False)
     year = models.IntegerField(help_text='four digit year, e.g. 2013')
 
     gender = models.CharField(max_length=32, choices=LEAGUE_GENDER_CHOICES)
@@ -130,6 +133,15 @@ class League(models.Model):
 
     def __unicode__(self):
         return ('%s %d %s' % (self.season, self.year, self.night)).replace('_', ' ')
+
+    def save(self):
+        if not self.night_slug:
+            self.night_slug = slugify(self.night)
+
+        if not self.season_slug:
+            self.season_slug = slugify(self.season)
+
+        super(League, self).save()
 
     @property
     def display_gender(self):
