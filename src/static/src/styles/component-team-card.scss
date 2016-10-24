@@ -13,7 +13,7 @@
 
   background-color: $color-gray;
 
-  font-size: 1.25rem;
+  font-size: $font-size-lg;
   font-weight: 700;
 }
 
@@ -24,7 +24,7 @@
   border-top-right-radius: $border-radius;
   background-color: $color-gray-dark;
 
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
   font-weight: 500;
 
   @include outer-container();
@@ -65,7 +65,7 @@
 
   margin-right: -0.5rem;
 
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
 }
 
 .team-card-footer {
@@ -82,7 +82,7 @@
   color: $color-light-gray;
   background-color: $color-gray;
 
-  font-size: 0.75rem;
+  font-size: $font-size-xs;
 }
 
 .team-card-footer-content {
@@ -122,7 +122,7 @@
   border-radius: 50%;
   background-color: $color-light-gray-dark;
 
-  font-size: 1.5rem;
+  font-size: $font-size-xl;
   font-weight: 900;
   line-height: 4rem;
 }

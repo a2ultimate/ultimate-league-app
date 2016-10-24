@@ -307,7 +307,7 @@ body {
       list-style: none;
 
       > li {
-        margin: 0;
+        margin: 0 0 0.25rem;
         padding: 0;
       }
     }
@@ -359,6 +359,7 @@ body {
 }
 
 .content-inner-left-leagues-list-element-divisions-list-element-links-list-element {
+  margin-bottom: 0.25rem;
 }
 
 .content-inner-left-leagues-list-element-divisions-list-element-links-list-element-link {

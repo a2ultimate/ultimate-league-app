@@ -97,7 +97,7 @@ def exportteam(request, team_id):
             team_member.user.last_name,
             gender,
             team_member.user.email,
-            int(age),
+            'age': int(0 if age is None else age),
             height_inches,
             TeamMember.objects.filter(user=team_member.user).count(),
             getattr(Registrations.objects.get(user=team_member.user, league=team.league), 'attendance', 0),
