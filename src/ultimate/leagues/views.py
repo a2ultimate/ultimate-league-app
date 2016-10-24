@@ -20,10 +20,7 @@ from paypal.standard.forms import PayPalPaymentsForm
 
 def index(request, year=None, season=None):
     if year and season:
-        print(year)
-        print(season)
         leagues = League.objects.filter(Q(year=year), Q(season=season) | Q(season_slug=season)).order_by('league_start_date')
-        print(leagues)
     elif year:
         leagues = League.objects.filter(Q(year=year)).order_by('-league_start_date')
     else:
@@ -34,11 +31,15 @@ def index(request, year=None, season=None):
     elif not request.user.is_superuser:
         leagues = leagues.filter(state__in=['closed', 'open', 'preview'])
 
+    first_division = leagues.first()
+
     return render_to_response('leagues/index.html',
         {
             'leagues': leagues,
             'year': year,
-            'season': season
+            'season': season,
+
+            'first_division': first_division,
         },
         context_instance=RequestContext(request))
 

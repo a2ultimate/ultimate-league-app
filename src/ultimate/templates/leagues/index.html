@@ -4,11 +4,11 @@
 {% load staticfiles %}
 {% load utility %}
 
-{% block title %}{{ season|smart_title }} League {{ year }} &middot; {{ block.super }}{% endblock %}
-{% block og_title %}{{ season|smart_title }} League {{ year }} &middot; {{ block.super }}{% endblock %}
+{% block title %}{{ first_division.season|smart_title }} League {{ year }} &middot; {{ block.super }}{% endblock %}
+{% block og_title %}Ann Arbor Ultimate {{ block.super }}{{ first_division.season|smart_title }} League {{ year }}{% endblock %}
 
-{% block description %}Ann Arbor Ultimate is proud to present {{ season|smart_title }} League {{ year }}.{% endblock %}
-{% block og_description %}Ann Arbor Ultimate is proud to present {{ season|smart_title }} League {{ year }}.{% endblock %}
+{% block description %}Ann Arbor Ultimate is proud to present {{ first_division.season|smart_title }} League {{ year }}.{% endblock %}
+{% block og_description %}Ann Arbor Ultimate is proud to present {{ first_division.season|smart_title }} League {{ year }}.{% endblock %}
 
 {% block content %}
   {% if not season %}
