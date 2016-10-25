@@ -83,8 +83,8 @@ class LeagueAdmin(admin.ModelAdmin):
     list_display = ('id', 'year', 'season', 'night', 'gender', 'level', 'type', 'state',)
     list_display_links = ('id',)
     list_filter = ('year', 'season', 'night', 'gender', 'state', )
-    prepopulated_fields = {'season_slug': ('season',), 'night_slug': ('night',)}
-    search_fields = ['year', 'season', 'season_slug', 'night', 'night_slug', 'gender',]
+    prepopulated_fields = {'night_slug': ('night',)}
+    search_fields = ['year', 'season', 'night', 'night_slug', 'gender',]
 
 
 class RegistrationsAdmin(admin.ModelAdmin):
@@ -144,6 +144,13 @@ class RegistrationsAdmin(admin.ModelAdmin):
     paypal_details.allow_tags = True
 
 
+class SeasonAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'slug', 'order',)
+    prepopulated_fields = {'slug': ('name',),}
+    save_as = True
+    save_on_top = True
+
+
 class TeamMemberModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, team_member):
         # Return a string of the format: "firstname lastname (username)"
@@ -192,4 +199,5 @@ admin.site.register(FieldNames, FieldNameAdmin)
 admin.site.register(Game, GameAdmin)
 admin.site.register(League, LeagueAdmin)
 admin.site.register(Registrations, RegistrationsAdmin)
+admin.site.register(Season, SeasonAdmin)
 admin.site.register(Team, TeamAdmin)

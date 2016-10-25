@@ -21,7 +21,7 @@
       </li>
       {% if league %}
       <li class="breadcrumb">
-        <a href="{% url 'gamereports_league' year=league.year season=league.season|slugify division=league.night|slugify %}">{{ league.season_title|smart_title }} {{ league.year }} {{ league.night|smart_title }}</a>
+        <a href="{% url 'gamereports_league' year=league.year season=league.season.slug division=league.night_slug %}">{{ league.season_title|smart_title }} {{ league.year }} {{ league.night|smart_title }}</a>
       </li>
       {% endif %}
       {% if game_reports %}

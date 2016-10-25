@@ -42,6 +42,25 @@ class FieldNames(models.Model):
         return '%s %s' % (self.field.name, self.name)
 
 
+class Season(models.Model):
+    name = models.CharField(max_length=32)
+    slug = models.SlugField()
+
+    order = models.IntegerField(null=True, default=None)
+
+    class Meta:
+        ordering = ['order', 'name']
+
+    def __unicode__(self):
+        return '{}'.format(self.name)
+
+    def save(self):
+        if not self.slug:
+            self.slug = slugify(self.name)
+
+        super(Season, self).save()
+
+
 class League(models.Model):
     STATE_CLOSED = 'closed'
     STATE_HIDDEN = 'hidden'
@@ -83,11 +102,10 @@ class League(models.Model):
         (LEAGUE_TYPE_TOURNAMENT, 'Tournament'),
     )
 
+    year = models.IntegerField(help_text='four digit year, e.g. 2013')
+    season = models.ForeignKey('leagues.Season')
     night = models.CharField(max_length=32, help_text='lower case, no special characters, e.g. "sunday", "tuesday and thursday", "end of season tournament"')
     night_slug = models.SlugField()
-    season = models.CharField(max_length=32, help_text='lower case, no special characters, e.g. "late fall", "winter"')
-    season_slug = models.SlugField()
-    year = models.IntegerField(help_text='four digit year, e.g. 2013')
 
     gender = models.CharField(max_length=32, choices=LEAGUE_GENDER_CHOICES)
     level = models.CharField(max_length=32, choices=LEAGUE_LEVEL_CHOICES)
@@ -131,6 +149,7 @@ class League(models.Model):
 
     class Meta:
         db_table = u'league'
+        ordering = ['year', 'season__order', 'league_start_date']
 
     def __unicode__(self):
         return ('%s %d %s' % (self.season, self.year, self.night)).replace('_', ' ')
@@ -138,9 +157,6 @@ class League(models.Model):
     def save(self):
         if not self.night_slug:
             self.night_slug = slugify(self.night)
-
-        if not self.season_slug:
-            self.season_slug = slugify(self.season)
 
         super(League, self).save()
 

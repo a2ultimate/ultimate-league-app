@@ -77,27 +77,27 @@
           {% for season_year in season_years %}
             {% with season_year_league=season_year.list|first %}
               <li>
-                <a href="{% url 'league_index_season' year=season_year_league.year season=season_year_league.season|slugify  %}">
+                <a href="{% url 'league_index_season' year=season_year_league.year season=season_year_league.season.slug  %}">
                   {{ season_year.grouper|smart_title }}
                 </a>
                 <ul class="nav-inner-list-dropdown">
                   {% for league in season_year.list|sort_by_league_start_date_weekday %}
                     <li>
-                      <a href="{% url 'league_summary' year=league.year season=league.season|slugify|slugify division=league.night|slugify|slugify  %}">
+                      <a href="{% url 'league_summary' year=league.year season=league.season.slug division=league.night_slug  %}">
                         {{ league.night_title|smart_title }}
                       </a>
                       <ul class="nav-inner-list-dropdown">
                         {% if league|is_open:user %}
                           {% if league|is_waitlist:user %}
-                            <li><a href="{% url 'league_registration' year=league.year season=league.season|slugify|slugify division=league.night|slugify|slugify  %}">Register for Waitlist</a></li>
+                            <li><a href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug  %}">Register for Waitlist</a></li>
                           {% else %}
-                            <li><a href="{% url 'league_registration' year=league.year season=league.season|slugify|slugify division=league.night|slugify|slugify  %}">Register</a></li>
+                            <li><a href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug  %}">Register</a></li>
                           {% endif %}
                         {% endif %}
-                        <li><a href="{% url 'league_summary' year=league.year season=league.season|slugify|slugify division=league.night|slugify|slugify  %}">Summary</a></li>
-                        <li><a href="{% url 'league_details' year=league.year season=league.season|slugify|slugify division=league.night|slugify|slugify  %}">Detailed Info</a></li>
-                        <li><a href="{% url 'league_players' year=league.year season=league.season|slugify|slugify division=league.night|slugify|slugify  %}">Players</a></li>
-                        <li><a href="{% url 'league_teams' year=league.year season=league.season|slugify|slugify division=league.night|slugify|slugify  %}">Teams and Schedules</a></li>
+                        <li><a href="{% url 'league_summary' year=league.year season=league.season.slug division=league.night_slug  %}">Summary</a></li>
+                        <li><a href="{% url 'league_details' year=league.year season=league.season.slug division=league.night_slug  %}">Detailed Info</a></li>
+                        <li><a href="{% url 'league_players' year=league.year season=league.season.slug division=league.night_slug  %}">Players</a></li>
+                        <li><a href="{% url 'league_teams' year=league.year season=league.season.slug division=league.night_slug  %}">Teams and Schedules</a></li>
                       </ul>
                     </li>
                   {% endfor %}

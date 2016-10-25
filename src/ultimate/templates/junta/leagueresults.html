@@ -21,7 +21,7 @@
       </li>
       {% if league %}
       <li class="breadcrumb">
-        <a href="{% url 'leagueresults_league' year=league.year season=league.season|slugify division=league.night|slugify %}">{{ league.season_title|smart_title }} {{ league.year }} {{ league.night|smart_title }}</a>
+        <a href="{% url 'leagueresults_league' year=league.year season=league.season.slug division=league.night_slug %}">{{ league.season_title|smart_title }} {{ league.year }} {{ league.night|smart_title }}</a>
       </li>
       {% endif %}
     </ul>
@@ -39,7 +39,7 @@
       {% include '_partials/schedule_table.html' with league=league game_locations=game_locations game_dates=game_dates user_games=user_games next_game_date=next_game_date show_game_result=1 condensed=1 only %}
 
       <p>
-        <a href="{% url 'league_teams' year=league.year season=league.season|slugify division=league.night|slugify %}">Go to Teams and Schedules</a>
+        <a href="{% url 'league_teams' year=league.year season=league.season.slug division=league.night_slug %}">Go to Teams and Schedules</a>
       </p>
     {% else %}
       <h4>

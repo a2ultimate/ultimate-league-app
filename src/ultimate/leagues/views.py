@@ -20,7 +20,7 @@ from paypal.standard.forms import PayPalPaymentsForm
 
 def index(request, year=None, season=None):
     if year and season:
-        leagues = League.objects.filter(Q(year=year), Q(season=season) | Q(season_slug=season)).order_by('league_start_date')
+        leagues = League.objects.filter(Q(year=year), Q(season__name=season) | Q(season__slug=season)).order_by('league_start_date')
     elif year:
         leagues = League.objects.filter(Q(year=year)).order_by('-league_start_date')
     else:
@@ -45,7 +45,7 @@ def index(request, year=None, season=None):
 
 
 def summary(request, year, season, division):
-    league = get_object_or_404(League, Q(year=year), Q(season=season) | Q(season_slug=season), Q(night=division) | Q(night_slug=division))
+    league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
     return render_to_response('leagues/summary.html',
         {
             'league': league
@@ -54,7 +54,7 @@ def summary(request, year, season, division):
 
 
 def details(request, year, season, division):
-    league = get_object_or_404(League, Q(year=year), Q(season=season) | Q(season_slug=season), Q(night=division) | Q(night_slug=division))
+    league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
     return render_to_response('leagues/details.html',
         {
             'league': league
@@ -63,7 +63,7 @@ def details(request, year, season, division):
 
 
 def players(request, year, season, division):
-    league = get_object_or_404(League, Q(year=year), Q(season=season) | Q(season_slug=season), Q(night=division) | Q(night_slug=division))
+    league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
 
     user_registration = None
     if request.user.is_authenticated():
@@ -97,7 +97,7 @@ def players(request, year, season, division):
 
 
 def teams(request, year, season, division):
-    league = get_object_or_404(League, Q(year=year), Q(season=season) | Q(season_slug=season), Q(night=division) | Q(night_slug=division))
+    league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
     user_games = None
 
     games = league.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
@@ -130,7 +130,7 @@ def teams(request, year, season, division):
 @atomic
 @login_required
 def group(request, year, season, division):
-    league = get_object_or_404(League, Q(year=year), Q(season=season) | Q(season_slug=season), Q(night=division) | Q(night_slug=division))
+    league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
     registration = get_object_or_404(Registrations, league=league, user=request.user)
 
     if request.method == 'POST':
@@ -165,7 +165,7 @@ def group(request, year, season, division):
 @atomic
 @login_required
 def registration(request, year, season, division, section=None):
-    league = get_object_or_404(League, Q(year=year), Q(season=season) | Q(season_slug=season), Q(night=division) | Q(night_slug=division))
+    league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
 
     try:
         registration, created = Registrations.objects.get_or_create(user=request.user, league=league)
@@ -398,11 +398,11 @@ def registration(request, year, season, division, section=None):
 
             paypal_dict = {
                 'amount': registration.paypal_price,
-                'cancel_return': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season_slug) + '/' + str(league.night_slug) + '/registration/',
+                'cancel_return': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season.slug) + '/' + str(league.night_slug) + '/registration/',
                 'invoice': registration.paypal_invoice_id,
                 'item_name': str(league.season_title).capitalize() + ' League ' + str(league.year) + ' - ' + str(league.night_title).capitalize(),
                 'notify_url': baseUrl + '/leagues/registration/payment/' + getattr(settings, 'PAYPAL_CALLBACK_SECRET', 'notification/callback/for/a2ultimate/secret/'),
-                'return_url': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season_slug) + '/' + str(league.night_slug) + '/registration-complete/',
+                'return_url': baseUrl + '/leagues/' + str(league.year) + '/' + str(league.season.slug) + '/' + str(league.night_slug) + '/registration-complete/',
             }
 
             paypal_form = PayPalPaymentsForm(initial=paypal_dict)

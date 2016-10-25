@@ -4,29 +4,29 @@
   <ul class="tabs-list">
     {% if league|is_open:user or selected_tab == 'registration' %}
     <li class="tab {% if selected_tab == 'registration' %} tab-selected{% endif %}">
-      <a class="tab-link" href="{% url 'league_registration' year=league.year season=league.season|slugify division=league.night|slugify  %}">
+      <a class="tab-link" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug  %}">
         Registration
       </a>
     </li>
     {% endif %}
 
     <li class="tab{% if selected_tab == 'summary' %} tab-selected{% endif %}">
-      <a class="tab-link" href="{% url 'league_summary' year=league.year season=league.season|slugify division=league.night|slugify  %}">
+      <a class="tab-link" href="{% url 'league_summary' year=league.year season=league.season.slug division=league.night_slug  %}">
         Summary
       </a>
     </li>
     <li class="tab{% if selected_tab == 'details' %} tab-selected{% endif %}">
-      <a class="tab-link" href="{% url 'league_details' year=league.year season=league.season|slugify division=league.night|slugify  %}">
+      <a class="tab-link" href="{% url 'league_details' year=league.year season=league.season.slug division=league.night_slug  %}">
         Detailed Info
       </a>
     </li>
     <li class="tab{% if selected_tab == 'players' %} tab-selected{% endif %}">
-      <a class="tab-link" href="{% url 'league_players' year=league.year season=league.season|slugify division=league.night|slugify  %}">
+      <a class="tab-link" href="{% url 'league_players' year=league.year season=league.season.slug division=league.night_slug  %}">
         Players
       </a>
     </li>
     <li class="tab{% if selected_tab == 'teams' %} tab-selected{% endif %}">
-      <a class="tab-link" href="{% url 'league_teams' year=league.year season=league.season|slugify division=league.night|slugify  %}">
+      <a class="tab-link" href="{% url 'league_teams' year=league.year season=league.season.slug division=league.night_slug  %}">
         Teams and Schedules
       </a>
     </li>
