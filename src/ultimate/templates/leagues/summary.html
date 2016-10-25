@@ -47,23 +47,6 @@
 
   <table class="table table-striped-header">
     <tr>
-      <td>
-        <a href="{% url 'league_details' year=league.year season=league.season.slug division=league.night_slug %}">
-          Detailed Info
-        </a>
-      </td>
-      <td>
-        <a href="{% url 'league_players' year=league.year season=league.season.slug division=league.night_slug %}">
-          Players
-        </a>
-      </td>
-      <td>
-        <a href="{% url 'league_teams' year=league.year season=league.season.slug division=league.night_slug %}">
-          Teams and Schedules
-        </a>
-      </td>
-    </tr>
-    <tr>
       <th colspan="2">
         {% ifequal league.league_start_date league.league_end_date %}
           Date

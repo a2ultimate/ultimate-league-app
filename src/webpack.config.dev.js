@@ -82,7 +82,7 @@ module.exports = {
       {
         test: /\.(ico|jpe?g|png|gif|svg)$/i,
         loaders: [
-            'file?hash=sha512&digest=hex&name=images/assets/[name].[ext]',
+            'file?hash=sha512&digest=hex&name=images/assets/[name].[ext]?[hash:5]',
             'image-webpack?bypassOnDebug&optimizationLevel=7&interlaced=false&progressive=true',
         ],
         include: [
@@ -90,7 +90,7 @@ module.exports = {
         ],
       },
       {
-        test: /\.(jpe?g|png|gif|svg)$/i,
+        test: /\.(ico|jpe?g|png|gif|svg)$/i,
         loader: 'url?limit=8192&name=images/includes/[name].[ext]',
         include: [
           path.resolve(__dirname, 'static/src/images/includes'),
@@ -105,6 +105,12 @@ module.exports = {
       {
         test: /\.scss$/,
         loader: 'style!css!postcss!sass',
+      },
+
+      // MISC
+      {
+        test: /\.xml$/,
+        loader: 'file?hash=sha512&digest=hex&name=[name].[ext]?[hash:5]',
       },
     ]
   },
