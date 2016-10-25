@@ -149,7 +149,7 @@ class League(models.Model):
 
     class Meta:
         db_table = u'league'
-        ordering = ['year', 'season__order', 'league_start_date']
+        ordering = ['-year', 'season__order', 'league_start_date']
 
     def __unicode__(self):
         return ('%s %d %s' % (self.season, self.year, self.night)).replace('_', ' ')
