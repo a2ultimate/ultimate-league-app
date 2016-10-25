@@ -8,11 +8,12 @@ from ultimate.utils.google_api import GoogleAppsApi
 def get_events():
     calendar_id = getattr(settings, 'GOOGLE_APPS_CALENDAR_ID', False)
     events = []
-    since = timedelta(weeks=4)
+    since = timedelta(weeks=0)
+    until = timedelta(weeks=12)
 
     if calendar_id:
         api = GoogleAppsApi()
 
-        events = api.get_calendar_events(calendar_id, since)
+        events = api.get_calendar_events(calendar_id, since, until)
 
     return events
