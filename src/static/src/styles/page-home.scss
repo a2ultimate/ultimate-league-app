@@ -2,6 +2,8 @@
 }
 
 .page-home-info {
+  margin-bottom: 2rem;
+
   @include outer-container();
 }
 
@@ -9,35 +11,101 @@
   @include span-columns(7);
 }
 
-.page-home-info-news-content {
+.page-home-info-events {
+  @include span-columns(5);
 }
 
-.page-home-info-news-content-list {
+.page-home-info-section {
+}
+
+.page-home-info-section-header {
+  .fa {
+    vertical-align: 0.1875rem;
+
+    font-size: 1.625rem;
+  }
+}
+
+.page-home-info-section-content {
+  overflow: scroll;
+
+  max-height: 20rem;
+  padding-bottom: 1rem;
+
+  border-bottom: 0.25rem solid $color-primary;
+}
+
+.page-home-info-section-content-list {
   margin: 0;
   padding: 0;
 
   list-style: none;
 }
 
-.page-home-info-news-content-list-element {
-  margin: 0.5rem 0;
-  padding: 0.75rem 0.5rem;
+.page-home-info-section-content-list-element {
+  overflow: hidden;
 
-  border-radius: 0.125rem;
-  background-color: $color-light-gray;
+  margin: 0 0 0.5rem;
+  padding: 0;
 }
 
-.page-home-info-news-content-list-element-content {
+.page-home-info-section-content-list-element-link {
+  position: relative;
+
+  display: block;
+
+  padding: 0.75rem 1.5rem 0.75rem 0.5rem;
+
+  text-decoration: none !important;
+
+  border-bottom: 0.25rem solid $color-light-gray-dark;
+  border-radius: $border-radius;
+  background-color: $color-light-gray;
+
+  .page-home-info-news & {
+    border-bottom: 0.25rem solid $color-turquoise;
+  }
+
+  .page-home-info-events & {
+    border-bottom: 0.25rem solid $color-purple;
+  }
+
+  &:focus,
+  &:hover,
+  &:active {
+    &:after {
+      color: $color-gray-dark;
+    }
+  }
+
+  &:after {
+    position: absolute;
+    top: 50%;
+    right: 0.5rem;
+
+    height: 1rem;
+    margin-top: -0.5rem;
+
+    color: $color-light-gray-dark;
+
+    line-height: 1rem;
+
+    @include icon('chevron-right');
+  }
+}
+
+.page-home-info-section-content-list-element-link-content {
   color: $color-dark-gray;
 
-  font-size: 1.125rem;
   font-weight: 600;
+
+  .page-home-info-news & {
+    font-size: 1.125rem;
+  }
 }
 
-.page-home-info-news-content-list-element-footer {
+.page-home-info-section-content-list-element-link-footer {
   color: $color-gray;
-}
 
-.page-home-info-events {
-  @include span-columns(5);
+  font-size: 0.875rem;
 }

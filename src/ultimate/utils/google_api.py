@@ -1,4 +1,6 @@
 from datetime import datetime
+from feedparser import _parse_date as parse_date
+from time import mktime
 import httplib2
 import sys
 
@@ -148,17 +150,21 @@ class GoogleAppsApi:
         return response
 
 
-    def get_calendar_events(self, calendar_id, since):
+    def get_calendar_events(self, calendar_id, since, until):
         service = build(serviceName='calendar', version='v3', http=self.http)
 
-        limit = (datetime.utcnow() - since).isoformat('T') + 'Z'
+        since = (datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0) - since).isoformat('T') + 'Z'
+        until = (datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0) + until).isoformat('T') + 'Z'
+        print(since)
+        print(until)
 
         try:
             events_response = service.events().list(
                 calendarId=calendar_id,
                 orderBy='startTime',
                 singleEvents=True,
-                timeMin=limit).execute(http=self.http)
+                timeMin=since,
+                timeMax=until,).execute(http=self.http)
         except Exception as e:
             return None
 
@@ -166,7 +172,7 @@ class GoogleAppsApi:
         for event in events_response['items']:
             events.append({
                 'summary': event.get('summary'),
-                'start': event['start']['dateTime'],
+                'start': datetime.fromtimestamp(mktime(parse_date(event['start']['dateTime']))),
                 'end': event['end']['dateTime'],
                 'location': event.get('location'),
                 'description': event.get('description'),

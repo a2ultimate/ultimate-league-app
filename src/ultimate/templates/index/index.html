@@ -3,34 +3,46 @@
 {% block content %}
 <div class="page-home">
   <div class="page-home-info">
-    <div class="page-home-info-news">
-      <div class="page-home-info-news-header">
-        <h1>News</h1>
+    <div class="page-home-info-news page-home-info-section">
+      <div class="page-home-info-section-header">
+        <h1><i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;Events</h1>
       </div>
-      <div class="page-home-info-news-content">
-        <ul class="page-home-info-news-content-list">
+      <div class="page-home-info-section-content">
+        <ul class="page-home-info-section-content-list">
           {% for announcement in announcements %}
-          <li class="page-home-info-news-content-list-element">
-            <div class="page-home-info-news-content-list-element-content">
-              {{ announcement.name }}
-            </div>
-            <div class="page-home-info-news-content-list-element-footer">
-              {{ announcement.created|timesince }} ago
-              <a href="{{ announcement.get_absolute_url }}">Read More...</a>
-            </div>
-          </li>
+            <li class="page-home-info-section-content-list-element">
+              <a class="page-home-info-section-content-list-element-link" href="{{ announcement.get_absolute_url }}">
+                <div class="page-home-info-section-content-list-element-link-content">
+                  {{ announcement.name }}
+                </div>
+                <div class="page-home-info-section-content-list-element-link-footer">
+                  {{ announcement.created|timesince }} ago
+                </div>
+              </a>
+            </li>
           {% endfor %}
         </ul>
       </div>
-
     </div>
-    <div class="page-home-info-events">
-      <div class="page-home-info-events-header">
-        <h1>Events</h1>
+    <div class="page-home-info-events page-home-info-section">
+      <div class="page-home-info-section-header">
+        <h1><i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;Events</h1>
       </div>
-      <div class="page-home-info-events-content">
-        <iframe src="https://www.google.com/calendar/embed?showTitle=0&amp;showNav=0&amp;showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;mode=AGENDA&amp;height=400&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=pm3odo50mikpffck6bnrhrqj3c%40group.calendar.google.com&amp;color=%23182C57&amp;ctz=America%2FNew_York"
-            style=" border-width:0 " width="282" height="268" frameborder="0" scrolling="no"></iframe>
+      <div class="page-home-info-section-content">
+        <ul class="page-home-info-section-content-list">
+          {% for event in events %}
+            <li class="page-home-info-section-content-list-element">
+              <a class="page-home-info-section-content-list-element-link" href="{{ event.description }}">
+                <div class="page-home-info-section-content-list-element-link-content">
+                  {{ event.summary }}
+                </div>
+                <div class="page-home-info-section-content-list-element-link-footer">
+                  {{ event.start|date:'l, F jS' }} at {{ event.start|date:'g:iA'|lower }}
+                </div>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
       </div>
     </div>
   </div>

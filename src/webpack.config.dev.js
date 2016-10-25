@@ -43,39 +43,21 @@ module.exports = {
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
         loader: 'url-loader?limit=8192&mimetype=application/font-woff',
-        include: [
-          path.resolve(__dirname, 'static/src/fonts'),
-        ],
       }, {
         test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
         loader: 'url-loader?limit=8192&mimetype=application/font-woff',
-        include: [
-          path.resolve(__dirname, 'static/src/fonts'),
-        ],
       }, {
         test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
         loader: 'url-loader?limit=8192&mimetype=application/octet-stream',
-        include: [
-          path.resolve(__dirname, 'static/src/fonts'),
-        ],
       }, {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
         loader: 'url-loader?limit=8192&mimetype=application/vnd.ms-fontobject',
-        include: [
-          path.resolve(__dirname, 'static/src/fonts'),
-        ],
       }, {
         test: /\.otf(\?v=\d+\.\d+\.\d+)?$/,
         loader: 'url-loader?limit=8192&mimetype=image/font-otf',
-        include: [
-          path.resolve(__dirname, 'static/src/fonts'),
-        ],
       }, {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
         loader: 'url-loader?limit=8192&mimetype=image/svg+xml',
-        include: [
-          path.resolve(__dirname, 'static/src/fonts'),
-        ],
       },
 
       // IMAGES
