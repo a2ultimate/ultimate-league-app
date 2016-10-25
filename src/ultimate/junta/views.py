@@ -40,7 +40,7 @@ def captainstatus(request, year=None, season=None, division=None):
     leagues = None
 
     if year and season and division:
-        league = get_object_or_404(League, Q(year=year), Q(season=season) | Q(season_slug=season), Q(night=division) | Q(night_slug=division))
+        league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
 
     else:
         leagues = League.objects.all().order_by('-league_start_date')
@@ -60,7 +60,7 @@ def leagueresults(request, year=None, season=None, division=None):
     team_records = None
 
     if year and season and division:
-        league = get_object_or_404(League, Q(year=year), Q(season=season) | Q(season_slug=season), Q(night=division) | Q(night_slug=division))
+        league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
         games = league.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
         game_locations = league.get_game_locations(games=games)
         game_dates = league.get_game_dates(games=games, game_locations=game_locations)
@@ -97,7 +97,7 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
     game_dates = None
 
     if year and season and division:
-        league = get_object_or_404(League, Q(year=year), Q(season=season) | Q(season_slug=season), Q(night=division) | Q(night_slug=division))
+        league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
 
         if game_id and team_id:
             game = get_object_or_404(Game, id=game_id)
@@ -161,7 +161,7 @@ def registrationexport(request, year=None, season=None, division=None):
     leagues = League.objects.all().order_by('-league_start_date')
 
     if year and season and division:
-        league = get_object_or_404(League, Q(year=year), Q(season=season) | Q(season_slug=season), Q(night=division) | Q(night_slug=division))
+        league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
 
         # TODO need to use better "complete" registration query
         registrations = Registrations.objects.filter(league=league) \
@@ -298,7 +298,7 @@ def registrationexport(request, year=None, season=None, division=None):
 @user_passes_test(lambda u: u.is_superuser)
 def teamgeneration(request, year=None, season=None, division=None):
     if year and season and division:
-        league = get_object_or_404(League, Q(year=year), Q(season=season) | Q(season_slug=season), Q(night=division) | Q(night_slug=division))
+        league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
         teams = Team.objects.filter(league=league)
         players = []
 
@@ -584,7 +584,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
     num_necessary_fields = 0
 
     if year and season and division:
-        league = get_object_or_404(League, Q(year=year), Q(season=season) | Q(season_slug=season), Q(night=division) | Q(night_slug=division))
+        league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
         games = league.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
         game_locations = league.get_game_locations(games=games)
         game_dates = league.get_game_dates(games=games, game_locations=game_locations)

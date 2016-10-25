@@ -67,25 +67,25 @@
                                 {% if league|is_open:user %}
                                   {% if league|is_waitlist:user %}
                                     <li class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element">
-                                      <a class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_registration' year=league.year season=league.season|slugify|slugify division=league.night|slugify|slugify %}">Register for Waitlist</a>
+                                      <a class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">Register for Waitlist</a>
                                     </li>
                                   {% else %}
                                     <li class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element">
-                                      <a class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_registration' year=league.year season=league.season|slugify|slugify division=league.night|slugify|slugify %}">Register</a>
+                                      <a class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">Register</a>
                                     </li>
                                   {% endif %}
                                 {% endif %}
                                 <li class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element">
-                                  <a class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_summary' year=league.year season=league.season|slugify|slugify division=league.night|slugify|slugify %}">Summary</a>
+                                  <a class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_summary' year=league.year season=league.season.slug division=league.night_slug %}">Summary</a>
                                 </li>
                                 <li class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element">
-                                  <a class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_details' year=league.year season=league.season|slugify|slugify division=league.night|slugify|slugify %}">Detailed Info</a>
+                                  <a class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_details' year=league.year season=league.season.slug division=league.night_slug %}">Detailed Info</a>
                                 </li>
                                 <li class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element">
-                                  <a class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_players' year=league.year season=league.season|slugify|slugify division=league.night|slugify|slugify %}">Players</a>
+                                  <a class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_players' year=league.year season=league.season.slug division=league.night_slug %}">Players</a>
                                 </li>
                                 <li class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element">
-                                  <a class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_teams' year=league.year season=league.season|slugify|slugify division=league.night|slugify|slugify %}">Teams and Schedules</a>
+                                  <a class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_teams' year=league.year season=league.season.slug division=league.night_slug %}">Teams and Schedules</a>
                                 </li>
                               </ul>
                             </div>
