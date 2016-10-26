@@ -1,6 +1,34 @@
 .page-home {
 }
 
+.page-home-follow {
+  margin-bottom: 2rem;
+}
+
+.page-home-follow-header {
+  .fa {
+    vertical-align: 0.1875rem;
+
+    font-size: 1.75rem;
+  }
+}
+
+.page-home-follow-content {
+  @include outer-container();
+}
+
+.page-home-follow-content-announcements {
+  @include span-columns(6);
+}
+
+.page-home-follow-content-twitter {
+  @include span-columns(3);
+}
+
+.page-home-follow-content-facebook {
+  @include span-columns(3);
+}
+
 .page-home-info {
   margin-bottom: 2rem;
 
@@ -20,9 +48,15 @@
 
 .page-home-info-section-header {
   .fa {
-    vertical-align: 0.1875rem;
-
     font-size: 1.625rem;
+
+    .page-home-info-news & {
+      vertical-align: 0.0625rem;
+    }
+
+    .page-home-info-events & {
+      vertical-align: 0.1875rem;
+    }
   }
 }
 

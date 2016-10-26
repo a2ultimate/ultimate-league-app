@@ -1,3 +1,23 @@
+.button-social-twitter {
+  background-color: $color-social-twitter;
+
+  @extend .button;
+
+  &:hover {
+    background-color: $color-social-twitter-dark;
+  }
+}
+
+.button-social-facebook {
+  background-color: $color-social-facebook;
+
+  @extend .button;
+
+  &:hover {
+    background-color: $color-social-facebook-dark;
+  }
+}
+
 .social-icon {
   width: 2rem;
   height: 2rem;
