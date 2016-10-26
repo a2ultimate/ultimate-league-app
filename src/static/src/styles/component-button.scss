@@ -11,7 +11,7 @@
   white-space: nowrap;
   text-decoration: none;
 
-  color: $color-white !important;
+  color: $color-white;
   border: 0;
   border-radius: $border-radius;
   background-color: $color-primary;
@@ -29,7 +29,7 @@
   &:hover {
     text-decoration: none;
 
-    color: $color-white !important;
+    color: $color-white;
     background-color: $color-primary-dark;
   }
 
@@ -37,6 +37,12 @@
     cursor: not-allowed;
 
     opacity: 0.5;
+  }
+
+  &.button-small {
+    padding: 0.5rem 1rem;
+
+    font-size: $font-size-sm;
   }
 
   &.button-primary {
@@ -80,6 +86,16 @@
     &:hover {
       background-color: $color-info-dark;
     }
+
+    &.button-inverse {
+      color: $color-info;
+      background-color: $color-white;
+
+      &:hover {
+        color: $color-info-dark;
+        background-color: $color-white;
+      }
+    }
   }
 
   &.button-link {
@@ -104,4 +120,8 @@
 
     width: 100%;
   }
+}
+
+a.button {
+  color: $color-white;
 }

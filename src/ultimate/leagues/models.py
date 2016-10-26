@@ -62,15 +62,15 @@ class Season(models.Model):
 
 
 class League(models.Model):
-    STATE_CLOSED = 'closed'
-    STATE_HIDDEN = 'hidden'
-    STATE_OPEN = 'open'
-    STATE_PREVIEW = 'preview'
+    LEAGUE_STATE_CLOSED = 'closed'
+    LEAGUE_STATE_HIDDEN = 'hidden'
+    LEAGUE_STATE_OPEN = 'open'
+    LEAGUE_STATE_PREVIEW = 'preview'
     LEAGUE_STATE_CHOICES = (
-        (STATE_CLOSED,    'Closed - visible to all, registration closed to all'),
-        (STATE_HIDDEN,    'Hidden - hidden to all, registration closed to all'),
-        (STATE_OPEN,    'Open - visible to all, registration conditionally open to all'),
-        (STATE_PREVIEW,    'Preview - visible only to admins, registration conditionally open only to admins'),
+        (LEAGUE_STATE_CLOSED,    'Closed - visible to all, registration closed to all'),
+        (LEAGUE_STATE_HIDDEN,    'Hidden - hidden to all, registration closed to all'),
+        (LEAGUE_STATE_OPEN,    'Open - visible to all, registration conditionally open to all'),
+        (LEAGUE_STATE_PREVIEW,    'Preview - visible only to admins, registration conditionally open only to admins'),
     )
 
     LEAGUE_GENDER_MENS = 'mens'
@@ -149,7 +149,7 @@ class League(models.Model):
 
     class Meta:
         db_table = u'league'
-        ordering = ['-year', '-season__order', '-league_start_date']
+        ordering = ['-year', 'season__order', 'league_start_date']
 
     def __unicode__(self):
         return ('%s %d %s' % (self.season, self.year, self.night)).replace('_', ' ')
@@ -169,6 +169,10 @@ class League(models.Model):
         return dict(self.LEAGUE_LEVEL_CHOICES)[self.level]
 
     @property
+    def display_state(self):
+        return dict(self.LEAGUE_STATE_CHOICES)[self.state]
+
+    @property
     def display_type(self):
         return dict(self.LEAGUE_TYPE_CHOICES)[self.type]
 
@@ -182,7 +186,7 @@ class League(models.Model):
 
     @property
     def season_year(self):
-        return ('%s %d' % (self.season, self.year)).replace('_', ' ')
+        return '{} {}'.format(self.season, self.year)
 
     @property
     def gender_title(self):
@@ -203,6 +207,10 @@ class League(models.Model):
         return self.paypal_cost + self.check_cost_increase + self.late_cost_increase
 
     @property
+    def is_closed(self):
+        return self.state == self.LEAGUE_STATE_CLOSED
+
+    @property
     def is_after_registration_start(self):
         return datetime.now() >= self.reg_start_date
 
@@ -219,6 +227,41 @@ class League(models.Model):
             return self.state in ['closed', 'open', 'preview']
 
         return self.state in ['closed', 'open']
+
+    def is_accepting_registrations(self, user=None):
+        # always accepting registrations for admins
+        if user and user.is_authenticated() and user.is_junta and \
+                self.state in [self.LEAGUE_STATE_OPEN, self.LEAGUE_STATE_PREVIEW]:
+            return True
+
+        # not open to public
+        if self.state not in [self.LEAGUE_STATE_OPEN]:
+            return False
+
+        # not after registration date start
+        if not datetime.now() >= self.reg_start_date:
+            return False
+
+        # not before league ends
+        if not datetime.today() <= self.league_end_date:
+            return False
+
+        return True
+
+    def is_waitlisting_registrations(self, user=None):
+        # not accepting registrations
+        if not self.is_accepting_registrations(user):
+            return False
+
+        # not after waitlist date start
+        if not datetime.now() >= self.waitlist_start_date:
+            return False
+
+        # not full
+        if not self.get_complete_registrations().count() < self.max_players:
+            return False
+
+        return True
 
     def is_open(self, user=None):
         if user and user.is_authenticated() and user.is_junta and self.state in ['open', 'preview']:
@@ -242,7 +285,6 @@ class League(models.Model):
 
         return False
 
-
     def get_user_games(self, user):
         return self.game_set.filter(gameteams__team__teammember__user=user).order_by('date')
 
@@ -265,6 +307,12 @@ class League(models.Model):
 
     def player_survey_complete_for_user(self, user):
         return bool(user.teammember_set.get(team__league=self).team.player_survey_complete(user))
+
+    def get_user_registration(self, user):
+        try:
+            return self.registrations_set.get(user=user)
+        except ObjectDoesNotExist:
+            return None
 
     def get_registrations(self):
         return self.registrations_set.filter(league=self).order_by('registered') \
