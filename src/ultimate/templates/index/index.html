@@ -1,7 +1,89 @@
 {% extends 'layout/layout_home.html' %}
 
+{% load i18n %}
+{% load leagues %}
+{% load utility %}
+
 {% block content %}
 <div class="page-home">
+  {% if menu_leagues %}
+    <div class="page-home-leagues-grid">
+      <div class="page-home-leagues-grid-header"></div>
+      <div class="page-home-leagues-grid-content">
+        <ul class="page-home-leagues-grid-content-list">
+
+          {% regroup menu_leagues by season_year as season_years %}
+
+          {% for season_year in season_years %}
+            <li class="page-home-leagues-grid-content-list-element">
+              <h2 class="page-home-leagues-grid-content-list-element-header">
+                {{ season_year.grouper|smart_title }}
+              </h2>
+
+              <ul class="page-home-leagues-grid-content-list-element-list">
+                {% for league in season_year.list|sort_by_league_start_date_weekday %}
+                  <li class="page-home-leagues-grid-content-list-element-list-element">
+                    <div class="page-home-leagues-grid-content-list-element-list-element-content">
+                      <h3 class="page-home-leagues-grid-content-list-element-list-element-content-heading">
+                        {{ league.night|smart_title }}
+                      </h3>
+
+                      <div class="page-home-leagues-grid-content-list-element-list-element-content-tags">
+                        <span>{{ league.display_type }}</span>
+                        <span>{{ league.display_level }}</span>
+                        <span>{{ league.display_gender }}</span>
+                      </div>
+                    </div>
+
+                    <div class="page-home-leagues-grid-content-list-element-list-element-footer">
+                      {% if league|has_complete_user_registration:request.user %}
+                        {% if league.team_set.exists and league.game_set.exists %}
+                          <a class="page-home-leagues-grid-content-list-element-list-element-footer-action button button-block" href="{% url 'league_teams' year=league.year season=league.season.slug division=league.night_slug %}">
+                            View Teams
+                          </a>
+                        {% else %}
+                          <div class="page-home-leagues-grid-content-list-element-list-element-footer-message">
+                            Thank you for registering, teams are coming soon!
+                          </div>
+                        {% endif %}
+                      {% else %}
+
+                        {% if league|is_accepting_registrations:request.user %}
+                          <a class="page-home-leagues-grid-content-list-element-list-element-footer-action button button-block button-warning" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">
+                            {% if league|is_accepting_registrations:request.user %}
+                              Join Waitlist
+                            {% else %}
+                              {% if league|has_user_registration:request.user %}
+                                Finish Registration
+                              {% else %}
+                                Register Now
+                              {% endif %}
+                            {% endif %}
+                          </a>
+                        {% else %}
+                          {% if not league.is_after_registration_start %}
+                            <div class="page-home-leagues-grid-content-list-element-list-element-footer-message">
+                              Registration opening soon!
+                            </div>
+                          {% else %}
+                            <div class="page-home-leagues-grid-content-list-element-list-element-footer-message">
+                              {{ league.display_type }} registration is closed.
+                            </div>
+                          {% endif %}
+                        {% endif %}
+
+                      {% endif %}
+                    </div>
+                  </li>
+                {% endfor %}
+              </ul>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  {% endif %}
+
   <div class="page-home-follow">
     <div class="page-home-follow-header">
       <h1><i class="fa fa-comments-o" aria-hidden="true"></i>&nbsp;Stay Up to Date</h1>
