@@ -23,17 +23,20 @@
               <ul class="page-home-leagues-grid-content-list-element-list">
                 {% for league in season_year.list|sort_by_league_start_date_weekday %}
                   <li class="page-home-leagues-grid-content-list-element-list-element">
-                    <div class="page-home-leagues-grid-content-list-element-list-element-content">
+                    <a class="page-home-leagues-grid-content-list-element-list-element-content" href="woo">
+                      <div class="page-home-leagues-grid-content-list-element-list-element-content-tag">
+                        {{ league.display_type }}
+                      </div>
+
                       <h3 class="page-home-leagues-grid-content-list-element-list-element-content-heading">
                         {{ league.night|smart_title }}
                       </h3>
 
-                      <div class="page-home-leagues-grid-content-list-element-list-element-content-tags">
-                        <span>{{ league.display_type }}</span>
+                      <div class="page-home-leagues-grid-content-list-element-list-element-content-info">
                         <span>{{ league.display_level }}</span>
                         <span>{{ league.display_gender }}</span>
                       </div>
-                    </div>
+                    </a>
 
                     <div class="page-home-leagues-grid-content-list-element-list-element-footer">
                       {% if league|has_complete_user_registration:request.user %}
@@ -50,7 +53,7 @@
 
                         {% if league|is_accepting_registrations:request.user %}
                           <a class="page-home-leagues-grid-content-list-element-list-element-footer-action button button-block button-warning" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">
-                            {% if league|is_accepting_registrations:request.user %}
+                            {% if league|is_waitlisting_registrations:request.user %}
                               Join Waitlist
                             {% else %}
                               {% if league|has_user_registration:request.user %}
@@ -67,7 +70,7 @@
                             </div>
                           {% else %}
                             <div class="page-home-leagues-grid-content-list-element-list-element-footer-message">
-                              {{ league.display_type }} registration is closed.
+                              Registration is closed.
                             </div>
                           {% endif %}
                         {% endif %}

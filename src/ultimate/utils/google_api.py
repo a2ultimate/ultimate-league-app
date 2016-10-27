@@ -155,8 +155,6 @@ class GoogleAppsApi:
 
         since = (datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0) - since).isoformat('T') + 'Z'
         until = (datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0) + until).isoformat('T') + 'Z'
-        print(since)
-        print(until)
 
         try:
             events_response = service.events().list(
