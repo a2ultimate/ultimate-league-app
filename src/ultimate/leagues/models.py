@@ -229,6 +229,10 @@ class League(models.Model):
         return self.state in ['closed', 'open']
 
     def is_accepting_registrations(self, user=None):
+        # not before league ends
+        if not date.today() <= self.league_end_date:
+            return False
+
         # always accepting registrations for admins
         if user and user.is_authenticated() and user.is_junta and \
                 self.state in [self.LEAGUE_STATE_OPEN, self.LEAGUE_STATE_PREVIEW]:
@@ -240,10 +244,6 @@ class League(models.Model):
 
         # not after registration date start
         if not datetime.now() >= self.reg_start_date:
-            return False
-
-        # not before league ends
-        if not datetime.today() <= self.league_end_date:
             return False
 
         return True
@@ -258,7 +258,7 @@ class League(models.Model):
             return False
 
         # not full
-        if not self.get_complete_registrations().count() < self.max_players:
+        if not len(self.get_complete_registrations()) < self.max_players:
             return False
 
         return True

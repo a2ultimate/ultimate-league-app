@@ -2,7 +2,7 @@
 }
 
 .page-home-leagues-grid {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .page-home-leagues-grid-header {
@@ -31,9 +31,11 @@
 }
 
 .page-home-leagues-grid-content-list-element-list-element {
+  position: relative;
+
   overflow: hidden;
 
-  margin: 0 0 1rem;
+  margin: 0 0 0.5rem;
   padding: 0;
 
   list-style: none;
@@ -47,50 +49,83 @@
 
 .page-home-leagues-grid-content-list-element-list-element-content {
   position: relative;
-  // min-height: 7.875rem;
 
-  padding: 0.5rem 0.75rem;
+  display: block;
 
-  border-radius: $border-radius;
+  padding: 2.5rem 2rem 0.25rem 0.75rem;
+
+  color: $color-primary;
   background-color: $color-light-gray;
 
-  // &:after {
-  //   position: absolute;
-  //   top: 50%;
-  //   right: 0rem;
-  //
-  //   width: 2.5rem;
-  //   height: 1rem;
-  //   margin-top: -0.5rem;
-  //
-  //   text-align: center;
-  //
-  //   color: $color-gray;
-  //
-  //   line-height: 1rem;
-  //
-  //   @include icon('chevron-right');
-  // }
+  &:after {
+    position: absolute;
+    top: 50%;
+    right: 0rem;
+
+    width: 2rem;
+    height: 1rem;
+    margin-top: -0.5rem;
+
+    text-align: center;
+
+    color: $color-gray;
+
+    line-height: 1rem;
+
+    @include icon('chevron-right');
+  }
+
+  &:hover {
+    text-decoration: none;
+
+    color: $color-primary-dark;
+
+    &:after {
+      color: $color-gray-dark;
+    }
+  }
+}
+
+.page-home-leagues-grid-content-list-element-list-element-content-tag {
+  position: absolute;
+  top: 0.5rem;
+  left: 0;
+
+  display: inline-block;
+
+  padding: 0.25rem 0.75rem;
+
+  color: white;
+  border-top-right-radius: $border-radius;
+  border-bottom-right-radius: $border-radius;
+  background-color: $color-gray;
+
+  font-size: $font-size-sm;
 }
 
 .page-home-leagues-grid-content-list-element-list-element-content-heading {
 }
 
-.page-home-leagues-grid-content-list-element-list-element-content-tags {
+.page-home-leagues-grid-content-list-element-list-element-content-info {
+  margin: 0.25rem 0;
+
+  color: $color-turquoise;
+
   font-size: 0;
 
   span {
     display: inline-block;
 
-    margin: 0 0.25rem 0.25rem 0;
-    padding: 0.25rem;
-
-    color: $color-white;
-    border-radius: $border-radius;
-    background-color: $color-gray;
-
     font-size: $font-size-sm;
     font-weight: 600;
+
+    + span {
+      &:before {
+        padding: 0 0.25rem;
+
+        content: '\00b7';
+      }
+    }
   }
 }
 
@@ -257,6 +292,7 @@
   padding-bottom: 1rem;
 
   border-bottom: 0.25rem solid $color-primary;
+  border-radius: $border-radius;
 }
 
 .page-home-info-section-content-list {
@@ -282,16 +318,16 @@
 
   text-decoration: none !important;
 
-  border-bottom: 0.25rem solid $color-light-gray-dark;
+  border-top: 0.25rem solid $color-light-gray-dark;
   border-radius: $border-radius;
   background-color: $color-light-gray;
 
   .page-home-info-news & {
-    border-bottom: 0.25rem solid $color-turquoise;
+    border-top: 0.25rem solid $color-turquoise;
   }
 
   .page-home-info-events & {
-    border-bottom: 0.25rem solid $color-purple;
+    border-top: 0.25rem solid $color-purple;
   }
 
   &:focus,
