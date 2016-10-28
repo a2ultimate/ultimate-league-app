@@ -344,10 +344,15 @@ class League(models.Model):
         return bool(user.teammember_set.get(team__league=self).team.player_survey_complete(user))
 
     def get_user_registration(self, user):
-        try:
-            return self.registrations_set.get(user=user)
-        except ObjectDoesNotExist:
-            return None
+        user_registration = None
+
+        if user and user.is_authenticated():
+            try:
+                return self.registrations_set.get(user=user)
+            except ObjectDoesNotExist:
+                pass
+
+        return user_registration
 
     def get_registrations(self):
         return self.registrations_set.filter(league=self).order_by('registered') \
