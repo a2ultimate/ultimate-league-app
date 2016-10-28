@@ -52,7 +52,7 @@ def is_waitlisting_registrations(league, user):
 
 @register.filter
 def has_user_registration(league, user):
-    return not league.get_user_registration(user) is None
+    return league.get_user_registration(user) is not None
 
 @register.filter
 def has_complete_user_registration(league, user):
