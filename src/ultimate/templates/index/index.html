@@ -23,13 +23,13 @@
               <ul class="page-home-leagues-grid-content-list-element-list">
                 {% for league in season_year.list|sort_by_league_start_date_weekday %}
                   <li class="page-home-leagues-grid-content-list-element-list-element">
-                    <a class="page-home-leagues-grid-content-list-element-list-element-content" href="woo">
-                      <div class="page-home-leagues-grid-content-list-element-list-element-content-tag">
-                        {{ league.display_type }}
+                    <a class="page-home-leagues-grid-content-list-element-list-element-content" href="{% url 'league_summary' year=league.year season=league.season.slug division=league.night_slug %}">
+                      <div class="page-home-leagues-grid-content-list-element-list-element-content-tag" style="background-color: {{ league.status_color }};">
+                        {{ league.status_text }}
                       </div>
 
                       <h3 class="page-home-leagues-grid-content-list-element-list-element-content-heading">
-                        {{ league.night|smart_title }}
+                        {{ league.night|smart_title }}{% if league.type == 'league' %} League{% endif %}
                       </h3>
 
                       <div class="page-home-leagues-grid-content-list-element-list-element-content-info">
@@ -87,26 +87,6 @@
     </div>
   {% endif %}
 
-  <div class="page-home-follow">
-    <div class="page-home-follow-header">
-      <h1><i class="fa fa-comments-o" aria-hidden="true"></i>&nbsp;Stay Up to Date</h1>
-    </div>
-    <div class="page-home-follow-content">
-      <div class="page-home-follow-content-announcements">
-        <a class="button button-block button-info" href="{% url 'announcements' %}">
-          <i class="fa fa-envelope" aria-hidden="true"></i>&nbsp;Join Our Announcements List</a>
-      </div>
-      <div class="page-home-follow-content-twitter">
-        <a class="button button-block button-social-twitter" href="https://twitter.com/a2ultimate">
-          <i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;Follow Us</a>
-      </div>
-      <div class="page-home-follow-content-facebook">
-        <a class="button button-block button-social-facebook" href="https://www.facebook.com/annarborultimate">
-          <i class="fa fa-facebook" aria-hidden="true"></i>&nbsp;Like Us</a>
-      </div>
-    </div>
-  </div>
-
   <div class="page-home-info">
     <div class="page-home-info-news page-home-info-section">
       <div class="page-home-info-section-header">
@@ -148,6 +128,26 @@
             </li>
           {% endfor %}
         </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-home-follow">
+    <div class="page-home-follow-header">
+      <!-- <h1><i class="fa fa-comments-o" aria-hidden="true"></i>&nbsp;Stay Up to Date</h1> -->
+    </div>
+    <div class="page-home-follow-content">
+      <div class="page-home-follow-content-announcements">
+        <a class="button button-block button-info" href="{% url 'announcements' %}">
+          <i class="fa fa-envelope" aria-hidden="true"></i>&nbsp;Join Our Announcements List</a>
+      </div>
+      <div class="page-home-follow-content-twitter">
+        <a class="button button-block button-social-twitter" href="https://twitter.com/a2ultimate">
+          <i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;Follow Us</a>
+      </div>
+      <div class="page-home-follow-content-facebook">
+        <a class="button button-block button-social-facebook" href="https://www.facebook.com/annarborultimate">
+          <i class="fa fa-facebook" aria-hidden="true"></i>&nbsp;Like Us</a>
       </div>
     </div>
   </div>

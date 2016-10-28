@@ -228,6 +228,41 @@ class League(models.Model):
 
         return self.state in ['closed', 'open']
 
+    @property
+    def status_text(self):
+        if datetime.now() < self.reg_start_date:
+            return 'Coming Soon'
+
+        if date.today() < self.league_start_date:
+            if datetime.now() >= self.waitlist_start_date or \
+                    len(self.get_complete_registrations()) >= self.max_players:
+                return 'Waitlisting Registrations'
+            else:
+                return 'Accepting Registrations'
+
+        if date.today() <= self.league_end_date:
+            return '{} In Progress'.format(self.display_type)
+
+        # TODO is "completed" the right word?
+        return '{} Completed'.format(self.display_type)
+
+    @property
+    def status_color(self):
+        if datetime.now() < self.reg_start_date:
+            return '#9b59b6'
+
+        if date.today() < self.league_start_date:
+            if datetime.now() >= self.waitlist_start_date or \
+                    len(self.get_complete_registrations()) >= self.max_players:
+                return '#f1c40f'
+            else:
+                return '#2ecc71'
+
+        if date.today() <= self.league_end_date:
+            return '#3498db'
+
+        return '#bdc3c7'
+
     def is_accepting_registrations(self, user=None):
         # not before league ends
         if not date.today() <= self.league_end_date:
