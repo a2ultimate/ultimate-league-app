@@ -17,7 +17,7 @@ def index(request):
     announcements = Topic.objects.filter(
         forum__name__exact='Announcements').order_by('-created')[:5]
 
-    events = get_events()
+    events = get_events()[:8]
 
     return render_to_response('index/index.html',
                               {
