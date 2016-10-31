@@ -19,7 +19,7 @@ def index(request):
     leagues = [r for r in leagues if r.is_visible(request.user)]
 
     # date.today() OR something like date(2010, 4, 13)
-    next_games = Game.objects.filter(~Q(league__state=League.STATE_HIDDEN) & Q(date__gte=date.today()) & Q(Q(gameteams__team__teammember__user=request.user) | Q(gameteams__team__teammember__user=request.user))).order_by('date')[0:2]
+    next_games = Game.objects.filter(~Q(league__state=League.LEAGUE_STATE_HIDDEN) & Q(date__gte=date.today()) & Q(Q(gameteams__team__teammember__user=request.user) | Q(gameteams__team__teammember__user=request.user))).order_by('date')[0:2]
     try:
         next_game = next_games[0:1].get()
     except Game.DoesNotExist:
