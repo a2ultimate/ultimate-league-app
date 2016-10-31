@@ -42,17 +42,11 @@
 
   <div class="page-division-teams-teams">
     {% if teams %}
-      <div class="page-division-teams-teams-row">
-        {% for team in teams %}
-          <div class="page-division-teams-teams-row-team" id="team-roster-{{ team.id }}">
-            {% include '_partials/team_card.html' with team=team user=request.user only %}
-          </div>
-
-          {% if forloop.counter|divisibleby:2 %}
-            </div><div class="page-division-teams-teams-row">
-          {% endif %}
-        {% endfor %}
-      </div>
+      {% for team in teams %}
+        <div class="page-division-teams-teams-team" id="team-roster-{{ team.id }}">
+          {% include '_partials/team_card.html' with team=team user=request.user only %}
+        </div>
+      {% endfor %}
     {% endif %}
   </div>
 

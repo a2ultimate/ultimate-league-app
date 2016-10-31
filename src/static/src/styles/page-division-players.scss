@@ -1,3 +1,26 @@
+.page-division-players-list {
+  margin-bottom: 1rem;
+
+  @include outer-container;
+}
+
+.page-division-players-list-group {
+  margin: 0;
+  padding: 0.75rem;
+
+  list-style: none;
+
+  border-radius: $border-radius;
+
+  @include span-columns(6);
+  @include omega(2n);
+
+  &:nth-child(4n-2),
+  &:nth-child(4n-3) {
+    background-color: $color-light-gray;
+  }
+}
+
 .page-division-players-notes {
   overflow: hidden;
 
