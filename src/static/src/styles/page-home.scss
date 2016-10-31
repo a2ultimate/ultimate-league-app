@@ -1,27 +1,27 @@
 .page-home {
 }
 
-.page-home-leagues-grid {
+.page-home-leagues {
   margin-bottom: 1rem;
 }
 
-.page-home-leagues-grid-header {
+.page-home-leagues-header {
 }
 
-.page-home-leagues-grid-content {
+.page-home-leagues-content {
 }
 
-.page-home-leagues-grid-content-list {
+.page-home-leagues-content-list {
   margin: 0;
   padding: 0;
 
   list-style: none;
 }
 
-.page-home-leagues-grid-content-list-element-header {
+.page-home-leagues-content-list-element-header {
 }
 
-.page-home-leagues-grid-content-list-element-list {
+.page-home-leagues-content-list-element-list {
   margin: 0;
   padding: 0;
 
@@ -30,7 +30,7 @@
   @include outer-container();
 }
 
-.page-home-leagues-grid-content-list-element-list-element {
+.page-home-leagues-content-list-element-list-element {
   position: relative;
 
   overflow: hidden;
@@ -40,14 +40,16 @@
 
   list-style: none;
 
-  border-radius: $border-radius;
+  border-left: 0.25rem solid $color-gray;
+  border-top-right-radius: $border-radius;
+  border-bottom-right-radius: $border-radius;
   background-color: $color-light-gray;
 
   @include span-columns(4);
   @include omega(3n);
 }
 
-.page-home-leagues-grid-content-list-element-list-element-content {
+.page-home-leagues-content-list-element-list-element-content {
   position: relative;
 
   display: block;
@@ -67,7 +69,7 @@
   }
 }
 
-.page-home-leagues-grid-content-list-element-list-element-content-tag {
+.page-home-leagues-content-list-element-list-element-content-tag {
   position: absolute;
   top: 0.5rem;
   left: 0;
@@ -84,7 +86,7 @@
   font-size: $font-size-sm;
 }
 
-.page-home-leagues-grid-content-list-element-list-element-content-heading {
+.page-home-leagues-content-list-element-list-element-content-heading {
   position: relative;
 
   padding-right: 1.25rem;
@@ -107,15 +109,15 @@
 
     @include icon('chevron-right');
 
-    .page-home-leagues-grid-content-list-element-list-element-content:active &,
-    .page-home-leagues-grid-content-list-element-list-element-content:focus &,
-    .page-home-leagues-grid-content-list-element-list-element-content:hover & {
+    .page-home-leagues-content-list-element-list-element-content:active &,
+    .page-home-leagues-content-list-element-list-element-content:focus &,
+    .page-home-leagues-content-list-element-list-element-content:hover & {
       color: $color-dark-gray;
     }
   }
 }
 
-.page-home-leagues-grid-content-list-element-list-element-content-info {
+.page-home-leagues-content-list-element-list-element-content-info {
   margin: 0.25rem 0;
 
   color: $color-gray;
@@ -138,13 +140,13 @@
   }
 }
 
-.page-home-leagues-grid-content-list-element-list-element-footer {
+.page-home-leagues-content-list-element-list-element-footer {
   position: relative;
 
   min-height: 3.25rem;
 }
 
-.page-home-leagues-grid-content-list-element-list-element-footer-message {
+.page-home-leagues-content-list-element-list-element-footer-message {
   position: absolute;
   right: 0.75rem;
   bottom: 0.75rem;
@@ -157,7 +159,7 @@
   font-style: italic;
 }
 
-.page-home-leagues-grid-content-list-element-list-element-footer-action {
+.page-home-leagues-content-list-element-list-element-footer-action {
   position: relative;
   position: absolute;
   right: 0;
@@ -169,6 +171,9 @@
   padding: 0.75rem;
 
   text-align: left;
+
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 
   &:after {
     position: absolute;
@@ -189,64 +194,7 @@
   }
 }
 
-.page-home-leagues-grid-content-list-element-list-element-action-1 {
-}
-
-
-
-
-
-
-
-.page-home-leagues-horizontal {
-  margin-bottom: 2rem;
-}
-
-.page-home-leagues-horizontal-header {
-}
-
-.page-home-leagues-horizontal-content {
-}
-
-.page-home-leagues-horizontal-content-list {
-  margin: 0;
-  padding: 0;
-
-  list-style: none;
-}
-
-.page-home-leagues-horizontal-content-list-element {
-}
-
-.page-home-leagues-horizontal-content-list-element-header {
-  margin: 0;
-  padding: 0.5rem;
-
-  border-radius: $border-radius;
-  background-color: $color-light-gray;
-}
-
-.page-home-leagues-horizontal-content-list-element-list {
-  margin: 0 0 0 1rem;
-  padding: 0;
-
-  list-style: none;
-}
-
-.page-home-leagues-horizontal-content-list-element-list-element {
-  padding: 0.5rem;
-
-  @include outer-container();
-}
-
-.page-home-leagues-horizontal-content-list-element-list-element-header {
-  @include span-columns(6);
-}
-
-.page-home-leagues-horizontal-content-list-element-list-element-action {
-  text-align: right;
-
-  @include span-columns(6);
+.page-home-leagues-content-list-element-list-element-action-1 {
 }
 
 .page-home-follow {
@@ -309,13 +257,11 @@
 }
 
 .page-home-info-section-content {
-  overflow: scroll;
+  // overflow: scroll;
+  // max-height: 20rem;
+  // padding-bottom: 1rem;
 
-  max-height: 20rem;
-  padding-bottom: 1rem;
-
-  border-bottom: 0.25rem solid $color-primary;
-  border-radius: $border-radius;
+  // border-bottom: 0.25rem solid $color-primary;
 }
 
 .page-home-info-section-content-list {
@@ -341,24 +287,16 @@
 
   text-decoration: none !important;
 
-  border-top: 0.25rem solid $color-light-gray-dark;
-  border-radius: $border-radius;
+  border-left: 0.25rem solid $color-gray;
+  border-top-right-radius: $border-radius;
+  border-bottom-right-radius: $border-radius;
   background-color: $color-light-gray;
 
   .page-home-info-news & {
-    border-top: 0.25rem solid $color-info;
   }
 
   .page-home-info-events & {
-    border-top: 0.25rem solid $color-info;
-  }
-
-  &:focus,
-  &:hover,
-  &:active {
-    &:after {
-      color: $color-gray-dark;
-    }
+    padding: 0.5rem 1.5rem 0.5rem 0.5rem;
   }
 
   &:after {
@@ -375,6 +313,15 @@
 
     @include icon('chevron-right');
   }
+
+  &:focus,
+  &:hover,
+  &:active {
+    border-color: $color-gray-dark;
+    &:after {
+      color: $color-gray-dark;
+    }
+  }
 }
 
 .page-home-info-section-content-list-element-link-content {
@@ -385,10 +332,19 @@
   .page-home-info-news & {
     font-size: 1.125rem;
   }
+
+  .page-home-info-events & {
+    font-size: $font-size-sm;
+  }
 }
 
 .page-home-info-section-content-list-element-link-footer {
   color: $color-gray;
 
-  font-size: 0.875rem;
+  .page-home-info-news & {
+  }
+
+  .page-home-info-events & {
+    font-size: $font-size-xs;
+  }
 }

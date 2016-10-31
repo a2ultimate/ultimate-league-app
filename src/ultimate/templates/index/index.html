@@ -7,52 +7,52 @@
 {% block content %}
 <div class="page-home">
   {% if menu_leagues %}
-    <div class="page-home-leagues-grid">
-      <div class="page-home-leagues-grid-header"></div>
-      <div class="page-home-leagues-grid-content">
-        <ul class="page-home-leagues-grid-content-list">
+    <div class="page-home-leagues">
+      <div class="page-home-leagues-header"></div>
+      <div class="page-home-leagues-content">
+        <ul class="page-home-leagues-content-list">
 
           {% regroup menu_leagues by season_year as season_years %}
 
           {% for season_year in season_years %}
-            <li class="page-home-leagues-grid-content-list-element">
-              <h2 class="page-home-leagues-grid-content-list-element-header">
+            <li class="page-home-leagues-content-list-element">
+              <h2 class="page-home-leagues-content-list-element-header">
                 {{ season_year.grouper|smart_title }}
               </h2>
 
-              <ul class="page-home-leagues-grid-content-list-element-list">
+              <ul class="page-home-leagues-content-list-element-list">
                 {% for league in season_year.list|sort_by_league_start_date_weekday %}
-                  <li class="page-home-leagues-grid-content-list-element-list-element">
-                    <a class="page-home-leagues-grid-content-list-element-list-element-content" href="{% url 'league_summary' year=league.year season=league.season.slug division=league.night_slug %}">
-                      <div class="page-home-leagues-grid-content-list-element-list-element-content-tag" style="background-color: {{ league.status_color }};">
+                  <li class="page-home-leagues-content-list-element-list-element" style="border-color: {{ league.status_color }};">
+                    <a class="page-home-leagues-content-list-element-list-element-content" href="{% url 'league_summary' year=league.year season=league.season.slug division=league.night_slug %}">
+                      <div class="page-home-leagues-content-list-element-list-element-content-tag" style="background-color: {{ league.status_color }};">
                         {{ league.status_text }}
                       </div>
 
-                      <h3 class="page-home-leagues-grid-content-list-element-list-element-content-heading">
+                      <h3 class="page-home-leagues-content-list-element-list-element-content-heading">
                         {{ league.night|smart_title }}{% if league.type == 'league' %} League{% endif %}
                       </h3>
 
-                      <div class="page-home-leagues-grid-content-list-element-list-element-content-info">
+                      <div class="page-home-leagues-content-list-element-list-element-content-info">
                         <span>{{ league.display_level }}</span>
                         <span>{{ league.display_gender }}</span>
                       </div>
                     </a>
 
-                    <div class="page-home-leagues-grid-content-list-element-list-element-footer">
+                    <div class="page-home-leagues-content-list-element-list-element-footer">
                       {% if league|has_complete_user_registration:request.user %}
                         {% if league.team_set.exists and league.game_set.exists %}
-                          <a class="page-home-leagues-grid-content-list-element-list-element-footer-action button button-block" href="{% url 'league_teams' year=league.year season=league.season.slug division=league.night_slug %}">
+                          <a class="page-home-leagues-content-list-element-list-element-footer-action button button-block" href="{% url 'league_teams' year=league.year season=league.season.slug division=league.night_slug %}">
                             View Teams
                           </a>
                         {% else %}
-                          <div class="page-home-leagues-grid-content-list-element-list-element-footer-message">
+                          <div class="page-home-leagues-content-list-element-list-element-footer-message">
                             Thank you for registering, teams are coming soon!
                           </div>
                         {% endif %}
                       {% else %}
 
                         {% if league|is_accepting_registrations:request.user %}
-                          <a class="page-home-leagues-grid-content-list-element-list-element-footer-action button button-block button-warning" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">
+                          <a class="page-home-leagues-content-list-element-list-element-footer-action button button-block button-warning" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">
                             {% if league|is_waitlisting_registrations:request.user %}
                               Join Waitlist
                             {% else %}
@@ -65,11 +65,11 @@
                           </a>
                         {% else %}
                           {% if not league.is_after_registration_start %}
-                            <div class="page-home-leagues-grid-content-list-element-list-element-footer-message">
+                            <div class="page-home-leagues-content-list-element-list-element-footer-message">
                               Registration opening soon!
                             </div>
                           {% else %}
-                            <div class="page-home-leagues-grid-content-list-element-list-element-footer-message">
+                            <div class="page-home-leagues-content-list-element-list-element-footer-message">
                               Registration is closed.
                             </div>
                           {% endif %}
@@ -90,7 +90,7 @@
   <div class="page-home-info">
     <div class="page-home-info-news page-home-info-section">
       <div class="page-home-info-section-header">
-        <h1><i class="fa fa-newspaper-o" aria-hidden="true"></i>&nbsp;News</h1>
+        <h1>News</h1>
       </div>
       <div class="page-home-info-section-content">
         <ul class="page-home-info-section-content-list">
@@ -111,7 +111,7 @@
     </div>
     <div class="page-home-info-events page-home-info-section">
       <div class="page-home-info-section-header">
-        <h1><i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;Events</h1>
+        <h1>Events</h1>
       </div>
       <div class="page-home-info-section-content">
         <ul class="page-home-info-section-content-list">
