@@ -110,11 +110,14 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.request',
     'django.core.context_processors.static',
+
     'pybb.context_processors.processor',
+
     'ultimate.context_processors.google_analytics',
     'ultimate.context_processors.menu_leagues',
     'ultimate.context_processors.menu_items_home_sidebar',
     'ultimate.context_processors.menu_items_nav',
+    'ultimate.context_processors.social_links',
     'ultimate.context_processors.user_profile_is_complete',
     'ultimate.context_processors.user_rating_is_complete',
 )
@@ -176,3 +179,11 @@ PAYPAL_CALLBACKS = [
 PYBB_DEFAULT_TITLE = 'A2Ultimate Forums'
 PYBB_TEMPLATE = 'layout/forum_base.html'
 PYBB_DEFAULT_TIME_ZONE = -5
+
+# SOCIAL
+SOCIAL = [
+    {'name': 'facebook', 'url': '',},
+    {'name': 'flickr', 'url': '',},
+    {'name': 'instagram', 'url': '',},
+    {'name': 'twitter', 'url': '',},
+]

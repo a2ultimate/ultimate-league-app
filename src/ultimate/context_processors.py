@@ -57,3 +57,9 @@ def google_analytics(request):
     return {
         'GOOGLE_ANALYTICS_TRACKERS': trackers,
         }
+
+
+def social_links(request):
+    return {
+        'SOCIAL_LINKS': getattr(settings, 'SOCIAL', []),
+        }

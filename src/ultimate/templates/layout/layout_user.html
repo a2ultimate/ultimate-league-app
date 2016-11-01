@@ -31,12 +31,15 @@
 
             <div class="content-inner-left-social">
               <ul class="content-inner-left-social-list">
-                <li class="content-inner-left-social-list-element">
-                  <a class="content-inner-left-social-list-element-link social-icon social-icon-twitter" href="http://twitter.com/a2ultimate" target="_blank">Twitter</a>
-                </li>
-                <li class="content-inner-left-social-list-element">
-                  <a class="content-inner-left-social-list-element-link social-icon social-icon-facebook" href="https://www.facebook.com/annarborultimate" target="_blank">Facebook</a>
-                </li>
+                {% if SOCIAL_LINKS %}
+                  {% for link in SOCIAL_LINKS %}
+                    {% if link.url %}
+                      <li class="content-inner-left-social-list-element">
+                        <a class="content-inner-left-social-list-element-link social-icon social-icon-{{ link.name }}" href="{{ link.url }}" target="_blank">{{ link.name|title }}</a>
+                      </li>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
               </ul>
             </div>
 
