@@ -337,6 +337,7 @@ def teamgeneration(request, year=None, season=None, division=None):
                 for key in captain_users:
                     captain_users[key] = captain_teams.index(captain_users[key])
 
+
                 groups = list({'baggage_id': k, 'players': sorted(list(v), key=lambda k: k['rating_total'], reverse=True)} for k, v in groupby(players, key=lambda k: k['baggage_id']))
 
                 for group in groups:
@@ -504,6 +505,28 @@ def teamgeneration(request, year=None, season=None, division=None):
                                     'team_id': team_id,
                                     'users': []
                                 })
+
+                for new_team in new_teams:
+                    team = None
+                    if new_team['team_id']:
+                        team = Team.objects.get(id=new_team['team_id'])
+                    else:
+                        team = Team()
+                        team.league = league
+                        team.hidden = True
+                        team.save()
+
+                    if team:
+                        for user in new_team['users']:
+                            try:
+                                team_member = TeamMember.objects.get(team__league=league, user=user)
+                            except ObjectDoesNotExist:
+                                team_member = TeamMember()
+                                team_member.user = user
+
+                            team_member.captain = user in new_team['captains']
+                            team_member.team = team
+                            team_member.save()
 
                 messages.success(request, 'Teams were successfully saved.')
                 return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
