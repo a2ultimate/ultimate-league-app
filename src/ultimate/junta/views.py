@@ -314,6 +314,29 @@ def teamgeneration(request, year=None, season=None, division=None):
             })
 
         if request.method == 'POST':
+            def save_teams(teams_list):
+                for team_object in teams_list:
+                    team = None
+                    if team_object['team_id']:
+                        team = Team.objects.get(id=team_object['team_id'])
+                    else:
+                        team = Team()
+                        team.league = league
+                        team.hidden = True
+                        team.save()
+
+                    if team:
+                        for user in team_object['users']:
+                            try:
+                                team_member = TeamMember.objects.get(team__league=league, user=user)
+                            except ObjectDoesNotExist:
+                                team_member = TeamMember()
+                                team_member.user = user
+
+                            team_member.captain = user in team_object['captains']
+                            team_member.team = team
+                            team_member.save()
+
             players.sort(key=lambda k: (k['team_id'], k['baggage_id']))
 
             new_teams = []
@@ -506,27 +529,7 @@ def teamgeneration(request, year=None, season=None, division=None):
                                     'users': []
                                 })
 
-                for new_team in new_teams:
-                    team = None
-                    if new_team['team_id']:
-                        team = Team.objects.get(id=new_team['team_id'])
-                    else:
-                        team = Team()
-                        team.league = league
-                        team.hidden = True
-                        team.save()
-
-                    if team:
-                        for user in new_team['users']:
-                            try:
-                                team_member = TeamMember.objects.get(team__league=league, user=user)
-                            except ObjectDoesNotExist:
-                                team_member = TeamMember()
-                                team_member.user = user
-
-                            team_member.captain = user in new_team['captains']
-                            team_member.team = team
-                            team_member.save()
+                save_teams(new_teams)
 
                 messages.success(request, 'Teams were successfully saved.')
                 return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
@@ -549,27 +552,7 @@ def teamgeneration(request, year=None, season=None, division=None):
                 return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
             # if POST and no other parameter, need to save newly generated teams
             else:
-                for new_team in new_teams:
-                    team = None
-                    if new_team['team_id']:
-                        team = Team.objects.get(id=new_team['team_id'])
-                    else:
-                        team = Team()
-                        team.league = league
-                        team.hidden = True
-                        team.save()
-
-                    if team:
-                        for user in new_team['users']:
-                            try:
-                                team_member = TeamMember.objects.get(team__league=league, user=user)
-                            except ObjectDoesNotExist:
-                                team_member = TeamMember()
-                                team_member.user = user
-
-                            team_member.captain = user in new_team['captains']
-                            team_member.team = team
-                            team_member.save()
+                save_teams(new_teams)
 
                 messages.success(request, 'Teams were successfully generated.')
                 return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
