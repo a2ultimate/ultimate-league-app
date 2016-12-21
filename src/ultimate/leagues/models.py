@@ -232,15 +232,15 @@ class League(models.Model):
     def is_waitlist(self, user=None):
         # if the league is open and its after the waitlist date or league is full
         if not self.is_open(user):
-            return False
+            return True
 
-        if datetime.now() < self.waitlist_start_date:
-            return False
+        if datetime.now() >= self.waitlist_start_date:
+            return True
 
-        if len(self.get_complete_registrations()) < self.max_players:
-            return False
+        if len(self.get_complete_registrations()) >= self.max_players:
+            return True
 
-        return True
+        return False
 
 
     def get_user_games(self, user):
