@@ -1,11 +1,13 @@
 {% extends 'layout/layout_home.html' %}
 
+{% load cache %}
 {% load i18n %}
 {% load leagues %}
 {% load utility %}
 
 {% block content %}
 <div class="page-home">
+
   {% if menu_leagues %}
     <div class="page-home-leagues">
       <div class="page-home-leagues-header"></div>
@@ -88,48 +90,53 @@
   {% endif %}
 
   <div class="page-home-info">
-    <div class="page-home-info-news page-home-info-section">
-      <div class="page-home-info-section-header">
-        <h1>News</h1>
+    {% cache 500 page_home_info_news %}
+      <div class="page-home-info-news page-home-info-section">
+        <div class="page-home-info-section-header">
+          <h1>News</h1>
+        </div>
+        <div class="page-home-info-section-content">
+          <ul class="page-home-info-section-content-list">
+            {% for announcement in announcements %}
+              <li class="page-home-info-section-content-list-element">
+                <a class="page-home-info-section-content-list-element-link" href="{{ announcement.get_absolute_url }}">
+                  <div class="page-home-info-section-content-list-element-link-content">
+                    {{ announcement.name }}
+                  </div>
+                  <div class="page-home-info-section-content-list-element-link-footer">
+                    {{ announcement.created|timesince }} ago
+                  </div>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
       </div>
-      <div class="page-home-info-section-content">
-        <ul class="page-home-info-section-content-list">
-          {% for announcement in announcements %}
-            <li class="page-home-info-section-content-list-element">
-              <a class="page-home-info-section-content-list-element-link" href="{{ announcement.get_absolute_url }}">
-                <div class="page-home-info-section-content-list-element-link-content">
-                  {{ announcement.name }}
-                </div>
-                <div class="page-home-info-section-content-list-element-link-footer">
-                  {{ announcement.created|timesince }} ago
-                </div>
-              </a>
-            </li>
-          {% endfor %}
-        </ul>
+    {% endcache %}
+
+    {% cache 500 page_home_info_events %}
+      <div class="page-home-info-events page-home-info-section">
+        <div class="page-home-info-section-header">
+          <h1>Events</h1>
+        </div>
+        <div class="page-home-info-section-content">
+          <ul class="page-home-info-section-content-list">
+            {% for event in events %}
+              <li class="page-home-info-section-content-list-element">
+                <a class="page-home-info-section-content-list-element-link" href="{{ event.description }}">
+                  <div class="page-home-info-section-content-list-element-link-content">
+                    {{ event.summary }}
+                  </div>
+                  <div class="page-home-info-section-content-list-element-link-footer">
+                    {{ event.start|date:'l, F jS' }} at {{ event.start|date:'g:iA'|lower }}
+                  </div>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
       </div>
-    </div>
-    <div class="page-home-info-events page-home-info-section">
-      <div class="page-home-info-section-header">
-        <h1>Events</h1>
-      </div>
-      <div class="page-home-info-section-content">
-        <ul class="page-home-info-section-content-list">
-          {% for event in events %}
-            <li class="page-home-info-section-content-list-element">
-              <a class="page-home-info-section-content-list-element-link" href="{{ event.description }}">
-                <div class="page-home-info-section-content-list-element-link-content">
-                  {{ event.summary }}
-                </div>
-                <div class="page-home-info-section-content-list-element-link-footer">
-                  {{ event.start|date:'l, F jS' }} at {{ event.start|date:'g:iA'|lower }}
-                </div>
-              </a>
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
+    {% endcache %}
   </div>
 
   <div class="page-home-follow">
