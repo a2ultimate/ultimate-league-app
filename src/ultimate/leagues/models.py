@@ -390,13 +390,13 @@ class League(models.Model):
 
     def sync_division_email_group(self, force=False):
         group_address = '{}{}-{}-{}@lists.annarborultimate.org'.format(
-            self.season,
+            self.season.slug,
             self.league_start_date.strftime('%y'),
             self.league_start_date.strftime('%a'),
             self.level,
             ).lower()
         group_name = '{} {} {} {}'.format(
-            self.season.title(),
+            self.season.name,
             self.league_start_date.strftime('%Y'),
             self.league_start_date.strftime('%A'),
             self.display_level,
@@ -425,13 +425,13 @@ class League(models.Model):
 
     def sync_division_captains_email_group(self, force=False):
         group_address = '{}{}-{}-{}-captains@lists.annarborultimate.org'.format(
-            self.season,
+            self.season.slug,
             self.league_start_date.strftime('%y'),
             self.league_start_date.strftime('%a'),
             self.level,
             ).lower()
         group_name = '{} {} {} {} Captains'.format(
-            self.season.title(),
+            self.season.name,
             self.league_start_date.strftime('%Y'),
             self.league_start_date.strftime('%A'),
             self.display_level,
@@ -960,14 +960,14 @@ class Team(models.Model):
 
     def sync_email_group(self, force=False):
         group_address = '{}{}-{}-{}-{}@lists.annarborultimate.org'.format(
-            self.league.season,
+            self.league.season.slug,
             self.league.league_start_date.strftime('%y'),
             self.league.league_start_date.strftime('%a'),
             self.league.level,
             self.id,
             ).lower()
         group_name = '{} {} {} {} Team {}'.format(
-            self.league.season.title(),
+            self.league.season.name,
             self.league.league_start_date.strftime('%Y'),
             self.league.league_start_date.strftime('%A'),
             self.league.display_level,
