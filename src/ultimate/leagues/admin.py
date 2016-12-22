@@ -84,7 +84,7 @@ class LeagueAdmin(admin.ModelAdmin):
     list_display_links = ('id',)
     list_filter = ('year', 'season', 'night', 'gender', 'state', )
     prepopulated_fields = {'night_slug': ('night',)}
-    search_fields = ['year', 'season', 'night', 'night_slug', 'gender',]
+    search_fields = ['year', 'season__name', 'season__slug', 'night', 'night_slug', 'gender',]
 
 
 class RegistrationsAdmin(admin.ModelAdmin):
