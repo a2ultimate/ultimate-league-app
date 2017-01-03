@@ -1,12 +1,12 @@
 from datetime import date, datetime
 import random
 
-from django.db import models
-from django.db.models import Count
-from django.db.transaction import atomic
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
+from django.db.models import Count
+from django.db.transaction import atomic
 from django.template.defaultfilters import slugify
 
 from pybb.models import *
@@ -716,19 +716,19 @@ class Registrations(models.Model):
 
     @atomic
     def leave_baggage_group(self):
-        if datetime.now() > self.league.waitlist_start_date:
+        if datetime.now() >= self.league.waitlist_start_date:
             return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
 
         try:
-            with transaction.atomic():
-                baggage = Baggage()
-                baggage.save()
+            baggage = Baggage()
+            baggage.save()
 
-                if self.baggage.get_registrations().count() <= 1:
-                    self.baggage.delete()
 
-                self.baggage = baggage
-                self.save()
+            if self.baggage.get_registrations().count() <= 1:
+                self.baggage.delete()
+
+            self.baggage = baggage
+            self.save()
 
         except:
             return False
