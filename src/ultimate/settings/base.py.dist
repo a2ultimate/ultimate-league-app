@@ -85,6 +85,9 @@ INSTALLED_APPS = (
     'django.contrib.webdesign',
 
     'captcha',
+    'compat',
+    'hijack',
+    'hijack_admin',
     'paypal.standard.ipn',
     'pybb',
     'pytils',
@@ -158,6 +161,11 @@ GOOGLE_APPS_CALENDAR_ID = ''
 
 # Annoucements Email Group/List Address
 ANNOUNCEMENTS_GROUP_ADDRESS = ''
+
+
+# Hijack
+HIJACK_ALLOW_GET_REQUESTS = True
+HIJACK_REGISTER_ADMIN = False
 
 
 # Paypal Info
