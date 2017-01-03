@@ -20,8 +20,6 @@
 .team-card-header-info {
   padding: 0.5rem 1rem;
 
-  border-top-left-radius: $border-radius;
-  border-top-right-radius: $border-radius;
   background-color: $color-gray-dark;
 
   font-size: $font-size-sm;
@@ -42,7 +40,7 @@
 }
 
 .team-card-content {
-  padding: 0.5rem 1.5rem 1rem;
+  padding: 0.5rem 1rem 1rem;
 
   background-color: $color-light-gray;
 }
@@ -137,9 +135,17 @@
 
   &:first-child {
     padding-left: 0;
+
+    .team-card-content {
+      padding-right: 1.5rem;
+    }
   }
 
   &:last-child {
     padding-right: 0;
+
+    .team-card-content {
+      padding-left: 1.5rem;
+    }
   }
 }

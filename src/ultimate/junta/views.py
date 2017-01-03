@@ -165,12 +165,12 @@ def registrationexport(request, year=None, season=None, division=None):
 
         # TODO need to use better "complete" registration query
         registrations = Registrations.objects.filter(league=league) \
-            .extra(select={'average_experience':'SELECT COALESCE(AVG(player_ratings.experience), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.experience != 0'}) \
-            .extra(select={'average_strategy':'SELECT COALESCE(AVG(player_ratings.strategy), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.strategy != 0'}) \
-            .extra(select={'average_throwing':'SELECT COALESCE(AVG(player_ratings.throwing), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.throwing != 0'}) \
-            .extra(select={'average_athleticism':'SELECT COALESCE(AVG(player_ratings.athleticism), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.athleticism != 0'}) \
-            .extra(select={'average_competitiveness':'SELECT COALESCE(AVG(player_ratings.competitiveness), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.competitiveness != 0'}) \
-            .extra(select={'average_spirit':'SELECT COALESCE(AVG(player_ratings.spirit), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.spirit != 0'}) \
+            .extra(select={'average_experience':'SELECT COALESCE(AVG(user_playerratings.experience), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.experience != 0'}) \
+            .extra(select={'average_strategy':'SELECT COALESCE(AVG(user_playerratings.strategy), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.strategy != 0'}) \
+            .extra(select={'average_throwing':'SELECT COALESCE(AVG(user_playerratings.throwing), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.throwing != 0'}) \
+            .extra(select={'average_athleticism':'SELECT COALESCE(AVG(user_playerratings.athleticism), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.athleticism != 0'}) \
+            .extra(select={'average_competitiveness':'SELECT COALESCE(AVG(user_playerratings.competitiveness), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.competitiveness != 0'}) \
+            .extra(select={'average_spirit':'SELECT COALESCE(AVG(user_playerratings.spirit), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.spirit != 0'}) \
             .extra(select={'num_teams':'SELECT COUNT(team_member.id) FROM team_member WHERE team_member.user_id = registrations.user_id GROUP BY team_member.user_id'})
 
         response = HttpResponse(content_type='text/csv')
@@ -314,6 +314,29 @@ def teamgeneration(request, year=None, season=None, division=None):
             })
 
         if request.method == 'POST':
+            def save_teams(teams_list):
+                for team_object in teams_list:
+                    team = None
+                    if team_object['team_id']:
+                        team = Team.objects.get(id=team_object['team_id'])
+                    else:
+                        team = Team()
+                        team.league = league
+                        team.hidden = True
+                        team.save()
+
+                    if team:
+                        for user in team_object['users']:
+                            try:
+                                team_member = TeamMember.objects.get(team__league=league, user=user)
+                            except ObjectDoesNotExist:
+                                team_member = TeamMember()
+                                team_member.user = user
+
+                            team_member.captain = user in team_object['captains']
+                            team_member.team = team
+                            team_member.save()
+
             players.sort(key=lambda k: (k['team_id'], k['baggage_id']))
 
             new_teams = []
@@ -336,6 +359,7 @@ def teamgeneration(request, year=None, season=None, division=None):
                 captain_teams = list(set(captain_users.values()))
                 for key in captain_users:
                     captain_users[key] = captain_teams.index(captain_users[key])
+
 
                 groups = list({'baggage_id': k, 'players': sorted(list(v), key=lambda k: k['rating_total'], reverse=True)} for k, v in groupby(players, key=lambda k: k['baggage_id']))
 
@@ -505,6 +529,8 @@ def teamgeneration(request, year=None, season=None, division=None):
                                     'users': []
                                 })
 
+                save_teams(new_teams)
+
                 messages.success(request, 'Teams were successfully saved.')
                 return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
 
@@ -526,27 +552,7 @@ def teamgeneration(request, year=None, season=None, division=None):
                 return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
             # if POST and no other parameter, need to save newly generated teams
             else:
-                for new_team in new_teams:
-                    team = None
-                    if new_team['team_id']:
-                        team = Team.objects.get(id=new_team['team_id'])
-                    else:
-                        team = Team()
-                        team.league = league
-                        team.hidden = True
-                        team.save()
-
-                    if team:
-                        for user in new_team['users']:
-                            try:
-                                team_member = TeamMember.objects.get(team__league=league, user=user)
-                            except ObjectDoesNotExist:
-                                team_member = TeamMember()
-                                team_member.user = user
-
-                            team_member.captain = user in new_team['captains']
-                            team_member.team = team
-                            team_member.save()
+                save_teams(new_teams)
 
                 messages.success(request, 'Teams were successfully generated.')
                 return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))

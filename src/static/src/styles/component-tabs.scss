@@ -1,7 +1,16 @@
 .tabs {
+  overflow: hidden;
+
   margin-bottom: 1rem;
 
-  border-bottom: 0.1875rem solid $color-dark-gray;
+  border-radius: $border-radius;
+
+  font-size: 0;
+
+  @include media($desktop) {
+    border-bottom: 0.25rem solid $color-dark-gray;
+    border-radius: 0;
+  }
 }
 
 .tabs-list {
@@ -12,38 +21,45 @@
 }
 
 .tab {
-  display: inline-block;
+  display: block;
+
+  background-color: $color-light-gray;
+
+  font-size: 1rem;
+
+  @include media($desktop) {
+    display: inline-block;
+    overflow: hidden;
+
+    border-top-left-radius: $border-radius;
+    border-top-right-radius: $border-radius;
+
+    + .tab {
+      margin-left: 0.5rem;
+    }
+  }
+}
+
+.tab-selected {
+  color: $color-white;
+  background-color: $color-dark-gray;
+
+  font-weight: 500;
 }
 
 .tab-link {
   display: block;
 
-  margin-right: 0.25rem;
-  padding: 0.625rem 1rem;
+  padding: 0.75rem 1rem;
 
-  border-top-left-radius: $border-radius;
-  border-top-right-radius: $border-radius;
-  background-color: $color-light-gray;
-
-  &:active {
-    text-decoration: none;
-  }
+  text-decoration: none !important;
 
   &:focus,
   &:hover {
-    text-decoration: none;
-
-    background-color: $color-light-gray-dark;
+    background-color: rgba(0, 0, 0, 0.1);
   }
 
-  .tab.tab-selected & {
+  .tab-selected & {
     color: $color-white;
-    background-color: $color-dark-gray;
-
-    font-weight: 500;
-
-    &:hover {
-      background-color: $color-dark-gray-dark;
-    }
   }
 }

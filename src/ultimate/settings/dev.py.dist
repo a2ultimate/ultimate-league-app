@@ -9,6 +9,12 @@ ALLOWED_HOSTS = [
     'localhost',
 ]
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
+
 INSTALLED_APPS += (
     'debug_toolbar',
     'django_extensions',

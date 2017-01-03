@@ -176,47 +176,47 @@
         <input value="Generate Teams" name="generate_teams" class="button button-success" type="submit" />
         <a class="button button-link" href="{% url 'teamgeneration'  %}">Cancel</a>
       {% endif %}
-    </form>
 
-    {% if players %}
-      <table class="table table-condensed table-striped">
-        <thead>
-          <tr>
-            {% if not teams %}
-              <th>Team Captain</th>
-            {% endif %}
-            <th>Name</th>
-            <th>Gender</th>
-            <th>Rating</th>
-            <th>Absences</th>
-            <th>Baggage</th>
-            <th>Team</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for player in players %}
+      {% if players %}
+        <table class="table table-condensed table-striped">
+          <thead>
             <tr>
               {% if not teams %}
-                <td>
-                  <select name="player_captain_{{ player.user.id }}">
-                    {% for i in 17|get_range %}
-                      <option value="{{ i }}">{{ i }}</option>
-                    {% endfor %}
-                  </select>
-                </td>
+                <th>Team Captain</th>
               {% endif %}
-              <td>
-                {{ player.user.get_full_name }}
-              </td>
-              <td>{{ player.user.profile.gender }}</td>
-              <td title="{{ player.rating_totals|pprint }}">{{ player.rating_total|floatformat:2 }}</td>
-              <td>{{ player.attendance }}</td>
-              <td>{{ player.baggage_id }}</td>
-              <td>{{ player.team_id }}</td>
+              <th>Name</th>
+              <th>Gender</th>
+              <th>Rating</th>
+              <th>Absences</th>
+              <th>Baggage</th>
+              <th>Team</th>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% endif %}
+          </thead>
+          <tbody>
+            {% for player in players %}
+              <tr>
+                {% if not teams %}
+                  <td>
+                    <select name="player_captain_{{ player.user.id }}">
+                      {% for i in 17|get_range %}
+                        <option value="{{ i }}">{{ i }}</option>
+                      {% endfor %}
+                    </select>
+                  </td>
+                {% endif %}
+                <td>
+                  {{ player.user.get_full_name }}
+                </td>
+                <td>{{ player.user.profile.gender }}</td>
+                <td title="{{ player.rating_totals|pprint }}">{{ player.rating_total|floatformat:2 }}</td>
+                <td>{{ player.attendance }}</td>
+                <td>{{ player.baggage_id }}</td>
+                <td>{{ player.team_id }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endif %}
+    </form>
   {% endif %}
 {% endblock %}

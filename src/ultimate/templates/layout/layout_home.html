@@ -1,3 +1,4 @@
+{% load cache %}
 {% load staticfiles %}
 {% load utility %}
 
@@ -20,30 +21,35 @@
 
     <div class="content">
       <div class="content-inner">
-        <div class="content-inner-left">
-          <div class="content-inner-left-logo">
-            <img class="content-inner-left-logo-image" src="{% webpack_static 'images/assets/logo.svg' %}">
-          </div>
+        {% cache 500 content_inner_left %}
+          <div class="content-inner-left">
+            <div class="content-inner-left-logo">
+              <img class="content-inner-left-logo-image" src="{% webpack_static 'images/assets/logo.svg' %}">
+            </div>
 
-          <div class="content-inner-left-social">
-            <ul class="content-inner-left-social-list">
-              <li class="content-inner-left-social-list-element">
-                <a class="content-inner-left-social-list-element-link social-icon social-icon-twitter" href="http://twitter.com/a2ultimate" target="_blank">Twitter</a>
-              </li>
-              <li class="content-inner-left-social-list-element">
-                <a class="content-inner-left-social-list-element-link social-icon social-icon-facebook" href="https://www.facebook.com/annarborultimate" target="_blank">Facebook</a>
-              </li>
-            </ul>
-          </div>
+            <div class="content-inner-left-social">
+              <ul class="content-inner-left-social-list">
+                {% if SOCIAL_LINKS %}
+                  {% for link in SOCIAL_LINKS %}
+                    {% if link.url %}
+                      <li class="content-inner-left-social-list-element">
+                        <a class="content-inner-left-social-list-element-link social-icon social-icon-{{ link.name }}" href="{{ link.url }}" target="_blank">{{ link.name|title }}</a>
+                      </li>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              </ul>
+            </div>
 
-          <div class="content-inner-left-links">
-            <ul class="content-inner-left-links-list">
-              {% autoescape off %}
-                {{ menu_items_home_sidebar|prepare_menu_items|unordered_list }}
-              {% endautoescape %}
-            </ul>
+            <div class="content-inner-left-links">
+              <ul class="content-inner-left-links-list">
+                {% autoescape off %}
+                  {{ menu_items_home_sidebar|prepare_menu_items|unordered_list }}
+                {% endautoescape %}
+              </ul>
+            </div>
           </div>
-        </div>
+        {% endcache %}
         <div class="content-inner-right">
           {% block content %}{% endblock %}
         </div>

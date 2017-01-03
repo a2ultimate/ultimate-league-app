@@ -1,5 +1,7 @@
 Django>=1.8,<1.8.99
 django-annoying==0.8.4
+django-hijack==2.1.2
+django-hijack-admin==2.1.2
 django-paypal==0.2.7
 django-pure-pagination==0.2.1
 django-simple-captcha==0.5.1

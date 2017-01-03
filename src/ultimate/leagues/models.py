@@ -1,12 +1,12 @@
 from datetime import date, datetime
 import random
 
-from django.db import models
-from django.db.models import Count
-from django.db.transaction import atomic
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
+from django.db.models import Count
+from django.db.transaction import atomic
 from django.template.defaultfilters import slugify
 
 from pybb.models import *
@@ -149,7 +149,7 @@ class League(models.Model):
 
     class Meta:
         db_table = u'league'
-        ordering = ['-year', 'season__order', 'league_start_date']
+        ordering = ['-year', '-season__order', '-league_start_date']
 
     def __unicode__(self):
         return ('%s %d %s' % (self.season, self.year, self.night)).replace('_', ' ')
@@ -232,15 +232,15 @@ class League(models.Model):
     def is_waitlist(self, user=None):
         # if the league is open and its after the waitlist date or league is full
         if not self.is_open(user):
-            return False
+            return True
 
-        if datetime.now() < self.waitlist_start_date:
-            return False
+        if datetime.now() >= self.waitlist_start_date:
+            return True
 
-        if len(self.get_complete_registrations()) < self.max_players:
-            return False
+        if len(self.get_complete_registrations()) >= self.max_players:
+            return True
 
-        return True
+        return False
 
 
     def get_user_games(self, user):
@@ -390,13 +390,13 @@ class League(models.Model):
 
     def sync_division_email_group(self, force=False):
         group_address = '{}{}-{}-{}@lists.annarborultimate.org'.format(
-            self.season,
+            self.season.slug,
             self.league_start_date.strftime('%y'),
             self.league_start_date.strftime('%a'),
             self.level,
             ).lower()
         group_name = '{} {} {} {}'.format(
-            self.season.title(),
+            self.season.name,
             self.league_start_date.strftime('%Y'),
             self.league_start_date.strftime('%A'),
             self.display_level,
@@ -425,13 +425,13 @@ class League(models.Model):
 
     def sync_division_captains_email_group(self, force=False):
         group_address = '{}{}-{}-{}-captains@lists.annarborultimate.org'.format(
-            self.season,
+            self.season.slug,
             self.league_start_date.strftime('%y'),
             self.league_start_date.strftime('%a'),
             self.level,
             ).lower()
         group_name = '{} {} {} {} Captains'.format(
-            self.season.title(),
+            self.season.name,
             self.league_start_date.strftime('%Y'),
             self.league_start_date.strftime('%A'),
             self.display_level,
@@ -716,19 +716,19 @@ class Registrations(models.Model):
 
     @atomic
     def leave_baggage_group(self):
-        if datetime.now() > self.league.waitlist_start_date:
+        if datetime.now() >= self.league.waitlist_start_date:
             return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
 
         try:
-            with transaction.atomic():
-                baggage = Baggage()
-                baggage.save()
+            baggage = Baggage()
+            baggage.save()
 
-                if self.baggage.get_registrations().count() <= 1:
-                    self.baggage.delete()
 
-                self.baggage = baggage
-                self.save()
+            if self.baggage.get_registrations().count() <= 1:
+                self.baggage.delete()
+
+            self.baggage = baggage
+            self.save()
 
         except:
             return False
@@ -960,14 +960,14 @@ class Team(models.Model):
 
     def sync_email_group(self, force=False):
         group_address = '{}{}-{}-{}-{}@lists.annarborultimate.org'.format(
-            self.league.season,
+            self.league.season.slug,
             self.league.league_start_date.strftime('%y'),
             self.league.league_start_date.strftime('%a'),
             self.league.level,
             self.id,
             ).lower()
         group_name = '{} {} {} {} Team {}'.format(
-            self.league.season.title(),
+            self.league.season.name,
             self.league.league_start_date.strftime('%Y'),
             self.league.league_start_date.strftime('%A'),
             self.league.display_level,

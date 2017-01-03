@@ -4,7 +4,7 @@ from django.conf import settings
 def menu_leagues(request):
     from ultimate.leagues.models import League
 
-    leagues = League.objects.filter(state__in=['closed', 'open', 'preview'])
+    leagues = League.objects.filter(state__in=['closed', 'open', 'preview']).reverse()
     leagues = [league for league in leagues if league.is_visible(request.user)]
 
     return {'menu_leagues': leagues}
@@ -56,4 +56,10 @@ def google_analytics(request):
 
     return {
         'GOOGLE_ANALYTICS_TRACKERS': trackers,
+        }
+
+
+def social_links(request):
+    return {
+        'SOCIAL_LINKS': getattr(settings, 'SOCIAL', []),
         }

@@ -15,4 +15,11 @@ urlpatterns = patterns('',
     (r'^forum/', include('pybb.urls', namespace='pybb')),
 
     (r'^captcha/', include('captcha.urls')),
+    (r'^hijack/', include('hijack.urls')),
 )
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += [
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    ]

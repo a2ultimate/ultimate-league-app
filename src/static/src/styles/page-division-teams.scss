@@ -8,17 +8,12 @@
 .page-division-teams-teams {
   margin-bottom: 2rem;
 
-  @include outer-container();
+  @include outer-container;
 }
 
-.page-division-teams-teams-row {
-  margin-bottom: 1rem;
-
-  @include row();
-}
-
-.page-division-teams-teams-row-team {
+.page-division-teams-teams-team {
   @include span-columns(6);
+  @include omega(2n);
 }
 
 .page-division-teams-notes {

@@ -4,6 +4,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import ugettext_lazy as _
 
+from hijack_admin.admin import HijackUserAdminMixin
+
 from ultimate.user.models import Player, PlayerRatings
 
 
@@ -21,7 +23,7 @@ class PlayerInline(admin.StackedInline):
     verbose_name_plural = 'player'
 
 
-class UserAdmin(BaseUserAdmin):
+class UserAdmin(BaseUserAdmin, HijackUserAdminMixin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name')}),
@@ -38,7 +40,8 @@ class UserAdmin(BaseUserAdmin):
 
     inlines = (PlayerInline,)
     list_display = ('email', 'first_name', 'last_name',
-                    'is_staff', 'is_superuser', 'date_joined',)
+                    'is_staff', 'is_superuser', 'date_joined',
+                    'hijack_field',)
     list_filter = BaseUserAdmin.list_filter + ('groups__name',)
     ordering = ('email',)
     search_fields = ('email', 'first_name', 'last_name',)
