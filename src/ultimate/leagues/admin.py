@@ -103,7 +103,7 @@ class RegistrationsAdmin(admin.ModelAdmin):
 
     list_display = ('id', 'league', 'user_details', 'registered', 'waitlist', 'status',)
     list_filter = ('league__year', 'league__season', 'league__night', 'paypal_complete', 'check_complete', 'waitlist', 'refunded',)
-    search_fields = ['user__first_name', 'user__last_name', 'user__email', 'paypal_invoice_id', 'baggage__id',]
+    search_fields = ['user__first_name', 'user__last_name', 'user__email', 'paypal_invoice_id', 'baggage__id', 'coupon__code']
 
     def get_form(self, request, obj=None, **kwargs):
         # just save obj reference for future processing in Inline
