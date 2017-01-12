@@ -24,10 +24,6 @@ def payment_success(sender, **kwargs):
         registration.registered = ipn_obj.payment_date
         registration.save()
 
-        if registration.coupon:
-            registration.coupon.update(
-                use_count=F('use_count') + 1, redeemed_at=datetime.now())
-
         print 'PayPal IPN Success: ' + ipn_obj.invoice
     except Registrations.DoesNotExist:
         print 'PayPal IPN Error: ' + ipn_obj.invoice + ' - Registration does not exist'
