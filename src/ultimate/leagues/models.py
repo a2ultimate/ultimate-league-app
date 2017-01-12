@@ -556,7 +556,10 @@ class Registrations(models.Model):
             if self.waiver_complete:
                 status = 'Waiting for Attendance Entry'
                 if self.attendance != None:
-                    status = 'Waiting for Payment'
+                    if self.pay_type == 'check':
+                        status = 'Waiting for Check'
+                    else:
+                        status = 'Waiting for Payment'
                     if self.check_complete or self.paypal_complete or self.payment_complete:
                         status = 'Complete'
 
