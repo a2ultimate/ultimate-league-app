@@ -1,12 +1,12 @@
 from datetime import date, datetime
 import random
 
-from django.db import models
-from django.db.models import Count
-from django.db.transaction import atomic
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
+from django.db.models import Count
+from django.db.transaction import atomic
 from django.template.defaultfilters import slugify
 
 from pybb.models import *
@@ -644,7 +644,10 @@ class Registrations(models.Model):
             if self.waiver_complete:
                 status = 'Waiting for Attendance Entry'
                 if self.attendance != None:
-                    status = 'Waiting for Payment'
+                    if self.pay_type == 'check':
+                        status = 'Waiting for Check'
+                    else:
+                        status = 'Waiting for Payment'
                     if self.check_complete or self.paypal_complete or self.payment_complete:
                         status = 'Complete'
 
@@ -804,19 +807,19 @@ class Registrations(models.Model):
 
     @atomic
     def leave_baggage_group(self):
-        if datetime.now() > self.league.waitlist_start_date:
+        if datetime.now() >= self.league.waitlist_start_date:
             return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
 
         try:
-            with transaction.atomic():
-                baggage = Baggage()
-                baggage.save()
+            baggage = Baggage()
+            baggage.save()
 
-                if self.baggage.get_registrations().count() <= 1:
-                    self.baggage.delete()
 
-                self.baggage = baggage
-                self.save()
+            if self.baggage.get_registrations().count() <= 1:
+                self.baggage.delete()
+
+            self.baggage = baggage
+            self.save()
 
         except:
             return False
@@ -1212,10 +1215,12 @@ class Coupon(models.Model):
             return int(max(price * (1 - (self.value / 100.0)), 0))
 
     def is_valid(self, league=None):
+        # if there is a use limit and uses have exceeded it
         if self.use_limit is not None and self.use_limit <= self.use_count:
             return False
 
-        if self.valid_until and self.valid_until >= datetime.now():
+        # if there is an expiration date and it today is past it
+        if self.valid_until and self.valid_until < datetime.now():
             return False
 
         if league is not None:

@@ -301,6 +301,9 @@ def registration(request, year, season, division, section=None):
                     registration.coupon = coupon
                     registration.save()
 
+                    registration.coupon.use_count = F('use_count') + 1
+                    registration.coupon.save()
+
                     messages.success(request, 'Your coupon code has been applied.')
                 else:
                     success = False
@@ -311,6 +314,9 @@ def registration(request, year, season, division, section=None):
 
         if 'remove_coupon' in request.POST:
             if registration.coupon:
+                registration.coupon.use_count = F('use_count') - 1
+                registration.coupon.save()
+
                 registration.coupon = None
                 registration.save()
 
@@ -324,11 +330,6 @@ def registration(request, year, season, division, section=None):
                 registration.payment_complete = True
                 registration.registered = datetime.now()
                 registration.save()
-
-                if registration.coupon:
-                    registration.coupon.use_count = F('use_count') + 1
-                    registration.coupon.redeemed_at = datetime.now()
-                    registration.coupon.save()
 
                 success = True
                 messages.success(request, 'Your registration has been processed.')

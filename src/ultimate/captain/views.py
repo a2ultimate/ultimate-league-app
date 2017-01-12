@@ -116,11 +116,11 @@ def playersurvey(request, team_id):
         raise Http403
 
     team_member_users = get_user_model().objects.filter(teammember__team=team).exclude(id=request.user.id) \
-        .extra(select={'average_experience':'SELECT COALESCE(AVG(player_ratings.experience), 0) FROM player_ratings WHERE player_ratings.user_id = user_user.id AND player_ratings.experience != 0'}) \
-        .extra(select={'average_strategy':'SELECT COALESCE(AVG(player_ratings.strategy), 0) FROM player_ratings WHERE player_ratings.user_id = user_user.id AND player_ratings.strategy != 0'}) \
-        .extra(select={'average_throwing':'SELECT COALESCE(AVG(player_ratings.throwing), 0) FROM player_ratings WHERE player_ratings.user_id = user_user.id AND player_ratings.throwing != 0'}) \
-        .extra(select={'average_athleticism':'SELECT COALESCE(AVG(player_ratings.athleticism), 0) FROM player_ratings WHERE player_ratings.user_id = user_user.id AND player_ratings.athleticism != 0'}) \
-        .extra(select={'average_spirit':'SELECT COALESCE(AVG(player_ratings.spirit), 0) FROM player_ratings WHERE player_ratings.user_id = user_user.id AND player_ratings.spirit != 0'}) \
+        .extra(select={'average_experience':'SELECT COALESCE(AVG(user_playerratings.experience), 0) FROM user_playerratings WHERE user_playerratings.user_id = user_user.id AND user_playerratings.experience != 0'}) \
+        .extra(select={'average_strategy':'SELECT COALESCE(AVG(user_playerratings.strategy), 0) FROM user_playerratings WHERE user_playerratings.user_id = user_user.id AND user_playerratings.strategy != 0'}) \
+        .extra(select={'average_throwing':'SELECT COALESCE(AVG(user_playerratings.throwing), 0) FROM user_playerratings WHERE user_playerratings.user_id = user_user.id AND user_playerratings.throwing != 0'}) \
+        .extra(select={'average_athleticism':'SELECT COALESCE(AVG(user_playerratings.athleticism), 0) FROM user_playerratings WHERE user_playerratings.user_id = user_user.id AND user_playerratings.athleticism != 0'}) \
+        .extra(select={'average_spirit':'SELECT COALESCE(AVG(user_playerratings.spirit), 0) FROM user_playerratings WHERE user_playerratings.user_id = user_user.id AND user_playerratings.spirit != 0'}) \
         .distinct()
 
     try:

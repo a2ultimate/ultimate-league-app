@@ -23,7 +23,7 @@
 
     <div class="content">
       <div class="content-inner">
-        {% cache 500 content_inner_left user.is_junta %}
+        {% cache 500 content_inner_left_user user.is_junta %}
           <div class="content-inner-left">
             <div class="content-inner-left-logo">
               <img class="content-inner-left-logo-image" src="{% webpack_static 'images/assets/logo.svg' %}">

@@ -165,12 +165,12 @@ def registrationexport(request, year=None, season=None, division=None):
 
         # TODO need to use better "complete" registration query
         registrations = Registrations.objects.filter(league=league) \
-            .extra(select={'average_experience':'SELECT COALESCE(AVG(player_ratings.experience), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.experience != 0'}) \
-            .extra(select={'average_strategy':'SELECT COALESCE(AVG(player_ratings.strategy), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.strategy != 0'}) \
-            .extra(select={'average_throwing':'SELECT COALESCE(AVG(player_ratings.throwing), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.throwing != 0'}) \
-            .extra(select={'average_athleticism':'SELECT COALESCE(AVG(player_ratings.athleticism), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.athleticism != 0'}) \
-            .extra(select={'average_competitiveness':'SELECT COALESCE(AVG(player_ratings.competitiveness), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.competitiveness != 0'}) \
-            .extra(select={'average_spirit':'SELECT COALESCE(AVG(player_ratings.spirit), 0) FROM player_ratings WHERE player_ratings.user_id = registrations.user_id AND player_ratings.spirit != 0'}) \
+            .extra(select={'average_experience':'SELECT COALESCE(AVG(user_playerratings.experience), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.experience != 0'}) \
+            .extra(select={'average_strategy':'SELECT COALESCE(AVG(user_playerratings.strategy), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.strategy != 0'}) \
+            .extra(select={'average_throwing':'SELECT COALESCE(AVG(user_playerratings.throwing), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.throwing != 0'}) \
+            .extra(select={'average_athleticism':'SELECT COALESCE(AVG(user_playerratings.athleticism), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.athleticism != 0'}) \
+            .extra(select={'average_competitiveness':'SELECT COALESCE(AVG(user_playerratings.competitiveness), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.competitiveness != 0'}) \
+            .extra(select={'average_spirit':'SELECT COALESCE(AVG(user_playerratings.spirit), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.spirit != 0'}) \
             .extra(select={'num_teams':'SELECT COUNT(team_member.id) FROM team_member WHERE team_member.user_id = registrations.user_id GROUP BY team_member.user_id'})
 
         response = HttpResponse(content_type='text/csv')
