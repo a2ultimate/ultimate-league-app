@@ -1124,10 +1124,12 @@ class Coupon(models.Model):
             return int(max(price * (1 - (self.value / 100.0)), 0))
 
     def is_valid(self, league=None):
+        # if there is a use limit and uses have exceeded it
         if self.use_limit is not None and self.use_limit <= self.use_count:
             return False
 
-        if self.valid_until and self.valid_until >= datetime.now():
+        # if there is an expiration date and it today is past it
+        if self.valid_until and self.valid_until < datetime.now():
             return False
 
         if league is not None:
