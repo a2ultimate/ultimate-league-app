@@ -242,7 +242,6 @@ class League(models.Model):
 
         return False
 
-
     def get_user_games(self, user):
         return self.game_set.filter(gameteams__team__teammember__user=user).order_by('date')
 
@@ -276,31 +275,31 @@ class League(models.Model):
     def get_registrations_for_user(self, user):
         return self.get_registrations().filter(user=user).order_by('registered')
 
-    def get_complete_registrations(self, registrations = None):
+    def get_complete_registrations(self, registrations=None):
         if not registrations:
             registrations = self.get_registrations()
 
         return [r for r in registrations if r.is_complete and not r.waitlist and not r.refunded]
 
-    def get_waitlist_registrations(self, registrations = None):
+    def get_waitlist_registrations(self, registrations=None):
         if not registrations:
             registrations = self.get_registrations()
 
         return [r for r in registrations if r.is_complete and r.waitlist and not r.refunded]
 
-    def get_incomplete_registrations(self, registrations = None):
+    def get_incomplete_registrations(self, registrations=None):
         if not registrations:
             registrations = self.get_registrations()
 
         return [r for r in registrations if not r.is_complete and not r.refunded]
 
-    def get_refunded_registrations(self, registrations = None):
+    def get_refunded_registrations(self, registrations=None):
         if not registrations:
             registrations = self.get_registrations()
 
         return [r for r in registrations if r.is_complete and r.refunded]
 
-    def get_unassigned_registrations(self, registrations = None):
+    def get_unassigned_registrations(self, registrations=None):
         team_member_users = [t.user for t in TeamMember.objects.filter(team__league=self).prefetch_related('user')]
 
         if not registrations:
@@ -310,7 +309,7 @@ class League(models.Model):
 
     def get_game_locations(self, games=None):
         if games is None:
-            games = self.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
+            games = self.game_set.order_by('date', 'start', 'field_name', 'field_name__field')
 
         locations = {}
 
@@ -326,7 +325,7 @@ class League(models.Model):
                     'field': game.field_name.field,
                     'start': game.start.time() if game.start else None,
                     'field_name': game.field_name,
-                    }
+                }
 
         locations = locations.values()
         locations.sort(key=lambda k: k['field_name'].name)
@@ -337,7 +336,7 @@ class League(models.Model):
 
     def get_game_dates(self, games=None, game_locations=None):
         if games is None:
-            games = self.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
+            games = self.game_set.order_by('date', 'start', 'field_name', 'field_name__field')
 
         if game_locations is None:
             game_locations = self.get_game_locations()
@@ -394,13 +393,14 @@ class League(models.Model):
             self.league_start_date.strftime('%y'),
             self.league_start_date.strftime('%a'),
             self.level,
-            ).lower()
+        ).lower()
+
         group_name = '{} {} {} {}'.format(
             self.season.name,
             self.league_start_date.strftime('%Y'),
             self.league_start_date.strftime('%A'),
             self.display_level,
-            )
+        )
 
         from ultimate.utils.google_api import GoogleAppsApi
         api = GoogleAppsApi()
@@ -429,13 +429,14 @@ class League(models.Model):
             self.league_start_date.strftime('%y'),
             self.league_start_date.strftime('%a'),
             self.level,
-            ).lower()
+        ).lower()
+
         group_name = '{} {} {} {} Captains'.format(
             self.season.name,
             self.league_start_date.strftime('%Y'),
             self.league_start_date.strftime('%A'),
             self.display_level,
-            )
+        )
 
         from ultimate.utils.google_api import GoogleAppsApi
         api = GoogleAppsApi()
@@ -492,7 +493,7 @@ class Baggage(models.Model):
 class Registrations(models.Model):
     REGISTRATION_PAYMENT_CHOICES = (
         ('check',    'Check'),
-        ('paypal',    'PayPal'),
+        ('paypal',   'PayPal'),
     )
 
     REGISTRATION_CAPTAIN_CHOICES = (
@@ -555,7 +556,7 @@ class Registrations(models.Model):
             status = 'Waiting for Liability Waiver'
             if self.waiver_complete:
                 status = 'Waiting for Attendance Entry'
-                if self.attendance != None:
+                if self.attendance is not None:
                     if self.pay_type == 'check':
                         status = 'Waiting for Check'
                     else:
@@ -583,19 +584,18 @@ class Registrations(models.Model):
                     percentage += interval
 
                     if self.league.check_price > 0 or \
-                        self.league.paypal_price > 0:
+                            self.league.paypal_price > 0:
 
                         if self.league.checks_accepted and \
-                            (self.pay_type or self.payment_complete):
+                                (self.pay_type or self.payment_complete):
                             percentage += interval
 
                         if self.check_complete or \
-                            self.paypal_complete or \
-                            self.payment_complete:
+                                self.paypal_complete or \
+                                self.payment_complete:
                             percentage += interval
                     else:
                         percentage += interval
-
 
         return int(round(percentage))
 
@@ -618,11 +618,11 @@ class Registrations(models.Model):
             return False
 
         if self.league.check_price > 0 or \
-            self.league.paypal_price > 0:
+                self.league.paypal_price > 0:
 
             if not self.check_complete and \
-                not self.paypal_complete and \
-                not self.payment_complete:
+                    not self.paypal_complete and \
+                    not self.payment_complete:
 
                 return False
 
@@ -631,18 +631,17 @@ class Registrations(models.Model):
 
         return True
 
-
     @property
     def is_refunded(self):
         if not self.is_ready_for_payment:
             return False
 
         if self.league.check_price > 0 or \
-            self.league.paypal_price > 0:
+                self.league.paypal_price > 0:
 
             if not self.check_complete and \
-                not self.paypal_complete and \
-                not self.payment_complete:
+                    not self.paypal_complete and \
+                    not self.payment_complete:
 
                 return False
 
@@ -725,7 +724,6 @@ class Registrations(models.Model):
         try:
             baggage = Baggage()
             baggage.save()
-
 
             if self.baggage.get_registrations().count() <= 1:
                 self.baggage.delete()
@@ -858,7 +856,7 @@ class Team(models.Model):
         return self.teammember_set.filter(captain=True)
 
     def get_members_with_baggage(self):
-        return self.teammember_set.extra(select={'baggage_id':'SELECT baggage_id FROM registrations JOIN team ON team.league_id = registrations.league_id WHERE registrations.user_id = team_member.user_id AND team.id = team_member.team_id'}).order_by('baggage_id')
+        return self.teammember_set.extra(select={'baggage_id': 'SELECT baggage_id FROM registrations JOIN team ON team.league_id = registrations.league_id WHERE registrations.user_id = team_member.user_id AND team.id = team_member.team_id'}).order_by('baggage_id')
 
     def get_male_members(self):
         return self.teammember_set.filter(user__profile__gender__iexact='M')
@@ -919,26 +917,26 @@ class Team(models.Model):
                     opponent_result = 3
 
             if (team_result == 1 and opponent_result == 1) or \
-                (team_result == 1 and opponent_result == 0) or \
-                (opponent_result == 1 and team_result == 0):
+                    (team_result == 1 and opponent_result == 0) or \
+                    (opponent_result == 1 and team_result == 0):
 
                 team_record['wins'] += 1
 
             elif (team_result == 2 and opponent_result == 2) or \
-                (team_result == 2 and opponent_result == 0) or \
-                (opponent_result == 2 and team_result == 0):
+                    (team_result == 2 and opponent_result == 0) or \
+                    (opponent_result == 2 and team_result == 0):
 
                 team_record['losses'] += 1
 
             elif (team_result == 3 and opponent_result == 3) or \
-                (team_result == 3 and opponent_result == 0) or \
-                (opponent_result == 3 and team_result == 0):
+                    (team_result == 3 and opponent_result == 0) or \
+                    (opponent_result == 3 and team_result == 0):
 
                 team_record['ties'] += 1
 
             elif team_result != opponent_result and \
-                team_result != 0 and \
-                opponent_result != 0:
+                    team_result != 0 and \
+                    opponent_result != 0:
 
                 team_record['conflicts'] += 1
 
@@ -968,14 +966,15 @@ class Team(models.Model):
             self.league.league_start_date.strftime('%a'),
             self.league.level,
             self.id,
-            ).lower()
+        ).lower()
+
         group_name = '{} {} {} {} Team {}'.format(
             self.league.season.name,
             self.league.league_start_date.strftime('%Y'),
             self.league.league_start_date.strftime('%A'),
             self.league.display_level,
             self.id,
-            )
+        )
 
         from ultimate.utils.google_api import GoogleAppsApi
         api = GoogleAppsApi()
@@ -1074,7 +1073,7 @@ class Coupon(models.Model):
     )
 
     code = models.CharField(max_length=30, unique=True, blank=True,
-        help_text='Leaving this field empty will generate a random code.')
+                            help_text='Leaving this field empty will generate a random code.')
 
     type = models.CharField(max_length=20, choices=COUPON_TYPE_CHOICES)
 
@@ -1087,11 +1086,11 @@ class Coupon(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     redeemed_at = models.DateTimeField(blank=True, null=True)
     valid_until = models.DateTimeField(blank=True, null=True,
-        help_text='Leave empty for coupons that never expire')
+                                       help_text='Leave empty for coupons that never expire')
 
     class Meta:
         db_table = u'coupons'
-        ordering = ['-created_at',]
+        ordering = ['-created_at', ]
 
     def __unicode__(self):
         return self.code
