@@ -33,8 +33,10 @@
         {% if not hide_email %}
           <div class="team-card-header-info-email">
             {% if team.email and user.is_authenticated %}
-            {% if user|is_on_team:team or user.is_superuser or user|in_group:'junta' %}
-              <a style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}">Email Team</a>
+            {% if user.is_superuser or user|in_group:'junta' or user|is_on_team:team %}
+              <a style="color: {{ team.css_text_color }}" href="mailto:{{ team.email }}">
+                Email Team
+              </a>
             {% endif %}
             {% endif %}
           </div>
@@ -61,9 +63,10 @@
             <em>{{ team_member.user.profile.nickname }}</em>
 
             {% if forloop.first and user.is_authenticated %}
-            {% if user.is_superuser or user|is_on_team:team or user|is_division_captain:league %}
+            {% if user.is_superuser or user|in_group:'junta' or user|is_on_team:team or user|is_division_captain:team.league %}
               <a class="team-card-content-members-member-email" href="mailto:{% for captain in team.get_captains %}{{ captain.user.email }},{% endfor %}">
-                Email Captains</a>
+                Email Captains
+              </a>
             {% endif %}
             {% endif %}
           </li>
