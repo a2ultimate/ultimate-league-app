@@ -13,12 +13,20 @@ from pybb.models import *
 
 
 class Field(models.Model):
+    FIELD_TYPE_INDOOR = 'indoor'
+    FIELD_TYPE_OUTDOOR = 'outdoor'
+    FIELD_TYPE_CHOICES = (
+        (FIELD_TYPE_INDOOR, 'Indoor'),
+        (FIELD_TYPE_OUTDOOR, 'Outdoor'),
+    )
+
     id = models.AutoField(primary_key=True)
     name = models.TextField()
     layout_link = models.TextField(blank=True)
     address = models.TextField(blank=True)
     driving_link = models.TextField(blank=True)
     note = models.TextField(blank=True)
+    type = models.CharField(max_length=32, choices=FIELD_TYPE_CHOICES)
 
     class Meta:
         db_table = u'field'
@@ -29,9 +37,17 @@ class Field(models.Model):
 
 
 class FieldNames(models.Model):
+    FIELD_TYPE_GRASS = 'grass'
+    FIELD_TYPE_TURF = 'turf'
+    FIELD_TYPE_CHOICES = (
+        (FIELD_TYPE_GRASS, 'Grass'),
+        (FIELD_TYPE_TURF, 'Turf'),
+    )
+
     id = models.AutoField(primary_key=True)
     name = models.TextField()
     field = models.ForeignKey('leagues.Field')
+    type = models.CharField(max_length=32, choices=FIELD_TYPE_CHOICES)
 
     class Meta:
         db_table = u'field_names'
@@ -67,10 +83,10 @@ class League(models.Model):
     STATE_OPEN = 'open'
     STATE_PREVIEW = 'preview'
     LEAGUE_STATE_CHOICES = (
-        (STATE_CLOSED,    'Closed - visible to all, registration closed to all'),
-        (STATE_HIDDEN,    'Hidden - hidden to all, registration closed to all'),
-        (STATE_OPEN,    'Open - visible to all, registration conditionally open to all'),
-        (STATE_PREVIEW,    'Preview - visible only to admins, registration conditionally open only to admins'),
+        (STATE_CLOSED, 'Closed - visible to all, registration closed to all'),
+        (STATE_HIDDEN, 'Hidden - hidden to all, registration closed to all'),
+        (STATE_OPEN, 'Open - visible to all, registration conditionally open to all'),
+        (STATE_PREVIEW, 'Preview - visible only to admins, registration conditionally open only to admins'),
     )
 
     LEAGUE_GENDER_MENS = 'mens'
@@ -492,8 +508,8 @@ class Baggage(models.Model):
 
 class Registrations(models.Model):
     REGISTRATION_PAYMENT_CHOICES = (
-        ('check',    'Check'),
-        ('paypal',   'PayPal'),
+        ('check', 'Check'),
+        ('paypal', 'PayPal'),
     )
 
     REGISTRATION_CAPTAIN_CHOICES = (
