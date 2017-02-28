@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import math
 
 from django.conf import settings
@@ -109,6 +110,15 @@ class User(AbstractUser):
 
     class Meta(AbstractUser.Meta):
         swappable = 'AUTH_USER_MODEL'
+
+    @property
+    def has_completed_player_rating(self):
+        return self.playerratings_set.filter(submitted_by=self, user=self).exists()
+
+    @property
+    def has_expired_player_rating(self):
+        return not self.playerratings_set.filter(submitted_by=self, user=self,
+                                                 updated__gte=datetime.now() - timedelta(days=365)).exists()
 
     @property
     def rating_totals(self):
@@ -231,7 +241,6 @@ class Player(PybbProfile):
 
 
 class PlayerRatings(models.Model):
-
     RATING_EXPERIENCE_CHOICES = (
         (1,    'I am new to ultimate or have played less than 2 years of pickup.'),
         (2,    'I have played in an organized league or on a high school team for 1-2 seasons, or pickup for 3+ years.'),

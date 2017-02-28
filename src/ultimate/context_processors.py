@@ -26,28 +26,6 @@ def menu_items_home_sidebar(request):
     return {'menu_items_home_sidebar': menu_items}
 
 
-def user_profile_is_complete(request):
-    result = {'user_profile_is_complete': False}
-    if request.user and request.user.is_authenticated():
-        try:
-            result['user_profile_is_complete'] = bool(request.user.profile.is_complete_for_user)
-        except:
-            return result
-
-    return result
-
-
-def user_rating_is_complete(request):
-    result = {'user_rating_is_complete': False}
-    if request.user and request.user.is_authenticated():
-        try:
-            result['user_rating_is_complete'] = bool(request.user.playerratings_set.filter(submitted_by=request.user, user=request.user))
-        except:
-            return result
-
-    return result
-
-
 def google_analytics(request):
     trackers = []
 
@@ -56,10 +34,10 @@ def google_analytics(request):
 
     return {
         'GOOGLE_ANALYTICS_TRACKERS': trackers,
-        }
+    }
 
 
 def social_links(request):
     return {
         'SOCIAL_LINKS': getattr(settings, 'SOCIAL', []),
-        }
+    }

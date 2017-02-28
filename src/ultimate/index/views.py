@@ -36,9 +36,9 @@ def announcements(request):
                 email_address=user_email_address)
 
             if success_count:
-	            messages.success(
-	                request, 'Your email address was added successfully.')
-	            return HttpResponseRedirect(reverse('announcements'))
+                messages.success(
+                    request, 'Your email address was added successfully.')
+                return HttpResponseRedirect(reverse('announcements'))
             else:
                 messages.error(
                     request, 'Your email address could not be added. It is possible that you are already a member.')
