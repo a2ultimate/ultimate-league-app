@@ -58,6 +58,14 @@
     }
   }
 
+  &.button-caution {
+    background-color: $color-caution;
+
+    &:hover {
+      background-color: $color-caution-dark;
+    }
+  }
+
   &.button-warning {
     background-color: $color-warning;
 

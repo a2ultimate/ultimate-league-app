@@ -76,7 +76,11 @@
   }
 }
 
-.progress-bar-progress-error {
+.progress-bar-progress-caution {
+  background-color: $color-caution;
+}
+
+.progress-bar-progress-danger {
   background-color: $color-danger;
 }
 
@@ -92,7 +96,11 @@
   background-color: $color-warning;
 }
 
-.progress-bar-tick-error {
+.progress-bar-tick-caution {
+  border-color: $color-caution;
+}
+
+.progress-bar-tick-danger {
   border-color: $color-danger;
 }
 
