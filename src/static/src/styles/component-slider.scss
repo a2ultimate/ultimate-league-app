@@ -29,15 +29,21 @@
 }
 
 .slider-element {
+  height: 1rem !important;
   margin: 1.25rem 6rem 1.25rem 1rem;
 
-  border: 0;
   border: 0 !important;
   border-radius: $border-radius !important;
   background-color: $color-light-gray;
 }
 
 .slider-element .ui-slider-handle {
+  top: -0.25rem !important;
+
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  margin-left: -0.75rem !important;
+
   cursor: grab;
 
   border: 0 !important;

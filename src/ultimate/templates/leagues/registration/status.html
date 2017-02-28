@@ -16,11 +16,9 @@
   <h2>Registration Status</h2>
 
   {% if registration.is_complete %}
-    <h4>
+    <div class="message message-success">
       Your registration is <strong>complete</strong>.
-    </h4>
-
-    <hr>
+    </div>
 
     <p>
       {% if registration.waitlist %}
@@ -30,9 +28,9 @@
       {% endif %}
     </p>
   {% elif registration.is_refunded %}
-    <h4>
+    <div class="message message-warning">
       Your registration has been <strong>refunded</strong>.
-    </h4>
+    </div>
 
     <p>
       For PayPal, please allow up to a week for the refund process to complete. For check,
@@ -44,21 +42,97 @@
       <a href="mailto:registration@annarborultimate.org">email registration@annarborultimate.org</a>.
     </p>
   {% else %}
-    <h4>
-      Your registration is <strong>not complete</strong>.
-    </h4>
+    <div class="message message-danger">
+      Your registration is <strong>not complete</strong>. You must complete the payment process.
+    </div>
 
     {% if league.is_waitlist %}
+      <div class="message message-small message-caution">
+        Note: This division is currently either at capacity or the waitlist deadline has passed.
+        Upon completion of of your registration, you will be placed on the waitlist.
+      </div>
+    {% endif %}
+
+    {% if league.coupons_accepted %}
+      <hr>
+      {% if registration.coupon %}
+        <form class="form" method="post">{% csrf_token %}
+          <p>
+            You have entered a coupon code
+            "<strong>{{ registration.coupon.code }}</strong>"
+            good for <em>{{ registration.coupon.display_value }}</em>.
+
+            <button class="button button-info" name="remove_coupon" type="submit">
+              Remove It?
+            </button>
+          </p>
+        </form>
+      {% else %}
+        <form class="form" method="post">{% csrf_token %}
+          <h4><label for="coupon-code-input">Do you have a coupon code?</label></h4>
+          <input name="coupon_code" id="coupon-code-input" type="text">
+          <button class="button button-success" type="submit">
+            Submit
+          </button>
+        </form>
+      {% endif %}
+    {% endif %}
+
+    {% if registration.paypal_price > 0 or registration.check_price > 0 %}
+      {% if registration.pay_type == 'check' %}
+        <p>
+          You're currently set to pay by check. Please send a check for
+          <strong>${{ registration.check_price }}</strong> to:
+        </p>
+
+        {{ league.mail_check_address|safe }}
+
+        <div class="message message-small message-info">
+          Your registration will be marked complete when the check is received.
+        </div>
+      {% else %}
+        <p>
+          Click the "<em>Checkout using PayPal</em>" button to pay
+          <strong>${{ registration.paypal_price }}</strong>.
+        </p>
+
+        <p>
+          You will be taken to PayPal's website to pay and redirected
+          back to the Ann Arbor Ultimate website afterward.
+        </p>
+
+        <p>
+          {{ paypal_form.render }}
+        </p>
+
+        <p>
+          If you have already submitted a payment via PayPal, please be patient. It can take
+          up to 24 hours for a regular payment to process and up to 3-6 business days for
+          an eCheck to clear. If those time ranges have elapsed, please email
+          <a href="mailto:registration@annarborultimate.org">registration@annarborultimate.org</a>.
+        </p>
+      {% endif %}
+
+      {% if league.checks_accepted %}
+        <p>
+          If you no longer wish to pay via {% if registration.pay_type != 'check' %}PayPal{% else %}check{% endif %}, you can
+          <a href="{% url 'league_registration_section' year=league.year season=league.season.slug division=league.night_slug section='pay_type' %}">
+            change your payment type</a>.
+        </p>
+      {% endif %}
+    {% else %}
       <p>
-        <strong>Note:</strong>
-        This league is currently either at capacity the waitlist deadline has passed.
-        By completing your registration, you will be placed on the waitlist.
+        No payment is needed, please click the "Process Registration" button to complete your registration.
       </p>
+
+      <form class="form" method="post">{% csrf_token %}
+        <button class="button button-success" name="process_registration" type="submit">Process Registration</button>
+      </form>
     {% endif %}
   {% endif %}
 
   {% if not registration.is_refunded %}
-    <hr />
+    <hr>
     <p>
       Your attendance response indicates you will miss <strong>{{ registration.attendance }}</strong> out of <strong>{{ league.get_num_game_events }}</strong> games.
     </p>
@@ -66,7 +140,7 @@
     {% if league.type == 'league' %}
       <p>
         {% if registration.captain >= 0 %}
-          Your captaining response is <strong>"{{ registration.get_captain_display }}"</strong>
+          Your captaining response is "<strong>{{ registration.get_captain_display }}</strong>"
         {% else %}
           You have not submitted a captain response.
         {% endif %}
@@ -78,86 +152,6 @@
       <a href="{% url 'league_registration_section' year=league.year season=league.season.slug division=league.night_slug section='attendance' %}">
         change your attendance{% if league.type == 'league' %} or captaining{% endif %} rating</a>.
     </p>
-
-    <hr />
-
-    {% if not registration.is_complete %}
-      {% if league.paypal_price > 0 or league.check_price > 0 %}
-        {% if league.coupons_accepted %}
-          {% if registration.coupon %}
-            <form class="form" method="post">{% csrf_token %}
-              <p>
-                You have entered a coupon code
-                <strong>{{ registration.coupon.code }}</strong>
-                good for <em>{{ registration.coupon.display_value }}</em>.
-
-                <button class="button button-info" name="remove_coupon" type="submit">
-                  Remove It?
-                </button>
-              </p>
-            </form>
-          {% else %}
-            <form class="form" method="post">{% csrf_token %}
-              <h4><label for="coupon-code-input">Do you have a coupon code?</label></h4>
-              <input name="coupon_code" id="coupon-code-input" type="text">
-              <button class="button button-success" type="submit">
-                Submit
-              </button>
-            </form>
-          {% endif %}
-        {% endif %}
-
-        {% if registration.pay_type != 'check' %}
-          {% if registration.paypal_price > 0 %}
-            {% if not registration.paypal_complete %}
-              <p>
-                Click the "<em>Checkout using PayPal</em>" button to pay
-                <strong>${{ registration.paypal_price }}</strong>.
-              </p>
-
-              <p>
-                You will be taken to PayPal's website to pay and redirected
-                back to the Ann Arbor Ultimate website afterward.
-              </p>
-
-              <p>
-                {{ paypal_form.render }}
-              </p>
-            {% endif %}
-
-            <p>
-              If you have already submitted a payment via PayPal, please be patient.<br />
-              It can take up to 24 hours to show as completed.
-            </p>
-
-            <p>
-              If has already been 24 hours, please email
-              <a href="mailto:registration@annarborultimate.org">registration@annarborultimate.org</a>.
-            </p>
-          {% else %}
-            <form class="form" method="post">{% csrf_token %}
-              <button class="button button-success" name="process_registration" type="submit">Process Registration</button>
-            </form>
-          {% endif %}
-        {% else %}
-          <p>
-            You're currently set to pay by check. You may send a check for
-            <strong>${{ registration.check_price }}</strong> to:
-          </p>
-
-          {{ league.mail_check_address|safe }}
-        {% endif %}
-
-        <form class="form" method="post">{% csrf_token %}
-          {% if league.checks_accepted and registration.check_price > 0 and registration.pay_type != 'check' %}
-            <button class="button button-info" name="pay_type" value="check" type="submit">Switch Payment Type to Check</button>
-          {% endif %}
-          {% if league.checks_accepted and registration.paypal_price > 0 and registration.pay_type != 'paypal' %}
-            <button class="button button-info" name="pay_type" value="paypal" type="submit">Switch Payment Type to PayPal</button>
-          {% endif %}
-        </form>
-      {% endif %}
-    {% endif %}
   {% endif %}
 
 {% endblock %}

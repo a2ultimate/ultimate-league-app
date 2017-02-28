@@ -100,7 +100,7 @@ def teams(request, year, season, division):
     league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
     user_games = None
 
-    games = league.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
+    games = league.game_set.order_by('date', 'start', 'field_name', 'field_name__field')
     game_locations = league.get_game_locations(games=games)
     game_dates = league.get_game_dates(games=games, game_locations=game_locations)
 
@@ -110,21 +110,21 @@ def teams(request, year, season, division):
         user_games = games.filter(league=league, gameteams__team__teammember__user=request.user).order_by('date')
 
     return render_to_response('leagues/teams.html',
-    {
-        'league': league,
+        {
+            'league': league,
 
-        'next_game_date': next_game_date,
-        'user_games': user_games,
+            'next_game_date': next_game_date,
+            'user_games': user_games,
 
-        'game_locations': game_locations,
-        'game_dates': game_dates,
+            'game_locations': game_locations,
+            'game_dates': game_dates,
 
-        'teams': Team.objects.filter(league=league, hidden=False)
-            .prefetch_related('teammember_set')
-            .prefetch_related('teammember_set__user')
-            .prefetch_related('teammember_set__user__profile'),
-    },
-    context_instance=RequestContext(request))
+            'teams': Team.objects.filter(league=league, hidden=False)
+                         .prefetch_related('teammember_set')
+                         .prefetch_related('teammember_set__user')
+                         .prefetch_related('teammember_set__user__profile'),
+        },
+        context_instance=RequestContext(request))
 
 
 @atomic
@@ -136,18 +136,17 @@ def group(request, year, season, division):
     if request.method == 'POST':
         if 'leave_group' in request.POST:
             message = registration.leave_baggage_group()
-            if message == True:
+            if message is True:
                 messages.success(request, 'You were successfully removed from your baggage group.')
             elif isinstance(message, str):
                 messages.error(request, message)
             else:
                 messages.error(request, 'You could not be removed from your baggage group.')
 
-
         elif 'add_group' in request.POST and 'email' in request.POST:
             email = request.POST.get('email')
             message = registration.add_to_baggage_group(email)
-            if (message == True):
+            if message is True:
                 messages.success(request, 'You were successfully added to ' + email + '\'s group.')
             else:
                 messages.error(request, message)
@@ -275,12 +274,12 @@ def registration(request, year, season, division, section=None):
                 registration.save()
                 messages.error(request, 'Payment type set to PayPal. Checks are not accepted for this league.')
 
-            elif request.POST.get('pay_type').lower() == 'check':
+            elif request.POST.get('pay_type').lower() == 'pay with check':
                 registration.pay_type = 'check'
                 registration.save()
                 messages.success(request, 'Payment type set to check.')
 
-            elif request.POST.get('pay_type').lower() == 'paypal':
+            elif request.POST.get('pay_type').lower() == 'pay with paypal':
                 registration.pay_type = 'paypal'
                 registration.save()
                 messages.success(request, 'Payment type set to PayPal.')
@@ -361,8 +360,8 @@ def registration(request, year, season, division, section=None):
             context_instance=RequestContext(request))
 
     if section == 'attendance' or \
-        registration.attendance == None or \
-        (registration.captain == None and league.type == 'league'):
+            registration.attendance is None or \
+            (registration.captain is None and league.type == 'league'):
 
         if not attendance_form:
             attendance_form = RegistrationAttendanceForm(instance=registration)

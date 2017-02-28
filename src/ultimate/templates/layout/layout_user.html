@@ -23,7 +23,7 @@
 
     <div class="content">
       <div class="content-inner">
-        {% cache 500 content_inner_left_user user.is_junta %}
+        {% cache 500 content_inner_left_user request.user.is_junta %}
           <div class="content-inner-left">
             <div class="content-inner-left-logo">
               <img class="content-inner-left-logo-image" src="{% webpack_static 'images/assets/logo.svg' %}">
@@ -73,8 +73,8 @@
                               </div>
                               <div class="content-inner-left-leagues-list-element-divisions-list-element-links">
                                 <ul class="content-inner-left-leagues-list-element-divisions-list-element-links-list">
-                                  {% if league|is_open:user %}
-                                    {% if league|is_waitlist:user %}
+                                  {% if league|is_open:request.user %}
+                                    {% if league|is_waitlist:request.user %}
                                       <li class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element">
                                         <a class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">Register for Waitlist</a>
                                       </li>
@@ -113,18 +113,25 @@
         {% endcache %}
 
         <div class="content-inner-right">
-          {% if user and user.is_authenticated and not user_profile_is_complete %}
-            <div class="message message-warning">
-              {% trans 'You are missing profile information required to register for a league. Please' %}
-              <a href="{% url 'editprofile' %}">{% trans 'complete your profile' %}</a>.
-            </div>
-          {% endif %}
+          {% if request.user and request.user.is_authenticated %}
+            {% if not request.user.profile.is_complete_for_user %}
+              <div class="message message-warning">
+                <p>{% trans 'You are missing profile information required to register for a league.' %}</p>
+                <a class="button button-small button-primary" href="{% url 'editprofile' %}">{% trans 'Complete Your Profile' %}</a>
+              </div>
+            {% endif %}
 
-          {% if user and user.is_authenticated and not user_rating_is_complete %}
-            <div class="message message-warning">
-              {% trans 'You are missing player ratings required to register for a league. Please' %}
-              <a href="{% url 'editratings' %}">{% trans 'complete your ratings' %}</a>.
-            </div>
+            {% if not request.user.has_completed_player_rating %}
+              <div class="message message-warning">
+                <p>{% trans 'Users are required to rate their skills before registering for a league. This information directly influences the data used to balance teams.' %}</p>
+                <a class="button button-small button-primary" href="{% url 'editratings' %}">{% trans 'Complete Your Ratings' %}</a>
+              </div>
+            {% elif request.user.has_expired_player_rating %}
+              <div class="message message-warning">
+                <p>{% trans 'Users are required to update their player ratings once per year. This information directly influences the data used to balance teams.' %}</p>
+                <a class="button button-small button-primary" href="{% url 'editratings' %}">{% trans 'Update Your Ratings' %}</a>
+              </div>
+            {% endif %}
           {% endif %}
 
           {% block content %}{% endblock %}

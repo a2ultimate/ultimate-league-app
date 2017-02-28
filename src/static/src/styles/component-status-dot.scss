@@ -10,7 +10,11 @@
   background-color: $color-primary;
 }
 
-.status-dot-error {
+.status-dot-caution {
+  background-color: $color-caution;
+}
+
+.status-dot-danger {
   background-color: $color-danger;
 }
 

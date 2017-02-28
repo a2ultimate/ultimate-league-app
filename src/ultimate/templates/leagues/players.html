@@ -25,11 +25,11 @@
     {% endif %}
 
     {% if league.is_after_waitlist_start %}
-      <div class="message message-warning">
+      <div class="message message-caution">
         The registration deadline has passed. All new registrations will be added to the waitlist.
       </div>
     {% elif registrations_remaining <= 0 %}
-      <div class="message message-warning">
+      <div class="message message-caution">
         This division is currently at capacity. All new registrations will be added to the waitlist.
       </div>
     {% elif registrations_remaining == league.max_players %}

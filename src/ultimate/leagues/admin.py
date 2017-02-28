@@ -24,16 +24,17 @@ class FieldAdmin(admin.ModelAdmin):
     save_as = True
     save_on_top = True
 
-    list_display = ('name', 'layout_link', 'driving_link',)
-    list_editable = ('name', 'layout_link', 'driving_link',)
+    list_display = ('name', 'layout_link', 'driving_link', 'type',)
+    # list_editable = ('name', 'layout_link', 'driving_link', 'type',)
+    list_filter = ('type',)
 
 
 class FieldNameAdmin(admin.ModelAdmin):
     save_as = True
     save_on_top = True
 
-    list_display = ('name', 'field',)
-    list_filter = ('field',)
+    list_display = ('name', 'field', 'type',)
+    list_filter = ('field', 'field__type', 'type',)
 
 
 class GameTeamsInline(admin.TabularInline):
@@ -74,6 +75,7 @@ class GameAdmin(admin.ModelAdmin):
 class LeagueFieldsInline(admin.TabularInline):
     model = LeagueFields
     extra = 1
+
 
 class LeagueAdmin(admin.ModelAdmin):
     save_as = True
@@ -119,15 +121,15 @@ class RegistrationsAdmin(admin.ModelAdmin):
 
     def year(self, obj):
         return u'%d' % (obj.league.year)
-    year.admin_order_field  = 'league__year'
+    year.admin_order_field = 'league__year'
 
     def season(self, obj):
         return u'%s' % (obj.league.season)
-    season.admin_order_field  = 'league__season'
+    season.admin_order_field = 'league__season'
 
     def night(self, obj):
         return u'%s' % (obj.league.night)
-    night.admin_order_field  = 'league__night'
+    night.admin_order_field = 'league__night'
 
     def user_details(self, obj):
         return u'%s <br /> %s' % (obj.user.get_full_name(), obj.user.email)
@@ -190,7 +192,7 @@ class TeamAdmin(admin.ModelAdmin):
         return super(TeamAdmin, self).get_form(request, obj, **kwargs)
 
     list_display = ('id', 'name', 'color', 'email', 'league', 'hidden',)
-    list_editable = ('name', 'color', 'email',)
+    # list_editable = ('name', 'color', 'email',)
     list_filter = ('league__year', 'league__season', 'league__night', 'league__gender', 'league__state', 'hidden',)
 
 

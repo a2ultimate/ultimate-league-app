@@ -34,7 +34,7 @@
               {% if team.league|get_player_survey_status:user %}
                 <span class="status-dot status-dot-success"></span>
               {% else %}
-                <span class="status-dot status-dot-error"></span>
+                <span class="status-dot status-dot-danger"></span>
               {% endif %}
               Fill Out Player Survey
             </a>
@@ -47,7 +47,7 @@
               {% if game|report_complete_for_team:user %}
                 <span class="status-dot status-dot-success"></span>
               {% else %}
-                <span class="status-dot status-dot-error"></span>
+                <span class="status-dot status-dot-danger"></span>
               {% endif %}
               <a href="{% url 'gamereport' team_id=team.id game_id=game.id %}">
                 On {{ game.date|date:'m/d' }} vs. {{ game|get_game_opponent_team_name:user}}
