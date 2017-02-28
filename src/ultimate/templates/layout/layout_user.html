@@ -113,20 +113,20 @@
           {% if request.user and request.user.is_authenticated %}
             {% if not request.user.profile.is_complete_for_user %}
               <div class="message message-warning">
-                {% trans 'You are missing profile information required to register for a league. Please' %}
-                <a href="{% url 'editprofile' %}">{% trans 'complete your profile' %}</a>.
+                <p>{% trans 'You are missing profile information required to register for a league.' %}</p>
+                <a class="button button-small button-primary" href="{% url 'editprofile' %}">{% trans 'Complete Your Profile' %}</a>
               </div>
             {% endif %}
 
             {% if not request.user.has_completed_player_rating %}
               <div class="message message-warning">
-                {% trans 'You are missing player ratings required to register for a league. Please' %}
-                <a href="{% url 'editratings' %}">{% trans 'complete your ratings' %}</a>.
+                <p>{% trans 'Users are required to rate their skills before registering for a league. This information directly influences the data used to balance teams.' %}</p>
+                <a class="button button-small button-primary" href="{% url 'editratings' %}">{% trans 'Complete Your Ratings' %}</a>
               </div>
             {% elif request.user.has_expired_player_rating %}
               <div class="message message-warning">
-                {% trans 'Users are required to update their player ratings once per year. Please' %}
-                <a href="{% url 'editratings' %}">{% trans 'update your ratings' %}</a>.
+                <p>{% trans 'Users are required to update their player ratings once per year. This information directly influences the data used to balance teams.' %}</p>
+                <a class="button button-small button-primary" href="{% url 'editratings' %}">{% trans 'Update Your Ratings' %}</a>
               </div>
             {% endif %}
           {% endif %}

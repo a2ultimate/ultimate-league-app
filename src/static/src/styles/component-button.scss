@@ -16,6 +16,7 @@
   border-radius: $border-radius;
   background-color: $color-primary;
 
+  font-size: 1rem;
   font-weight: 600;
 
   appearance: none;
@@ -37,6 +38,12 @@
     cursor: not-allowed;
 
     opacity: 0.5;
+  }
+
+  &.button-small {
+    padding: 0.5rem 0.75rem;
+
+    font-size: 0.875rem;
   }
 
   &.button-primary {
