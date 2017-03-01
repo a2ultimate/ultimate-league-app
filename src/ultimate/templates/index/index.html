@@ -25,6 +25,11 @@
               <ul class="page-home-leagues-content-list-element-list">
                 {% for league in season_year.list|sort_by_league_start_date_weekday %}
                   <li class="page-home-leagues-content-list-element-list-element" style="border-color: {{ league.status_color }};">
+                    {% if league.image_cover and league.image_cover|file_exists %}
+                      <div class="page-home-leagues-content-list-element-list-element-background" style="background-image: url('{{ league.image_cover.url }}');">
+                        <div class="page-home-leagues-content-list-element-list-element-background-overlay"></div>
+                      </div>
+                    {% endif %}
                     <a class="page-home-leagues-content-list-element-list-element-content" href="{% url 'league_summary' year=league.year season=league.season.slug division=league.night_slug %}">
                       <div class="page-home-leagues-content-list-element-list-element-content-tag" style="background-color: {{ league.status_color }};">
                         {{ league.status_text }}

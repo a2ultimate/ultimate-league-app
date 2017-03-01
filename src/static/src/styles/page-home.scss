@@ -49,6 +49,29 @@
   @include omega(3n);
 }
 
+.page-home-leagues-content-list-element-list-element-background {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  background: transparent;
+  background-repeat: none;
+  background-position: center;
+  background-size: cover;
+}
+
+.page-home-leagues-content-list-element-list-element-background-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  background: linear-gradient(rgba($color-dark-gray, 0.5), rgba($color-dark-gray, 0.5));
+}
+
 .page-home-leagues-content-list-element-list-element-content {
   position: relative;
 
@@ -58,7 +81,6 @@
   padding: 2.5rem 0.75rem 0.25rem 0.75rem;
 
   color: $color-primary;
-  background-color: $color-light-gray;
 
   &:hover,
   &:active,
@@ -91,6 +113,8 @@
 
   padding-right: 1.25rem;
 
+  letter-spacing: 0.015625rem;
+
   &:after {
     position: absolute;
     top: 50%;
@@ -115,6 +139,11 @@
       color: $color-dark-gray;
     }
   }
+
+  .page-home-leagues-content-list-element-list-element-background + .page-home-leagues-content-list-element-list-element-content > & {
+    color: $color-white !important;
+    text-shadow: 0 0.0625rem 0 $color-dark-gray-dark;
+  }
 }
 
 .page-home-leagues-content-list-element-list-element-content-info {
@@ -137,6 +166,11 @@
         content: '\00b7';
       }
     }
+  }
+
+  .page-home-leagues-content-list-element-list-element-background + .page-home-leagues-content-list-element-list-element-content > & {
+    color: $color-white !important;
+    text-shadow: 0 0.0625rem 0 $color-dark-gray-dark;
   }
 }
 
@@ -173,6 +207,7 @@
   text-align: left;
 
   border-top-left-radius: 0;
+  border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
 
   &:after {
@@ -192,9 +227,6 @@
 
     @include icon('chevron-right');
   }
-}
-
-.page-home-leagues-content-list-element-list-element-action-1 {
 }
 
 .page-home-follow {

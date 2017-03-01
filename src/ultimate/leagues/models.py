@@ -4,12 +4,17 @@ import random
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Count
 from django.db.transaction import atomic
 from django.template.defaultfilters import slugify
 
 from pybb.models import *
+
+
+def generateLeagueCoverImagePath(instance, filename):
+    return 'images/{}/{}/{}/{}'.format(instance.year, instance.season.slug, instance.night_slug, filename)
 
 
 class Field(models.Model):
@@ -162,6 +167,8 @@ class League(models.Model):
     division_captains_email_group_id = models.CharField(max_length=128, blank=True, null=True)
 
     state = models.CharField(max_length=32, choices=LEAGUE_STATE_CHOICES, help_text='state of league, changes whether registration is open or league is visible')
+
+    image_cover = models.ImageField(upload_to=generateLeagueCoverImagePath, blank=True, null=True)
 
     class Meta:
         db_table = u'league'
