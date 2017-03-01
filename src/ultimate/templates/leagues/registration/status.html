@@ -22,9 +22,14 @@
 
     <p>
       {% if registration.waitlist %}
-        However, you are on the <strong>waitlist</strong>.
+        <p>
+          However, you are on the <strong>waitlist</strong>.
+        </p>
       {% elif league.baggage > 1 and not league.waitlist_start_date|is_past_deadline %}
-        You may <a href="{% url 'league_group' year=league.year season=league.season.slug division=league.night_slug  %}">form a baggage group here</a>.
+        <p>
+          You may now <a href="{% url 'league_group' year=league.year season=league.season.slug division=league.night_slug  %}">form a group</a>.
+          The deadline to do so is <strong>{{ league.waitlist_start_date|date:'l, F jS' }} at {{ league.waitlist_start_date|date:'g:iA'|lower }}</strong>.
+        </p>
       {% endif %}
     </p>
   {% elif registration.is_refunded %}
