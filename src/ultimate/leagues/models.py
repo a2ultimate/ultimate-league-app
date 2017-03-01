@@ -167,6 +167,9 @@ class League(models.Model):
         db_table = u'league'
         ordering = ['-year', '-season__order', 'league_start_date']
 
+    def get_absolute_url(self):
+        return reverse('league_summary', args=[self.year, self.season.slug, self.night_slug, ])
+
     def __unicode__(self):
         return ('%s %d %s' % (self.season, self.year, self.night)).replace('_', ' ')
 
