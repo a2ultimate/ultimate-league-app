@@ -30,8 +30,15 @@
 
   {% if 'rating' in errors %}
     <p>
-      {% trans 'You are missing player ratings required to register for a league. Please ' %}
+      {% trans 'You are required to rate your skills before registering for a league. Please ' %}
       <a href="{% url 'editratings' %}">{% trans 'complete your ratings' %}</a>.
+    </p>
+  {% endif %}
+
+  {% if 'rating_expired' in errors %}
+    <p>
+      {% trans 'You are required to update your player ratings once per year. Please ' %}
+      <a href="{% url 'editratings' %}">{% trans 'update your ratings' %}</a>.
     </p>
   {% endif %}
 
