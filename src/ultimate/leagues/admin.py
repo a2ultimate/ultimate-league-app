@@ -82,7 +82,7 @@ class LeagueAdmin(admin.ModelAdmin):
     save_on_top = True
 
     inlines = (LeagueFieldsInline,)
-    list_display = ('id', 'year', 'season', 'night', 'gender', 'level', 'type', 'state',)
+    list_display = ('waitlist_start_date', 'id', 'year', 'season', 'night', 'gender', 'level', 'type', 'state',)
     list_display_links = ('id',)
     list_filter = ('year', 'season', 'night', 'gender', 'level', 'type', 'state', )
     ordering = ['-year', '-season__order', '-league_start_date']

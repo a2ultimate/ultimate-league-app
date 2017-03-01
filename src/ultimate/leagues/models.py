@@ -280,14 +280,14 @@ class League(models.Model):
         return '#bdc3c7'
 
     def is_accepting_registrations(self, user=None):
-        # not before league ends
-        if not date.today() <= self.league_end_date:
-            return False
-
         # always accepting registrations for admins
         if user and user.is_authenticated() and user.is_junta and \
                 self.state in [self.LEAGUE_STATE_OPEN, self.LEAGUE_STATE_PREVIEW]:
             return True
+
+        # not before league ends
+        if not date.today() <= self.league_end_date:
+            return False
 
         # not open to public
         if self.state not in [self.LEAGUE_STATE_OPEN]:
@@ -305,14 +305,14 @@ class League(models.Model):
             return False
 
         # not after waitlist date start
-        if not datetime.now() >= self.waitlist_start_date:
-            return False
+        if datetime.now() >= self.waitlist_start_date:
+            return True
 
         # not full
-        if not len(self.get_complete_registrations()) < self.max_players:
-            return False
+        if len(self.get_complete_registrations()) >= self.max_players:
+            return True
 
-        return True
+        return False
 
     def is_open(self, user=None):
         if user and user.is_authenticated() and user.is_junta and self.state in ['open', 'preview']:

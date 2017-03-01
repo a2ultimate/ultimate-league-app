@@ -54,7 +54,7 @@
                       {% else %}
 
                         {% if league|is_accepting_registrations:request.user %}
-                          <a class="page-home-leagues-content-list-element-list-element-footer-action button button-block button-warning" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">
+                          <a class="page-home-leagues-content-list-element-list-element-footer-action button button-block button-caution" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">
                             {% if league|is_waitlisting_registrations:request.user %}
                               Join Waitlist
                             {% else %}
