@@ -120,12 +120,12 @@
 
             {% if not request.user.has_completed_player_rating %}
               <div class="message message-warning">
-                <p>{% trans 'Users are required to rate their skills before registering for a league. This information directly influences the data used to balance teams.' %}</p>
+                <p>{% trans 'You are required to rate your skills before registering for a league. This gives us a better picture of you as a player and helps us generate more balanced teams.' %}</p>
                 <a class="button button-small button-primary" href="{% url 'editratings' %}">{% trans 'Complete Your Ratings' %}</a>
               </div>
             {% elif request.user.has_expired_player_rating %}
               <div class="message message-warning">
-                <p>{% trans 'Users are required to update their player ratings once per year. This information directly influences the data used to balance teams.' %}</p>
+                <p>{% trans 'Once per year, you are required to resubmit your player ratings. This gives us a better picture of you as a player and helps us generate balanced teams.' %}</p>
                 <a class="button button-small button-primary" href="{% url 'editratings' %}">{% trans 'Update Your Ratings' %}</a>
               </div>
             {% endif %}
