@@ -186,8 +186,11 @@ def registration(request, year, season, division, section=None):
             if not request.user.profile or not request.user.profile.is_complete_for_user:
                 errors.append('profile')
 
-            if not request.user.playerratings_set.filter(submitted_by=request.user, user=request.user).exists():
+            if not request.user.has_completed_player_rating:
                 errors.append('rating')
+
+            if request.user.has_expired_player_rating:
+                errors.append('rating_expired')
 
         except ObjectDoesNotExist:
             errors.append('unknown')
