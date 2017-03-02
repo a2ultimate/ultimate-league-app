@@ -27,12 +27,19 @@ def add_to_group(group_id=None, group_email_address=None, email_address=None, fi
 
 
 def generate_email_list_address(league, team=None, suffix=None):
-    group_address = '{}{}-{}-{}'.format(
-        league.season.slug,
-        league.league_start_date.strftime('%y'),
-        league.league_start_date.strftime('%a'),
-        league.level,
-    )
+    if league.type == 'league':
+        group_address = '{}{}-{}-{}'.format(
+            league.season.slug,
+            str(league.year)[-2:],
+            league.league_start_date.strftime('%a'),
+            league.level,
+        )
+    else:
+        group_address = '{}{}-{}'.format(
+            league.season.slug,
+            str(league.year)[-2:],
+            league.night_slug,
+        )
 
     if team is not None:
         group_address += '-' + str(team.id)
@@ -44,12 +51,19 @@ def generate_email_list_address(league, team=None, suffix=None):
 
 
 def generate_email_list_name(league, team=None, suffix=None):
-    group_name = '{} {} {} {}'.format(
-        league.season.name,
-        league.league_start_date.strftime('%Y'),
-        league.league_start_date.strftime('%A'),
-        league.display_level,
-    )
+    if league.type == 'league':
+        group_name = '{} {} {} {}'.format(
+            league.season.name,
+            league.year,
+            league.league_start_date.strftime('%A'),
+            league.display_level,
+        )
+    else:
+        group_name = '{} {} {}'.format(
+            league.season.name,
+            league.year,
+            league.night,
+        )
 
     if team is not None:
         group_name += ' Team ' + str(team.id)
