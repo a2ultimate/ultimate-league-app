@@ -258,17 +258,17 @@ class League(models.Model):
 
     @property
     def status_text(self):
-        if datetime.now() < self.reg_start_date:
+        if timezone.now() < self.reg_start_date:
             return 'Coming Soon'
 
-        if date.today() < self.league_start_date:
-            if datetime.now() >= self.waitlist_start_date or \
+        if timezone.now().date() < self.league_start_date:
+            if timezone.now() >= self.waitlist_start_date or \
                     len(self.get_complete_registrations()) >= self.max_players:
                 return 'Waitlisting Registrations'
             else:
                 return 'Accepting Registrations'
 
-        if date.today() <= self.league_end_date:
+        if timezone.now().date() <= self.league_end_date:
             return '{} In Progress'.format(self.display_type)
 
         # TODO is "completed" the right word?
@@ -276,17 +276,17 @@ class League(models.Model):
 
     @property
     def status_color(self):
-        if datetime.now() < self.reg_start_date:
+        if timezone.now() < self.reg_start_date:
             return '#9b59b6'
 
-        if date.today() < self.league_start_date:
-            if datetime.now() >= self.waitlist_start_date or \
+        if timezone.now().date() < self.league_start_date:
+            if timezone.now() >= self.waitlist_start_date or \
                     len(self.get_complete_registrations()) >= self.max_players:
                 return '#f1c40f'
             else:
                 return '#2ecc71'
 
-        if date.today() <= self.league_end_date:
+        if timezone.now().date() <= self.league_end_date:
             return '#3498db'
 
         return '#bdc3c7'
@@ -298,7 +298,7 @@ class League(models.Model):
             return True
 
         # not before league ends
-        if not date.today() <= self.league_end_date:
+        if not timezone.now().date() <= self.league_end_date:
             return False
 
         # not open to public
@@ -306,7 +306,7 @@ class League(models.Model):
             return False
 
         # not after registration date start
-        if not datetime.now() >= self.reg_start_date:
+        if not timezone.now() >= self.reg_start_date:
             return False
 
         return True
@@ -317,7 +317,7 @@ class League(models.Model):
             return False
 
         # not after waitlist date start
-        if datetime.now() >= self.waitlist_start_date:
+        if timezone.now() >= self.waitlist_start_date:
             return True
 
         # not full
