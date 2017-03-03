@@ -1,7 +1,5 @@
 # leagues/signals.py
 
-from datetime import datetime
-
 from django.db.models import F
 
 from ultimate.leagues.models import League, Registrations

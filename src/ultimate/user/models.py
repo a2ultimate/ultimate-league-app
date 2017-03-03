@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 import math
 
 from django.conf import settings
@@ -7,6 +7,7 @@ from django.core.mail import send_mail
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 
 from ultimate.leagues.models import *
 
@@ -118,7 +119,7 @@ class User(AbstractUser):
     @property
     def has_expired_player_rating(self):
         return not self.playerratings_set.filter(submitted_by=self, user=self,
-                                                 updated__gte=datetime.now() - timedelta(days=365)).exists()
+                                                 updated__gte=timezone.now() - timedelta(days=365)).exists()
 
     @property
     def rating_totals(self):
@@ -210,7 +211,7 @@ class Player(PybbProfile):
 
     @property
     def age(self):
-        return self.get_age_on(date.today())
+        return self.get_age_on(timezone.now().date())
 
     @property
     def is_complete_for_user(self):
@@ -229,7 +230,7 @@ class Player(PybbProfile):
 
     def is_minor(self, now=None):
         if not now:
-            now = date.today()
+            now = timezone.now().date()
 
         return self.get_age_on(now) < 18
 

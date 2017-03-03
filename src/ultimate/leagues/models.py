@@ -1,4 +1,3 @@
-from datetime import date, datetime
 import random
 
 from django.conf import settings
@@ -8,6 +7,7 @@ from django.db import models
 from django.db.models import Count
 from django.db.transaction import atomic
 from django.template.defaultfilters import slugify
+from django.utils import timezone
 
 from pybb.models import *
 
@@ -208,29 +208,29 @@ class League(models.Model):
 
     @property
     def paypal_price(self):
-        if self.paypal_cost == 0 or datetime.now() < self.price_increase_start_date:
+        if self.paypal_cost == 0 or timezone.now() < self.price_increase_start_date:
             return self.paypal_cost
 
         return self.paypal_cost + self.late_cost_increase
 
     @property
     def check_price(self):
-        if self.paypal_cost + self.check_cost_increase == 0 or datetime.now() < self.price_increase_start_date:
+        if self.paypal_cost + self.check_cost_increase == 0 or timezone.now() < self.price_increase_start_date:
             return self.paypal_cost + self.check_cost_increase
 
         return self.paypal_cost + self.check_cost_increase + self.late_cost_increase
 
     @property
     def is_after_registration_start(self):
-        return datetime.now() >= self.reg_start_date
+        return timezone.now() >= self.reg_start_date
 
     @property
     def is_after_price_increase(self):
-        return datetime.now() >= self.price_increase_start_date
+        return timezone.now() >= self.price_increase_start_date
 
     @property
     def is_after_waitlist_start(self):
-        return datetime.now() >= self.waitlist_start_date
+        return timezone.now() >= self.waitlist_start_date
 
     def is_visible(self, user=None):
         if user and user.is_authenticated() and user.is_junta:
@@ -244,15 +244,15 @@ class League(models.Model):
 
         # if the user is not a league admin and the league is "open" and falls between valid dates
         return self.state in ['open'] and \
-            (datetime.now() >= self.reg_start_date) and \
-            (date.today() <= self.league_end_date)
+            (timezone.now() >= self.reg_start_date) and \
+            (timezone.now().date() <= self.league_end_date)
 
     def is_waitlist(self, user=None):
         # if the league is open and its after the waitlist date or league is full
         if not self.is_open(user):
             return True
 
-        if datetime.now() >= self.waitlist_start_date:
+        if timezone.now() >= self.waitlist_start_date:
             return True
 
         if len(self.get_complete_registrations()) >= self.max_players:
@@ -672,7 +672,7 @@ class Registrations(models.Model):
 
     @atomic
     def add_to_baggage_group(self, email):
-        if datetime.now() > self.league.waitlist_start_date:
+        if timezone.now() > self.league.waitlist_start_date:
             return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
 
         if self.user.email == email:
@@ -718,7 +718,7 @@ class Registrations(models.Model):
 
     @atomic
     def leave_baggage_group(self):
-        if datetime.now() >= self.league.waitlist_start_date:
+        if timezone.now() >= self.league.waitlist_start_date:
             return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
 
         try:
@@ -865,7 +865,7 @@ class Team(models.Model):
         return self.teammember_set.filter(user__profile__gender__iexact='F')
 
     def get_past_games(self):
-        return self.game_set.all().filter(date__lte=date.today())
+        return self.game_set.all().filter(date__lte=timezone.now().date())
 
     def get_record_list(self):
         # return in format {wins, losses, ties, conflicts}
@@ -1119,7 +1119,7 @@ class Coupon(models.Model):
             return False
 
         # if there is an expiration date and it today is past it
-        if self.valid_until and self.valid_until < datetime.now():
+        if self.valid_until and self.valid_until < timezone.now():
             return False
 
         if league is not None:

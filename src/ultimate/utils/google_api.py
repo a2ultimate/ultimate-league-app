@@ -1,4 +1,3 @@
-from datetime import datetime
 import httplib2
 import sys
 
@@ -19,21 +18,20 @@ class GoogleAppsApi:
 
         if credentials_file and scopes and account:
             credentials = ServiceAccountCredentials.from_json_keyfile_name(
-              credentials_file, scopes=scopes)
+                credentials_file, scopes=scopes)
 
             credentials._kwargs['sub'] = account
 
             self.http = httplib2.Http()
             self.http = credentials.authorize(self.http)
 
-
     def prepare_group_for_sync(self, group_name, group_id=None, group_email_address=None, force=False):
         if force:
             self.delete_group(group_id=group_id, group_email_address=group_email_address)
         else:
             self.remove_all_group_members(
-                group_id=group_id, \
-                group_email_address=group_email_address, \
+                group_id=group_id,
+                group_email_address=group_email_address,
                 group_name=group_name)
 
         if group_id:
@@ -47,7 +45,6 @@ class GoogleAppsApi:
 
         return None
 
-
     # TODO need paging for when you have over 200 groups
     def get_or_create_group(self, group_email_address, group_name):
         service = build('admin', 'directory_v1', http=self.http)
@@ -56,7 +53,7 @@ class GoogleAppsApi:
         target_group = None
 
         try:
-          groups_response = service.groups().list(customer='my_customer', domain='lists.annarborultimate.org').execute(http=self.http)
+            groups_response = service.groups().list(customer='my_customer', domain='lists.annarborultimate.org').execute(http=self.http)
         except Exception as e:
             return None
 
@@ -67,9 +64,9 @@ class GoogleAppsApi:
 
         # couldn't find group, create it
         if not target_group:
-            body = { 'email': group_email_address, }
+            body = {'email': group_email_address, }
             if group_name:
-                body.update({ 'name': group_name, })
+                body.update({'name': group_name, })
 
             try:
                 target_group = service.groups().insert(body=body).execute(http=self.http)
@@ -77,7 +74,6 @@ class GoogleAppsApi:
                 return None
 
         return target_group
-
 
     def delete_group(self, group_id=None, group_email_address=None):
         service = build('admin', 'directory_v1', http=self.http)
@@ -87,9 +83,9 @@ class GoogleAppsApi:
                 groups_response = service.groups().list(customer='my_customer', domain='lists.annarborultimate.org').execute(http=self.http)
 
                 if groups_response:
-                  for group in groups_response.get('groups'):
-                      if group.get('email') == group_email_address:
-                          group_id = group.get('id', None)
+                    for group in groups_response.get('groups'):
+                        if group.get('email') == group_email_address:
+                            group_id = group.get('id', None)
 
             except Exception as e:
                 return False
@@ -101,7 +97,6 @@ class GoogleAppsApi:
                 return False
 
         return True
-
 
     def remove_all_group_members(self, group_id=None, group_email_address=None, group_name=None):
         service = build('admin', 'directory_v1', http=self.http)
@@ -121,14 +116,13 @@ class GoogleAppsApi:
                     member_id = member.get('id', None)
                     service.members().delete(groupKey=group_id, memberKey=member_id).execute(http=self.http)
 
-
     def add_group_member(self, email_address, group_id=None, group_email_address=None, group_name=None):
         service = build('admin', 'directory_v1', http=self.http)
 
         body = {
             'email': email_address,
             'role': 'MEMBER'
-            }
+        }
         response = False
 
         # look for group
@@ -146,7 +140,6 @@ class GoogleAppsApi:
                 return False
 
         return response
-
 
     def get_calendar_events(self, calendar_id, since):
         service = build(serviceName='calendar', version='v3', http=self.http)
