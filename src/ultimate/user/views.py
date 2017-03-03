@@ -1,5 +1,3 @@
-from datetime import date, datetime
-
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -7,6 +5,7 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.utils import timezone
 
 from ultimate.leagues.models import *
 from ultimate.user.models import *
@@ -18,8 +17,7 @@ def index(request):
     leagues = League.objects.filter(state__in=['closed', 'open', 'preview']).order_by('league_start_date')
     leagues = [r for r in leagues if r.is_visible(request.user)]
 
-    # date.today() OR something like date(2010, 4, 13)
-    next_games = Game.objects.filter(~Q(league__state=League.LEAGUE_STATE_HIDDEN) & Q(date__gte=date.today()) & Q(Q(gameteams__team__teammember__user=request.user) | Q(gameteams__team__teammember__user=request.user))).order_by('date')[0:2]
+    next_games = Game.objects.filter(~Q(league__state=League.LEAGUE_STATE_HIDDEN) & Q(date__gte=timezone.now().date()) & Q(Q(gameteams__team__teammember__user=request.user) | Q(gameteams__team__teammember__user=request.user))).order_by('date')[0:2]
     try:
         next_game = next_games[0:1].get()
     except Game.DoesNotExist:
@@ -114,7 +112,7 @@ def editratings(request):
             instance = form.save(commit=False)
             instance.ratings_type = PlayerRatings.RATING_TYPE_USER
             instance.submitted_by = request.user
-            instance.updated = datetime.now()
+            instance.updated = timezone.now()
             instance.user = request.user
             instance.save()
 

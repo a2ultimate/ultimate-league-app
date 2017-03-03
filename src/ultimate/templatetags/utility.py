@@ -1,4 +1,3 @@
-from datetime import date
 import collections
 import re
 
@@ -7,6 +6,7 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.urlresolvers import reverse
 from django.template.defaultfilters import stringfilter
+from django.utils import timezone
 
 register = template.Library()
 
@@ -14,16 +14,6 @@ register = template.Library()
 @register.filter()
 def groups_sort(groups):
     return sorted(groups, key=lambda group: len(group['list']))
-
-
-@register.filter
-def time_until_days(value):
-    try:
-        difference = value - date.today
-    except:
-        return value
-
-    return difference.days
 
 
 @register.filter(is_safe=True)

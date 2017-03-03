@@ -1,9 +1,8 @@
-from datetime import date
-
 from django import forms
 from django.contrib.auth import get_user_model
 from django.forms.extras import SelectDateWidget
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 
 from captcha.fields import CaptchaField
 
@@ -23,7 +22,7 @@ class SignupForm(forms.ModelForm):
 
     date_of_birth = forms.DateField(label='Date of Birth',
         widget=SelectDateWidget(empty_label=('Year', 'Month', 'Day'),
-        years=range(date.today().year, date.today().year - 70, -1)))
+        years=range(timezone.now().year, timezone.now().year - 70, -1)))
 
     gender = forms.CharField(label='Gender', widget=forms.Select(choices=(('', ''),) + Player.GENDER_CHOICES))
 
@@ -105,7 +104,7 @@ class EditProfileForm(forms.ModelForm):
 class EditPlayerForm(forms.ModelForm):
     date_of_birth = forms.DateField(label='Date of Birth*',
         widget=SelectDateWidget(empty_label=('Year', 'Month', 'Day'),
-        years=range(date.today().year, date.today().year - 70, -1)))
+        years=range(timezone.now().year, timezone.now().year - 70, -1)))
     gender = forms.CharField(label='Gender*', widget=forms.Select(choices=(('', ''),) + Player.GENDER_CHOICES))
     nickname = forms.CharField(required=False)
     phone = forms.CharField(required=False)

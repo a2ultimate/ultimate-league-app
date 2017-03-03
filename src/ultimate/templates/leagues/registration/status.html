@@ -16,17 +16,53 @@
   <h2>Registration Status</h2>
 
   {% if registration.is_complete %}
-    <div class="message message-success">
-      Your registration is <strong>complete</strong>.
-    </div>
+    {% if not registration.waitlist %}
+      <div class="message message-success">
+        Your registration is <strong>complete</strong>.
+      </div>
 
-    <p>
-      {% if registration.waitlist %}
-        However, you are on the <strong>waitlist</strong>.
-      {% elif league.baggage > 1 and not league.waitlist_start_date|is_past_deadline %}
-        You may <a href="{% url 'league_group' year=league.year season=league.season.slug division=league.night_slug  %}">form a baggage group here</a>.
+      <h3>What's Next?</h3>
+      {% if league.type == 'league' %}
+        <p>
+          You will be added to a team, a schedule will be generated, and you will then receive a welcome email.
+          This generally happens 24-48 hours before the first game.
+          If you have any questions, please <a href="mailto:registration@annarborultimate.org">email us at registration@annarborultimate.org</a>.
+        </p>
+      {% else %}
+        <p>
+          Teams and schedules will be created and will either be added to the website or assigned in person at the field site.
+          If you have any questions, please <a href="mailto:registration@annarborultimate.org">email us at registration@annarborultimate.org</a>.
+        </p>
       {% endif %}
-    </p>
+
+      {% if league.baggage > 1 and not league.waitlist_start_date|is_past_deadline %}
+        <p>
+          You may now <a href="{% url 'league_group' year=league.year season=league.season.slug division=league.night_slug  %}">form a group</a>.
+          The deadline to do so is <strong>{{ league.waitlist_start_date|date:'l, F jS' }} at {{ league.waitlist_start_date|date:'g:iA'|lower }}</strong>.
+        </p>
+      {% endif %}
+    {% else %}
+      <div class="message message-caution">
+        Your registration is <strong>complete</strong>, but you are currently on the <strong>waitlist</strong>.
+      </div>
+
+      <p>
+        {% if registration.waitlist %}
+          <p>
+            Waitlisted players are generally added to a team when one of the following conditions is met:
+          </p>
+          <ul>
+            <li>The league has not reached the player cap</li>
+            <li>The league expands to accomodate more players</li>
+            <li>A player has dropped from a team</li>
+            <li>A team is having attendance issues and needs another player</li>
+          </ul>
+          <p>
+            To check on the status of your registration, please <a href="mailto:registration@annarborultimate.org">email us at registration@annarborultimate.org</a>.
+          </p>
+        {% endif %}
+      </p>
+    {% endif %}
   {% elif registration.is_refunded %}
     <div class="message message-warning">
       Your registration has been <strong>refunded</strong>.

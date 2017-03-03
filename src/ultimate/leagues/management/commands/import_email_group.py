@@ -13,37 +13,49 @@ class Command(BaseCommand):
     help = 'Add members to an email group from an email address, file, or team id'
 
     def add_arguments(self, parser):
-        parser.add_argument('-e',
+        parser.add_argument(
+            '-e',
             dest='email',
             default='',
-            help='Add single email address')
+            help='Add single email address',
+        )
 
-        parser.add_argument('-f',
+        parser.add_argument(
+            '-f',
             dest='file',
             default='',
-            help='Import from a file')
+            help='Import from a file',
+        )
 
-        parser.add_argument('-t',
+        parser.add_argument(
+            '-t',
             type=int,
             dest='team',
             default=0,
-            help='Sync a team')
+            help='Sync a team',
+        )
 
-        parser.add_argument('-l',
+        parser.add_argument(
+            '-l',
             default='',
             dest='league',
-            help='Sync a league')
+            help='Sync a league',
+        )
 
-        parser.add_argument('-g',
+        parser.add_argument(
+            '-g',
             default='',
             dest='group_address',
-            help='Group Address (required for email and file)')
+            help='Group Address (required for email and file)',
+        )
 
-        parser.add_argument('--force',
+        parser.add_argument(
+            '--force',
             action='store_true',
             default=False,
             dest='force',
-            help='force group create or find (only for team)')
+            help='force group create or find (only for team)',
+        )
 
     def handle(self, *args, **options):
         email_address = options.get('email', None)

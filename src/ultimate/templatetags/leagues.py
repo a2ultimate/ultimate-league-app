@@ -1,5 +1,5 @@
-from datetime import datetime
 from django import template
+from django.utils import timezone
 
 from ultimate.leagues.models import League
 
@@ -35,30 +35,35 @@ def is_waitlist(league, user):
 
 @register.filter
 def is_past_deadline(league_date):
-    return bool(datetime.now() > league_date)
+    return bool(timezone.now() > league_date)
 
 
 @register.filter
 def is_free(league):
     return bool(league.check_price == 0 and league.paypal_price == 0)
 
+
 @register.filter
 def is_accepting_registrations(league, user):
     return league.is_accepting_registrations(user)
+
 
 @register.filter
 def is_waitlisting_registrations(league, user):
     return league.is_waitlisting_registrations(user)
 
+
 @register.filter
 def has_user_registration(league, user):
     return league.get_user_registration(user) is not None
+
 
 @register.filter
 def has_complete_user_registration(league, user):
     user_registration = league.get_user_registration(user)
     return user_registration and \
         user_registration.is_complete
+
 
 @register.filter
 # returns league captains as user objects

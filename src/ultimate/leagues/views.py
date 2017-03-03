@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib import messages
@@ -10,6 +10,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 
 from ultimate.forms import RegistrationAttendanceForm
 from ultimate.leagues.models import *
@@ -104,7 +105,7 @@ def teams(request, year, season, division):
     game_locations = league.get_game_locations(games=games)
     game_dates = league.get_game_dates(games=games, game_locations=game_locations)
 
-    next_game_date = getattr(games.filter(date__gte=date.today()).first(), 'date', None)
+    next_game_date = getattr(games.filter(date__gte=timezone.now().date()).first(), 'date', None)
 
     if request.user.is_authenticated():
         user_games = games.filter(league=league, gameteams__team__teammember__user=request.user).order_by('date')
@@ -253,7 +254,7 @@ def registration(request, year, season, division, section=None):
                     registration.save()
 
                 if league.check_price == 0 and league.paypal_price == 0:
-                    registration.registered = datetime.now()
+                    registration.registered = timezone.now()
                     registration.save()
 
                 if league.type == 'league':
@@ -330,7 +331,7 @@ def registration(request, year, season, division, section=None):
         if 'process_registration' in request.POST:
             if registration.is_ready_for_payment:
                 registration.payment_complete = True
-                registration.registered = datetime.now()
+                registration.registered = timezone.now()
                 registration.save()
 
                 success = True

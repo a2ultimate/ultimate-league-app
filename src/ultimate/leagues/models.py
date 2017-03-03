@@ -1,4 +1,3 @@
-from datetime import date, datetime
 import random
 
 from django.conf import settings
@@ -9,8 +8,11 @@ from django.db import models
 from django.db.models import Count
 from django.db.transaction import atomic
 from django.template.defaultfilters import slugify
+from django.utils import timezone
 
 from pybb.models import *
+
+from ultimate.utils.email_groups import *
 
 
 def generateLeagueCoverImagePath(instance, filename):
@@ -220,14 +222,14 @@ class League(models.Model):
 
     @property
     def paypal_price(self):
-        if self.paypal_cost == 0 or datetime.now() < self.price_increase_start_date:
+        if self.paypal_cost == 0 or timezone.now() < self.price_increase_start_date:
             return self.paypal_cost
 
         return self.paypal_cost + self.late_cost_increase
 
     @property
     def check_price(self):
-        if self.paypal_cost + self.check_cost_increase == 0 or datetime.now() < self.price_increase_start_date:
+        if self.paypal_cost + self.check_cost_increase == 0 or timezone.now() < self.price_increase_start_date:
             return self.paypal_cost + self.check_cost_increase
 
         return self.paypal_cost + self.check_cost_increase + self.late_cost_increase
@@ -238,15 +240,15 @@ class League(models.Model):
 
     @property
     def is_after_registration_start(self):
-        return datetime.now() >= self.reg_start_date
+        return timezone.now() >= self.reg_start_date
 
     @property
     def is_after_price_increase(self):
-        return datetime.now() >= self.price_increase_start_date
+        return timezone.now() >= self.price_increase_start_date
 
     @property
     def is_after_waitlist_start(self):
-        return datetime.now() >= self.waitlist_start_date
+        return timezone.now() >= self.waitlist_start_date
 
     def is_visible(self, user=None):
         if user and user.is_authenticated() and user.is_junta:
@@ -330,15 +332,15 @@ class League(models.Model):
 
         # if the user is not a league admin and the league is "open" and falls between valid dates
         return self.state in ['open'] and \
-            (datetime.now() >= self.reg_start_date) and \
-            (date.today() <= self.league_end_date)
+            (timezone.now() >= self.reg_start_date) and \
+            (timezone.now().date() <= self.league_end_date)
 
     def is_waitlist(self, user=None):
         # if the league is open and its after the waitlist date or league is full
         if not self.is_open(user):
             return True
 
-        if datetime.now() >= self.waitlist_start_date:
+        if timezone.now() >= self.waitlist_start_date:
             return True
 
         if len(self.get_complete_registrations()) >= self.max_players:
@@ -503,19 +505,8 @@ class League(models.Model):
         return division_email_success + division_captains_email_success
 
     def sync_division_email_group(self, force=False):
-        group_address = '{}{}-{}-{}@lists.annarborultimate.org'.format(
-            self.season.slug,
-            self.league_start_date.strftime('%y'),
-            self.league_start_date.strftime('%a'),
-            self.level,
-        ).lower()
-
-        group_name = '{} {} {} {}'.format(
-            self.season.name,
-            self.league_start_date.strftime('%Y'),
-            self.league_start_date.strftime('%A'),
-            self.display_level,
-        )
+        group_address = generate_email_list_address(self)
+        group_name = generate_email_list_name(self)
 
         from ultimate.utils.google_api import GoogleAppsApi
         api = GoogleAppsApi()
@@ -529,29 +520,25 @@ class League(models.Model):
         self.division_email_group_id = group_id
 
         success_count = 0
-        for registration in self.get_complete_registrations():
-            if api.add_group_member(registration.user.email, group_id=self.division_email_group_id, group_email_address=group_address):
-                success_count = success_count + 1
 
-        self.division_email = group_address
+        if Team.objects.filter(league=self).exists():
+            for team_member in TeamMember.objects.filter(team__league=self):
+                success_count += add_to_group(
+                    group_id=group_id,
+                    email_address=team_member.user.email)
+        else:
+            for registration in self.get_complete_registrations():
+                success_count += add_to_group(
+                    group_id=group_id,
+                    email_address=registration.user.email)
+
         self.save()
 
         return success_count, group_address
 
     def sync_division_captains_email_group(self, force=False):
-        group_address = '{}{}-{}-{}-captains@lists.annarborultimate.org'.format(
-            self.season.slug,
-            self.league_start_date.strftime('%y'),
-            self.league_start_date.strftime('%a'),
-            self.level,
-        ).lower()
-
-        group_name = '{} {} {} {} Captains'.format(
-            self.season.name,
-            self.league_start_date.strftime('%Y'),
-            self.league_start_date.strftime('%A'),
-            self.display_level,
-        )
+        group_address = generate_email_list_address(self, suffix='captains')
+        group_name = generate_email_list_name(self, suffix='Captains')
 
         from ultimate.utils.google_api import GoogleAppsApi
         api = GoogleAppsApi()
@@ -565,13 +552,10 @@ class League(models.Model):
         self.division_captains_email_group_id = group_id
 
         success_count = 0
-        for registration in self.get_complete_registrations():
-            team_member_captain = 0
-            team_member_models = TeamMember.objects.filter(user=registration.user, team__league=registration.league)
-            if team_member_models.count():
-                if team_member_models[:1].get().captain:
-                    if api.add_group_member(registration.user.email, group_id=self.division_captains_email_group_id, group_email_address=group_address):
-                        success_count = success_count + 1
+        for team_member in TeamMember.objects.filter(team__league=self, captain=True):
+            success_count += add_to_group(
+                group_id=group_id,
+                email_address=team_member.user.email)
 
         self.save()
 
@@ -787,7 +771,7 @@ class Registrations(models.Model):
 
     @atomic
     def add_to_baggage_group(self, email):
-        if datetime.now() > self.league.waitlist_start_date:
+        if timezone.now() > self.league.waitlist_start_date:
             return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
 
         if self.user.email == email:
@@ -833,7 +817,7 @@ class Registrations(models.Model):
 
     @atomic
     def leave_baggage_group(self):
-        if datetime.now() >= self.league.waitlist_start_date:
+        if timezone.now() >= self.league.waitlist_start_date:
             return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
 
         try:
@@ -980,7 +964,7 @@ class Team(models.Model):
         return self.teammember_set.filter(user__profile__gender__iexact='F')
 
     def get_past_games(self):
-        return self.game_set.all().filter(date__lte=date.today())
+        return self.game_set.all().filter(date__lte=timezone.now().date())
 
     def get_record_list(self):
         # return in format {wins, losses, ties, conflicts}
@@ -1075,21 +1059,8 @@ class Team(models.Model):
             bool(ratings_reports.filter(num_ratings__gte=self.size - 1).count() > 0)
 
     def sync_email_group(self, force=False):
-        group_address = '{}{}-{}-{}-{}@lists.annarborultimate.org'.format(
-            self.league.season.slug,
-            self.league.league_start_date.strftime('%y'),
-            self.league.league_start_date.strftime('%a'),
-            self.league.level,
-            self.id,
-        ).lower()
-
-        group_name = '{} {} {} {} Team {}'.format(
-            self.league.season.name,
-            self.league.league_start_date.strftime('%Y'),
-            self.league.league_start_date.strftime('%A'),
-            self.league.display_level,
-            self.id,
-        )
+        group_address = generate_email_list_address(self.league, team=self)
+        group_name = generate_email_list_name(self.league, team=self)
 
         from ultimate.utils.google_api import GoogleAppsApi
         api = GoogleAppsApi()
@@ -1104,8 +1075,9 @@ class Team(models.Model):
 
         success_count = 0
         for team_member in self.teammember_set.all():
-            if api.add_group_member(team_member.user.email, group_id=self.group_id, group_email_address=group_address):
-                success_count = success_count + 1
+            success_count += add_to_group(
+                group_id=group_id,
+                email_address=team_member.user.email)
 
         self.save()
 
@@ -1246,7 +1218,7 @@ class Coupon(models.Model):
             return False
 
         # if there is an expiration date and it today is past it
-        if self.valid_until and self.valid_until < datetime.now():
+        if self.valid_until and self.valid_until < timezone.now():
             return False
 
         if league is not None:
