@@ -57,18 +57,18 @@
                           </div>
                         {% endif %}
                       {% else %}
-
                         {% if league|is_accepting_registrations:request.user %}
-                          <a class="page-home-leagues-content-list-element-list-element-footer-action button button-block button-caution" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">
-                            {% if league|is_waitlisting_registrations:request.user %}
+                          {% if league|is_waitlisting_registrations:request.user %}
+                            <a class="page-home-leagues-content-list-element-list-element-footer-action button button-block button-caution" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">
                               Join Waitlist
-                            {% else %}
-                              {% if league|has_user_registration:request.user %}
-                                Finish Registration
-                              {% else %}
-                                Register Now
-                              {% endif %}
-                            {% endif %}
+                          {% else %}
+                              <a class="page-home-leagues-content-list-element-list-element-footer-action button button-block button-success" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">
+                                {% if league|has_user_registration:request.user %}
+                                  Finish Registration
+                                {% else %}
+                                  Register Now
+                                {% endif %}
+                          {% endif %}
                           </a>
                         {% else %}
                           {% if not league.is_after_registration_start %}
@@ -81,7 +81,6 @@
                             </div>
                           {% endif %}
                         {% endif %}
-
                       {% endif %}
                     </div>
                   </li>
