@@ -1,5 +1,5 @@
 {% load games %}
-{% load staticfiles %}
+{% load webpack_static from webpack_loader %}
 
 <table class="schedule-table table table-centered{% if condensed %} table-condensed{% endif %} table-fixed table-striped">
   <thead>
@@ -22,7 +22,7 @@
           {% if field.grouper.layout_link %}
             <small>
               &middot;
-              <a href="{% static field.grouper.layout_link %}" target="_blank">
+              <a href="{% webpack_static field.grouper.layout_link %}" target="_blank">
                 Layout
               </a>
             </small>

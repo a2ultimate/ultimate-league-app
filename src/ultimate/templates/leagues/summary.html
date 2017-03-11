@@ -1,8 +1,8 @@
 {% extends 'layout/layout_user.html' %}
 
 {% load leagues %}
-{% load staticfiles %}
 {% load utility %}
+{% load webpack_static from webpack_loader %}
 
 {% block title %}Summary &middot; {{ league.night_title|smart_title }} &middot; {{ league.season_title|smart_title }} League {{ league.year }} &middot; {{ block.super }}{% endblock %}
 {% block og_title %}{{ block.super }} {{ league.year }} {{ league.season_title|smart_title }} League {{ league.night_title|smart_title }} Division{% endblock %}
@@ -92,7 +92,7 @@
           {% if field.layout_link %}
             <small>
               &middot;
-              <a href="{% static field.layout_link %}" target="_blank">
+              <a href="{% webpack_static field.layout_link %}" target="_blank">
                 Layout
               </a>
             </small>

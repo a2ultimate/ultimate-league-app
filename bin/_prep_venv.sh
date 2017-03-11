@@ -25,7 +25,7 @@ if [ "x$2" == "xclean" ]; then
 fi
 
 # Create virtualenv and install necessary packages
-virtualenv --no-site-packages --prompt="(ultimate $venv) " $virtual_env
+virtualenv --no-site-packages --prompt="(ulti $venv) " $virtual_env
 . $virtual_env/bin/activate
 
 pip install -r $ULTIMATE_SRC_ROOT/requirements/$reqs.txt
