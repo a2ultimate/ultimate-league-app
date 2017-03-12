@@ -160,27 +160,45 @@ class User(AbstractUser):
             if len(values):
                 player_ratings_averaged[key] = float(sum(values)) / len(values)
 
-        rating_min = 1
-        rating_max = 6
-        max_athleticism = (0.1 * pow(3, 3)) + \
-            (-1.2 * pow(3, 2)) + (5 * 3)
-        max_throwing = (0.1 * pow(3, 3)) + (-1.2 * pow(3, 2)) + (5 * 3)
+        def calculate_weighted_athleticism_rating(rating, max_rating, percentage):
+            # 0.1x^3 - 1.2x^2 + 5x
+            rating = (0.1 * pow(rating, 3)) + (-1.2 * pow(rating, 2)) + (5 * rating)
+            max_rating = (0.1 * pow(max_rating, 3)) + (-1.2 * pow(max_rating, 2)) + (5 * max_rating)
+            rating = rating / max_rating * percentage
+            return rating
+
+        def calculate_weighted_experience_rating(rating, max_rating, percentage):
+            # x^1.4
+            rating = pow(rating, 1.4)
+            max_rating = pow(max_rating, 1.4)
+            rating = rating / max_rating * percentage
+            return rating
+
+        def calculate_weighted_strategy_rating(rating, max_rating, percentage):
+            # x^0.25
+            rating = pow(rating, 0.25)
+            max_rating = pow(max_rating, 0.25)
+            rating = rating / max_rating * percentage
+            return rating
+
+        def calculate_weighted_throwing_rating(rating, max_rating, percentage):
+            # 0.1x^3 - 1.2x^2 + 5x
+            rating = (0.1 * pow(rating, 3)) + (-1.2 * pow(rating, 2)) + (5 * rating)
+            max_rating = (0.1 * pow(max_rating, 3)) + (-1.2 * pow(max_rating, 2)) + (5 * max_rating)
+            rating = rating / max_rating * percentage
+            return rating
 
         player_ratings_averaged['athleticism'] -= 3
         player_ratings_averaged['throwing'] -= 3
 
         player_ratings_weighted = {}
-        player_ratings_weighted['athleticism'] = ((0.1 * pow(player_ratings_averaged['athleticism'], 3) + -1.2 * pow(
-            player_ratings_averaged['athleticism'], 2) + 5 * player_ratings_averaged['athleticism'])) / max_athleticism * 10
-        player_ratings_weighted['experience'] = (
-            pow(player_ratings_averaged['experience'], 1.4) / pow(6, 1.4)) * 6
-        player_ratings_weighted['strategy'] = (
-            pow(player_ratings_averaged['strategy'], 0.25) / pow(6, 0.25)) * 6
-        player_ratings_weighted['throwing'] = ((0.1 * pow(player_ratings_averaged['throwing'], 3) + -1.2 * pow(
-            player_ratings_averaged['throwing'], 2) + 5 * player_ratings_averaged['throwing'])) / max_throwing * 10
+        player_ratings_weighted['athleticism'] = calculate_weighted_athleticism_rating(player_ratings_averaged['athleticism'], 3, 32)
+        player_ratings_weighted['experience'] = calculate_weighted_experience_rating(player_ratings_averaged['experience'], 6, 18)
+        player_ratings_weighted['strategy'] = calculate_weighted_strategy_rating(player_ratings_averaged['strategy'], 6, 18)
+        player_ratings_weighted['throwing'] = calculate_weighted_throwing_rating(player_ratings_averaged['throwing'], 3, 32)
 
-        player_ratings_weighted['total'] = max(
-            sum(player_ratings_weighted.itervalues()), 0)
+        # rating cannot be less than 0
+        player_ratings_weighted['total'] = max(sum(player_ratings_weighted.itervalues()), 0)
 
         return player_ratings_weighted
 
