@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.mail import send_mail
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
@@ -126,10 +127,18 @@ class User(AbstractUser):
     @property
     def rating_totals(self):
         player_ratings_collected = {'athleticism': [],
-                                    'experience': [], 'strategy': [], 'throwing': []}
+                                    'experience': [],
+                                    'strategy': [],
+                                    'throwing': []}
 
-        # date cap for old ratings?
         ratings = self.playerratings_set.all()
+
+        rating_limit = getattr(settings, 'A2U_RATING_LIMIT_MONTHS', 0)
+        if rating_limit:
+            ratings = ratings.filter(Q(ratings_type=PlayerRatings.RATING_TYPE_USER) |
+                Q(ratings_type=PlayerRatings.RATING_TYPE_JUNTA) |
+                Q(updated__gte=timezone.now() - relativedelta(months=rating_limit)))
+
         for rating in ratings:
             if rating.athleticism:
                 player_ratings_collected['athleticism'].append(rating.athleticism)
