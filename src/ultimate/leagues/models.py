@@ -744,7 +744,7 @@ class Team(models.Model):
     email = models.CharField(max_length=128, blank=True)
     league = models.ForeignKey('leagues.League')
     hidden = models.BooleanField(default=False)
-    group_id = models.CharField(max_length=128, blank=True)
+    group_id = models.CharField(max_length=128, blank=True, null=True)
 
     class Meta:
         db_table = u'team'
