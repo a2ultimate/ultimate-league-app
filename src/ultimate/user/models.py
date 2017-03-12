@@ -1,13 +1,10 @@
-from datetime import timedelta
-import math
-
+from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.mail import send_mail
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from django.utils import timezone
 
 from ultimate.leagues.models import *
 
@@ -71,7 +68,7 @@ class AbstractUser(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name',]
+    REQUIRED_FIELDS = ['first_name', 'last_name', ]
 
     class Meta:
         verbose_name = _('user')
@@ -118,8 +115,13 @@ class User(AbstractUser):
 
     @property
     def has_expired_player_rating(self):
+        expiration_months = getattr(settings, 'A2U_RATING_EXPIRATION_MONTHS', 0)
+
+        if expiration_months == 0:
+            return False
+
         return not self.playerratings_set.filter(submitted_by=self, user=self,
-                                                 updated__gte=timezone.now() - timedelta(days=365)).exists()
+            updated__gte=timezone.now() - relativedelta(months=expiration_months)).exists()
 
     @property
     def rating_totals(self):
@@ -151,21 +153,21 @@ class User(AbstractUser):
 
         rating_min = 1
         rating_max = 6
-        max_athleticism = (0.1 * math.pow(3, 3)) + \
-            (-1.2 * math.pow(3, 2)) + (5 * 3)
-        max_throwing = (0.1 * math.pow(3, 3)) + (-1.2 * math.pow(3, 2)) + (5 * 3)
+        max_athleticism = (0.1 * pow(3, 3)) + \
+            (-1.2 * pow(3, 2)) + (5 * 3)
+        max_throwing = (0.1 * pow(3, 3)) + (-1.2 * pow(3, 2)) + (5 * 3)
 
         player_ratings_averaged['athleticism'] -= 3
         player_ratings_averaged['throwing'] -= 3
 
         player_ratings_weighted = {}
-        player_ratings_weighted['athleticism'] = ((0.1 * math.pow(player_ratings_averaged['athleticism'], 3) + -1.2 * math.pow(
+        player_ratings_weighted['athleticism'] = ((0.1 * pow(player_ratings_averaged['athleticism'], 3) + -1.2 * pow(
             player_ratings_averaged['athleticism'], 2) + 5 * player_ratings_averaged['athleticism'])) / max_athleticism * 10
         player_ratings_weighted['experience'] = (
-            math.pow(player_ratings_averaged['experience'], 1.4) / math.pow(6, 1.4)) * 6
+            pow(player_ratings_averaged['experience'], 1.4) / pow(6, 1.4)) * 6
         player_ratings_weighted['strategy'] = (
-            math.pow(player_ratings_averaged['strategy'], 0.25) / math.pow(6, 0.25)) * 6
-        player_ratings_weighted['throwing'] = ((0.1 * math.pow(player_ratings_averaged['throwing'], 3) + -1.2 * math.pow(
+            pow(player_ratings_averaged['strategy'], 0.25) / pow(6, 0.25)) * 6
+        player_ratings_weighted['throwing'] = ((0.1 * pow(player_ratings_averaged['throwing'], 3) + -1.2 * pow(
             player_ratings_averaged['throwing'], 2) + 5 * player_ratings_averaged['throwing'])) / max_throwing * 10
 
         player_ratings_weighted['total'] = max(

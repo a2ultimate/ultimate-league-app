@@ -125,7 +125,7 @@
               </div>
             {% elif request.user.has_expired_player_rating %}
               <div class="message message-warning">
-                <p>{% trans 'Once per year, you are required to resubmit your player ratings. This gives us a better picture of you as a player and helps us generate balanced teams.' %}</p>
+                <p>{% trans 'Every ' %}{% settings_value 'A2U_RATING_EXPIRATION_MONTHS' %}{% trans ' months, you are required to resubmit your player ratings. This gives us a better picture of you as a player and helps us generate balanced teams.' %}</p>
                 <a class="button button-small button-primary" href="{% url 'editratings' %}">{% trans 'Update Your Ratings' %}</a>
               </div>
             {% endif %}

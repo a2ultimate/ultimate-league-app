@@ -10,6 +10,10 @@ from django.utils import timezone
 register = template.Library()
 
 
+@register.simple_tag
+def settings_value(name):
+    return getattr(settings, name, '')
+
 @register.filter()
 def groups_sort(groups):
     return sorted(groups, key=lambda group: len(group['list']))
