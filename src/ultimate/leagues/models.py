@@ -413,7 +413,7 @@ class League(models.Model):
         api = GoogleAppsApi()
         group_id = api.prepare_group_for_sync(
             group_name=group_name,
-            group_id=self.division_captains_email_group_id,
+            group_id=self.division_email_group_id,
             group_email_address=group_address,
             force=force)
 
