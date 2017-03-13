@@ -13,7 +13,7 @@
 <div class="page-user-index">
   {% include '_partials/account_tabs.html' with selected_tab='user' %}
 
-  {% if next_game and next_game.get_teams|length %}
+  {% if next_game and next_game.get_display_teams|length %}
     <h2>My Next Game</h2>
 
     <div class="page-user-index-next-game">
@@ -50,7 +50,7 @@
       </div>
 
       <div class="team-card-game">
-        {% for team in next_game.get_teams %}
+        {% for team in next_game.get_display_teams %}
           <div class="team-card-game-team">
 
             {% include '_partials/team_card.html' with team=team user=request.user only %}
@@ -64,7 +64,7 @@
       </div>
     </div>
 
-    {% if following_game and following_game.get_teams|length %}
+    {% if following_game and following_game.get_display_teams|length %}
       <p class="page-user-index-following-game">
         Following that, you have a game
 

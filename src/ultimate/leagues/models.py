@@ -180,7 +180,7 @@ class League(models.Model):
         return reverse('league_summary', args=[self.year, self.season.slug, self.night_slug, ])
 
     def __unicode__(self):
-        return ('%s %d %s' % (self.season, self.year, self.night)).replace('_', ' ')
+        return ('%s %d %s' % (self.season, self.year, self.night))
 
     def save(self):
         if not self.night_slug:
@@ -502,7 +502,8 @@ class League(models.Model):
         division_captains_email_success, division_captains_email_address = \
             self.sync_division_captains_email_group(force)
 
-        return division_email_success + division_captains_email_success
+        return division_email_success, division_email_address, \
+            division_captains_email_success, division_captains_email_address
 
     def sync_division_email_group(self, force=False):
         group_address = generate_email_list_address(self)
@@ -512,7 +513,7 @@ class League(models.Model):
         api = GoogleAppsApi()
         group_id = api.prepare_group_for_sync(
             group_name=group_name,
-            group_id=self.division_captains_email_group_id,
+            group_id=self.division_email_group_id,
             group_email_address=group_address,
             force=force)
 
@@ -522,13 +523,15 @@ class League(models.Model):
         success_count = 0
 
         if Team.objects.filter(league=self).exists():
-            for team_member in TeamMember.objects.filter(team__league=self):
+            for team_member in TeamMember.objects.filter(team__league=self).order_by('user__last_name'):
                 success_count += add_to_group(
+                    group_email_address=group_address,
                     group_id=group_id,
                     email_address=team_member.user.email)
         else:
-            for registration in self.get_complete_registrations():
+            for registration in self.get_complete_registrations().order_by('user__last_name'):
                 success_count += add_to_group(
+                    group_email_address=group_address,
                     group_id=group_id,
                     email_address=registration.user.email)
 
@@ -552,8 +555,10 @@ class League(models.Model):
         self.division_captains_email_group_id = group_id
 
         success_count = 0
-        for team_member in TeamMember.objects.filter(team__league=self, captain=True):
+
+        for team_member in TeamMember.objects.filter(team__league=self, captain=True).order_by('user__last_name'):
             success_count += add_to_group(
+                group_email_address=group_address,
                 group_id=group_id,
                 email_address=team_member.user.email)
 
@@ -843,7 +848,7 @@ class Team(models.Model):
     email = models.CharField(max_length=128, blank=True)
     league = models.ForeignKey('leagues.League')
     hidden = models.BooleanField(default=False)
-    group_id = models.CharField(max_length=128, blank=True)
+    group_id = models.CharField(max_length=128, blank=True, null=True)
 
     class Meta:
         db_table = u'team'
@@ -1074,8 +1079,9 @@ class Team(models.Model):
         self.group_id = group_id
 
         success_count = 0
-        for team_member in self.teammember_set.all():
+        for team_member in self.teammember_set.all().order_by('user__last_name', 'user__first_name'):
             success_count += add_to_group(
+                group_email_address=group_address,
                 group_id=group_id,
                 email_address=team_member.user.email)
 
@@ -1118,6 +1124,9 @@ class Game(models.Model):
         return '{} {} {} {}'.format(self.league, self.date, self.start, self.field_name)
 
     def get_teams(self):
+        return self.teams.all()
+
+    def get_display_teams(self):
         return self.teams.filter(hidden=False)
 
     def get_user_opponent(self, user):

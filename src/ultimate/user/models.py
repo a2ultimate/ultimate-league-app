@@ -1,13 +1,11 @@
-from datetime import timedelta
-import math
-
+from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.mail import send_mail
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from django.utils import timezone
 
 from ultimate.leagues.models import *
 
@@ -71,7 +69,7 @@ class AbstractUser(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name',]
+    REQUIRED_FIELDS = ['first_name', 'last_name', ]
 
     class Meta:
         verbose_name = _('user')
@@ -118,16 +116,29 @@ class User(AbstractUser):
 
     @property
     def has_expired_player_rating(self):
+        expiration_months = getattr(settings, 'A2U_RATING_EXPIRATION_MONTHS', 0)
+
+        if expiration_months == 0:
+            return False
+
         return not self.playerratings_set.filter(submitted_by=self, user=self,
-                                                 updated__gte=timezone.now() - timedelta(days=365)).exists()
+            updated__gte=timezone.now() - relativedelta(months=expiration_months)).exists()
 
     @property
     def rating_totals(self):
         player_ratings_collected = {'athleticism': [],
-                                    'experience': [], 'strategy': [], 'throwing': []}
+                                    'experience': [],
+                                    'strategy': [],
+                                    'throwing': []}
 
-        # date cap for old ratings?
         ratings = self.playerratings_set.all()
+
+        rating_limit = getattr(settings, 'A2U_RATING_LIMIT_MONTHS', 0)
+        if rating_limit:
+            ratings = ratings.filter(Q(ratings_type=PlayerRatings.RATING_TYPE_USER) |
+                Q(ratings_type=PlayerRatings.RATING_TYPE_JUNTA) |
+                Q(updated__gte=timezone.now() - relativedelta(months=rating_limit)))
+
         for rating in ratings:
             if rating.athleticism:
                 player_ratings_collected['athleticism'].append(rating.athleticism)
@@ -149,27 +160,45 @@ class User(AbstractUser):
             if len(values):
                 player_ratings_averaged[key] = float(sum(values)) / len(values)
 
-        rating_min = 1
-        rating_max = 6
-        max_athleticism = (0.1 * math.pow(3, 3)) + \
-            (-1.2 * math.pow(3, 2)) + (5 * 3)
-        max_throwing = (0.1 * math.pow(3, 3)) + (-1.2 * math.pow(3, 2)) + (5 * 3)
+        def calculate_weighted_athleticism_rating(rating, max_rating, percentage):
+            # 0.1x^3 - 1.2x^2 + 5x
+            rating = (0.1 * pow(rating, 3)) + (-1.2 * pow(rating, 2)) + (5 * rating)
+            max_rating = (0.1 * pow(max_rating, 3)) + (-1.2 * pow(max_rating, 2)) + (5 * max_rating)
+            rating = rating / max_rating * percentage
+            return rating
+
+        def calculate_weighted_experience_rating(rating, max_rating, percentage):
+            # x^1.4
+            rating = pow(rating, 1.4)
+            max_rating = pow(max_rating, 1.4)
+            rating = rating / max_rating * percentage
+            return rating
+
+        def calculate_weighted_strategy_rating(rating, max_rating, percentage):
+            # x^0.25
+            rating = pow(rating, 0.25)
+            max_rating = pow(max_rating, 0.25)
+            rating = rating / max_rating * percentage
+            return rating
+
+        def calculate_weighted_throwing_rating(rating, max_rating, percentage):
+            # 0.1x^3 - 1.2x^2 + 5x
+            rating = (0.1 * pow(rating, 3)) + (-1.2 * pow(rating, 2)) + (5 * rating)
+            max_rating = (0.1 * pow(max_rating, 3)) + (-1.2 * pow(max_rating, 2)) + (5 * max_rating)
+            rating = rating / max_rating * percentage
+            return rating
 
         player_ratings_averaged['athleticism'] -= 3
         player_ratings_averaged['throwing'] -= 3
 
         player_ratings_weighted = {}
-        player_ratings_weighted['athleticism'] = ((0.1 * math.pow(player_ratings_averaged['athleticism'], 3) + -1.2 * math.pow(
-            player_ratings_averaged['athleticism'], 2) + 5 * player_ratings_averaged['athleticism'])) / max_athleticism * 10
-        player_ratings_weighted['experience'] = (
-            math.pow(player_ratings_averaged['experience'], 1.4) / math.pow(6, 1.4)) * 6
-        player_ratings_weighted['strategy'] = (
-            math.pow(player_ratings_averaged['strategy'], 0.25) / math.pow(6, 0.25)) * 6
-        player_ratings_weighted['throwing'] = ((0.1 * math.pow(player_ratings_averaged['throwing'], 3) + -1.2 * math.pow(
-            player_ratings_averaged['throwing'], 2) + 5 * player_ratings_averaged['throwing'])) / max_throwing * 10
+        player_ratings_weighted['athleticism'] = calculate_weighted_athleticism_rating(player_ratings_averaged['athleticism'], 3, 32)
+        player_ratings_weighted['experience'] = calculate_weighted_experience_rating(player_ratings_averaged['experience'], 6, 18)
+        player_ratings_weighted['strategy'] = calculate_weighted_strategy_rating(player_ratings_averaged['strategy'], 6, 18)
+        player_ratings_weighted['throwing'] = calculate_weighted_throwing_rating(player_ratings_averaged['throwing'], 3, 32)
 
-        player_ratings_weighted['total'] = max(
-            sum(player_ratings_weighted.itervalues()), 0)
+        # rating cannot be less than 0
+        player_ratings_weighted['total'] = max(sum(player_ratings_weighted.itervalues()), 0)
 
         return player_ratings_weighted
 

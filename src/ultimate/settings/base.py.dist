@@ -122,6 +122,11 @@ TEMPLATES = [
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 
+# A2U
+A2U_RATING_EXPIRATION_MONTHS = 0
+A2U_RATING_LIMIT_MONTHS = 0
+
+
 # USER
 AUTH_USER_MODEL = 'user.User'
 LOGIN_URL = '/user/log-in/'

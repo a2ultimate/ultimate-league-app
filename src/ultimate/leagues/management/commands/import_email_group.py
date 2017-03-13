@@ -32,14 +32,14 @@ class Command(BaseCommand):
             type=int,
             dest='team',
             default=0,
-            help='Sync a team',
+            help='Sync a team (team id)',
         )
 
         parser.add_argument(
             '-l',
             default='',
             dest='league',
-            help='Sync a league',
+            help='Sync a league (league id)',
         )
 
         parser.add_argument(
@@ -68,32 +68,71 @@ class Command(BaseCommand):
         success_count = 0
 
         if not group_address and (email_address or file_path):
-            self.stdout.write('group address (-l) is required with email (-e) or file (-f)')
-            return
+            raise CommandError('group address (-g) is required with email (-e) or file (-f)')
 
         if email_address:
+            self.stdout.write(self.style.MIGRATE_HEADING('Adding email address to group:'))
+            self.stdout.write('Adding {} to {}...'.format(email_address, group_address))
+
             success_count = add_to_group(group_email_address=group_address, email_address=email_address)
 
+            if success_count == 1:
+                self.stdout.write(self.style.MIGRATE_SUCCESS('DONE'))
+                self.stdout.write('Added {} to {}...'.format(email_address, group_address))
+            else:
+                self.stdout.write(self.style.ERROR(' HMMM...'))
+                self.stdout.write(self.style.ERROR('No email addresses added...'))
+
         elif file_path:
+            self.stdout.write(self.style.MIGRATE_HEADING('Adding file to group:'))
+            self.stdout.write('Adding file to {}...'.format(group_address), ending="")
             success_count = add_to_group(group_email_address=group_address, file_path=file_path)
+            if success_count > 0:
+                self.stdout.write(self.style.MIGRATE_SUCCESS('DONE'))
+            else:
+                self.stdout.write(self.style.ERROR(' HMMM...'))
+                self.stdout.write(self.style.ERROR('No email addresses added...'))
 
         elif team_id:
+            self.stdout.write(self.style.MIGRATE_HEADING('Adding team email addresses to group:'))
+
             from ultimate.leagues.models import Team
             try:
                 team = Team.objects.get(id=team_id)
+
+                self.stdout.write('Adding Team {}...'.format(team))
+
                 success_count, group_address = team.sync_email_group(force)
+
+                if success_count > 0:
+                    self.stdout.write(self.style.MIGRATE_SUCCESS('DONE'))
+                    self.stdout.write(self.style.MIGRATE_SUCCESS('Added {} email addresses to {}'.format(success_count, group_address)))
+                else:
+                    self.stdout.write(self.style.ERROR(' HMMM...'))
+                    self.stdout.write(self.style.ERROR('No email addresses added...'))
+
             except Team.DoesNotExist:
-                self.stdout.write('bad team id')
+                self.stdout.write(self.style.ERROR('No team found with that id'))
 
         elif league_id:
+            self.stdout.write(self.style.MIGRATE_HEADING('Adding division email addresses with group:'))
+
             from ultimate.leagues.models import League
             try:
                 league = League.objects.get(id=league_id)
-                success_count = league.sync_email_groups(force)
-            except League.DoesNotExist:
-                self.stdout.write('bad league id')
 
-        if group_address:
-            self.stdout.write('{} email addresses added to {}'.format(success_count, group_address))
-        else:
-            self.stdout.write('Success! Added {} email addresses.'.format(success_count))
+                self.stdout.write('Adding {}...'.format(league))
+
+                success_count, group_address, captains_success_count, captains_group_address = \
+                    league.sync_email_groups(force)
+
+                if success_count > 0:
+                    self.stdout.write(self.style.MIGRATE_SUCCESS('DONE'))
+                    self.stdout.write(self.style.MIGRATE_SUCCESS('Added {} email addresses to {}'.format(success_count, group_address)))
+                    self.stdout.write(self.style.MIGRATE_SUCCESS('Added {} email addresses to {}'.format(captains_success_count, captains_group_address)))
+                else:
+                    self.stdout.write(self.style.ERROR(' HMMM...'))
+                    self.stdout.write(self.style.ERROR('No email addresses added...'))
+
+            except League.DoesNotExist:
+                self.stdout.write(self.style.ERROR('No league division found with that id'))
