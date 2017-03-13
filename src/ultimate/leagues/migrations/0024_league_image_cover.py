@@ -8,7 +8,7 @@ import ultimate.leagues.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('leagues', '0022_auto_20170228_1649'),
+        ('leagues', '0023_auto_20170312_1821'),
     ]
 
     operations = [
