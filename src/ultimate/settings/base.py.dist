@@ -121,6 +121,28 @@ TEMPLATES = [
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout,
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+        'a2u.email_groups': {
+            'handlers': ['console',],
+            'level': 'DEBUG',
+            'propagate': False
+        },
+    },
+}
+
 
 # A2U
 A2U_RATING_EXPIRATION_MONTHS = 0
