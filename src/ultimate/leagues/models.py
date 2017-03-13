@@ -1025,6 +1025,9 @@ class Game(models.Model):
         return '{} {} {} {}'.format(self.league, self.date, self.start, self.field_name)
 
     def get_teams(self):
+        return self.teams.all()
+
+    def get_display_teams(self):
         return self.teams.filter(hidden=False)
 
     def get_user_opponent(self, user):
