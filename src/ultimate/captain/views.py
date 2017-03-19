@@ -1,5 +1,4 @@
 import csv
-from datetime import datetime
 import re
 
 from django.contrib import messages
@@ -13,6 +12,7 @@ from django.forms.models import model_to_dict, modelformset_factory
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
+from django.utils import timezone
 
 from ultimate.captain.models import *
 from ultimate.forms import *
@@ -125,7 +125,7 @@ def playersurvey(request, team_id):
 
     try:
         ratings_report, created = PlayerRatingsReport.objects.get_or_create(submitted_by=request.user, team=team,
-            defaults={'submitted_by': request.user, 'team': team, 'updated': datetime.now()})
+            defaults={'submitted_by': request.user, 'team': team, 'updated': timezone.now()})
     except IntegrityError:
         ratings_report = PlayerRatingsReport.objects.get(submitted_by=request.user, team=team)
 
@@ -140,7 +140,7 @@ def playersurvey(request, team_id):
                     'ratings_report': ratings_report,
                     'ratings_type': PlayerRatings.RATING_TYPE_CAPTAIN,
                     'submitted_by': request.user,
-                    'updated': datetime.now(),
+                    'updated': timezone.now(),
                     'user': team_member_users.get(id=rating_data['user_id'])
                 }
 
@@ -201,7 +201,7 @@ def gamereport(request, team_id, game_id):
     game = get_object_or_404(Game, id=game_id)
 
     if not bool(team.teammember_set.filter(user=request.user, captain=True)[0:1].count()) or \
-        not bool(game.gameteams_set.filter(team__teammember__user=request.user, team__teammember__captain=True)[0:1].count()):
+            not bool(game.gameteams_set.filter(team__teammember__user=request.user, team__teammember__captain=True)[0:1].count()):
 
         raise Http403
 
@@ -230,7 +230,7 @@ def gamereport(request, team_id, game_id):
             if re.match('user_', postParam):
                 attendance.append(int(re.split('user_', postParam)[1]))
 
-        if date.today() < game.date:
+        if timezone.now().date() < game.date:
             score_us_form = score_formset.forms[0]
             score_them_form = score_formset.forms[1]
             messages.error(request, 'You cannot submit a game report before the game date.')
@@ -269,7 +269,7 @@ def gamereport(request, team_id, game_id):
                 attendanceRecord.save()
 
             messages.success(request, 'Your game report was updated successfully.')
-            return HttpResponseRedirect(reverse('gamereport', kwargs={'game_id':game_id, 'team_id':team_id}))
+            return HttpResponseRedirect(reverse('gamereport', kwargs={'game_id': game_id, 'team_id': team_id}))
 
     else:
         comment_form = GameReportCommentForm(instance=game_report_comment)

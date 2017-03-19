@@ -1,5 +1,5 @@
 {% load games %}
-{% load staticfiles %}
+{% load webpack_static from webpack_loader %}
 
 <table class="schedule-table table table-centered{% if condensed %} table-condensed{% endif %} table-fixed table-striped">
   <thead>
@@ -22,7 +22,7 @@
           {% if field.grouper.layout_link %}
             <small>
               &middot;
-              <a href="{% static field.grouper.layout_link %}" target="_blank">
+              <a href="{% webpack_static field.grouper.layout_link %}" target="_blank">
                 Layout
               </a>
             </small>
@@ -60,25 +60,27 @@
           <td class="schedule-table-game">
             {% if game %}
               {% for team in game.get_teams %}
-                {% if link_game_report %}
-                  <a class="schedule-table-game-team-link" href="{% url 'gamereports_game' year=league.year season=league.season.slug division=league.night_slug game_id=game.id team_id=team.id %}">
-                {% elif show_game_result %}
-                  <div>
-                {% else %}
-                  <a class="schedule-table-game-team-jump" href="#team-roster-{{ team.id }}"{% if game in user_games %} style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }};"{% endif %}>
-                {% endif %}
+                {% if not team.hidden or show_teams %}
+                  {% if link_game_report %}
+                    <a class="schedule-table-game-team-link" href="{% url 'gamereports_game' year=league.year season=league.season.slug division=league.night_slug game_id=game.id team_id=team.id %}">
+                  {% elif show_game_result %}
+                    <div>
+                  {% else %}
+                    <a class="schedule-table-game-team-jump" href="#team-roster-{{ team.id }}"{% if game in user_games %} style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }};"{% endif %}>
+                  {% endif %}
 
-                {% if show_game_result %}
-                  {% for report in game|get_report_for_team:team %}
-                    <div class="schedule-table-game-result-{{ report|get_result:team }}">
+                  {% if show_game_result %}
+                    {% for report in game|get_report_for_team:team %}
+                      <div class="schedule-table-game-result-{{ report|get_result:team }}">
+                        {{ team.id }}
+                        {{ report|get_report_scores_formatted }}
+                      </div>
+                    {% empty %}
                       {{ team.id }}
-                      {{ report|get_report_scores_formatted }}
-                    </div>
-                  {% empty %}
+                    {% endfor %}
+                  {% else %}
                     {{ team.id }}
-                  {% endfor %}
-                {% else %}
-                  {{ team.id }}
+                  {% endif %}
                 {% endif %}
 
                 {% if show_game_result %}

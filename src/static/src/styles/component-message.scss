@@ -26,6 +26,16 @@
     }
   }
 
+  &.message-caution {
+    color: $color-white;
+    border-color: $color-caution-dark;
+    background-color: $color-caution;
+
+    hr {
+      border-top-color: $color-caution-dark;
+    }
+  }
+
   &.message-warning {
     color: $color-white;
     border-color: $color-warning-dark;

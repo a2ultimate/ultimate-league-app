@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib import messages
@@ -10,6 +10,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 
 from ultimate.forms import RegistrationAttendanceForm
 from ultimate.leagues.models import *
@@ -100,31 +101,31 @@ def teams(request, year, season, division):
     league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
     user_games = None
 
-    games = league.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
+    games = league.game_set.order_by('date', 'start', 'field_name', 'field_name__field')
     game_locations = league.get_game_locations(games=games)
     game_dates = league.get_game_dates(games=games, game_locations=game_locations)
 
-    next_game_date = getattr(games.filter(date__gte=date.today()).first(), 'date', None)
+    next_game_date = getattr(games.filter(date__gte=timezone.now().date()).first(), 'date', None)
 
     if request.user.is_authenticated():
         user_games = games.filter(league=league, gameteams__team__teammember__user=request.user).order_by('date')
 
     return render_to_response('leagues/teams.html',
-    {
-        'league': league,
+        {
+            'league': league,
 
-        'next_game_date': next_game_date,
-        'user_games': user_games,
+            'next_game_date': next_game_date,
+            'user_games': user_games,
 
-        'game_locations': game_locations,
-        'game_dates': game_dates,
+            'game_locations': game_locations,
+            'game_dates': game_dates,
 
-        'teams': Team.objects.filter(league=league, hidden=False)
-            .prefetch_related('teammember_set')
-            .prefetch_related('teammember_set__user')
-            .prefetch_related('teammember_set__user__profile'),
-    },
-    context_instance=RequestContext(request))
+            'teams': Team.objects.filter(league=league, hidden=False)
+                         .prefetch_related('teammember_set')
+                         .prefetch_related('teammember_set__user')
+                         .prefetch_related('teammember_set__user__profile'),
+        },
+        context_instance=RequestContext(request))
 
 
 @atomic
@@ -136,18 +137,17 @@ def group(request, year, season, division):
     if request.method == 'POST':
         if 'leave_group' in request.POST:
             message = registration.leave_baggage_group()
-            if message == True:
+            if message is True:
                 messages.success(request, 'You were successfully removed from your baggage group.')
             elif isinstance(message, str):
                 messages.error(request, message)
             else:
                 messages.error(request, 'You could not be removed from your baggage group.')
 
-
         elif 'add_group' in request.POST and 'email' in request.POST:
             email = request.POST.get('email')
             message = registration.add_to_baggage_group(email)
-            if (message == True):
+            if message is True:
                 messages.success(request, 'You were successfully added to ' + email + '\'s group.')
             else:
                 messages.error(request, message)
@@ -187,8 +187,11 @@ def registration(request, year, season, division, section=None):
             if not request.user.profile or not request.user.profile.is_complete_for_user:
                 errors.append('profile')
 
-            if not request.user.playerratings_set.filter(submitted_by=request.user, user=request.user).exists():
+            if not request.user.has_completed_player_rating:
                 errors.append('rating')
+
+            if request.user.has_expired_player_rating:
+                errors.append('rating_expired')
 
         except ObjectDoesNotExist:
             errors.append('unknown')
@@ -251,7 +254,7 @@ def registration(request, year, season, division, section=None):
                     registration.save()
 
                 if league.check_price == 0 and league.paypal_price == 0:
-                    registration.registered = datetime.now()
+                    registration.registered = timezone.now()
                     registration.save()
 
                 if league.type == 'league':
@@ -275,12 +278,12 @@ def registration(request, year, season, division, section=None):
                 registration.save()
                 messages.error(request, 'Payment type set to PayPal. Checks are not accepted for this league.')
 
-            elif request.POST.get('pay_type').lower() == 'check':
+            elif request.POST.get('pay_type').lower() == 'pay with check':
                 registration.pay_type = 'check'
                 registration.save()
                 messages.success(request, 'Payment type set to check.')
 
-            elif request.POST.get('pay_type').lower() == 'paypal':
+            elif request.POST.get('pay_type').lower() == 'pay with paypal':
                 registration.pay_type = 'paypal'
                 registration.save()
                 messages.success(request, 'Payment type set to PayPal.')
@@ -301,6 +304,9 @@ def registration(request, year, season, division, section=None):
                     registration.coupon = coupon
                     registration.save()
 
+                    registration.coupon.use_count = F('use_count') + 1
+                    registration.coupon.save()
+
                     messages.success(request, 'Your coupon code has been applied.')
                 else:
                     success = False
@@ -311,6 +317,9 @@ def registration(request, year, season, division, section=None):
 
         if 'remove_coupon' in request.POST:
             if registration.coupon:
+                registration.coupon.use_count = F('use_count') - 1
+                registration.coupon.save()
+
                 registration.coupon = None
                 registration.save()
 
@@ -322,13 +331,8 @@ def registration(request, year, season, division, section=None):
         if 'process_registration' in request.POST:
             if registration.is_ready_for_payment:
                 registration.payment_complete = True
-                registration.registered = datetime.now()
+                registration.registered = timezone.now()
                 registration.save()
-
-                if registration.coupon:
-                    registration.coupon.use_count = F('use_count') + 1
-                    registration.coupon.redeemed_at = datetime.now()
-                    registration.coupon.save()
 
                 success = True
                 messages.success(request, 'Your registration has been processed.')
@@ -360,8 +364,8 @@ def registration(request, year, season, division, section=None):
             context_instance=RequestContext(request))
 
     if section == 'attendance' or \
-        registration.attendance == None or \
-        (registration.captain == None and league.type == 'league'):
+            registration.attendance is None or \
+            (registration.captain is None and league.type == 'league'):
 
         if not attendance_form:
             attendance_form = RegistrationAttendanceForm(instance=registration)

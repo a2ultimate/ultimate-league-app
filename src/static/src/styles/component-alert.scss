@@ -38,6 +38,12 @@
     background-color: $color-success;
   }
 
+  &.alert-caution {
+    color: $color-white;
+    border-color: $color-caution-dark;
+    background-color: $color-caution;
+  }
+
   &.alert-warning {
     color: $color-white;
     border-color: $color-warning-dark;

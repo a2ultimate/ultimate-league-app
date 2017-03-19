@@ -27,7 +27,7 @@
       <form class="form" method="post">{% csrf_token %}
         <p>
           You have entered a coupon code
-          <strong>{{ registration.coupon.code }}</strong>
+          "<strong>{{ registration.coupon.code }}</strong>"
           good for <em>{{ registration.coupon.display_value }}</em>.
 
           <button class="button button-info" name="remove_coupon" type="submit">
@@ -46,6 +46,7 @@
     {% endif %}
   {% endif %}
 
+  <h4>Your total cost will be:</h4>
   <p>
     <ul>
       <li>${{ registration.paypal_price }} via PayPal</li>
@@ -56,9 +57,9 @@
   </p>
 
   <form class="form" method="post">{% csrf_token %}
-    <input class="button button-success" type="submit" name="pay_type" value="Paypal">
+    <input class="button button-success" type="submit" name="pay_type" value="Pay with PayPal">
     {% if league.checks_accepted %}
-      <input class="button button-success" type="submit" name="pay_type" value="Check">
+      <input class="button button-success" type="submit" name="pay_type" value="Pay with Check">
     {% endif %}
   </form>
 

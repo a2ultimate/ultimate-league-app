@@ -12,6 +12,8 @@
 }
 
 .page-division-teams-teams-team {
+  margin-bottom: 1rem;
+
   @include span-columns(6);
   @include omega(2n);
 }

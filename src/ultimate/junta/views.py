@@ -1,6 +1,6 @@
 import copy
 import csv
-from datetime import timedelta
+from datetime import datetime, timedelta
 from itertools import groupby
 from math import ceil, floor
 import re

@@ -15,7 +15,10 @@
 
   <h2>Edit Baggage Group</h2>
 
-  <p>This league allows groups of up to {{ league.baggage }} (including you).</p>
+  <p>
+    This league allows groups of up to <strong>{{ league.baggage }}</strong> (including you).
+    The deadline for group changes is <strong>{{ league.waitlist_start_date|date:'l, F jS' }} at {{ league.waitlist_start_date|date:'g:iA'|lower }}</strong>.
+  </p>
 
   {% if registration.waitlist %}
     <p>You are currently on the wait list and are ineligible to form a group.</p>

@@ -1,4 +1,3 @@
-from datetime import date, datetime
 import random
 
 from django.conf import settings
@@ -8,17 +7,28 @@ from django.db import models
 from django.db.models import Count
 from django.db.transaction import atomic
 from django.template.defaultfilters import slugify
+from django.utils import timezone
 
 from pybb.models import *
 
+from ultimate.utils.email_groups import *
+
 
 class Field(models.Model):
+    FIELD_TYPE_INDOOR = 'indoor'
+    FIELD_TYPE_OUTDOOR = 'outdoor'
+    FIELD_TYPE_CHOICES = (
+        (FIELD_TYPE_INDOOR, 'Indoor'),
+        (FIELD_TYPE_OUTDOOR, 'Outdoor'),
+    )
+
     id = models.AutoField(primary_key=True)
     name = models.TextField()
     layout_link = models.TextField(blank=True)
     address = models.TextField(blank=True)
     driving_link = models.TextField(blank=True)
     note = models.TextField(blank=True)
+    type = models.CharField(max_length=32, choices=FIELD_TYPE_CHOICES)
 
     class Meta:
         db_table = u'field'
@@ -29,9 +39,17 @@ class Field(models.Model):
 
 
 class FieldNames(models.Model):
+    FIELD_TYPE_GRASS = 'grass'
+    FIELD_TYPE_TURF = 'turf'
+    FIELD_TYPE_CHOICES = (
+        (FIELD_TYPE_GRASS, 'Grass'),
+        (FIELD_TYPE_TURF, 'Turf'),
+    )
+
     id = models.AutoField(primary_key=True)
     name = models.TextField()
     field = models.ForeignKey('leagues.Field')
+    type = models.CharField(max_length=32, choices=FIELD_TYPE_CHOICES)
 
     class Meta:
         db_table = u'field_names'
@@ -67,10 +85,10 @@ class League(models.Model):
     STATE_OPEN = 'open'
     STATE_PREVIEW = 'preview'
     LEAGUE_STATE_CHOICES = (
-        (STATE_CLOSED,    'Closed - visible to all, registration closed to all'),
-        (STATE_HIDDEN,    'Hidden - hidden to all, registration closed to all'),
-        (STATE_OPEN,    'Open - visible to all, registration conditionally open to all'),
-        (STATE_PREVIEW,    'Preview - visible only to admins, registration conditionally open only to admins'),
+        (STATE_CLOSED, 'Closed - visible to all, registration closed to all'),
+        (STATE_HIDDEN, 'Hidden - hidden to all, registration closed to all'),
+        (STATE_OPEN, 'Open - visible to all, registration conditionally open to all'),
+        (STATE_PREVIEW, 'Preview - visible only to admins, registration conditionally open only to admins'),
     )
 
     LEAGUE_GENDER_MENS = 'mens'
@@ -149,10 +167,10 @@ class League(models.Model):
 
     class Meta:
         db_table = u'league'
-        ordering = ['-year', '-season__order', '-league_start_date']
+        ordering = ['-year', '-season__order', 'league_start_date']
 
     def __unicode__(self):
-        return ('%s %d %s' % (self.season, self.year, self.night)).replace('_', ' ')
+        return ('%s %d %s' % (self.season, self.year, self.night))
 
     def save(self):
         if not self.night_slug:
@@ -190,29 +208,29 @@ class League(models.Model):
 
     @property
     def paypal_price(self):
-        if self.paypal_cost == 0 or datetime.now() < self.price_increase_start_date:
+        if self.paypal_cost == 0 or timezone.now() < self.price_increase_start_date:
             return self.paypal_cost
 
         return self.paypal_cost + self.late_cost_increase
 
     @property
     def check_price(self):
-        if self.paypal_cost + self.check_cost_increase == 0 or datetime.now() < self.price_increase_start_date:
+        if self.paypal_cost + self.check_cost_increase == 0 or timezone.now() < self.price_increase_start_date:
             return self.paypal_cost + self.check_cost_increase
 
         return self.paypal_cost + self.check_cost_increase + self.late_cost_increase
 
     @property
     def is_after_registration_start(self):
-        return datetime.now() >= self.reg_start_date
+        return timezone.now() >= self.reg_start_date
 
     @property
     def is_after_price_increase(self):
-        return datetime.now() >= self.price_increase_start_date
+        return timezone.now() >= self.price_increase_start_date
 
     @property
     def is_after_waitlist_start(self):
-        return datetime.now() >= self.waitlist_start_date
+        return timezone.now() >= self.waitlist_start_date
 
     def is_visible(self, user=None):
         if user and user.is_authenticated() and user.is_junta:
@@ -226,22 +244,21 @@ class League(models.Model):
 
         # if the user is not a league admin and the league is "open" and falls between valid dates
         return self.state in ['open'] and \
-            (datetime.now() >= self.reg_start_date) and \
-            (date.today() <= self.league_end_date)
+            (timezone.now() >= self.reg_start_date) and \
+            (timezone.now().date() <= self.league_end_date)
 
     def is_waitlist(self, user=None):
         # if the league is open and its after the waitlist date or league is full
         if not self.is_open(user):
             return True
 
-        if datetime.now() >= self.waitlist_start_date:
+        if timezone.now() >= self.waitlist_start_date:
             return True
 
         if len(self.get_complete_registrations()) >= self.max_players:
             return True
 
         return False
-
 
     def get_user_games(self, user):
         return self.game_set.filter(gameteams__team__teammember__user=user).order_by('date')
@@ -276,31 +293,31 @@ class League(models.Model):
     def get_registrations_for_user(self, user):
         return self.get_registrations().filter(user=user).order_by('registered')
 
-    def get_complete_registrations(self, registrations = None):
+    def get_complete_registrations(self, registrations=None):
         if not registrations:
             registrations = self.get_registrations()
 
         return [r for r in registrations if r.is_complete and not r.waitlist and not r.refunded]
 
-    def get_waitlist_registrations(self, registrations = None):
+    def get_waitlist_registrations(self, registrations=None):
         if not registrations:
             registrations = self.get_registrations()
 
         return [r for r in registrations if r.is_complete and r.waitlist and not r.refunded]
 
-    def get_incomplete_registrations(self, registrations = None):
+    def get_incomplete_registrations(self, registrations=None):
         if not registrations:
             registrations = self.get_registrations()
 
         return [r for r in registrations if not r.is_complete and not r.refunded]
 
-    def get_refunded_registrations(self, registrations = None):
+    def get_refunded_registrations(self, registrations=None):
         if not registrations:
             registrations = self.get_registrations()
 
         return [r for r in registrations if r.is_complete and r.refunded]
 
-    def get_unassigned_registrations(self, registrations = None):
+    def get_unassigned_registrations(self, registrations=None):
         team_member_users = [t.user for t in TeamMember.objects.filter(team__league=self).prefetch_related('user')]
 
         if not registrations:
@@ -310,7 +327,7 @@ class League(models.Model):
 
     def get_game_locations(self, games=None):
         if games is None:
-            games = self.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
+            games = self.game_set.order_by('date', 'start', 'field_name', 'field_name__field')
 
         locations = {}
 
@@ -326,7 +343,7 @@ class League(models.Model):
                     'field': game.field_name.field,
                     'start': game.start.time() if game.start else None,
                     'field_name': game.field_name,
-                    }
+                }
 
         locations = locations.values()
         locations.sort(key=lambda k: k['field_name'].name)
@@ -337,7 +354,7 @@ class League(models.Model):
 
     def get_game_dates(self, games=None, game_locations=None):
         if games is None:
-            games = self.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
+            games = self.game_set.order_by('date', 'start', 'field_name', 'field_name__field')
 
         if game_locations is None:
             game_locations = self.get_game_locations()
@@ -386,27 +403,18 @@ class League(models.Model):
         division_captains_email_success, division_captains_email_address = \
             self.sync_division_captains_email_group(force)
 
-        return division_email_success + division_captains_email_success
+        return division_email_success, division_email_address, \
+            division_captains_email_success, division_captains_email_address
 
     def sync_division_email_group(self, force=False):
-        group_address = '{}{}-{}-{}@lists.annarborultimate.org'.format(
-            self.season.slug,
-            self.league_start_date.strftime('%y'),
-            self.league_start_date.strftime('%a'),
-            self.level,
-            ).lower()
-        group_name = '{} {} {} {}'.format(
-            self.season.name,
-            self.league_start_date.strftime('%Y'),
-            self.league_start_date.strftime('%A'),
-            self.display_level,
-            )
+        group_address = generate_email_list_address(self)
+        group_name = generate_email_list_name(self)
 
         from ultimate.utils.google_api import GoogleAppsApi
         api = GoogleAppsApi()
         group_id = api.prepare_group_for_sync(
             group_name=group_name,
-            group_id=self.division_captains_email_group_id,
+            group_id=self.division_email_group_id,
             group_email_address=group_address,
             force=force)
 
@@ -414,28 +422,27 @@ class League(models.Model):
         self.division_email_group_id = group_id
 
         success_count = 0
-        for registration in self.get_complete_registrations():
-            if api.add_group_member(registration.user.email, group_id=self.division_email_group_id, group_email_address=group_address):
-                success_count = success_count + 1
 
-        self.division_email = group_address
+        if Team.objects.filter(league=self).exists():
+            for team_member in TeamMember.objects.filter(team__league=self).order_by('user__last_name'):
+                success_count += add_to_group(
+                    group_email_address=group_address,
+                    group_id=group_id,
+                    email_address=team_member.user.email)
+        else:
+            for registration in self.get_complete_registrations().order_by('user__last_name'):
+                success_count += add_to_group(
+                    group_email_address=group_address,
+                    group_id=group_id,
+                    email_address=registration.user.email)
+
         self.save()
 
         return success_count, group_address
 
     def sync_division_captains_email_group(self, force=False):
-        group_address = '{}{}-{}-{}-captains@lists.annarborultimate.org'.format(
-            self.season.slug,
-            self.league_start_date.strftime('%y'),
-            self.league_start_date.strftime('%a'),
-            self.level,
-            ).lower()
-        group_name = '{} {} {} {} Captains'.format(
-            self.season.name,
-            self.league_start_date.strftime('%Y'),
-            self.league_start_date.strftime('%A'),
-            self.display_level,
-            )
+        group_address = generate_email_list_address(self, suffix='captains')
+        group_name = generate_email_list_name(self, suffix='Captains')
 
         from ultimate.utils.google_api import GoogleAppsApi
         api = GoogleAppsApi()
@@ -449,13 +456,12 @@ class League(models.Model):
         self.division_captains_email_group_id = group_id
 
         success_count = 0
-        for registration in self.get_complete_registrations():
-            team_member_captain = 0
-            team_member_models = TeamMember.objects.filter(user=registration.user, team__league=registration.league)
-            if team_member_models.count():
-                if team_member_models[:1].get().captain:
-                    if api.add_group_member(registration.user.email, group_id=self.division_captains_email_group_id, group_email_address=group_address):
-                        success_count = success_count + 1
+
+        for team_member in TeamMember.objects.filter(team__league=self, captain=True).order_by('user__last_name'):
+            success_count += add_to_group(
+                group_email_address=group_address,
+                group_id=group_id,
+                email_address=team_member.user.email)
 
         self.save()
 
@@ -491,8 +497,8 @@ class Baggage(models.Model):
 
 class Registrations(models.Model):
     REGISTRATION_PAYMENT_CHOICES = (
-        ('check',    'Check'),
-        ('paypal',    'PayPal'),
+        ('check', 'Check'),
+        ('paypal', 'PayPal'),
     )
 
     REGISTRATION_CAPTAIN_CHOICES = (
@@ -555,8 +561,11 @@ class Registrations(models.Model):
             status = 'Waiting for Liability Waiver'
             if self.waiver_complete:
                 status = 'Waiting for Attendance Entry'
-                if self.attendance != None:
-                    status = 'Waiting for Payment'
+                if self.attendance is not None:
+                    if self.pay_type == 'check':
+                        status = 'Waiting for Check'
+                    else:
+                        status = 'Waiting for Payment'
                     if self.check_complete or self.paypal_complete or self.payment_complete:
                         status = 'Complete'
 
@@ -580,19 +589,18 @@ class Registrations(models.Model):
                     percentage += interval
 
                     if self.league.check_price > 0 or \
-                        self.league.paypal_price > 0:
+                            self.league.paypal_price > 0:
 
                         if self.league.checks_accepted and \
-                            (self.pay_type or self.payment_complete):
+                                (self.pay_type or self.payment_complete):
                             percentage += interval
 
                         if self.check_complete or \
-                            self.paypal_complete or \
-                            self.payment_complete:
+                                self.paypal_complete or \
+                                self.payment_complete:
                             percentage += interval
                     else:
                         percentage += interval
-
 
         return int(round(percentage))
 
@@ -615,11 +623,11 @@ class Registrations(models.Model):
             return False
 
         if self.league.check_price > 0 or \
-            self.league.paypal_price > 0:
+                self.league.paypal_price > 0:
 
             if not self.check_complete and \
-                not self.paypal_complete and \
-                not self.payment_complete:
+                    not self.paypal_complete and \
+                    not self.payment_complete:
 
                 return False
 
@@ -628,18 +636,17 @@ class Registrations(models.Model):
 
         return True
 
-
     @property
     def is_refunded(self):
         if not self.is_ready_for_payment:
             return False
 
         if self.league.check_price > 0 or \
-            self.league.paypal_price > 0:
+                self.league.paypal_price > 0:
 
             if not self.check_complete and \
-                not self.paypal_complete and \
-                not self.payment_complete:
+                    not self.paypal_complete and \
+                    not self.payment_complete:
 
                 return False
 
@@ -670,7 +677,7 @@ class Registrations(models.Model):
 
     @atomic
     def add_to_baggage_group(self, email):
-        if datetime.now() > self.league.waitlist_start_date:
+        if timezone.now() > self.league.waitlist_start_date:
             return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
 
         if self.user.email == email:
@@ -716,13 +723,12 @@ class Registrations(models.Model):
 
     @atomic
     def leave_baggage_group(self):
-        if datetime.now() >= self.league.waitlist_start_date:
+        if timezone.now() >= self.league.waitlist_start_date:
             return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
 
         try:
             baggage = Baggage()
             baggage.save()
-
 
             if self.baggage.get_registrations().count() <= 1:
                 self.baggage.delete()
@@ -743,7 +749,7 @@ class Team(models.Model):
     email = models.CharField(max_length=128, blank=True)
     league = models.ForeignKey('leagues.League')
     hidden = models.BooleanField(default=False)
-    group_id = models.CharField(max_length=128, blank=True)
+    group_id = models.CharField(max_length=128, blank=True, null=True)
 
     class Meta:
         db_table = u'team'
@@ -855,7 +861,7 @@ class Team(models.Model):
         return self.teammember_set.filter(captain=True)
 
     def get_members_with_baggage(self):
-        return self.teammember_set.extra(select={'baggage_id':'SELECT baggage_id FROM registrations JOIN team ON team.league_id = registrations.league_id WHERE registrations.user_id = team_member.user_id AND team.id = team_member.team_id'}).order_by('baggage_id')
+        return self.teammember_set.extra(select={'baggage_id': 'SELECT baggage_id FROM registrations JOIN team ON team.league_id = registrations.league_id WHERE registrations.user_id = team_member.user_id AND team.id = team_member.team_id'}).order_by('baggage_id')
 
     def get_male_members(self):
         return self.teammember_set.filter(user__profile__gender__iexact='M')
@@ -864,7 +870,7 @@ class Team(models.Model):
         return self.teammember_set.filter(user__profile__gender__iexact='F')
 
     def get_past_games(self):
-        return self.game_set.all().filter(date__lte=date.today())
+        return self.game_set.all().filter(date__lte=timezone.now().date())
 
     def get_record_list(self):
         # return in format {wins, losses, ties, conflicts}
@@ -916,26 +922,26 @@ class Team(models.Model):
                     opponent_result = 3
 
             if (team_result == 1 and opponent_result == 1) or \
-                (team_result == 1 and opponent_result == 0) or \
-                (opponent_result == 1 and team_result == 0):
+                    (team_result == 1 and opponent_result == 0) or \
+                    (opponent_result == 1 and team_result == 0):
 
                 team_record['wins'] += 1
 
             elif (team_result == 2 and opponent_result == 2) or \
-                (team_result == 2 and opponent_result == 0) or \
-                (opponent_result == 2 and team_result == 0):
+                    (team_result == 2 and opponent_result == 0) or \
+                    (opponent_result == 2 and team_result == 0):
 
                 team_record['losses'] += 1
 
             elif (team_result == 3 and opponent_result == 3) or \
-                (team_result == 3 and opponent_result == 0) or \
-                (opponent_result == 3 and team_result == 0):
+                    (team_result == 3 and opponent_result == 0) or \
+                    (opponent_result == 3 and team_result == 0):
 
                 team_record['ties'] += 1
 
             elif team_result != opponent_result and \
-                team_result != 0 and \
-                opponent_result != 0:
+                    team_result != 0 and \
+                    opponent_result != 0:
 
                 team_record['conflicts'] += 1
 
@@ -959,20 +965,8 @@ class Team(models.Model):
             bool(ratings_reports.filter(num_ratings__gte=self.size - 1).count() > 0)
 
     def sync_email_group(self, force=False):
-        group_address = '{}{}-{}-{}-{}@lists.annarborultimate.org'.format(
-            self.league.season.slug,
-            self.league.league_start_date.strftime('%y'),
-            self.league.league_start_date.strftime('%a'),
-            self.league.level,
-            self.id,
-            ).lower()
-        group_name = '{} {} {} {} Team {}'.format(
-            self.league.season.name,
-            self.league.league_start_date.strftime('%Y'),
-            self.league.league_start_date.strftime('%A'),
-            self.league.display_level,
-            self.id,
-            )
+        group_address = generate_email_list_address(self.league, team=self)
+        group_name = generate_email_list_name(self.league, team=self)
 
         from ultimate.utils.google_api import GoogleAppsApi
         api = GoogleAppsApi()
@@ -986,9 +980,11 @@ class Team(models.Model):
         self.group_id = group_id
 
         success_count = 0
-        for team_member in self.teammember_set.all():
-            if api.add_group_member(team_member.user.email, group_id=self.group_id, group_email_address=group_address):
-                success_count = success_count + 1
+        for team_member in self.teammember_set.all().order_by('user__last_name', 'user__first_name'):
+            success_count += add_to_group(
+                group_email_address=group_address,
+                group_id=group_id,
+                email_address=team_member.user.email)
 
         self.save()
 
@@ -1029,6 +1025,9 @@ class Game(models.Model):
         return '{} {} {} {}'.format(self.league, self.date, self.start, self.field_name)
 
     def get_teams(self):
+        return self.teams.all()
+
+    def get_display_teams(self):
         return self.teams.filter(hidden=False)
 
     def get_user_opponent(self, user):
@@ -1071,7 +1070,7 @@ class Coupon(models.Model):
     )
 
     code = models.CharField(max_length=30, unique=True, blank=True,
-        help_text='Leaving this field empty will generate a random code.')
+                            help_text='Leaving this field empty will generate a random code.')
 
     type = models.CharField(max_length=20, choices=COUPON_TYPE_CHOICES)
 
@@ -1084,11 +1083,11 @@ class Coupon(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     redeemed_at = models.DateTimeField(blank=True, null=True)
     valid_until = models.DateTimeField(blank=True, null=True,
-        help_text='Leave empty for coupons that never expire')
+                                       help_text='Leave empty for coupons that never expire')
 
     class Meta:
         db_table = u'coupons'
-        ordering = ['-created_at',]
+        ordering = ['-created_at', ]
 
     def __unicode__(self):
         return self.code
@@ -1124,10 +1123,12 @@ class Coupon(models.Model):
             return int(max(price * (1 - (self.value / 100.0)), 0))
 
     def is_valid(self, league=None):
+        # if there is a use limit and uses have exceeded it
         if self.use_limit is not None and self.use_limit <= self.use_count:
             return False
 
-        if self.valid_until and self.valid_until >= datetime.now():
+        # if there is an expiration date and it today is past it
+        if self.valid_until and self.valid_until < timezone.now():
             return False
 
         if league is not None:

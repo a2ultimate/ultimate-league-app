@@ -4,8 +4,6 @@
 
 {% block content %}
 
-<h1>Edit Profile and Ratings</h1>
-
 <div class="tabs">
   <ul class="tabs-list">
     <li class="tab tab-selected">
@@ -31,6 +29,8 @@
     </li>
   </ul>
 </div>
+
+<h1>Edit Profile</h1>
 
 <form class="form" method="post">{% csrf_token %}
   {% for hidden in form.hidden_fields %}
