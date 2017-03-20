@@ -39,6 +39,7 @@ Once you are deployed in production, you can pull new code and update with the f
 git pull
 source env/prod/bin/activate
 cd src/
+pip install -r requirements/prod.txt
 ./manage.py migrate
 npm run build
 ./manage.py collectstatic
