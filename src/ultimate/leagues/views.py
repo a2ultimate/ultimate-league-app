@@ -173,8 +173,7 @@ def registration(request, year, season, division, section=None):
         registration = Registrations.objects.get(user=request.user, league=league)
 
     if not league.is_open(request.user):
-        return render_to_response('leagues/registration/error.html',
-            {
+        return render_to_response('leagues/registration/error.html', {
                 'league': league,
                 'registration': registration,
                 'errors': ['closed'],
@@ -184,7 +183,13 @@ def registration(request, year, season, division, section=None):
     if not registration.is_complete:
         errors = []
         try:
-            if not request.user.profile or not request.user.profile.is_complete_for_user:
+            user_profile = request.user.profile
+            if league.min_age:
+                if not user_profile or \
+                        not user_profile.get_age_on(league.league_start_date) < league.min_age:
+                    errors.append('age')
+
+            if not user_profile or not user_profile.is_complete_for_user:
                 errors.append('profile')
 
             if not request.user.has_completed_player_rating:
