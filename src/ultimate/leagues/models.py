@@ -485,7 +485,7 @@ class Baggage(models.Model):
         db_table = u'baggage'
 
     def __unicode__(self):
-        return '%d' % (self.id)
+        return '%d (%d)' % (self.id, self.size)
 
     @property
     def size(self):

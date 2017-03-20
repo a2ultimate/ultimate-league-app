@@ -50,7 +50,7 @@ class GameTeamsInline(admin.TabularInline):
 
 
 class GameAdmin(admin.ModelAdmin):
-    inlines = [GameTeamsInline,]
+    inlines = [GameTeamsInline, ]
     save_as = True
     save_on_top = True
 
@@ -92,11 +92,11 @@ class LeagueAdmin(admin.ModelAdmin):
 class RegistrationsAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
-            'fields': ('user', 'league', 'registered', 'payment_complete', 'paypal_complete', 'check_complete', 'coupon', 'waitlist', 'refunded', 'attendance', 'captain',)
+            'fields': ('user', 'league', 'registered', 'payment_complete', 'paypal_complete', 'check_complete', 'coupon', 'waitlist', 'refunded', 'attendance', 'captain', 'baggage', )
         }),
         ('Advanced Options', {
             'classes': ('collapse',),
-            'fields': ('created', 'updated', 'conduct_complete', 'waiver_complete', 'pay_type', 'paypal_invoice_id', 'paypal_details', 'baggage',)
+            'fields': ('created', 'updated', 'conduct_complete', 'waiver_complete', 'pay_type', 'paypal_invoice_id', 'paypal_details', )
         }),
     )
     readonly_fields = ('created', 'updated', 'paypal_details',)
@@ -115,7 +115,7 @@ class RegistrationsAdmin(admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'baggage' and request._registration_obj_:
             max_id = Baggage.objects.all().aggregate(Max('id'))['id__max']
-            kwargs['queryset'] = Baggage.objects.filter(Q(registrations__league=request._registration_obj_.league) | Q(id=max_id)).order_by('id').distinct()
+            kwargs['queryset'] = Baggage.objects.filter(Q(registrations__league=request._registration_obj_.league) | Q(registrations__id__isnull=True)).order_by('id').distinct()
         return super(RegistrationsAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     def year(self, obj):
@@ -195,6 +195,7 @@ class TeamAdmin(admin.ModelAdmin):
     list_filter = ('league__year', 'league__season', 'league__night', 'league__gender', 'league__state', 'hidden',)
 
 
+admin.site.register(Baggage)
 admin.site.register(Coupon, CouponAdmin)
 admin.site.register(Field, FieldAdmin)
 admin.site.register(FieldNames, FieldNameAdmin)
