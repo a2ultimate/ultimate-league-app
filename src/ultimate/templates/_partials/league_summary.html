@@ -1,0 +1,143 @@
+{% load webpack_static from webpack_loader %}
+
+<table class="table table-striped-header">
+  {% if show_links %}
+    <tr>
+      <td>
+        <a href="{% url 'league_details' year=league.year season=league.season.slug division=league.night_slug %}">
+          Detailed Info
+        </a>
+      </td>
+      <td>
+        <a href="{% url 'league_players' year=league.year season=league.season.slug division=league.night_slug %}">
+          Players
+        </a>
+      </td>
+      <td>
+        <a href="{% url 'league_teams' year=league.year season=league.season.slug division=league.night_slug %}">
+          Teams and Schedules
+        </a>
+      </td>
+    </tr>
+  {% endif %}
+  <tr>
+    <th colspan="2">
+      {% ifequal league.league_start_date league.league_end_date %}
+        Date
+      {% else %}
+        Dates
+      {% endifequal %}
+    </th>
+    <th colspan="2">
+      Time
+    </th>
+  </tr>
+  <tr>
+    <td colspan="2">
+      {% ifequal league.league_start_date league.league_end_date %}
+        {{ league.league_start_date|date:'F d, Y' }}
+      {% else %}
+        {{ league.league_start_date|date:'F d, Y' }} through {{ league.league_end_date|date:'F d, Y' }}
+      {% endifequal %}
+    </td>
+    <td colspan="2">
+      {{ league.times }}
+      {% if league.num_time_slots > 1 %}
+        ({{ league.num_time_slots }} Time Slots)
+      {% endif %}
+    </td>
+  </tr>
+  <tr>
+    <th colspan="4">
+      Location
+    </th>
+  </tr>
+  {% for field in league.fields.all %}
+    <tr>
+      <td colspan="4">
+        {{ field.name }}
+
+        {% if field.driving_link %}
+          <small>
+            &middot;
+            <a href="{{ field.driving_link }}" target="_blank">
+              Directions
+            </a>
+          </small>
+        {% endif %}
+
+        {% if field.layout_link %}
+          <small>
+            &middot;
+            <a href="{% webpack_static field.layout_link %}" target="_blank">
+              Layout
+            </a>
+          </small>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  <tr>
+    <th colspan="2">
+      Cost
+    </th>
+    <th>
+      Minimum Age
+    </th>
+    <th>
+      Maximum Group Size
+    </th>
+  </tr>
+  <tr>
+    {% if league.paypal_price > 0 %}
+      <td>
+        PayPal ${{ league.paypal_price|floatformat:2 }}
+      </td>
+      <td>
+        {% if league.checks_accepted %}
+          Check ${{ league.check_price|floatformat:2 }}
+        {% endif %}
+      </td>
+    {% else %}
+      <td colspan="2">
+        Free
+      </td>
+    {% endif %}
+    <td>
+      {{ league.min_age }} Years Old
+    </td>
+    <td>
+      {{ league.baggage }}
+    </td>
+  </tr>
+  {% if not league.is_after_price_increase and league.late_cost_increase > 0 %}
+    <tr>
+      <td colspan="4">
+        <em>The price will increase by ${{ league.late_cost_increase }} on {{ league.price_increase_start_date|date:'F d, Y' }} at {{ league.price_increase_start_date|date:'h:iA'|lower }}</em>
+      </td>
+    </tr>
+  {% endif %}
+  <tr>
+    <th colspan="4">
+      Important Dates
+    </th>
+  </tr>
+  <tr>
+    <td>
+      Registration Deadline
+    </td>
+    <td colspan="3">
+      {{ league.waitlist_start_date|date:'F d, Y' }} at {{ league.waitlist_start_date|date:'h:iA'|lower }} or {{ league.max_players }} Players
+    </td>
+  </tr>
+  {% if league.baggage > 1 %}
+    <tr>
+      <td>
+        Group Edit Deadline
+      </td>
+      <td colspan="3">
+        {{ league.waitlist_start_date|date:'F d, Y' }} at {{ league.waitlist_start_date|date:'h:iA'|lower }}
+      </td>
+    </tr>
+  {% endif %}
+</table>
