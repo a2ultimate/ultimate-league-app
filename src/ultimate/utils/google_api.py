@@ -1,11 +1,10 @@
 from datetime import datetime
-from feedparser import _parse_date as parse_date
-from time import mktime
+import dateutil.parser
 import httplib2
 import logging
-import sys
 
 from django.conf import settings
+from django.utils.timezone import make_aware
 
 from googleapiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
@@ -137,7 +136,7 @@ class GoogleAppsApi:
                     member_id = member.get('id', None)
                     service.members().delete(groupKey=group_id, memberKey=member_id).execute(http=self.http)
 
-        logger.debug('Done!');
+        logger.debug('Done!')
 
     def add_group_member(self, email_address, group_id=None, group_email_address=None, group_name=None):
         service = build('admin', 'directory_v1', http=self.http, cache_discovery=False)
@@ -187,7 +186,7 @@ class GoogleAppsApi:
         for event in events_response['items']:
             events.append({
                 'summary': event.get('summary'),
-                'start': datetime.fromtimestamp(mktime(parse_date(event['start']['dateTime']))),
+                'start': dateutil.parser.parse(event['start']['dateTime']),
                 'end': event['end']['dateTime'],
                 'location': event.get('location'),
                 'description': event.get('description'),
