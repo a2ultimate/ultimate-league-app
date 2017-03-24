@@ -126,4 +126,5 @@ module.exports = {
   postcss: [
     autoprefixer({ browsers: ['last 2 versions'] }),
   ],
+  devtool: 'cheap-module-eval-source-map',
 };
