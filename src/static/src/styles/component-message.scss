@@ -65,4 +65,13 @@
       border-top-color: $color-info-dark;
     }
   }
+
+  > a:not(.button) {
+    color: $color-white !important;
+    text-decoration: underline;
+
+    &:hover {
+      color: rgba($color-white, 0.75) !important;
+    }
+  }
 }

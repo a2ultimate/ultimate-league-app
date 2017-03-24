@@ -15,37 +15,43 @@
 
   <h2>Registration Error</h2>
 
+  {% if 'age' in errors %}
+    <p class="message message-danger">
+      {% trans 'This league requires the age of players be at least' %} <strong>{{ league.min_age }}</strong> years old by the league start date ({{ league.league_start_date|date:'l, F jS' }}). {% trans 'Please <a href="mailto:registration@annarborultimate.org">email us at registration@annarborultimate.org</a> if you have any questions.' %}
+    </p>
+  {% endif %}
+
   {% if 'closed' in errors %}
-    <p>
+    <p class="message message-danger">
       {% trans 'This league is not currently open for registration. Either it is no longer accepting registrations (e.g. the league is over), or league has not yet opened for registration.' %}
     </p>
   {% endif %}
 
   {% if 'profile' in errors %}
-    <p>
+    <p class="message message-danger">
       {% trans 'You are missing profile information required to register for a league. Please ' %}
       <a href="{% url 'editprofile' %}">{% trans 'complete your profile' %}</a>.
     </p>
   {% endif %}
 
   {% if 'rating' in errors %}
-    <p>
+    <p class="message message-danger">
       {% trans 'You are required to rate your skills before registering for a league. Please ' %}
       <a href="{% url 'editratings' %}">{% trans 'complete your ratings' %}</a>.
     </p>
   {% endif %}
 
   {% if 'rating_expired' in errors %}
-    <p>
+    <p class="message message-danger">
       {% trans 'You are required to update your player ratings once per year. Please ' %}
       <a href="{% url 'editratings' %}">{% trans 'update your ratings' %}</a>.
     </p>
   {% endif %}
 
   {% if 'unknown' in errors %}
-    <p>
+    <p class="message message-danger">
       {% trans 'You are currently not eligible to register for this league. Please ensure your profile is updated and you have filled out the player rating form. If that does not help, ' %}
-      <a href="mailto:registration@annarborultimate.org">email registration@annarborultimate.org</a>
+      <a href="mailto:registration@annarborultimate.org">email us at registration@annarborultimate.org</a>
     </p>
   {% endif %}
 

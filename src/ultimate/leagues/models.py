@@ -148,6 +148,7 @@ class League(models.Model):
 
     max_players = models.IntegerField(help_text='max players for league, extra registrations will be placed on waitlist')
     baggage = models.IntegerField(help_text='max baggage group size')
+    min_age = models.IntegerField(help_text='minimum age (in years)', default=0)
 
     paypal_cost = models.IntegerField(help_text='base cost of league if paying by PayPal')
     checks_accepted = models.BooleanField(default=True)
