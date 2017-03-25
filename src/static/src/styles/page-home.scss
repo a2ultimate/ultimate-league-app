@@ -18,7 +18,15 @@
   list-style: none;
 }
 
+.page-home-leagues-content-list-element {
+  margin-bottom: 1rem;
+}
+
 .page-home-leagues-content-list-element-header {
+  letter-spacing: 0.0625rem;
+
+  font-family: $font-family-oswald;
+  font-weight: 400;
 }
 
 .page-home-leagues-content-list-element-list {
@@ -77,7 +85,7 @@
 
   display: block;
 
-  min-height: 7.5rem;
+  min-height: 9rem;
   padding: 2.5rem 0.75rem 0.25rem 0.75rem;
 
   color: $color-primary;
@@ -88,6 +96,12 @@
     text-decoration: none;
 
     color: $color-primary-dark;
+  }
+
+  .page-home-leagues-content-list-element-list-element-background + & {
+    &:hover {
+      opacity: 0.8;
+    }
   }
 }
 
@@ -100,12 +114,16 @@
 
   padding: 0.25rem 0.75rem;
 
+  letter-spacing: 0.0125rem;
+
   color: white;
   border-top-right-radius: $border-radius;
   border-bottom-right-radius: $border-radius;
   background-color: $color-gray;
 
+  font-family: $font-family-oswald;
   font-size: $font-size-sm;
+  font-weight: 200;
 }
 
 .page-home-leagues-content-list-element-list-element-content-heading {
@@ -113,7 +131,10 @@
 
   padding-right: 1.25rem;
 
-  letter-spacing: 0.015625rem;
+  letter-spacing: 0.03125rem;
+
+  font-family: $font-family-oswald;
+  font-weight: 200;
 
   &:after {
     position: absolute;
@@ -143,27 +164,37 @@
   .page-home-leagues-content-list-element-list-element-background + .page-home-leagues-content-list-element-list-element-content > & {
     color: $color-white !important;
     text-shadow: 0 0.0625rem 0 $color-dark-gray-dark;
+
+    &:after {
+      color: $color-white;
+    }
   }
 }
 
 .page-home-leagues-content-list-element-list-element-content-info {
   margin: 0.25rem 0;
 
-  color: $color-gray;
+  color: $color-gray-dark;
 
   font-size: 0;
 
   span {
     display: inline-block;
 
+    letter-spacing: 0.0125rem;
+
     font-size: $font-size-sm;
-    font-weight: 600;
+    font-weight: 400;
 
-    + span {
-      &:before {
-        padding: 0 0.25rem;
+    &:after {
+      padding: 0 0.25rem;
 
-        content: '\00b7';
+      content: '\00b7';
+    }
+
+    &:last-child {
+      &:after {
+        display: none;
       }
     }
   }
@@ -275,25 +306,13 @@
 }
 
 .page-home-info-section-header {
-  .fa {
-    font-size: 1.625rem;
+  letter-spacing: 0.0625rem;
 
-    .page-home-info-news & {
-      vertical-align: 0.0625rem;
-    }
-
-    .page-home-info-events & {
-      vertical-align: 0.1875rem;
-    }
-  }
+  font-family: $font-family-oswald;
+  font-weight: 400;
 }
 
 .page-home-info-section-content {
-  // overflow: scroll;
-  // max-height: 20rem;
-  // padding-bottom: 1rem;
-
-  // border-bottom: 0.25rem solid $color-primary;
 }
 
 .page-home-info-section-content-list {

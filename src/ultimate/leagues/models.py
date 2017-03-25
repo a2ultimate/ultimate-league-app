@@ -42,6 +42,10 @@ class Field(models.Model):
     def __unicode__(self):
         return self.name
 
+    @property
+    def display_type(self):
+        return dict(self.FIELD_TYPE_CHOICES)[self.type]
+
 
 class FieldNames(models.Model):
     FIELD_TYPE_GRASS = 'grass'
@@ -289,7 +293,7 @@ class League(models.Model):
         if timezone.now().date() <= self.league_end_date:
             return '#3498db'
 
-        return '#bdc3c7'
+        return '#95a5a6'
 
     def is_accepting_registrations(self, user=None):
         # always accepting registrations for admins

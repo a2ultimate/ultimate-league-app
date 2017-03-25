@@ -35,12 +35,14 @@
                         {{ league.status_text }}
                       </div>
 
-                      <h3 class="page-home-leagues-content-list-element-list-element-content-heading">
+                      <h2 class="page-home-leagues-content-list-element-list-element-content-heading">
                         {{ league.night|smart_title }}{% if league.type == 'league' %} League{% endif %}
-                      </h3>
+                      </h2>
 
                       <div class="page-home-leagues-content-list-element-list-element-content-info">
+                        <span>{{ league.display_type }}</span>
                         <span>{{ league.display_level }}</span>
+                        <span>{{ league.fields.first.display_type }}</span>
                         <span>{{ league.display_gender }}</span>
                       </div>
                     </a>
@@ -96,9 +98,9 @@
   <div class="page-home-info">
     {% cache 500 page_home_info_news %}
       <div class="page-home-info-news page-home-info-section">
-        <div class="page-home-info-section-header">
-          <h1>News</h1>
-        </div>
+        <h1 class="page-home-info-section-header">
+          News
+        </h1>
         <div class="page-home-info-section-content">
           <ul class="page-home-info-section-content-list">
             {% for announcement in announcements %}
@@ -120,9 +122,9 @@
 
     {% cache 500 page_home_info_events %}
       <div class="page-home-info-events page-home-info-section">
-        <div class="page-home-info-section-header">
-          <h1>Events</h1>
-        </div>
+        <h1 class="page-home-info-section-header">
+          Events
+        </h1>
         <div class="page-home-info-section-content">
           <ul class="page-home-info-section-content-list">
             {% for event in events %}

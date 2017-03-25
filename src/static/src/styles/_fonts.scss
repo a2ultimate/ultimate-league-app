@@ -221,60 +221,45 @@
 
 // OSWALD
 
-// @font-face {
-//     font-family: 'Oswald';
-//     src: url('../fonts/Oswald/oswald-bold-webfont.eot');
-//     src: url('../fonts/Oswald/oswald-bold-webfont.eot?#iefix') format('embedded-opentype'),
-//          url('../fonts/Oswald/oswald-bold-webfont.woff2') format('woff2'),
-//          url('../fonts/Oswald/oswald-bold-webfont.woff') format('woff'),
-//          url('../fonts/Oswald/oswald-bold-webfont.ttf') format('truetype'),
-//          url('../fonts/Oswald/oswald-bold-webfont.svg#oswaldbold') format('svg');
-//     font-weight: 700;
-//     font-style: normal;
-//     text-rendering: optimizeLegibility;
-// }
-//
-// @font-face {
-//     font-family: 'Oswald';
-//     src: url('../fonts/Oswald/oswald-regular-webfont.eot');
-//     src: url('../fonts/Oswald/oswald-regular-webfont.eot?#iefix') format('embedded-opentype'),
-//          url('../fonts/Oswald/oswald-regular-webfont.woff2') format('woff2'),
-//          url('../fonts/Oswald/oswald-regular-webfont.woff') format('woff'),
-//          url('../fonts/Oswald/oswald-regular-webfont.ttf') format('truetype'),
-//          url('../fonts/Oswald/oswald-regular-webfont.svg#oswaldregular') format('svg');
-//     font-weight: 400;
-//     font-style: normal;
-//     text-rendering: optimizeLegibility;
-// }
-//
-// @font-face {
-//     font-family: 'Oswald';
-//     src: url('../fonts/Oswald/oswald-light-webfont.eot');
-//     src: url('../fonts/Oswald/oswald-light-webfont.eot?#iefix') format('embedded-opentype'),
-//          url('../fonts/Oswald/oswald-light-webfont.woff2') format('woff2'),
-//          url('../fonts/Oswald/oswald-light-webfont.woff') format('woff'),
-//          url('../fonts/Oswald/oswald-light-webfont.ttf') format('truetype'),
-//          url('../fonts/Oswald/oswald-light-webfont.svg#oswaldlight') format('svg');
-//     font-weight: 200;
-//     font-style: normal;
-//     text-rendering: optimizeLegibility;
-// }
+@font-face {
+    font-family: 'Oswald';
+    src: url('../fonts/Oswald/oswald-bold-webfont.eot');
+    src: url('../fonts/Oswald/oswald-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/Oswald/oswald-bold-webfont.woff2') format('woff2'),
+         url('../fonts/Oswald/oswald-bold-webfont.woff') format('woff'),
+         url('../fonts/Oswald/oswald-bold-webfont.ttf') format('truetype'),
+         url('../fonts/Oswald/oswald-bold-webfont.svg#oswaldbold') format('svg');
+    font-weight: 700;
+    font-style: normal;
+    text-rendering: optimizeLegibility;
+}
+
+@font-face {
+    font-family: 'Oswald';
+    src: url('../fonts/Oswald/oswald-regular-webfont.eot');
+    src: url('../fonts/Oswald/oswald-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/Oswald/oswald-regular-webfont.woff2') format('woff2'),
+         url('../fonts/Oswald/oswald-regular-webfont.woff') format('woff'),
+         url('../fonts/Oswald/oswald-regular-webfont.ttf') format('truetype'),
+         url('../fonts/Oswald/oswald-regular-webfont.svg#oswaldregular') format('svg');
+    font-weight: 400;
+    font-style: normal;
+    text-rendering: optimizeLegibility;
+}
+
+@font-face {
+    font-family: 'Oswald';
+    src: url('../fonts/Oswald/oswald-light-webfont.eot');
+    src: url('../fonts/Oswald/oswald-light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/Oswald/oswald-light-webfont.woff2') format('woff2'),
+         url('../fonts/Oswald/oswald-light-webfont.woff') format('woff'),
+         url('../fonts/Oswald/oswald-light-webfont.ttf') format('truetype'),
+         url('../fonts/Oswald/oswald-light-webfont.svg#oswaldlight') format('svg');
+    font-weight: 200;
+    font-style: normal;
+    text-rendering: optimizeLegibility;
+}
 
 $font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 $font-family-lato: 'Lato', $font-family-base;
-// $font-family-oswald: 'Oswald', $font-family-base;
-
-$font-family-lato-black: 'LatoBlack', 'LatoRegular', $font-family-base;
-$font-family-lato-heavy: 'LatoHeavy', 'LatoRegular', $font-family-base;
-$font-family-lato-bold: 'LatoBold', 'LatoRegular', $font-family-base;
-$font-family-lato-semibold: 'LatoSemibold', 'LatoRegular', $font-family-base;
-$font-family-lato-medium: 'LatoMedium', 'LatoRegular', $font-family-base;
-$font-family-lato-regular: 'LatoRegular', $font-family-base;
-$font-family-lato-light: 'LatoLight', 'LatoRegular', $font-family-base;
-$font-family-lato-thin: 'LatoThin', 'LatoRegular', $font-family-base;
-$font-family-lato-hairline: 'LatoHairline', 'LatoRegular', $font-family-base;
-
-// $font-family-oswald-bold: 'OswaldBold', 'Oswald', $font-family-base;
-// $font-family-oswald-regular: 'Oswald', $font-family-base;
-// $font-family-oswald-light: 'OswaldLight', 'Oswald', $font-family-base;
-// $font-family-oswald: $font-family-oswald-regular;
+$font-family-oswald: 'Oswald', $font-family-base;
