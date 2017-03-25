@@ -3,6 +3,7 @@ import random
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Count
 from django.db.transaction import atomic
@@ -12,6 +13,10 @@ from django.utils import timezone
 from pybb.models import *
 
 from ultimate.utils.email_groups import *
+
+
+def generateLeagueCoverImagePath(instance, filename):
+    return 'images/{}/{}/{}/{}'.format(instance.year, instance.season.slug, instance.night_slug, filename)
 
 
 class Field(models.Model):
@@ -36,6 +41,10 @@ class Field(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    @property
+    def display_type(self):
+        return dict(self.FIELD_TYPE_CHOICES)[self.type]
 
 
 class FieldNames(models.Model):
@@ -80,15 +89,15 @@ class Season(models.Model):
 
 
 class League(models.Model):
-    STATE_CLOSED = 'closed'
-    STATE_HIDDEN = 'hidden'
-    STATE_OPEN = 'open'
-    STATE_PREVIEW = 'preview'
+    LEAGUE_STATE_CLOSED = 'closed'
+    LEAGUE_STATE_HIDDEN = 'hidden'
+    LEAGUE_STATE_OPEN = 'open'
+    LEAGUE_STATE_PREVIEW = 'preview'
     LEAGUE_STATE_CHOICES = (
-        (STATE_CLOSED, 'Closed - visible to all, registration closed to all'),
-        (STATE_HIDDEN, 'Hidden - hidden to all, registration closed to all'),
-        (STATE_OPEN, 'Open - visible to all, registration conditionally open to all'),
-        (STATE_PREVIEW, 'Preview - visible only to admins, registration conditionally open only to admins'),
+        (LEAGUE_STATE_CLOSED, 'Closed - visible to all, registration closed to all'),
+        (LEAGUE_STATE_HIDDEN, 'Hidden - hidden to all, registration closed to all'),
+        (LEAGUE_STATE_OPEN, 'Open - visible to all, registration conditionally open to all'),
+        (LEAGUE_STATE_PREVIEW, 'Preview - visible only to admins, registration conditionally open only to admins'),
     )
 
     LEAGUE_GENDER_MENS = 'mens'
@@ -166,9 +175,14 @@ class League(models.Model):
 
     state = models.CharField(max_length=32, choices=LEAGUE_STATE_CHOICES, help_text='state of league, changes whether registration is open or league is visible')
 
+    image_cover = models.ImageField(upload_to=generateLeagueCoverImagePath, blank=True, null=True)
+
     class Meta:
         db_table = u'league'
         ordering = ['-year', '-season__order', 'league_start_date']
+
+    def get_absolute_url(self):
+        return reverse('league_summary', args=[self.year, self.season.slug, self.night_slug, ])
 
     def __unicode__(self):
         return ('%s %d %s' % (self.season, self.year, self.night))
@@ -188,6 +202,10 @@ class League(models.Model):
         return dict(self.LEAGUE_LEVEL_CHOICES)[self.level]
 
     @property
+    def display_state(self):
+        return dict(self.LEAGUE_STATE_CHOICES)[self.state]
+
+    @property
     def display_type(self):
         return dict(self.LEAGUE_TYPE_CHOICES)[self.type]
 
@@ -201,7 +219,7 @@ class League(models.Model):
 
     @property
     def season_year(self):
-        return ('%s %d' % (self.season, self.year)).replace('_', ' ')
+        return '{} {}'.format(self.season, self.year)
 
     @property
     def gender_title(self):
@@ -222,6 +240,10 @@ class League(models.Model):
         return self.paypal_cost + self.check_cost_increase + self.late_cost_increase
 
     @property
+    def is_closed(self):
+        return self.state == self.LEAGUE_STATE_CLOSED
+
+    @property
     def is_after_registration_start(self):
         return timezone.now() >= self.reg_start_date
 
@@ -238,6 +260,76 @@ class League(models.Model):
             return self.state in ['closed', 'open', 'preview']
 
         return self.state in ['closed', 'open']
+
+    @property
+    def status_text(self):
+        if timezone.now() < self.reg_start_date:
+            return 'Coming Soon'
+
+        if timezone.now().date() < self.league_start_date:
+            if timezone.now() >= self.waitlist_start_date or \
+                    len(self.get_complete_registrations()) >= self.max_players:
+                return 'Waitlisting Registrations'
+            else:
+                return 'Accepting Registrations'
+
+        if timezone.now().date() <= self.league_end_date:
+            return '{} In Progress'.format(self.display_type)
+
+        # TODO is "completed" the right word?
+        return '{} Completed'.format(self.display_type)
+
+    @property
+    def status_color(self):
+        if timezone.now() < self.reg_start_date:
+            return '#9b59b6'
+
+        if timezone.now().date() < self.league_start_date:
+            if timezone.now() >= self.waitlist_start_date or \
+                    len(self.get_complete_registrations()) >= self.max_players:
+                return '#f1c40f'
+            else:
+                return '#2ecc71'
+
+        if timezone.now().date() <= self.league_end_date:
+            return '#3498db'
+
+        return '#95a5a6'
+
+    def is_accepting_registrations(self, user=None):
+        # always accepting registrations for admins
+        if user and user.is_authenticated() and user.is_junta and \
+                self.state in [self.LEAGUE_STATE_OPEN, self.LEAGUE_STATE_PREVIEW]:
+            return True
+
+        # not before league ends
+        if not timezone.now().date() <= self.league_end_date:
+            return False
+
+        # not open to public
+        if self.state not in [self.LEAGUE_STATE_OPEN]:
+            return False
+
+        # not after registration date start
+        if not timezone.now() >= self.reg_start_date:
+            return False
+
+        return True
+
+    def is_waitlisting_registrations(self, user=None):
+        # not accepting registrations
+        if not self.is_accepting_registrations(user):
+            return False
+
+        # not after waitlist date start
+        if timezone.now() >= self.waitlist_start_date:
+            return True
+
+        # not full
+        if len(self.get_complete_registrations()) >= self.max_players:
+            return True
+
+        return False
 
     def is_open(self, user=None):
         if user and user.is_authenticated() and user.is_junta and self.state in ['open', 'preview']:
@@ -283,6 +375,17 @@ class League(models.Model):
 
     def player_survey_complete_for_user(self, user):
         return bool(user.teammember_set.get(team__league=self).team.player_survey_complete(user))
+
+    def get_user_registration(self, user):
+        user_registration = None
+
+        if user and user.is_authenticated():
+            try:
+                return self.registrations_set.get(user=user)
+            except ObjectDoesNotExist:
+                pass
+
+        return user_registration
 
     def get_registrations(self):
         return self.registrations_set.filter(league=self).order_by('registered') \

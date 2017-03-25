@@ -1,28 +1,63 @@
+.button-social-twitter {
+  background-color: $color-social-twitter;
+
+  @extend .button;
+
+  &:hover {
+    background-color: $color-social-twitter-dark;
+  }
+}
+
+.button-social-facebook {
+  background-color: $color-social-facebook;
+
+  @extend .button;
+
+  &:hover {
+    background-color: $color-social-facebook-dark;
+  }
+}
+
 .social-icon {
-  width: 2rem;
-  height: 2rem;
+  display: inline-block;
+
+  width: 2.5rem;
+  height: 2.5rem;
   margin: 0 0.25rem;
 
-  text-indent: -999em;
+  text-align: center;
 
-  background-color: transparent;
-  background-image: url('../images/includes/social_sprite@2x.png');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 6rem 2rem;
+  border-radius: $border-radius;
+
+  font-size: 1.25rem;
+  line-height: 2.5rem;
 
   &:active {
     position: relative;
     top: 0.0625rem;
   }
+}
 
-  &.social-icon-facebook {
-    background-color: $color-social-facebook;
-    background-position: 0 0;
-  }
+.social-icon-facebook {
+  color: $color-white;
+  background-color: $color-social-facebook;
 
-  &.social-icon-twitter {
-    background-color: $color-social-twitter;
-    background-position: -2rem 0;
+  &:hover {
+    color: $color-white;
+    background-color: $color-social-facebook-dark;
   }
+}
+
+.social-icon-twitter {
+  color: $color-white;
+  background-color: $color-social-twitter;
+
+  &:hover {
+    color: $color-white;
+    background-color: $color-social-twitter-dark;
+  }
+}
+
+.social-icon-text {
+  @include sr-only();
 }

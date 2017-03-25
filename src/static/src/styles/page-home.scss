@@ -1,7 +1,296 @@
 .page-home {
 }
 
+.page-home-leagues {
+  margin-bottom: 1rem;
+}
+
+.page-home-leagues-header {
+}
+
+.page-home-leagues-content {
+}
+
+.page-home-leagues-content-list {
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.page-home-leagues-content-list-element {
+  margin-bottom: 1rem;
+}
+
+.page-home-leagues-content-list-element-header {
+  letter-spacing: 0.0625rem;
+
+  font-family: $font-family-oswald;
+  font-weight: 400;
+}
+
+.page-home-leagues-content-list-element-list {
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  @include outer-container();
+}
+
+.page-home-leagues-content-list-element-list-element {
+  position: relative;
+
+  overflow: hidden;
+
+  margin: 0 0 0.75rem;
+  padding: 0;
+
+  list-style: none;
+
+  border-left: 0.25rem solid $color-gray;
+  border-top-right-radius: $border-radius;
+  border-bottom-right-radius: $border-radius;
+  background-color: $color-light-gray;
+
+  @include span-columns(4);
+  @include omega(3n);
+}
+
+.page-home-leagues-content-list-element-list-element-background {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  background: transparent;
+  background-repeat: none;
+  background-position: center;
+  background-size: cover;
+}
+
+.page-home-leagues-content-list-element-list-element-background-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  background: linear-gradient(rgba($color-dark-gray, 0.5), rgba($color-dark-gray, 0.5));
+}
+
+.page-home-leagues-content-list-element-list-element-content {
+  position: relative;
+
+  display: block;
+
+  min-height: 9rem;
+  padding: 2.5rem 0.75rem 0.25rem 0.75rem;
+
+  color: $color-primary;
+
+  &:hover,
+  &:active,
+  &:focus {
+    text-decoration: none;
+
+    color: $color-primary-dark;
+  }
+
+  .page-home-leagues-content-list-element-list-element-background + & {
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+.page-home-leagues-content-list-element-list-element-content-tag {
+  position: absolute;
+  top: 0.5rem;
+  left: 0;
+
+  display: inline-block;
+
+  padding: 0.25rem 0.75rem;
+
+  letter-spacing: 0.0125rem;
+
+  color: white;
+  border-top-right-radius: $border-radius;
+  border-bottom-right-radius: $border-radius;
+  background-color: $color-gray;
+
+  font-family: $font-family-oswald;
+  font-size: $font-size-sm;
+  font-weight: 200;
+}
+
+.page-home-leagues-content-list-element-list-element-content-heading {
+  position: relative;
+
+  padding-right: 1.25rem;
+
+  letter-spacing: 0.03125rem;
+
+  font-family: $font-family-oswald;
+  font-weight: 200;
+
+  &:after {
+    position: absolute;
+    top: 50%;
+    right: 0rem;
+
+    width: 1rem;
+    height: $font-size-sm;
+    margin-top: -$font-size-sm / 2;
+
+    text-align: right;
+
+    color: $color-gray;
+
+    font-size: $font-size-sm !important;
+    line-height: $font-size-sm !important;
+
+    @include icon('chevron-right');
+
+    .page-home-leagues-content-list-element-list-element-content:active &,
+    .page-home-leagues-content-list-element-list-element-content:focus &,
+    .page-home-leagues-content-list-element-list-element-content:hover & {
+      color: $color-dark-gray;
+    }
+  }
+
+  .page-home-leagues-content-list-element-list-element-background + .page-home-leagues-content-list-element-list-element-content > & {
+    color: $color-white !important;
+    text-shadow: 0 0.0625rem 0 $color-dark-gray-dark;
+
+    &:after {
+      color: $color-white;
+    }
+  }
+}
+
+.page-home-leagues-content-list-element-list-element-content-info {
+  margin: 0.25rem 0;
+
+  color: $color-gray-dark;
+
+  font-size: 0;
+
+  span {
+    display: inline-block;
+
+    letter-spacing: 0.0125rem;
+
+    font-size: $font-size-sm;
+    font-weight: 400;
+
+    &:after {
+      padding: 0 0.25rem;
+
+      content: '\00b7';
+    }
+
+    &:last-child {
+      &:after {
+        display: none;
+      }
+    }
+  }
+
+  .page-home-leagues-content-list-element-list-element-background + .page-home-leagues-content-list-element-list-element-content > & {
+    color: $color-white !important;
+    text-shadow: 0 0.0625rem 0 $color-dark-gray-dark;
+  }
+}
+
+.page-home-leagues-content-list-element-list-element-footer {
+  position: relative;
+
+  min-height: 3.25rem;
+}
+
+.page-home-leagues-content-list-element-list-element-footer-message {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  left: 0.75rem;
+
+  display: block;
+
+  color: rgba($color-gray, 0.6);
+
+  font-style: italic;
+}
+
+.page-home-leagues-content-list-element-list-element-footer-action {
+  position: relative;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  display: block;
+
+  padding: 0.75rem;
+
+  text-align: left;
+
+  border-top-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+
+  &:after {
+    position: absolute;
+    top: 50%;
+    right: 0.75rem;
+
+    height: $font-size-sm;
+    margin-top: -$font-size-sm / 2;
+
+    text-align: right;
+
+    color: $color-white;
+
+    font-size: $font-size-sm !important;
+    line-height: $font-size-sm !important;
+
+    @include icon('chevron-right');
+  }
+}
+
+.page-home-follow {
+  margin-bottom: 2rem;
+}
+
+.page-home-follow-header {
+  .fa {
+    vertical-align: 0.1875rem;
+
+    font-size: 1.75rem;
+  }
+}
+
+.page-home-follow-content {
+  @include outer-container();
+}
+
+.page-home-follow-content-announcements {
+  @include span-columns(6);
+}
+
+.page-home-follow-content-twitter {
+  @include span-columns(3);
+}
+
+.page-home-follow-content-facebook {
+  @include span-columns(3);
+}
+
 .page-home-info {
+  margin-bottom: 2rem;
+
   @include outer-container();
 }
 
@@ -9,35 +298,108 @@
   @include span-columns(7);
 }
 
-.page-home-info-news-content {
+.page-home-info-events {
+  @include span-columns(5);
 }
 
-.page-home-info-news-content-list {
+.page-home-info-section {
+}
+
+.page-home-info-section-header {
+  letter-spacing: 0.0625rem;
+
+  font-family: $font-family-oswald;
+  font-weight: 400;
+}
+
+.page-home-info-section-content {
+}
+
+.page-home-info-section-content-list {
   margin: 0;
   padding: 0;
 
   list-style: none;
 }
 
-.page-home-info-news-content-list-element {
-  margin: 0.5rem 0;
-  padding: 0.75rem 0.5rem;
+.page-home-info-section-content-list-element {
+  overflow: hidden;
 
-  border-radius: 0.125rem;
-  background-color: $color-light-gray;
+  margin: 0 0 0.5rem;
+  padding: 0;
 }
 
-.page-home-info-news-content-list-element-content {
+.page-home-info-section-content-list-element-link {
+  position: relative;
+
+  display: block;
+
+  padding: 0.75rem 1.5rem 0.75rem 0.5rem;
+
+  text-decoration: none !important;
+
+  border-left: 0.25rem solid $color-gray;
+  border-top-right-radius: $border-radius;
+  border-bottom-right-radius: $border-radius;
+  background-color: $color-light-gray;
+
+  .page-home-info-news & {
+  }
+
+  .page-home-info-events & {
+    padding: 0.5rem 1.5rem 0.5rem 0.5rem;
+  }
+
+  &:after {
+    position: absolute;
+    top: 50%;
+    right: 0.5rem;
+
+    height: 1rem;
+    margin-top: -0.5rem;
+
+    color: $color-light-gray-dark;
+
+    line-height: 1rem;
+
+    @include icon('chevron-right');
+  }
+
+  &:focus,
+  &:hover,
+  &:active {
+    border-color: $color-gray-dark;
+    &:after {
+      color: $color-gray-dark;
+    }
+  }
+}
+
+.page-home-info-section-content-list-element-link-content {
   color: $color-dark-gray;
 
-  font-size: 1.125rem;
   font-weight: 600;
+
+  .page-home-info-news & {
+    font-size: 1.125rem;
+  }
+
+  .page-home-info-events & {
+    font-size: $font-size-sm;
+  }
 }
 
-.page-home-info-news-content-list-element-footer {
+.page-home-info-section-content-list-element-link-footer {
   color: $color-gray;
+
+  .page-home-info-news & {
+  }
+
+  .page-home-info-events & {
+    font-size: $font-size-xs;
+  }
 }
 
-.page-home-info-events {
-  @include span-columns(5);
+.page-home-info-section-footer {
+  font-size: $font-size-sm;
 }

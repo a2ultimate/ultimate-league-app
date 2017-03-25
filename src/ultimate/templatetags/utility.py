@@ -3,6 +3,7 @@ import re
 
 from django import template
 from django.conf import settings
+from django.core.files.storage import default_storage
 from django.core.urlresolvers import reverse
 from django.template.defaultfilters import stringfilter
 from django.utils import timezone
@@ -81,3 +82,11 @@ def prepare_menu_items(menu_items):
             lists[parent_id].remove(lists[menu_item.id])
 
     return lists[0]
+
+
+@register.filter()
+def file_exists(filepath):
+    if default_storage.exists(filepath):
+        return filepath
+
+    return False

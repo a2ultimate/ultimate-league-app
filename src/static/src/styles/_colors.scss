@@ -20,7 +20,9 @@ $color-gray: #95a5a6;
 $color-gray-dark: #7f8c8d;
 $color-dark-gray: #34495e;
 $color-dark-gray-dark: #2c3e50;
+$color-black: #000000;
 $color-white: #ffffff;
+$color-off-white: #f9f9f9;
 
 // States
 $color-primary: $color-dark-gray;
@@ -40,4 +42,6 @@ $color-info-dark: $color-blue-dark;
 
 // Social
 $color-social-facebook: #2f4b93;
+$color-social-facebook-dark: darken(#2f4b93, 10%);
 $color-social-twitter: #00bdef;
+$color-social-twitter-dark: darken(#00bdef, 10%);

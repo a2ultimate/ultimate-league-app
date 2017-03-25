@@ -44,6 +44,28 @@ def is_free(league):
 
 
 @register.filter
+def is_accepting_registrations(league, user):
+    return league.is_accepting_registrations(user)
+
+
+@register.filter
+def is_waitlisting_registrations(league, user):
+    return league.is_waitlisting_registrations(user)
+
+
+@register.filter
+def has_user_registration(league, user):
+    return league.get_user_registration(user) is not None
+
+
+@register.filter
+def has_complete_user_registration(league, user):
+    user_registration = league.get_user_registration(user)
+    return user_registration and \
+        user_registration.is_complete
+
+
+@register.filter
 # returns league captains as user objects
 def get_captains(league):
     return league.get_captains()

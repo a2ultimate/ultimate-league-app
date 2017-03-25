@@ -1,42 +1,175 @@
 {% extends 'layout/layout_home.html' %}
 
+{% load cache %}
+{% load i18n %}
+{% load leagues %}
+{% load utility %}
+
 {% block content %}
 <div class="page-home">
-  <div class="page-home-info">
-    <div class="page-home-info-news">
-      <div class="page-home-info-news-header">
-        <h1>News</h1>
-      </div>
-      <div class="page-home-info-news-content">
-        <ul class="page-home-info-news-content-list">
-          {% for announcement in announcements %}
-          <li class="page-home-info-news-content-list-element">
-            <div class="page-home-info-news-content-list-element-content">
-              {{ announcement.name }}
-            </div>
-            <div class="page-home-info-news-content-list-element-footer">
-              {{ announcement.created|timesince }} ago
-              <a href="{{ announcement.get_absolute_url }}">Read More...</a>
-            </div>
-          </li>
+
+  {% if menu_leagues %}
+    <div class="page-home-leagues">
+      <div class="page-home-leagues-header"></div>
+      <div class="page-home-leagues-content">
+        <ul class="page-home-leagues-content-list">
+
+          {% regroup menu_leagues by season_year as season_years %}
+
+          {% for season_year in season_years %}
+            <li class="page-home-leagues-content-list-element">
+              <h2 class="page-home-leagues-content-list-element-header">
+                {{ season_year.grouper|smart_title }}
+              </h2>
+
+              <ul class="page-home-leagues-content-list-element-list">
+                {% for league in season_year.list|sort_by_league_start_date_weekday %}
+                  <li class="page-home-leagues-content-list-element-list-element" style="border-color: {{ league.status_color }};">
+                    {% if league.image_cover and league.image_cover|file_exists %}
+                      <div class="page-home-leagues-content-list-element-list-element-background" style="background-image: url('{{ league.image_cover.url }}');">
+                        <div class="page-home-leagues-content-list-element-list-element-background-overlay"></div>
+                      </div>
+                    {% endif %}
+                    <a class="page-home-leagues-content-list-element-list-element-content" href="{% url 'league_summary' year=league.year season=league.season.slug division=league.night_slug %}">
+                      <div class="page-home-leagues-content-list-element-list-element-content-tag" style="background-color: {{ league.status_color }};">
+                        {{ league.status_text }}
+                      </div>
+
+                      <h2 class="page-home-leagues-content-list-element-list-element-content-heading">
+                        {{ league.night|smart_title }}{% if league.type == 'league' %} League{% endif %}
+                      </h2>
+
+                      <div class="page-home-leagues-content-list-element-list-element-content-info">
+                        <span>{{ league.display_type }}</span>
+                        <span>{{ league.display_level }}</span>
+                        <span>{{ league.fields.first.display_type }}</span>
+                        <span>{{ league.display_gender }}</span>
+                      </div>
+                    </a>
+
+                    <div class="page-home-leagues-content-list-element-list-element-footer">
+                      {% if league|has_complete_user_registration:request.user %}
+                        {% if league.team_set.exists and league.game_set.exists %}
+                          <a class="page-home-leagues-content-list-element-list-element-footer-action button button-block" href="{% url 'league_teams' year=league.year season=league.season.slug division=league.night_slug %}">
+                            View Teams
+                          </a>
+                        {% else %}
+                          <div class="page-home-leagues-content-list-element-list-element-footer-message">
+                            Thank you for registering, teams are coming soon!
+                          </div>
+                        {% endif %}
+                      {% else %}
+                        {% if league|is_accepting_registrations:request.user %}
+                          {% if league|is_waitlisting_registrations:request.user %}
+                            <a class="page-home-leagues-content-list-element-list-element-footer-action button button-block button-caution" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">
+                              Join Waitlist
+                          {% else %}
+                              <a class="page-home-leagues-content-list-element-list-element-footer-action button button-block button-success" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">
+                                {% if league|has_user_registration:request.user %}
+                                  Finish Registration
+                                {% else %}
+                                  Register Now
+                                {% endif %}
+                          {% endif %}
+                          </a>
+                        {% else %}
+                          {% if not league.is_after_registration_start %}
+                            <div class="page-home-leagues-content-list-element-list-element-footer-message">
+                              Registration opening soon!
+                            </div>
+                          {% else %}
+                            <div class="page-home-leagues-content-list-element-list-element-footer-message">
+                              Registration is closed.
+                            </div>
+                          {% endif %}
+                        {% endif %}
+                      {% endif %}
+                    </div>
+                  </li>
+                {% endfor %}
+              </ul>
+            </li>
           {% endfor %}
         </ul>
       </div>
-
     </div>
-    <div class="page-home-info-events">
-      <div class="page-home-info-events-header">
-        <h1>Events</h1>
+  {% endif %}
+
+  <div class="page-home-info">
+    {% cache 500 page_home_info_news %}
+      <div class="page-home-info-news page-home-info-section">
+        <h1 class="page-home-info-section-header">
+          News
+        </h1>
+        <div class="page-home-info-section-content">
+          <ul class="page-home-info-section-content-list">
+            {% for announcement in announcements %}
+              <li class="page-home-info-section-content-list-element">
+                <a class="page-home-info-section-content-list-element-link" href="{{ announcement.get_absolute_url }}">
+                  <div class="page-home-info-section-content-list-element-link-content">
+                    {{ announcement.name }}
+                  </div>
+                  <div class="page-home-info-section-content-list-element-link-footer">
+                    {{ announcement.created|timesince }} ago
+                  </div>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
       </div>
-      <div class="page-home-info-events-content">
-        <iframe src="https://www.google.com/calendar/embed?showTitle=0&amp;showNav=0&amp;showDate=0&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=0&amp;showTz=0&amp;mode=AGENDA&amp;height=400&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=pm3odo50mikpffck6bnrhrqj3c%40group.calendar.google.com&amp;color=%23182C57&amp;ctz=America%2FNew_York"
-            style=" border-width:0 " width="282" height="268" frameborder="0" scrolling="no"></iframe>
+    {% endcache %}
+
+    {% cache 500 page_home_info_events %}
+      <div class="page-home-info-events page-home-info-section">
+        <h1 class="page-home-info-section-header">
+          Events
+        </h1>
+        <div class="page-home-info-section-content">
+          <ul class="page-home-info-section-content-list">
+            {% for event in events %}
+              <li class="page-home-info-section-content-list-element">
+                <a class="page-home-info-section-content-list-element-link" href="{{ event.description }}">
+                  <div class="page-home-info-section-content-list-element-link-content">
+                    {{ event.summary }}
+                  </div>
+                  <div class="page-home-info-section-content-list-element-link-footer">
+                    {{ event.start|date:'l, F jS' }} at {{ event.start|date:'g:iA'|lower }}
+                  </div>
+                </a>
+              </li>
+            {% endfor %}
+            <li class="page-home-info-section-content-list-element">
+              <a class="page-home-info-section-content-list-element-link" href="https://calendar.google.com/calendar/embed?src={% settings_value 'GOOGLE_APPS_CALENDAR_ID' %}">
+                <div class="page-home-info-section-content-list-element-link-content">
+                  View Full Calendar
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    {% endcache %}
+  </div>
+
+  <div class="page-home-follow">
+    <div class="page-home-follow-header">
+      <!-- <h1><i class="fa fa-comments-o" aria-hidden="true"></i>&nbsp;Stay Up to Date</h1> -->
+    </div>
+    <div class="page-home-follow-content">
+      <div class="page-home-follow-content-announcements">
+        <a class="button button-block button-info" href="{% url 'announcements' %}">
+          <i class="fa fa-envelope" aria-hidden="true"></i>&nbsp;Join Our Announcements List</a>
+      </div>
+      <div class="page-home-follow-content-twitter">
+        <a class="button button-block button-social-twitter" href="https://twitter.com/a2ultimate">
+          <i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;Follow Us</a>
+      </div>
+      <div class="page-home-follow-content-facebook">
+        <a class="button button-block button-social-facebook" href="https://www.facebook.com/annarborultimate">
+          <i class="fa fa-facebook" aria-hidden="true"></i>&nbsp;Like Us</a>
       </div>
     </div>
   </div>
-
-  <p>
-    <a class="button button-info" href="{% url 'announcements' %}">Join Our Announcements List</a>
-  <p>
 </div>
 {% endblock %}

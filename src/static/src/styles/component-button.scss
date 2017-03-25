@@ -11,13 +11,13 @@
   white-space: nowrap;
   text-decoration: none;
 
-  color: $color-white !important;
+  color: $color-white;
   border: 0;
   border-radius: $border-radius;
   background-color: $color-primary;
 
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
 
   appearance: none;
   -webkit-font-smoothing: antialiased;
@@ -30,7 +30,7 @@
   &:hover {
     text-decoration: none;
 
-    color: $color-white !important;
+    color: $color-white;
     background-color: $color-primary-dark;
   }
 
@@ -41,9 +41,9 @@
   }
 
   &.button-small {
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 1rem;
 
-    font-size: 0.875rem;
+    font-size: $font-size-sm;
   }
 
   &.button-primary {
@@ -95,6 +95,16 @@
     &:hover {
       background-color: $color-info-dark;
     }
+
+    &.button-inverse {
+      color: $color-info;
+      background-color: $color-white;
+
+      &:hover {
+        color: $color-info-dark;
+        background-color: $color-white;
+      }
+    }
   }
 
   &.button-link {
@@ -119,4 +129,8 @@
 
     width: 100%;
   }
+}
+
+a.button {
+  color: $color-white;
 }

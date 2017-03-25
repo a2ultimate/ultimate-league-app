@@ -17,7 +17,7 @@ def index(request):
     leagues = League.objects.filter(state__in=['closed', 'open', 'preview']).order_by('league_start_date')
     leagues = [r for r in leagues if r.is_visible(request.user)]
 
-    next_games = Game.objects.filter(~Q(league__state=League.STATE_HIDDEN) & Q(date__gte=timezone.now().date()) & Q(Q(gameteams__team__teammember__user=request.user) | Q(gameteams__team__teammember__user=request.user))).order_by('date')[0:2]
+    next_games = Game.objects.filter(~Q(league__state=League.LEAGUE_STATE_HIDDEN) & Q(date__gte=timezone.now().date()) & Q(Q(gameteams__team__teammember__user=request.user) | Q(gameteams__team__teammember__user=request.user))).order_by('date')[0:2]
     try:
         next_game = next_games[0:1].get()
     except Game.DoesNotExist:

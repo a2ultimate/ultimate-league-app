@@ -32,7 +32,10 @@
                   {% for link in SOCIAL_LINKS %}
                     {% if link.url %}
                       <li class="content-inner-left-social-list-element">
-                        <a class="content-inner-left-social-list-element-link social-icon social-icon-{{ link.name }}" href="{{ link.url }}" target="_blank">{{ link.name|title }}</a>
+                        <a class="social-icon social-icon-{{ link.name }}" href="{{ link.url }}" aria-label="{{ link.name|title }}" target="_blank">
+                          <i class="fa fa-{{ link.name }}" aria-hidden="true"></i>
+                          <span class="social-icon-text">{{ link.name|title }}</span>
+                        </a>
                       </li>
                     {% endif %}
                   {% endfor %}
@@ -49,6 +52,7 @@
             </div>
           </div>
         {% endcache %}
+
         <div class="content-inner-right">
           {% block content %}{% endblock %}
         </div>

@@ -9,16 +9,20 @@ from pybb.models import Topic
 
 from ultimate.index.models import *
 from ultimate.forms import AnnoucementsForm
+from ultimate.utils.calendar import get_events
 from ultimate.utils.email_groups import add_to_group
 
 
 def index(request):
     announcements = Topic.objects.filter(
-        forum__name__exact='Announcements').order_by('-created')[:4]
+        forum__name__exact='Announcements').order_by('-created')[:5]
+
+    events = get_events()[:7]
 
     return render_to_response('index/index.html',
                               {
                                   'announcements': announcements,
+                                  'events': events,
                               },
                               context_instance=RequestContext(request))
 
