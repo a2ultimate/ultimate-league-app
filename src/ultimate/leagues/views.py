@@ -186,7 +186,7 @@ def registration(request, year, season, division, section=None):
             user_profile = request.user.profile
             if league.min_age:
                 if not user_profile or \
-                        not user_profile.get_age_on(league.league_start_date) < league.min_age:
+                        user_profile.get_age_on(league.league_start_date) < league.min_age:
                     errors.append('age')
 
             if not user_profile or not user_profile.is_complete_for_user:
