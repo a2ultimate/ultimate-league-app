@@ -562,7 +562,7 @@ class League(models.Model):
                     group_id=group_id,
                     email_address=team_member.user.email)
         else:
-            for registration in self.get_complete_registrations().order_by('user__last_name'):
+            for registration in sorted(self.get_complete_registrations(), key=lambda r: r.user.last_name):
                 success_count += add_to_group(
                     group_email_address=group_address,
                     group_id=group_id,
