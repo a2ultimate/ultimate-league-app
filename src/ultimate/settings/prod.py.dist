@@ -10,8 +10,6 @@ GOOGLE_ANALYTICS_TRACKERS = [
   {'name': '', 'id': '',},
 ]
 
-PAYPAL_CALLBACK_SECRET = 'replace/this/path/with/a/secret/'
-
 WEBPACK_LOADER = {
     'DEFAULT': {
         'BUNDLE_DIR_NAME': '',
