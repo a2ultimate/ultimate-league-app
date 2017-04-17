@@ -1,5 +1,5 @@
 from django.contrib import admin
-from ultimate.index.models import *
+from ultimate.index.models import (StaticContent, StaticMenuItems)
 
 
 class StaticContentAdmin(admin.ModelAdmin):
@@ -8,8 +8,6 @@ class StaticContentAdmin(admin.ModelAdmin):
     save_as = True
     save_on_top = True
 
-admin.site.register(StaticContent, StaticContentAdmin)
-
 
 class StaticMenuItemsAdmin(admin.ModelAdmin):
     list_display = ('location', 'position', 'parent', 'content', 'href', 'type',)
@@ -17,4 +15,6 @@ class StaticMenuItemsAdmin(admin.ModelAdmin):
     save_as = True
     save_on_top = True
 
+
+admin.site.register(StaticContent, StaticContentAdmin)
 admin.site.register(StaticMenuItems, StaticMenuItemsAdmin)

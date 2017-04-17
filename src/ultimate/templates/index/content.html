@@ -13,4 +13,9 @@
   {% else %}
     {{ content.content }}
   {% endif %}
+
+  {% if content.updated %}
+    <hr>
+    <small>Last Updated: {{ content.updated|date:'F jS, Y' }}</small>
+  {% endif %}
 {% endblock %}

@@ -17,6 +17,9 @@ class StaticContent(models.Model):
     type = models.CharField(max_length=32, choices=STATIC_CONTENT_TYPE_CHOICES)
     content = models.TextField()
 
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
     class Meta:
         db_table = u'static_content'
         verbose_name_plural = 'static content'
