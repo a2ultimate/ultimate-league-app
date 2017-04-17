@@ -1,5 +1,16 @@
 {% extends 'layout/layout_home.html' %}
 
+{% load markdown_deux_tags %}
+
+{% block title %}{{ content.title }} &middot; {{ block.super }}{% endblock %}
+{% block og_title %}{{ content.title }} &middot; {{ block.super }}{% endblock %}
+
 {% block content %}
-  {{ content.content|safe }}
+  {% if content.is_markdown %}
+    {{ content.content|markdown }}
+  {% elif content.is_html %}
+    {{ content.content|safe }}
+  {% else %}
+    {{ content.content }}
+  {% endif %}
 {% endblock %}

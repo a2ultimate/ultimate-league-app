@@ -4,7 +4,7 @@ urlpatterns = patterns('ultimate.index.views',
     (r'^$', 'index', {}, 'home'),
     (r'^announcements/$', 'announcements', {}, 'announcements'),
 
-    (r'^about/$', 'content', {'url': 'about_us/'}, 'about_us'),
+    (r'^about/$', 'content', {'url': 'about/'}, 'about'),
     (r'^comments/$', 'content', {'url': 'comments/'}, 'comments'),
     (r'^contact/$', 'content', {'url': 'contacts/'}, 'contact'),
     (r'^pickup/$', 'content', {'url': 'pickup/'}, 'pickup'),
