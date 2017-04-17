@@ -118,7 +118,7 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
                         'Last Name',
                         'Spirit',
                         'Comment',
-                        ])
+                    ])
 
                     game_report_comments = GameReportComment.objects.filter(report__team__league=league, report__game__league=league).order_by('report__game__start')
                     for game_report_comment in game_report_comments:
@@ -130,7 +130,7 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
                             game_report_comment.submitted_by.last_name,
                             game_report_comment.spirit,
                             game_report_comment.comment.encode('ascii', 'ignore'),
-                            ])
+                        ])
 
                     return response
 
@@ -353,7 +353,7 @@ def teamgeneration(request, year=None, season=None, division=None):
 
                 captain_users = {}
                 for key in request.POST:
-                    if key.startswith('player_captain_') and not int(request.POST[key]) == 0:
+                    if key.startswith('player_captain_') and int(request.POST[key]) != 0:
                         captain_users[int(key.split('_').pop())] = int(request.POST[key])
 
                 captain_teams = list(set(captain_users.values()))
