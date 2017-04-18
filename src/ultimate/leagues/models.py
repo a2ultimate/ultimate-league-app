@@ -1,3 +1,4 @@
+from datetime import datetime, time
 import random
 
 from django.conf import settings
@@ -89,11 +90,13 @@ class Season(models.Model):
 
 
 class League(models.Model):
+    LEAGUE_STATE_CANCELLED = 'cancelled'
     LEAGUE_STATE_CLOSED = 'closed'
     LEAGUE_STATE_HIDDEN = 'hidden'
     LEAGUE_STATE_OPEN = 'open'
     LEAGUE_STATE_PREVIEW = 'preview'
     LEAGUE_STATE_CHOICES = (
+        (LEAGUE_STATE_CANCELLED, 'Cancelled - visible to all, registration closed to all'),
         (LEAGUE_STATE_CLOSED, 'Closed - visible to all, registration closed to all'),
         (LEAGUE_STATE_HIDDEN, 'Hidden - hidden to all, registration closed to all'),
         (LEAGUE_STATE_OPEN, 'Open - visible to all, registration conditionally open to all'),
@@ -226,6 +229,22 @@ class League(models.Model):
         return ('%s' % (self.gender)).replace('_', ' ')
 
     @property
+    def league_start_datetime(self):
+        start_time = time(0, 0, 0)
+        if self.start_time:
+            start_time = self.start_time
+
+        return datetime.combine(self.league_start_date, start_time)
+
+    @property
+    def league_end_datetime(self):
+        end_time = time(23, 59, 59)
+        if self.end_time:
+            end_time = self.end_time
+
+        return datetime.combine(self.league_end_date, end_time)
+
+    @property
     def paypal_price(self):
         if self.paypal_cost == 0 or timezone.now() < self.price_increase_start_date:
             return self.paypal_cost
@@ -238,6 +257,10 @@ class League(models.Model):
             return self.paypal_cost + self.check_cost_increase
 
         return self.paypal_cost + self.check_cost_increase + self.late_cost_increase
+
+    @property
+    def is_cancelled(self):
+        return self.state == self.LEAGUE_STATE_CANCELLED
 
     @property
     def is_closed(self):
@@ -257,41 +280,46 @@ class League(models.Model):
 
     def is_visible(self, user=None):
         if user and user.is_authenticated() and user.is_junta:
-            return self.state in ['closed', 'open', 'preview']
+            return self.state in ['cancelled', 'closed', 'open', 'preview']
 
-        return self.state in ['closed', 'open']
+        return self.state in ['cancelled', 'closed', 'open']
 
     @property
     def status_text(self):
+        if self.is_cancelled:
+            return '{} Cancelled'.format(self.display_type)
+
         if timezone.now() < self.reg_start_date:
             return 'Coming Soon'
 
-        if timezone.now().date() < self.league_start_date:
+        if timezone.now() < self.league_start_datetime:
             if timezone.now() >= self.waitlist_start_date or \
                     len(self.get_complete_registrations()) >= self.max_players:
                 return 'Waitlisting Registrations'
             else:
                 return 'Accepting Registrations'
 
-        if timezone.now().date() <= self.league_end_date:
+        if timezone.now() <= self.league_end_datetime:
             return '{} In Progress'.format(self.display_type)
 
-        # TODO is "completed" the right word?
         return '{} Completed'.format(self.display_type)
 
     @property
     def status_color(self):
+        if self.is_cancelled:
+            return '#95a5a6'
+
         if timezone.now() < self.reg_start_date:
             return '#9b59b6'
 
-        if timezone.now().date() < self.league_start_date:
+        if timezone.now() < self.league_start_datetime:
             if timezone.now() >= self.waitlist_start_date or \
                     len(self.get_complete_registrations()) >= self.max_players:
                 return '#f1c40f'
             else:
                 return '#2ecc71'
 
-        if timezone.now().date() <= self.league_end_date:
+        if timezone.now() <= self.league_end_datetime:
             return '#3498db'
 
         return '#95a5a6'
@@ -534,7 +562,7 @@ class League(models.Model):
                     group_id=group_id,
                     email_address=team_member.user.email)
         else:
-            for registration in self.get_complete_registrations().order_by('user__last_name'):
+            for registration in sorted(self.get_complete_registrations(), key=lambda r: r.user.last_name):
                 success_count += add_to_group(
                     group_email_address=group_address,
                     group_id=group_id,

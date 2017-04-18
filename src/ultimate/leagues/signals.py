@@ -1,17 +1,15 @@
 # leagues/signals.py
 
-from django.db.models import F
-
-from ultimate.leagues.models import League, Registrations
+from ultimate.leagues.models import Registrations
 
 from paypal.standard.models import ST_PP_COMPLETED
 from paypal.standard.ipn.signals import valid_ipn_received
 
 
-def paypal_callback(sender, **kwargs):
+def paypal_callback(sender):
     ipn_obj = sender
 
-    print 'PayPal IPN Incoming: ' + ipn_obj.invoice + ' - ' + ipn_obj.payment_status
+    print 'PayPal IPN Incoming: {} - {}'.format(ipn_obj.invoice, ipn_obj.payment_status)
 
     if ipn_obj.payment_status == ST_PP_COMPLETED:
         try:
@@ -25,15 +23,15 @@ def paypal_callback(sender, **kwargs):
             registration.registered = ipn_obj.payment_date
             registration.save()
 
-            print 'PayPal IPN Complete: ' + ipn_obj.invoice + ' - ' + str(registration.id)
+            print 'PayPal IPN Complete: {} - {}'.format(ipn_obj.invoice, registration.id)
         except Registrations.DoesNotExist:
-            print 'PayPal IPN Error: ' + ipn_obj.invoice + ' - Registration does not exist'
-        except Exception, e:
-            print 'PayPal IPN Error: ' + ipn_obj.invoice + ' - Unknown error'
-            print '%s' % e
+            print 'PayPal IPN Error: {} - Registration does not exist'.format(ipn_obj.invoice)
+        except Exception, ex:
+            print 'PayPal IPN Error: {} - Unknown error'.format(ipn_obj.invoice)
+            print '%s' % ex
 
     else:
-        print 'PayPal IPN Not Complete: ' + ipn_obj.invoice + ' - ' + ipn_obj.payment_status
+        print 'PayPal IPN Not Complete: {} - {}'.format(ipn_obj.invoice, ipn_obj.payment_status)
 
 
 valid_ipn_received.connect(paypal_callback)

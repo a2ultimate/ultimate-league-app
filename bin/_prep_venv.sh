@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+set -eu
 
 here=`dirname ${BASH_SOURCE[0]}`
 source "$here/_common.sh" $1
@@ -18,15 +18,15 @@ virtual_env=$ULTIMATE_VIRTUALENV_ROOT/$venv
 
 # Optionally delete previously built virtualenv
 if [ "x$2" == "xclean" ]; then
-	if [ -d $virtual_env ]; then
+	if [ -d "$virtual_env" ]; then
 		echo "Removing existing virtualenv"
-	    rm -rf $virtual_env
+	    rm -rf "$virtual_env"
 	fi
 fi
 
 # Create virtualenv and install necessary packages
-virtualenv --no-site-packages --prompt="(ulti $venv) " $virtual_env
-. $virtual_env/bin/activate
+virtualenv --no-site-packages --prompt="(ulti $venv) " "$virtual_env"
+. "$virtual_env/bin/activate"
 
 pip install --no-cache-dir -r $ULTIMATE_SRC_ROOT/requirements/$reqs.txt
 pip freeze > $ULTIMATE_SRC_ROOT/requirements/$reqs.full.txt

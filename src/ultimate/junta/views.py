@@ -17,9 +17,8 @@ from django.template import RequestContext
 from ultimate.forms import ScheduleGenerationForm
 
 from ultimate.captain.models import GameReport, GameReportComment
-from ultimate.junta.models import *
-from ultimate.leagues.models import *
-from ultimate.user.models import *
+from ultimate.leagues.models \
+    import (FieldNames, Game, GameTeams, League, Registrations, Team, TeamMember)
 
 from paypal.standard.ipn.models import PayPalIPN
 
@@ -45,7 +44,8 @@ def captainstatus(request, year=None, season=None, division=None):
     else:
         leagues = League.objects.all().order_by('-league_start_date')
 
-    return render_to_response('junta/captainstatus.html',
+    return render_to_response(
+        'junta/captainstatus.html',
         {'league': league, 'leagues': leagues},
         context_instance=RequestContext(request))
 
@@ -61,7 +61,7 @@ def leagueresults(request, year=None, season=None, division=None):
 
     if year and season and division:
         league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
-        games = league.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
+        games = league.game_set.order_by('date', 'start', 'field_name', 'field_name__field')
         game_locations = league.get_game_locations(games=games)
         game_dates = league.get_game_dates(games=games, game_locations=game_locations)
 
@@ -118,7 +118,7 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
                         'Last Name',
                         'Spirit',
                         'Comment',
-                        ])
+                    ])
 
                     game_report_comments = GameReportComment.objects.filter(report__team__league=league, report__game__league=league).order_by('report__game__start')
                     for game_report_comment in game_report_comments:
@@ -130,12 +130,12 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
                             game_report_comment.submitted_by.last_name,
                             game_report_comment.spirit,
                             game_report_comment.comment.encode('ascii', 'ignore'),
-                            ])
+                        ])
 
                     return response
 
             else:
-                games = league.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
+                games = league.game_set.order_by('date', 'start', 'field_name', 'field_name__field')
                 game_locations = league.get_game_locations(games=games)
                 game_dates = league.get_game_dates(games=games, game_locations=game_locations)
 
@@ -165,13 +165,13 @@ def registrationexport(request, year=None, season=None, division=None):
 
         # TODO need to use better "complete" registration query
         registrations = Registrations.objects.filter(league=league) \
-            .extra(select={'average_experience':'SELECT COALESCE(AVG(user_playerratings.experience), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.experience != 0'}) \
-            .extra(select={'average_strategy':'SELECT COALESCE(AVG(user_playerratings.strategy), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.strategy != 0'}) \
-            .extra(select={'average_throwing':'SELECT COALESCE(AVG(user_playerratings.throwing), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.throwing != 0'}) \
-            .extra(select={'average_athleticism':'SELECT COALESCE(AVG(user_playerratings.athleticism), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.athleticism != 0'}) \
-            .extra(select={'average_competitiveness':'SELECT COALESCE(AVG(user_playerratings.competitiveness), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.competitiveness != 0'}) \
-            .extra(select={'average_spirit':'SELECT COALESCE(AVG(user_playerratings.spirit), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.spirit != 0'}) \
-            .extra(select={'num_teams':'SELECT COUNT(team_member.id) FROM team_member WHERE team_member.user_id = registrations.user_id GROUP BY team_member.user_id'})
+            .extra(select={'average_experience': 'SELECT COALESCE(AVG(user_playerratings.experience), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.experience != 0'}) \
+            .extra(select={'average_strategy': 'SELECT COALESCE(AVG(user_playerratings.strategy), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.strategy != 0'}) \
+            .extra(select={'average_throwing': 'SELECT COALESCE(AVG(user_playerratings.throwing), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.throwing != 0'}) \
+            .extra(select={'average_athleticism': 'SELECT COALESCE(AVG(user_playerratings.athleticism), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.athleticism != 0'}) \
+            .extra(select={'average_competitiveness': 'SELECT COALESCE(AVG(user_playerratings.competitiveness), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.competitiveness != 0'}) \
+            .extra(select={'average_spirit': 'SELECT COALESCE(AVG(user_playerratings.spirit), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.spirit != 0'}) \
+            .extra(select={'num_teams': 'SELECT COUNT(team_member.id) FROM team_member WHERE team_member.user_id = registrations.user_id GROUP BY team_member.user_id'})
 
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="' + league.__unicode__() + '.csv"'
@@ -345,21 +345,20 @@ def teamgeneration(request, year=None, season=None, division=None):
 
                 if not num_teams:
                     messages.error(request, 'You must specify a number of teams greater than zero.')
-                    return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
+                    return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season': season, 'division': division}))
 
                 if teams:
                     messages.error(request, 'Teams were not generated. Teams already exist for this league.')
-                    return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
+                    return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season': season, 'division': division}))
 
                 captain_users = {}
                 for key in request.POST:
-                    if key.startswith('player_captain_') and not int(request.POST[key]) == 0:
+                    if key.startswith('player_captain_') and int(request.POST[key]) != 0:
                         captain_users[int(key.split('_').pop())] = int(request.POST[key])
 
                 captain_teams = list(set(captain_users.values()))
                 for key in captain_users:
                     captain_users[key] = captain_teams.index(captain_users[key])
-
 
                 groups = list({'baggage_id': k, 'players': sorted(list(v), key=lambda k: k['rating_total'], reverse=True)} for k, v in groupby(players, key=lambda k: k['baggage_id']))
 
@@ -405,9 +404,9 @@ def teamgeneration(request, year=None, season=None, division=None):
 
                 # goal is something close to LPT, Longest Processing Time
 
-                captain_groups = list(g for g in groups if not g['captain'] == None)
-                female_groups = list(g for g in groups if g['num_females'] > 0 and g['captain'] == None)
-                male_groups = list(g for g in groups if g['num_females'] <= 0 and g['captain'] == None)
+                captain_groups = list(g for g in groups if not g['captain'] is None)
+                female_groups = list(g for g in groups if g['num_females'] > 0 and g['captain'] is None)
+                male_groups = list(g for g in groups if g['num_females'] <= 0 and g['captain'] is None)
 
                 # sort female and male groups, least important to most important values
                 # sort by attendance, low to high
@@ -452,7 +451,7 @@ def teamgeneration(request, year=None, season=None, division=None):
 
                 # distribute the groups with captains in them, one per team
                 for group in captain_groups:
-                    if not group['captain'] == None and group['captain'] < num_teams:
+                    if not group['captain'] is None and group['captain'] < num_teams:
                         assign_group_to_team(group, teams_object[group['captain']])
 
                 # distribute the groups with females in them, should split females as evenly as possible
@@ -500,7 +499,7 @@ def teamgeneration(request, year=None, season=None, division=None):
                     if team_member_match:
                         team_id = int(team_member_match.group(1))
                         if team_id:
-                            team = filter(lambda k: k['team_id'] == team_id, new_teams)
+                            team = [team for team in new_teams if team['team_id'] == team_id]
 
                             users = list(get_user_model().objects.get(id=user_id) for user_id in request.POST.getlist(key))
 
@@ -516,7 +515,7 @@ def teamgeneration(request, year=None, season=None, division=None):
                     elif team_member_captain_match:
                         team_id = int(team_member_captain_match.group(1))
                         if team_id:
-                            team = filter(lambda k: k['team_id'] == team_id, new_teams)
+                            team = [team for team in new_teams if team['team_id'] == team_id]
 
                             captains = list(get_user_model().objects.get(id=user_id) for user_id in request.POST.getlist(key))
 
@@ -532,30 +531,30 @@ def teamgeneration(request, year=None, season=None, division=None):
                 save_teams(new_teams)
 
                 messages.success(request, 'Teams were successfully saved.')
-                return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
+                return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season': season, 'division': division}))
 
             if 'publish_teams' in request.POST:
                 teams.update(hidden=False)
 
                 messages.success(request, 'Teams were successfully published.')
-                return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
+                return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season': season, 'division': division}))
 
             elif 'hide_teams' in request.POST:
                 teams.update(hidden=True)
 
                 messages.success(request, 'Teams were successfully hidden.')
-                return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
+                return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season': season, 'division': division}))
             elif 'delete_teams' in request.POST:
                 teams.delete()
 
                 messages.success(request, 'Teams were successfully deleted.')
-                return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
+                return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season': season, 'division': division}))
             # if POST and no other parameter, need to save newly generated teams
             else:
                 save_teams(new_teams)
 
                 messages.success(request, 'Teams were successfully generated.')
-                return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
+                return HttpResponseRedirect(reverse('teamgeneration_league', kwargs={'year': year, 'season': season, 'division': division}))
 
         players.sort(key=lambda k: (k['rating_total']), reverse=True)
 
@@ -591,7 +590,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
 
     if year and season and division:
         league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
-        games = league.game_set.order_by('date' ,'start', 'field_name', 'field_name__field')
+        games = league.game_set.order_by('date', 'start', 'field_name', 'field_name__field')
         game_locations = league.get_game_locations(games=games)
         game_dates = league.get_game_dates(games=games, game_locations=game_locations)
 
@@ -638,7 +637,6 @@ def schedulegeneration(request, year=None, season=None, division=None):
 
                     time_delta = end_datetime - start_datetime
                     time_slot_delta = time_delta / league.num_time_slots
-                    num_time_slots = league.num_time_slots
 
                     event_date = league.league_start_date
                     field_names = FieldNames.objects.filter(pk__in=field_names)
@@ -669,7 +667,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
                         event_date = event_date + timedelta(days=7)
 
                     messages.success(request, 'Schedule was successfully generated.')
-                    return HttpResponseRedirect(reverse('schedulegeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
+                    return HttpResponseRedirect(reverse('schedulegeneration_league', kwargs={'year': year, 'season': season, 'division': division}))
                 else:
                     if num_field_names >= num_necessary_fields:
                         messages.error(request, 'There was an issue with the form you submitted.')
@@ -679,12 +677,11 @@ def schedulegeneration(request, year=None, season=None, division=None):
                 Game.objects.filter(league=league).delete()
 
                 messages.success(request, 'Schedule was successfully cleared.')
-                return HttpResponseRedirect(reverse('schedulegeneration_league', kwargs={'year': year, 'season':season, 'division': division}))
+                return HttpResponseRedirect(reverse('schedulegeneration_league', kwargs={'year': year, 'season': season, 'division': division}))
         else:
             form = ScheduleGenerationForm()
 
         form.fields['field_names'].queryset = FieldNames.objects.filter(field__league=league)
-
 
     else:
         leagues = League.objects.all().order_by('-league_start_date')
