@@ -17,7 +17,7 @@ PYBB_FREEZE_FIRST_POST = getattr(settings, 'PYBB_FREEZE_FIRST_POST', False)
 PYBB_DEFAULT_TITLE = getattr(settings, 'PYBB_DEFAULT_TITLE', 'PYBB Powered Forum')
 
 from postmarkup import render_bbcode
-from markdown import Markdown
+# from markdown import Markdown
 
 PYBB_MARKUP_ENGINES = getattr(settings, 'PYBB_MARKUP_ENGINES', {
     'bbcode': lambda str: render_bbcode(str, exclude_tags=['size', 'center']),
