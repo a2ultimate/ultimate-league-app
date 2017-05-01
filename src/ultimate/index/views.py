@@ -7,21 +7,21 @@ from django.template import RequestContext
 
 from pybb.models import Topic
 
-from ultimate.index.models import *
+from ultimate.index.models import StaticContent
 from ultimate.forms import AnnoucementsForm
 from ultimate.utils.calendar import get_events
 from ultimate.utils.email_groups import add_to_group
 
 
 def index(request):
-    announcements = Topic.objects.filter(
+    announcements_list = Topic.objects.filter(
         forum__name__exact='Announcements').order_by('-created')[:5]
 
     events = get_events()[:7]
 
     return render_to_response('index/index.html',
                               {
-                                  'announcements': announcements,
+                                  'announcements': announcements_list,
                                   'events': events,
                               },
                               context_instance=RequestContext(request))
@@ -60,11 +60,11 @@ def announcements(request):
                               context_instance=RequestContext(request))
 
 
-def content(request, url):
+def static(request, content_url):
     try:
-        content = get_object_or_404(StaticContent, url=url)
+        page_content = get_object_or_404(StaticContent, url=content_url)
     except StaticContent.DoesNotExist:
-        content = ''
-    return render_to_response('index/content.html',
-                              {'content': content},
+        page_content = ''
+    return render_to_response('index/static.html',
+                              {'content': page_content},
                               context_instance=RequestContext(request))
