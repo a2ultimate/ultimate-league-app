@@ -60,10 +60,10 @@
 <div class="nav">
   <div class="nav-inner">
     <div class="nav-inner-left">
-      {% cache 500 nav_inner_left user.is_superuser %}
+      {% cache 500 nav_inner_left user.is_superuser user.is_staff %}
         <ul class="nav-inner-list">
           {% autoescape off %}{{ menu_items_nav|prepare_menu_items|unordered_list }}{% endautoescape %}
-          {% if user.is_superuser %}
+          {% if user.is_staff %}
             <li>
               <a href="{% url 'admin:index' %}">Admin</a>
             </li>

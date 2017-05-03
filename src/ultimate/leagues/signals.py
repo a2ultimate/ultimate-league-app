@@ -6,7 +6,7 @@ from paypal.standard.models import ST_PP_COMPLETED
 from paypal.standard.ipn.signals import valid_ipn_received
 
 
-def paypal_callback(sender):
+def paypal_callback(sender, **kwargs):
     ipn_obj = sender
 
     print 'PayPal IPN Incoming: {} - {}'.format(ipn_obj.invoice, ipn_obj.payment_status)

@@ -1,5 +1,6 @@
 {% extends 'layout/layout_home.html' %}
 
+{% load admin_urls %}
 {% load markdown_deux_tags %}
 
 {% block title %}{{ content.title }} &middot; {{ block.super }}{% endblock %}
@@ -16,6 +17,20 @@
 
   {% if content.updated %}
     <hr>
-    <small>Last Updated: {{ content.updated|date:'F jS, Y' }}</small>
+    <p>
+      <small>Last Updated: {{ content.updated|date:'F jS, Y' }}</small>
+    </p>
+  {% endif %}
+
+  {% if 'index.change_staticcontent' in perms %}
+    <div class="page-division-teams-notes">
+      <h4 class="page-division-teams-notes-title">
+        Admin Only
+      </h4>
+
+      <div class="page-division-teams-notes-content">
+        <a href="{% url 'admin:index_staticcontent_change' content.id %}">Edit Page</a>
+      </div>
+    </div>
   {% endif %}
 {% endblock %}

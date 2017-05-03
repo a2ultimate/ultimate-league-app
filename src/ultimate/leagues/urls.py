@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls import patterns, url, include
 
-from ultimate.leagues.signals import *
+from ultimate.leagues.signals import paypal_callback
 
 payment_callbacks = getattr(settings, 'PAYPAL_CALLBACKS', [])
 payment_callback_regex = r'^registration/payment/(' + '|'.join(payment_callbacks) + ')'
