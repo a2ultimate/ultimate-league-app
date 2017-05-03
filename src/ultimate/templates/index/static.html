@@ -22,8 +22,7 @@
     </p>
   {% endif %}
 
-
-  {% if request.user.is_staff %}
+  {% if 'index.change_staticcontent' in perms %}
     <div class="page-division-teams-notes">
       <h4 class="page-division-teams-notes-title">
         Admin Only
