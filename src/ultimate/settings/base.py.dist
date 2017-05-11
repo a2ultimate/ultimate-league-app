@@ -189,6 +189,18 @@ HIJACK_ALLOW_GET_REQUESTS = True
 HIJACK_REGISTER_ADMIN = False
 
 
+# Markdown
+MARKDOWN_DEUX_STYLES = {
+    'default': {
+        'extras': {
+            'header-ids': True,
+            'target-blank-links': True,
+        },
+        'safe_mode': False,
+    },
+}
+
+
 # Paypal Info
 PAYPAL_RECEIVER_EMAIL = ''
 PAYPAL_TEST = True      # Testing mode on
