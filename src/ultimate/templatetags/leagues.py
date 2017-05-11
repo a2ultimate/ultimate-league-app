@@ -7,15 +7,15 @@ register = template.Library()
 
 
 @register.filter
-def sort_by_league_start_date_weekday(divisions):
+def sort_by_league_start_date_weekday(league_divisions):
 
-    leagues = filter(lambda k: k.type == League.LEAGUE_TYPE_LEAGUE, divisions)
-    leagues.sort(key=lambda k: k.league_start_date.strftime('%w'))
+    divisions = [d for d in league_divisions if d.type == League.LEAGUE_TYPE_LEAGUE]
+    divisions.sort(key=lambda d: (d.league_start_date.strftime('%w'), d.league_start_date))
 
-    other_divisions = filter(lambda k: k.type != League.LEAGUE_TYPE_LEAGUE, divisions)
-    other_divisions.sort(key=lambda k: k.league_start_date)
+    other_divisions = [d for d in league_divisions if d.type != League.LEAGUE_TYPE_LEAGUE]
+    other_divisions.sort(key=lambda d: d.league_start_date)
 
-    return leagues + other_divisions
+    return divisions + other_divisions
 
 
 @register.filter

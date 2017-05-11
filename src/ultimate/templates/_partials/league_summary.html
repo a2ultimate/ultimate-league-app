@@ -84,9 +84,11 @@
     <th>
       Minimum Age
     </th>
+    {% if league.baggage > 1 %}
     <th>
       Maximum Group Size
     </th>
+    {% endif %}
   </tr>
   <tr>
     {% if league.paypal_price > 0 %}
@@ -106,9 +108,11 @@
     <td>
       {{ league.min_age }} Years Old
     </td>
-    <td>
-      {{ league.baggage }}
-    </td>
+    {% if league.baggage > 1 %}
+      <td>
+        {{ league.baggage }}
+      </td>
+    {% endif %}
   </tr>
   {% if not league.is_after_price_increase and league.late_cost_increase > 0 %}
     <tr>
