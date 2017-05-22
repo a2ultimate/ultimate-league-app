@@ -92,7 +92,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for registration in unassigned_registrations|dictsort:'progress'|dictsort:'registered' %}
+              {% for registration in unassigned_registrations|dictsort:'progress' %}
                 <tr>
                   <td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>({{ registration.user.profile.gender }})</em></td>
                   <td>{{ registration.status }}</td>
