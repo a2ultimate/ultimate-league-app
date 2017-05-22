@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from ultimate.leagues.models import *
+from pybb.models import PybbProfile
 
 
 class UserManager(BaseUserManager):
