@@ -8,6 +8,7 @@ import re
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.db.transaction import atomic
 from django.http import HttpResponseRedirect, HttpResponse
@@ -19,6 +20,7 @@ from ultimate.forms import ScheduleGenerationForm
 from ultimate.captain.models import GameReport, GameReportComment
 from ultimate.leagues.models \
     import (FieldNames, Game, GameTeams, League, Registrations, Team, TeamMember)
+from ultimate.user.models import Player
 
 from paypal.standard.ipn.models import PayPalIPN
 
@@ -329,7 +331,7 @@ def teamgeneration(request, year=None, season=None, division=None):
                         for user in team_object['users']:
                             try:
                                 team_member = TeamMember.objects.get(team__league=league, user=user)
-                            except ObjectDoesNotExist:
+                            except TeamMember.DoesNotExist:
                                 team_member = TeamMember()
                                 team_member.user = user
 
@@ -392,7 +394,7 @@ def teamgeneration(request, year=None, season=None, division=None):
                             else:
                                 group['num_males'] += 1
                                 group['rating_total_male'] += float(player['rating_total'])
-                        except ObjectDoesNotExist:
+                        except Player.DoesNotExist:
                             group['num_males'] += 1
                             group['rating_total_male'] += float(player['rating_total'])
 
