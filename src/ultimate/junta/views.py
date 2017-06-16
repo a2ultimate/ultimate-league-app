@@ -253,7 +253,7 @@ def registrationexport(request, year=None, season=None, division=None):
                     'num_teams': registration.num_teams,
                     'registration_status': registration.status.encode('ascii', 'ignore'),
                     'registration_timestamp': registration.registered,
-                    'registration_waitlisted': registration.waitlist,
+                    'registration_waitlisted': int(registration.waitlist),
                     'payment_type': registration.pay_type,
                     'paypal_email': paypal_row.payer_email.encode('ascii', 'ignore') if paypal_row else '',
                     'paypal_amount': paypal_row.mc_gross if paypal_row else '',
