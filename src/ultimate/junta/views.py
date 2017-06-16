@@ -200,14 +200,17 @@ def registrationexport(request, year=None, season=None, division=None):
             'Number of Leagues',
             'Registration Status',
             'Registration Timestamp',
+            'Registration Waitlisted',
+            'Payment Type',
             'PayPal Email',
+            'PayPal Amount',
             'Attendance',
             'Captaining',
         ])
 
         registration_list = []
         for registration in registrations:
-            if registration.is_complete and not registration.waitlist and not registration.refunded:
+            if registration.is_complete and not registration.refunded:
                 try:
                     paypal_row = PayPalIPN.objects.filter(invoice=registration.paypal_invoice_id)[:1].get()
                 except PayPalIPN.DoesNotExist:
@@ -250,7 +253,10 @@ def registrationexport(request, year=None, season=None, division=None):
                     'num_teams': registration.num_teams,
                     'registration_status': registration.status.encode('ascii', 'ignore'),
                     'registration_timestamp': registration.registered,
-                    'paypal_email': paypal_row.payer_email.encode('ascii', 'ignore') if paypal_row else paypal_row,
+                    'registration_waitlisted': registration.waitlist,
+                    'payment_type': registration.pay_type,
+                    'paypal_email': paypal_row.payer_email.encode('ascii', 'ignore') if paypal_row else '',
+                    'paypal_amount': paypal_row.mc_gross if paypal_row else '',
                     'attendance': int(0 if registration.attendance is None else registration.attendance),
                     'captaining': int(0 if registration.captain is None else registration.captain),
                 })
@@ -281,7 +287,10 @@ def registrationexport(request, year=None, season=None, division=None):
                 registration['num_teams'],
                 registration['registration_status'],
                 registration['registration_timestamp'],
+                registration['registration_waitlisted'],
+                registration['payment_type'],
                 registration['paypal_email'],
+                registration['paypal_amount'],
                 registration['attendance'],
                 registration['captaining'],
             ])
