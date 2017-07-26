@@ -109,12 +109,16 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
         else:
             if request.method == 'POST':
                 if 'export' in request.POST:
-                    response = HttpResponse(content_type='text/csv')
+                    response = HttpResponse()
                     response['Content-Disposition'] = 'attachment; filename="' + league.__unicode__() + '.csv"'
 
                     writer = csv.writer(response)
                     writer.writerow([
                         'Date',
+                        'Team',
+                        'Players',
+                        'Females',
+                        'Males',
                         'Email',
                         'First Name',
                         'Last Name',
@@ -122,17 +126,21 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
                         'Comment',
                     ])
 
-                    game_report_comments = GameReportComment.objects.filter(report__team__league=league, report__game__league=league).order_by('report__game__start')
-                    for game_report_comment in game_report_comments:
-
-                        writer.writerow([
-                            game_report_comment.report.game.date,
-                            game_report_comment.submitted_by.email,
-                            game_report_comment.submitted_by.first_name,
-                            game_report_comment.submitted_by.last_name,
-                            game_report_comment.spirit,
-                            game_report_comment.comment.encode('ascii', 'ignore'),
-                        ])
+                    game_reports = GameReport.objects.filter(team__league=league, game__league=league).order_by('game__start', 'team__id')
+                    for game_report in game_reports:
+                        for game_report_comment in game_report.gamereportcomment_set.all():
+                            writer.writerow([
+                                game_report.game.start,
+                                game_report.team.id,
+                                game_report.num_players_in_attendance(),
+                                game_report.num_females_in_attendance(),
+                                game_report.num_males_in_attendance(),
+                                game_report_comment.submitted_by.email,
+                                game_report_comment.submitted_by.first_name,
+                                game_report_comment.submitted_by.last_name,
+                                game_report_comment.spirit,
+                                game_report_comment.comment.encode('ascii', 'ignore'),
+                            ])
 
                     return response
 
