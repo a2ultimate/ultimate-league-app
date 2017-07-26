@@ -126,5 +126,8 @@ module.exports = {
   postcss: [
     autoprefixer({ browsers: ['last 2 versions'] }),
   ],
+  devServer: {
+    headers: { "Access-Control-Allow-Origin": "*" }
+  },
   devtool: 'cheap-module-eval-source-map',
 };
