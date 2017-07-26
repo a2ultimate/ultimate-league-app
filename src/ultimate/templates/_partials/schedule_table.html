@@ -70,19 +70,19 @@
                   {% endif %}
 
                   {% if link_game_report %}
-                  {% for report in game|get_report_for_team:team %}
-                    <div>
-                      {% if report.has_comment %}
-                      <strong>
-                      {% endif %}
-                        {{ team.id }}
-                      {% if report.has_comment %}
-                      </strong>
-                      {% endif %}
-                    </div>
-                  {% empty %}
-                    {{ team.id }}
-                  {% endfor %}
+                    {% for report in game|get_report_for_team:team %}
+                      <div>
+                        {% if report.has_comment %}
+                        <strong>
+                        {% endif %}
+                          {{ team.id }}
+                        {% if report.has_comment %}
+                        </strong>
+                        {% endif %}
+                      </div>
+                    {% empty %}
+                      <s>{{ team.id }}</s>
+                    {% endfor %}
                   {% elif show_game_result %}
                     {% for report in game|get_report_for_team:team %}
                       <div class="schedule-table-game-result-{{ report|get_result:team }}">
