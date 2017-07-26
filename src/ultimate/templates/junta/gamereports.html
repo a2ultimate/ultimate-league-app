@@ -45,9 +45,18 @@
   {% elif league and game and team %}
     <h1>{% include '_partials/division_header.html' with league=league header='Game Reports' only %}</h1>
 
-    <h2>Game Report Comments for Team {{ team.id }}</h2>
-
     {% for game_report in game_reports %}
+      <h2>Attendance for Team {{ team.id }}</h2>
+      <dl>
+        <dt>Players</dt>
+        <dd>{{ game_report.num_players_in_attendance }}</dd>
+        <dt>Females</dt>
+        <dd>{{ game_report.num_females_in_attendance }}</dd>
+        <dt>Males</dt>
+        <dd>{{ game_report.num_males_in_attendance }}</dd>
+      </dl>
+
+      <h2>Game Report Comments for Team {{ team.id }}</h2>
 
       {% for game_report_comment in game_report.gamereportcomment_set.all %}
         <dl>

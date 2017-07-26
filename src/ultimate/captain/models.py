@@ -19,6 +19,15 @@ class GameReport(models.Model):
     def has_comment(self):
         return self.gamereportcomment_set.exclude(comment='').exists()
 
+    def num_players_in_attendance(self):
+        return self.gamereportattendance_set.count()
+
+    def num_males_in_attendance(self):
+        return self.gamereportattendance_set.filter(user__profile__gender__iexact='M').count()
+
+    def num_females_in_attendance(self):
+        return self.gamereportattendance_set.filter(user__profile__gender__iexact='F').count()
+
 
 class GameReportAttendance(models.Model):
     report = models.ForeignKey('captain.GameReport')
