@@ -126,7 +126,7 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
                     for game_report_comment in game_report_comments:
 
                         writer.writerow([
-                            game_report_comment.report.game.start,
+                            game_report_comment.report.game.date,
                             game_report_comment.submitted_by.email,
                             game_report_comment.submitted_by.first_name,
                             game_report_comment.submitted_by.last_name,

@@ -24,8 +24,15 @@
         <a href="{% url 'gamereports_league' year=league.year season=league.season.slug division=league.night_slug %}">{{ league.season_title|smart_title }} {{ league.year }} {{ league.night|smart_title }}</a>
       </li>
       {% endif %}
+      {% if game %}
+      <li class="breadcrumb">
+        {{ game.date|date:'M d' }}
+      </li>
+      {% endif %}
       {% if game_reports %}
-      <li class="breadcrumb">Team {{ team.id }}</li>
+      <li class="breadcrumb">
+        Team {{ team.id }}
+      </li>
       {% endif %}
     </ul>
   </div>
@@ -38,14 +45,16 @@
   {% elif league and game and team %}
     <h1>{% include '_partials/division_header.html' with league=league header='Game Reports' only %}</h1>
 
-    <h2>Game Report for {{ team }}</h2>
+    <h2>Game Report Comments for Team {{ team.id }}</h2>
 
     {% for game_report in game_reports %}
 
       {% for game_report_comment in game_report.gamereportcomment_set.all %}
         <dl>
           <dt>Submitter</dt>
-          <dd>{{ game_report_comment.submitted_by }}</dd>
+          <dd>
+            {{ game_report_comment.submitted_by.get_full_name }}
+          </dd>
           <dt>Spirit</dt>
           <dd>{{ game_report_comment.spirit }}</dd>
           <dt>Comment</dt>
