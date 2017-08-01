@@ -36,3 +36,10 @@ def get_range(value, end=False):
         return range(value, end)
 
     return range(value)
+
+@register.filter
+def average_list(value):
+    if not len(value):
+        return 0
+
+    return sum(value) / float(len(value))

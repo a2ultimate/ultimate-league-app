@@ -995,11 +995,20 @@ class Team(models.Model):
     def get_members_with_baggage(self):
         return self.teammember_set.extra(select={'baggage_id': 'SELECT baggage_id FROM registrations JOIN team ON team.league_id = registrations.league_id WHERE registrations.user_id = team_member.user_id AND team.id = team_member.team_id'}).order_by('baggage_id')
 
+    def get_members_count(self):
+        return self.teammember_set.count()
+
     def get_male_members(self):
         return self.teammember_set.filter(user__profile__gender__iexact='M')
 
+    def get_male_members_count(self):
+        return self.get_male_members().count()
+
     def get_female_members(self):
         return self.teammember_set.filter(user__profile__gender__iexact='F')
+
+    def get_female_members_count(self):
+        return self.get_female_members().count()
 
     def get_past_games(self):
         return self.game_set.all().filter(date__lte=timezone.now().date())
@@ -1161,6 +1170,9 @@ class Game(models.Model):
 
     def get_display_teams(self):
         return self.teams.filter(hidden=False)
+
+    def get_opposing_team(self, team):
+        return self.teams.exclude(id=team.id).get()
 
     def get_user_opponent(self, user):
         try:

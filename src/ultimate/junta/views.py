@@ -97,6 +97,7 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
     game_reports = None
     game_locations = None
     game_dates = None
+    team_data = None
 
     if year and season and division:
         league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
@@ -107,6 +108,8 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
             game_reports = GameReport.objects.filter(team__id=team_id, game__id=game_id)
 
         else:
+            game_reports = GameReport.objects.filter(team__league=league, game__league=league).order_by('game__start', 'team__id')
+
             if request.method == 'POST':
                 if 'export' in request.POST:
                     response = HttpResponse()
@@ -126,15 +129,14 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
                         'Comment',
                     ])
 
-                    game_reports = GameReport.objects.filter(team__league=league, game__league=league).order_by('game__start', 'team__id')
                     for game_report in game_reports:
                         for game_report_comment in game_report.gamereportcomment_set.all():
                             writer.writerow([
                                 game_report.game.start,
                                 game_report.team.id,
-                                game_report.num_players_in_attendance(),
-                                game_report.num_females_in_attendance(),
-                                game_report.num_males_in_attendance(),
+                                game_report.num_players_in_attendance,
+                                game_report.num_females_in_attendance,
+                                game_report.num_males_in_attendance,
                                 game_report_comment.submitted_by.email,
                                 game_report_comment.submitted_by.first_name,
                                 game_report_comment.submitted_by.last_name,
@@ -149,6 +151,28 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
                 game_locations = league.get_game_locations(games=games)
                 game_dates = league.get_game_dates(games=games, game_locations=game_locations)
 
+                team_data = {}
+                for team in league.team_set.all():
+                    team_data.update({
+                        team.id: {
+                            'female_count': team.get_female_members_count(),
+                            'male_count': team.get_male_members_count(),
+                            'player_count': team.get_members_count(),
+                            'attendance_values_female': [],
+                            'attendance_values_male': [],
+                            'attendance_values_player': [],
+                            'spirit_values': [],
+                        },
+                    })
+
+                for game_report in game_reports:
+                    team_data[game_report.team.id]['attendance_values_player'].append(game_report.num_players_in_attendance)
+                    team_data[game_report.team.id]['attendance_values_female'].append(game_report.num_females_in_attendance)
+                    team_data[game_report.team.id]['attendance_values_male'].append(game_report.num_males_in_attendance)
+
+                    for game_report_comment in game_report.gamereportcomment_set.all():
+                        team_data[game_report.game.get_opposing_team(game_report.team).id]['spirit_values'].append(game_report_comment.spirit)
+
     else:
         leagues = League.objects.all().order_by('-league_start_date')
 
@@ -161,6 +185,8 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
             'game_reports': game_reports,
             'game_locations': game_locations,
             'game_dates': game_dates,
+
+            'team_data': team_data,
         },
         context_instance=RequestContext(request))
 

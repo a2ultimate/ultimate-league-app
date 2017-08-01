@@ -2,6 +2,7 @@
 
 {% load games %}
 {% load leagues %}
+{% load math %}
 {% load staticfiles %}
 {% load utility %}
 
@@ -29,7 +30,7 @@
         {{ game.date|date:'M d' }}
       </li>
       {% endif %}
-      {% if game_reports %}
+      {% if team %}
       <li class="breadcrumb">
         Team {{ team.id }}
       </li>
@@ -86,6 +87,29 @@
 
     {% if game_dates|length %}
       {% include '_partials/schedule_table.html' with league=league game_locations=game_locations game_dates=game_dates user_games=user_games next_game_date=next_game_date link_game_report=1 show_teams=1 only %}
+
+      <table class="table table-centered table-striped">
+        <thead>
+          <tr>
+            <th>Team Number</th>
+            <th>Spirit</th>
+            <th>Avg Players</th>
+            <th>Avg Females</th>
+            <th>Avg Males</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for team_id, data in team_data.items %}
+            <tr>
+              <td>{{ team_id }}</td>
+              <td>{{ data.spirit_values|average_list|floatformat:1 }}</td>
+              <td>{{ data.attendance_values_player|average_list|floatformat:1 }} of {{ data.player_count }}</td>
+              <td>{{ data.attendance_values_female|average_list|floatformat:1 }} of {{ data.female_count }}</td>
+              <td>{{ data.attendance_values_male|average_list|floatformat:1 }} of {{ data.male_count }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
 
       <form class="form" method="post">{% csrf_token %}
         <input class="button button-success" type="submit" name="export" value="Export All">

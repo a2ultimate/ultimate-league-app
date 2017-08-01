@@ -16,15 +16,19 @@ class GameReport(models.Model):
         return bool(self.gamereportattendance_set.count() >= 1) and \
             bool(self.gamereportscore_set.count() >= 2)
 
+    @property
     def has_comment(self):
         return self.gamereportcomment_set.exclude(comment='').exists()
 
+    @property
     def num_players_in_attendance(self):
         return self.gamereportattendance_set.count()
 
+    @property
     def num_males_in_attendance(self):
         return self.gamereportattendance_set.filter(user__profile__gender__iexact='M').count()
 
+    @property
     def num_females_in_attendance(self):
         return self.gamereportattendance_set.filter(user__profile__gender__iexact='F').count()
 
