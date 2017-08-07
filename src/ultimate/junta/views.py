@@ -229,9 +229,11 @@ def registrationexport(request, year=None, season=None, division=None):
             'Athleticism',
             'Competitiveness',
             'Spirit',
-            'Age',
-            'Height Inches',
             'Number of Leagues',
+            'Height Inches',
+            'Age',
+            'Guardian Name',
+            'Guardian Phone',
             'Registration Status',
             'Registration Timestamp',
             'Registration Waitlisted',
@@ -256,10 +258,16 @@ def registrationexport(request, year=None, season=None, division=None):
                     gender = getattr(registration_profile, 'gender', '').encode('ascii', 'ignore')
                     age = getattr(registration_profile, 'age', 0)
                     height_inches = getattr(registration_profile, 'height_inches', 0)
+
+                    guardian_name = getattr(registration_profile, 'guardian_name', '').encode('ascii', 'ignore')
+                    guardian_phone = getattr(registration_profile, 'guardian_phone', '').encode('ascii', 'ignore')
                 except:
                     gender = None
                     age = 0
                     height_inches = 0
+
+                    guardian_name = None
+                    guardian_phone = None
 
                 team_member_captain = 0
                 team_member_models = TeamMember.objects.filter(user=registration.user, team__league=registration.league)
@@ -282,9 +290,11 @@ def registrationexport(request, year=None, season=None, division=None):
                     'rating_athleticism': registration.average_athleticism,
                     'rating_competitiveness': registration.average_competitiveness,
                     'rating_spirit': registration.average_spirit,
-                    'age': int(0 if age is None else age),
-                    'height': height_inches,
                     'num_teams': registration.num_teams,
+                    'height': height_inches,
+                    'age': int(0 if age is None else age),
+                    'guardian_name': guardian_name,
+                    'guardian_phone': guardian_phone,
                     'registration_status': registration.status.encode('ascii', 'ignore'),
                     'registration_timestamp': registration.registered,
                     'registration_waitlisted': int(registration.waitlist),
@@ -316,9 +326,11 @@ def registrationexport(request, year=None, season=None, division=None):
                 registration['rating_athleticism'],
                 registration['rating_competitiveness'],
                 registration['rating_spirit'],
-                registration['age'],
-                registration['height'],
                 registration['num_teams'],
+                registration['height'],
+                registration['age'],
+                registration['guardian_name'],
+                registration['guardian_phone'],
                 registration['registration_status'],
                 registration['registration_timestamp'],
                 registration['registration_waitlisted'],
