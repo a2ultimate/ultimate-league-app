@@ -97,6 +97,7 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
     game_reports = None
     game_locations = None
     game_dates = None
+    team_data = None
 
     if year and season and division:
         league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
@@ -107,14 +108,20 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
             game_reports = GameReport.objects.filter(team__id=team_id, game__id=game_id)
 
         else:
+            game_reports = GameReport.objects.filter(team__league=league, game__league=league).order_by('game__start', 'team__id')
+
             if request.method == 'POST':
                 if 'export' in request.POST:
-                    response = HttpResponse(content_type='text/csv')
+                    response = HttpResponse()
                     response['Content-Disposition'] = 'attachment; filename="' + league.__unicode__() + '.csv"'
 
                     writer = csv.writer(response)
                     writer.writerow([
                         'Date',
+                        'Team',
+                        'Players',
+                        'Females',
+                        'Males',
                         'Email',
                         'First Name',
                         'Last Name',
@@ -122,17 +129,20 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
                         'Comment',
                     ])
 
-                    game_report_comments = GameReportComment.objects.filter(report__team__league=league, report__game__league=league).order_by('report__game__start')
-                    for game_report_comment in game_report_comments:
-
-                        writer.writerow([
-                            game_report_comment.report.game.start,
-                            game_report_comment.submitted_by.email,
-                            game_report_comment.submitted_by.first_name,
-                            game_report_comment.submitted_by.last_name,
-                            game_report_comment.spirit,
-                            game_report_comment.comment.encode('ascii', 'ignore'),
-                        ])
+                    for game_report in game_reports:
+                        for game_report_comment in game_report.gamereportcomment_set.all():
+                            writer.writerow([
+                                game_report.game.start,
+                                game_report.team.id,
+                                game_report.num_players_in_attendance,
+                                game_report.num_females_in_attendance,
+                                game_report.num_males_in_attendance,
+                                game_report_comment.submitted_by.email,
+                                game_report_comment.submitted_by.first_name,
+                                game_report_comment.submitted_by.last_name,
+                                game_report_comment.spirit,
+                                game_report_comment.comment.encode('ascii', 'ignore'),
+                            ])
 
                     return response
 
@@ -140,6 +150,28 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
                 games = league.game_set.order_by('date', 'start', 'field_name', 'field_name__field')
                 game_locations = league.get_game_locations(games=games)
                 game_dates = league.get_game_dates(games=games, game_locations=game_locations)
+
+                team_data = {}
+                for team in league.team_set.all():
+                    team_data.update({
+                        team.id: {
+                            'female_count': team.get_female_members_count(),
+                            'male_count': team.get_male_members_count(),
+                            'player_count': team.get_members_count(),
+                            'attendance_values_female': [],
+                            'attendance_values_male': [],
+                            'attendance_values_player': [],
+                            'spirit_values': [],
+                        },
+                    })
+
+                for game_report in game_reports:
+                    team_data[game_report.team.id]['attendance_values_player'].append(game_report.num_players_in_attendance)
+                    team_data[game_report.team.id]['attendance_values_female'].append(game_report.num_females_in_attendance)
+                    team_data[game_report.team.id]['attendance_values_male'].append(game_report.num_males_in_attendance)
+
+                    for game_report_comment in game_report.gamereportcomment_set.all():
+                        team_data[game_report.game.get_opposing_team(game_report.team).id]['spirit_values'].append(game_report_comment.spirit)
 
     else:
         leagues = League.objects.all().order_by('-league_start_date')
@@ -153,6 +185,8 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
             'game_reports': game_reports,
             'game_locations': game_locations,
             'game_dates': game_dates,
+
+            'team_data': team_data,
         },
         context_instance=RequestContext(request))
 
@@ -195,9 +229,11 @@ def registrationexport(request, year=None, season=None, division=None):
             'Athleticism',
             'Competitiveness',
             'Spirit',
-            'Age',
-            'Height Inches',
             'Number of Leagues',
+            'Height Inches',
+            'Age',
+            'Guardian Name',
+            'Guardian Phone',
             'Registration Status',
             'Registration Timestamp',
             'Registration Waitlisted',
@@ -222,10 +258,16 @@ def registrationexport(request, year=None, season=None, division=None):
                     gender = getattr(registration_profile, 'gender', '').encode('ascii', 'ignore')
                     age = getattr(registration_profile, 'age', 0)
                     height_inches = getattr(registration_profile, 'height_inches', 0)
+
+                    guardian_name = getattr(registration_profile, 'guardian_name', '').encode('ascii', 'ignore')
+                    guardian_phone = getattr(registration_profile, 'guardian_phone', '').encode('ascii', 'ignore')
                 except:
                     gender = None
                     age = 0
                     height_inches = 0
+
+                    guardian_name = None
+                    guardian_phone = None
 
                 team_member_captain = 0
                 team_member_models = TeamMember.objects.filter(user=registration.user, team__league=registration.league)
@@ -248,9 +290,11 @@ def registrationexport(request, year=None, season=None, division=None):
                     'rating_athleticism': registration.average_athleticism,
                     'rating_competitiveness': registration.average_competitiveness,
                     'rating_spirit': registration.average_spirit,
-                    'age': int(0 if age is None else age),
-                    'height': height_inches,
                     'num_teams': registration.num_teams,
+                    'height': height_inches,
+                    'age': int(0 if age is None else age),
+                    'guardian_name': guardian_name,
+                    'guardian_phone': guardian_phone,
                     'registration_status': registration.status.encode('ascii', 'ignore'),
                     'registration_timestamp': registration.registered,
                     'registration_waitlisted': int(registration.waitlist),
@@ -282,9 +326,11 @@ def registrationexport(request, year=None, season=None, division=None):
                 registration['rating_athleticism'],
                 registration['rating_competitiveness'],
                 registration['rating_spirit'],
-                registration['age'],
-                registration['height'],
                 registration['num_teams'],
+                registration['height'],
+                registration['age'],
+                registration['guardian_name'],
+                registration['guardian_phone'],
                 registration['registration_status'],
                 registration['registration_timestamp'],
                 registration['registration_waitlisted'],

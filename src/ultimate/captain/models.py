@@ -3,7 +3,6 @@ from django.db import models
 
 
 class GameReport(models.Model):
-    id = models.AutoField(primary_key=True)
     team = models.ForeignKey('leagues.Team')
     game = models.ForeignKey('leagues.Game')
     last_updated_by = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -17,9 +16,24 @@ class GameReport(models.Model):
         return bool(self.gamereportattendance_set.count() >= 1) and \
             bool(self.gamereportscore_set.count() >= 2)
 
+    @property
+    def has_comment(self):
+        return self.gamereportcomment_set.exclude(comment='').exists()
+
+    @property
+    def num_players_in_attendance(self):
+        return self.gamereportattendance_set.count()
+
+    @property
+    def num_males_in_attendance(self):
+        return self.gamereportattendance_set.filter(user__profile__gender__iexact='M').count()
+
+    @property
+    def num_females_in_attendance(self):
+        return self.gamereportattendance_set.filter(user__profile__gender__iexact='F').count()
+
 
 class GameReportAttendance(models.Model):
-    id = models.AutoField(primary_key=True)
     report = models.ForeignKey('captain.GameReport')
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
 
@@ -43,7 +57,6 @@ class GameReportComment(models.Model):
         (0, u'0 - Awful'),
     )
 
-    id = models.AutoField(primary_key=True)
     report = models.ForeignKey('captain.GameReport')
     submitted_by = models.ForeignKey(settings.AUTH_USER_MODEL)
     spirit = models.IntegerField(choices=SPIRIT_CHOICES)
@@ -54,7 +67,6 @@ class GameReportComment(models.Model):
 
 
 class GameReportScore(models.Model):
-    id = models.AutoField(primary_key=True)
     report = models.ForeignKey('captain.GameReport')
     team = models.ForeignKey('leagues.Team')
     score = models.IntegerField(blank=False)

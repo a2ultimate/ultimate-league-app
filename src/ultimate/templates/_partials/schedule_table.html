@@ -69,7 +69,21 @@
                     <a class="schedule-table-game-team-jump" href="#team-roster-{{ team.id }}"{% if game in user_games %} style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }};"{% endif %}>
                   {% endif %}
 
-                  {% if show_game_result %}
+                  {% if link_game_report %}
+                    {% for report in game|get_report_for_team:team %}
+                      <div>
+                        {% if report.has_comment %}
+                        <strong>
+                        {% endif %}
+                          {{ team.id }}
+                        {% if report.has_comment %}
+                        </strong>
+                        {% endif %}
+                      </div>
+                    {% empty %}
+                      <s>{{ team.id }}</s>
+                    {% endfor %}
+                  {% elif show_game_result %}
                     {% for report in game|get_report_for_team:team %}
                       <div class="schedule-table-game-result-{{ report|get_result:team }}">
                         {{ team.id }}
