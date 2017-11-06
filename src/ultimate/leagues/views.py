@@ -1,4 +1,4 @@
-from datetime import timedelta
+import uuid
 
 from django.conf import settings
 from django.contrib import messages
@@ -14,7 +14,6 @@ from django.utils import timezone
 
 from ultimate.forms import RegistrationAttendanceForm
 from ultimate.leagues.models import *
-from ultimate.middleware.http import Http403
 
 from paypal.standard.forms import PayPalPaymentsForm
 
