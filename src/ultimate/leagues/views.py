@@ -258,10 +258,6 @@ def registration(request, year, season, division, section=None):
                     registration.baggage_id = baggage.id
                     registration.save()
 
-                if league.check_price == 0 and league.paypal_price == 0:
-                    registration.registered = timezone.now()
-                    registration.save()
-
                 if league.type == 'league':
                     messages.success(request, 'Attendance and captaining response saved.')
                 else:

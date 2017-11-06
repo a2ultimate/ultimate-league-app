@@ -720,18 +720,13 @@ class Registrations(models.Model):
                 if self.attendance is not None:
                     percentage += interval
 
-                    if self.league.check_price > 0 or \
-                            self.league.paypal_price > 0:
+                    if self.league.checks_accepted and \
+                            (self.pay_type or self.payment_complete):
+                        percentage += interval
 
-                        if self.league.checks_accepted and \
-                                (self.pay_type or self.payment_complete):
-                            percentage += interval
-
-                        if self.check_complete or \
-                                self.paypal_complete or \
-                                self.payment_complete:
-                            percentage += interval
-                    else:
+                    if self.check_complete or \
+                            self.paypal_complete or \
+                            self.payment_complete:
                         percentage += interval
 
         return int(round(percentage))
@@ -754,14 +749,11 @@ class Registrations(models.Model):
         if not self.is_ready_for_payment:
             return False
 
-        if self.league.check_price > 0 or \
-                self.league.paypal_price > 0:
+        if not self.check_complete and \
+                not self.paypal_complete and \
+                not self.payment_complete:
 
-            if not self.check_complete and \
-                    not self.paypal_complete and \
-                    not self.payment_complete:
-
-                return False
+            return False
 
         if self.refunded:
             return False
@@ -773,14 +765,11 @@ class Registrations(models.Model):
         if not self.is_ready_for_payment:
             return False
 
-        if self.league.check_price > 0 or \
-                self.league.paypal_price > 0:
+        if not self.check_complete and \
+                not self.paypal_complete and \
+                not self.payment_complete:
 
-            if not self.check_complete and \
-                    not self.paypal_complete and \
-                    not self.payment_complete:
-
-                return False
+            return False
 
         if not self.refunded:
             return False
@@ -1251,7 +1240,7 @@ class Coupon(models.Model):
             return '{}% off'.format(self.value)
 
     def _generate_code(self):
-        while(1):
+        while 1:
             code = '-'.join(''.join(random.choice(self.CODE_CHARACTERS) for i in range(self.CODE_SEGMENT_LENGTH)) for j in range(self.CODE_SEGMENT_COUNT))
             try:
                 Coupon.objects.get(code=code)
