@@ -88,10 +88,10 @@ def players(request, year, season, division):
             'refunded_registrations': refunded_registrations,
             'unassigned_registrations': unassigned_registrations,
 
-            'registrations_female': len([r for r in complete_registrations if hasattr(r.user, 'profile') and r.user.profile.is_female()]),
-            'registrations_male': len([r for r in complete_registrations if hasattr(r.user, 'profile') and r.user.profile.is_male()]),
-            'registrations_minor': len([r for r in complete_registrations if hasattr(r.user, 'profile') and r.user.profile.is_minor(league.league_start_date)]),
-            'registrations_remaining': max(0, league.max_players - len(complete_registrations)),
+            'num_registrations_female': len([r for r in complete_registrations if hasattr(r.user, 'profile') and r.user.profile.is_female()]),
+            'num_registrations_male': len([r for r in complete_registrations if hasattr(r.user, 'profile') and r.user.profile.is_male()]),
+            'num_registrations_minor': len([r for r in complete_registrations if hasattr(r.user, 'profile') and r.user.profile.is_minor(league.league_start_date)]),
+            'num_registrations_remaining': max(0, league.max_players - len(complete_registrations)),
         },
         context_instance=RequestContext(request))
 
@@ -172,7 +172,8 @@ def registration(request, year, season, division, section=None):
         registration = Registrations.objects.get(user=request.user, league=league)
 
     if not league.is_open(request.user):
-        return render_to_response('leagues/registration/error.html', {
+        return render_to_response('leagues/registration/error.html',
+            {
                 'league': league,
                 'registration': registration,
                 'errors': ['closed'],
@@ -402,15 +403,15 @@ def registration(request, year, season, division, section=None):
             registration.save()
 
         if not registration.paypal_complete and not registration.check_complete:
-            baseUrl = request.build_absolute_uri(getattr(settings, 'FORCE_SCRIPT_NAME', '/')).replace(request.path_info.replace(' ', '%20'), '')
+            base_url = request.build_absolute_uri(getattr(settings, 'FORCE_SCRIPT_NAME', '/')).replace(request.path_info.replace(' ', '%20'), '')
 
             paypal_dict = {
                 'amount': registration.paypal_price,
-                'cancel_return': '{}/leagues/{}/{}/{}/registration/'.format(baseUrl, league.year, league.season.slug, league.night_slug),
+                'cancel_return': '{}/leagues/{}/{}/{}/registration/'.format(base_url, league.year, league.season.slug, league.night_slug),
                 'invoice': registration.paypal_invoice_id,
                 'item_name': '{} {} {}'.format(league.season_title, league.year, league.night_title),
-                'notify_url': '{}/leagues/registration/payment/{}'.format(baseUrl, getattr(settings, 'PAYPAL_CALLBACK_SECRET', 'notification/callback/for/a2ultimate/secret/')),
-                'return_url': '{}/leagues/{}/{}/{}/registration-complete/'.format(baseUrl, league.year, league.season.slug, league.night_slug),
+                'notify_url': '{}/leagues/registration/payment/{}'.format(base_url, getattr(settings, 'PAYPAL_CALLBACK_SECRET', 'notification/callback/for/a2ultimate/secret/')),
+                'return_url': '{}/leagues/{}/{}/{}/registration-complete/'.format(base_url, league.year, league.season.slug, league.night_slug),
             }
 
             paypal_form = PayPalPaymentsForm(initial=paypal_dict)
