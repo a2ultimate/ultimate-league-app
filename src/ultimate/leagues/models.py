@@ -246,14 +246,14 @@ class League(models.Model):
 
     @property
     def paypal_price(self):
-        if self.paypal_cost == 0 or timezone.now() < self.price_increase_start_date:
+        if timezone.now() < self.price_increase_start_date:
             return self.paypal_cost
 
         return self.paypal_cost + self.late_cost_increase
 
     @property
     def check_price(self):
-        if self.paypal_cost + self.check_cost_increase == 0 or timezone.now() < self.price_increase_start_date:
+        if timezone.now() < self.price_increase_start_date:
             return self.paypal_cost + self.check_cost_increase
 
         return self.paypal_cost + self.check_cost_increase + self.late_cost_increase
