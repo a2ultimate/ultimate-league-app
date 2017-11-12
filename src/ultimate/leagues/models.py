@@ -325,14 +325,14 @@ class League(models.Model):
         return '#95a5a6'
 
     def is_accepting_registrations(self, user=None):
-        # always accepting registrations for admins
-        if user and user.is_authenticated() and user.is_junta and \
-                self.state in [self.LEAGUE_STATE_OPEN, self.LEAGUE_STATE_PREVIEW]:
-            return True
-
         # not before league ends
         if not timezone.now().date() <= self.league_end_date:
             return False
+
+        # admins and junta can register in preview mode
+        if user and user.is_authenticated() and user.is_junta and \
+                self.state in [self.LEAGUE_STATE_OPEN, self.LEAGUE_STATE_PREVIEW]:
+            return True
 
         # not open to public
         if self.state not in [self.LEAGUE_STATE_OPEN]:
