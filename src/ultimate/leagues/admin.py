@@ -8,7 +8,7 @@ from ultimate.leagues.models import *
 
 
 class CouponAdmin(admin.ModelAdmin):
-    list_display = ('code', 'type', 'value', 'created_at', 'redeemed_at',)
+    list_display = ('code', 'note', 'type', 'value', 'use_count', 'created_at',)
 
     exclude = ('created_at', 'updated_at',)
     readonly_fields = ('created_by', 'redeemed_at',)

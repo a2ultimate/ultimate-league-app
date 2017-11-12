@@ -1216,6 +1216,8 @@ class Coupon(models.Model):
     use_limit = models.IntegerField(default=1,
                                     help_text='How many uses the coupon should have')
 
+    note = models.TextField(blank=True, help_text='What is the coupon for?')
+
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
     updated_at = models.DateTimeField(auto_now=True)
