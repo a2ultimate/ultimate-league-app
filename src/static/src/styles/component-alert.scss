@@ -50,7 +50,7 @@
     background-color: $color-warning;
   }
 
-  &.alert-error {
+  &.alert-error, &.alert-danger {
     color: $color-white;
     border-color: $color-danger-dark;
     background-color: $color-danger;
