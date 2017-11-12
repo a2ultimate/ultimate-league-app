@@ -2,14 +2,15 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+from django.db.transaction import atomic
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils import timezone
 
-from ultimate.leagues.models import *
-from ultimate.user.models import *
-from ultimate.forms import *
+from ultimate.leagues.models import Game, League
+from ultimate.user.models import Player, PlayerRatings
+from ultimate.forms import EditPlayerForm, EditPlayerRatingsForm, EditProfileForm, SignupForm
 
 
 @login_required
@@ -52,7 +53,7 @@ def signup(request):
         if form.is_valid():
             user = form.save()
 
-            player, created = Player.objects.get_or_create(user=user,
+            Player.objects.get_or_create(user=user,
                 defaults={'date_of_birth': form.cleaned_data.get('date_of_birth'),
                     'gender': form.cleaned_data.get('gender')})
 
