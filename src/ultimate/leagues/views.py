@@ -5,7 +5,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
-from django.db.models import F, Q
+from django.db.models import ObjectDoesNotExist, Q
+from django.db.transaction import atomic
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
@@ -13,7 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 
 from ultimate.forms import RegistrationAttendanceForm
-from ultimate.leagues.models import *
+from ultimate.leagues.models import Baggage, Coupon, League, Registrations, Team
 
 from paypal.standard.forms import PayPalPaymentsForm
 
@@ -296,38 +297,37 @@ def registration(request, year, season, division, section=None):
 
         if 'coupon_code' in request.POST:
             if league.coupons_accepted:
-                try:
-                    coupon = Coupon.objects.get(code=request.POST.get('coupon_code'))
-                except ObjectDoesNotExist:
-                    coupon = None
+                if not registration.is_complete and not registration.is_refunded:
+                    try:
+                        coupon_code = request.POST.get('coupon_code')
+                        coupon = Coupon.objects.get(code=coupon_code)
+                    except ObjectDoesNotExist:
+                        coupon = None
 
-                if coupon and coupon.is_valid():
-                    registration.coupon = coupon
-                    registration.save()
+                    if coupon and coupon.is_valid():
+                        registration.coupon = coupon
+                        registration.save()
 
-                    registration.coupon.use_count = F('use_count') + 1
-                    registration.coupon.save()
-
-                    messages.success(request, 'Your coupon code has been applied.')
+                        messages.success(request, 'Your coupon code has been added and will be redeemed when your registration is completed.')
+                    else:
+                        success = False
+                        messages.error(request, 'You have entered an invalid coupon code.')
                 else:
                     success = False
-                    messages.error(request, 'You have entered an invalid coupon code.')
+                    messages.error(request, 'Your registration is already complete or refunded.')
             else:
                 success = False
                 messages.error(request, 'Coupon codes are not accepted for this division.')
 
         if 'remove_coupon' in request.POST:
             if registration.coupon:
-                registration.coupon.use_count = F('use_count') - 1
-                registration.coupon.save()
-
                 registration.coupon = None
                 registration.save()
 
                 messages.success(request, 'Your coupon has been removed and will not be used with this registration.')
             else:
                 success = False
-                messages.error(request, 'No coupon has been added to this registration.')
+                messages.error(request, 'Could not remove coupon; no coupon has been added to this registration.')
 
         if 'process_registration' in request.POST:
             if registration.is_ready_for_payment:

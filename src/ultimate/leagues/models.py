@@ -6,14 +6,12 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Count
+from django.db.models import Count, F
 from django.db.transaction import atomic
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 
-from pybb.models import *
-
-from ultimate.utils.email_groups import *
+from ultimate.utils.email_groups import add_to_group, generate_email_list_address, generate_email_list_name
 
 
 def generateLeagueCoverImagePath(instance, filename):
@@ -675,14 +673,14 @@ class Registrations(models.Model):
     @property
     def check_price(self):
         if self.coupon:
-            return self.coupon.get_adjusted_price(self.league.check_price)
+            return self.coupon.get_adjusted_price(self.league.check_price, self.league, self.user)
 
         return self.league.check_price
 
     @property
     def paypal_price(self):
         if self.coupon:
-            return self.coupon.get_adjusted_price(self.league.paypal_price)
+            return self.coupon.get_adjusted_price(self.league.paypal_price, self.league, self.user)
 
         return self.league.paypal_price
 
@@ -1218,10 +1216,9 @@ class Coupon(models.Model):
 
     note = models.TextField(blank=True, help_text='What is the coupon for?')
 
-    created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    redeemed_at = models.DateTimeField(blank=True, null=True)
     valid_until = models.DateTimeField(blank=True, null=True,
                                        help_text='Leave empty for coupons that never expire')
 
@@ -1254,7 +1251,10 @@ class Coupon(models.Model):
             except ObjectDoesNotExist:
                 return code
 
-    def get_adjusted_price(self, price):
+    def get_adjusted_price(self, price, league=None, user=None):
+        if not self.is_valid(league, user):
+            return price
+
         if self.type == self.COUPON_TYPE_AMOUNT:
             return max(price - self.value, 0)
         elif self.type == self.COUPON_TYPE_FULL:
@@ -1262,7 +1262,7 @@ class Coupon(models.Model):
         elif self.type == self.COUPON_TYPE_PERCENTAGE:
             return int(max(price * (1 - (self.value / 100.0)), 0))
 
-    def is_valid(self, league=None):
+    def is_valid(self, league=None, user=None):
         # if there is a use limit and uses have exceeded it
         if self.use_limit is not None and self.use_limit <= self.use_count:
             return False
@@ -1272,7 +1272,32 @@ class Coupon(models.Model):
             return False
 
         if league is not None:
-            # TODO check to see if league is supported by coupon
+            pass
+
+        if user is not None:
             pass
 
         return True
+
+    def process(self, user):
+        self.use_count = F('use_count') + 1
+        CouponRedemtion.create(self, user)
+
+
+class CouponRedemtion(models.Model):
+    coupon = models.ForeignKey('leagues.Coupon')
+    redeemed_by = models.ForeignKey(settings.AUTH_USER_MODEL)
+
+    redeemed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = u'coupon_redemption'
+        ordering = ['-redeemed_at', 'redeemed_by', ]
+
+    def __unicode__(self):
+        return '%s by %s at %s' % (self.coupon.code, self.redeemed_by.email, self.redeemed_at)
+
+    @classmethod
+    def create(cls, coupon, user):
+        coupon_redemption = cls(coupone=coupon, redeemed_by=user)
+        return coupon_redemption
