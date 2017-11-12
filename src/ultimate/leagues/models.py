@@ -1209,10 +1209,12 @@ class Coupon(models.Model):
                             help_text='Leaving this field empty will generate a random code.')
 
     type = models.CharField(max_length=20, choices=COUPON_TYPE_CHOICES)
-
-    use_count = models.IntegerField(default=0)
-    use_limit = models.IntegerField(default=1)
     value = models.IntegerField(blank=True, null=True, default=None)
+
+    use_count = models.IntegerField(default=0,
+                                    help_text='How many times the coupon has been used')
+    use_limit = models.IntegerField(default=1,
+                                    help_text='How many uses the coupon should have')
 
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
