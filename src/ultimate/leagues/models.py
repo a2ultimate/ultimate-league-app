@@ -381,6 +381,9 @@ class League(models.Model):
 
         return False
 
+    def get_visible_teams(self):
+        return self.team_set.filter(hidden=False)
+
     def get_user_games(self, user):
         return self.game_set.filter(gameteams__team__teammember__user=user).order_by('date')
 
