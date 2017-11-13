@@ -24,7 +24,7 @@ def paypal_callback(sender, **kwargs):
             registration.save()
 
             if registration.coupon:
-                registration.coupon.process()
+                registration.coupon.process(registration.user)
 
             print 'PayPal IPN Complete: {} - {}'.format(ipn_obj.invoice, registration.id)
         except Registrations.DoesNotExist:

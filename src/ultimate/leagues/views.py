@@ -304,7 +304,7 @@ def registration(request, year, season, division, section=None):
                     except ObjectDoesNotExist:
                         coupon = None
 
-                    if coupon and coupon.is_valid():
+                    if coupon and coupon.is_valid(league, request.user):
                         registration.coupon = coupon
                         registration.save()
 
@@ -419,7 +419,8 @@ def registration(request, year, season, division, section=None):
             'league': league,
             'registration': registration,
             'section': 'status',
-            'tick_percentage': tick_percentage
+            'tick_percentage': tick_percentage,
+            'coupon_is_valid': registration.coupon.is_valid(league, request.user) if registration.coupon else False,
         },
         context_instance=RequestContext(request))
 

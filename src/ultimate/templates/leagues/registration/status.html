@@ -94,9 +94,15 @@
       {% if registration.coupon %}
         <form class="form" method="post">{% csrf_token %}
           <p>
-            You have entered a coupon code
-            "<strong>{{ registration.coupon.code }}</strong>"
-            good for <em>{{ registration.coupon.display_value }}</em>.
+            {% if coupon_is_valid %}
+              You have entered a coupon code
+              "<strong>{{ registration.coupon.code }}</strong>"
+              good for <em>{{ registration.coupon.display_value }}</em>.
+            {% else %}
+              The coupon code you have attached to your registration,
+              "<strong>{{ registration.coupon.code }}</strong>",
+              is no longer valid.
+            {% endif %}
 
             <button class="button button-info" name="remove_coupon" type="submit">
               Remove It?

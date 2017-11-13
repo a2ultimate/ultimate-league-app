@@ -4,10 +4,14 @@ from django.contrib.auth import get_user_model
 from django.db.models import Max, Q
 
 from paypal.standard.ipn.models import PayPalIPN
-from ultimate.leagues.models import *
+from ultimate.leagues.models import Coupon, CouponRedemtion, Field, FieldNames, GameTeams, Team, LeagueFields, Baggage, TeamMember, Registrations, Game, League, Season
 
+
+class CouponRedemtionInline(admin.TabularInline):
+    model = CouponRedemtion
 
 class CouponAdmin(admin.ModelAdmin):
+    inlines = [CouponRedemtionInline, ]
     list_display = ('code', 'note', 'type', 'value', 'use_count', 'created_at', )
 
     readonly_fields = ('created_by', 'created_at', 'updated_at', )

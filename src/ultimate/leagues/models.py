@@ -1275,13 +1275,16 @@ class Coupon(models.Model):
             pass
 
         if user is not None:
-            pass
+            if self.couponredemtion_set.filter(redeemed_by=user).exists():
+                return False
 
         return True
 
     def process(self, user):
         self.use_count = F('use_count') + 1
-        CouponRedemtion.create(self, user)
+        self.save()
+        coupon_redemption = CouponRedemtion.create(self, user)
+        coupon_redemption.save()
 
 
 class CouponRedemtion(models.Model):
@@ -1299,5 +1302,5 @@ class CouponRedemtion(models.Model):
 
     @classmethod
     def create(cls, coupon, user):
-        coupon_redemption = cls(coupone=coupon, redeemed_by=user)
+        coupon_redemption = cls(coupon=coupon, redeemed_by=user)
         return coupon_redemption
