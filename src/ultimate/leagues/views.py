@@ -304,14 +304,18 @@ def registration(request, year, season, division, section=None):
                     except ObjectDoesNotExist:
                         coupon = None
 
-                    if coupon and coupon.is_valid(league, request.user):
-                        registration.coupon = coupon
-                        registration.save()
+                    if coupon:
+                        if coupon.is_valid(league, request.user):
+                            registration.coupon = coupon
+                            registration.save()
 
-                        messages.success(request, 'Your coupon code has been added and will be redeemed when your registration is completed.')
+                            messages.success(request, 'Your coupon code has been added and will be redeemed when your registration is completed.')
+                        else:
+                            success = False
+                            messages.error(request, 'The coupon code entered is not valid. The code could be expired or past its use limit.')
                     else:
                         success = False
-                        messages.error(request, 'You have entered an invalid coupon code.')
+                        messages.error(request, 'The coupon code entered does not exist.')
                 else:
                     success = False
                     messages.error(request, 'Your registration is already complete or refunded.')
@@ -327,7 +331,7 @@ def registration(request, year, season, division, section=None):
                 messages.success(request, 'Your coupon has been removed and will not be used with this registration.')
             else:
                 success = False
-                messages.error(request, 'Could not remove coupon; no coupon has been added to this registration.')
+                messages.error(request, 'Could not remove coupon; no coupon is associated with this registration.')
 
         if 'process_registration' in request.POST:
             if registration.is_ready_for_payment:
