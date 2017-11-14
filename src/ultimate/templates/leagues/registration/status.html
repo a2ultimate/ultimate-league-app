@@ -110,13 +110,15 @@
           </form>
         </div>
       {% else %}
-        <form class="form" method="post">{% csrf_token %}
-          <h4><label for="coupon-code-input">Do you have a coupon code?</label></h4>
-          <input name="coupon_code" id="coupon-code-input" type="text">
-          <button class="button button-success" type="submit">
-            Submit
-          </button>
-        </form>
+        <div class="message">
+          <form method="post">{% csrf_token %}
+            <h4><label for="coupon-code-input">Do you have a coupon code?</label></h4>
+            <input name="coupon_code" id="coupon-code-input" type="text">
+            <button class="button button-success" type="submit">
+              Submit
+            </button>
+          </form>
+        </div>
       {% endif %}
     {% endif %}
 
