@@ -1,8 +1,6 @@
 def get_export_headers(export_type):
     headers_placement = [
         'Team',
-        'Group',
-        'Group Size',
         'Captain',
     ]
 
@@ -18,6 +16,7 @@ def get_export_headers(export_type):
         'Registration Status',
         'Registration Timestamp',
         'Registration Waitlisted',
+        'Registration Refunded',
         'Payment Type',
         'PayPal Email',
         'PayPal Amount',
@@ -26,6 +25,11 @@ def get_export_headers(export_type):
     ]
 
     if export_type == 'league':
+        headers_group = [
+            'Group',
+            'Group Size',
+        ]
+
         headers_ratings = [
             'Rating Total',
             'Experience',
@@ -43,7 +47,7 @@ def get_export_headers(export_type):
             'Guardian Phone',
         ]
 
-        return headers_placement + headers_info + headers_ratings + headers_additional_info + headers_payment
+        return headers_placement + headers_group + headers_info + headers_ratings + headers_additional_info + headers_payment
 
     return headers_placement + headers_info + headers_payment
 
@@ -51,8 +55,6 @@ def get_export_headers(export_type):
 def get_export_values(export_type, registration_data):
     values_placement = [
         registration_data['team_id'],
-        registration_data['baggage_id'],
-        registration_data['baggage_size'],
         registration_data['is_captain'],
     ]
 
@@ -68,6 +70,7 @@ def get_export_values(export_type, registration_data):
         registration_data['registration_status'],
         registration_data['registration_timestamp'],
         registration_data['registration_waitlisted'],
+        registration_data['registration_refunded'],
         registration_data['payment_type'],
         registration_data['paypal_email'],
         registration_data['paypal_amount'],
@@ -76,6 +79,11 @@ def get_export_values(export_type, registration_data):
     ]
 
     if export_type == 'league':
+        values_group = [
+            registration_data['baggage_id'],
+            registration_data['baggage_size'],
+        ]
+
         values_ratings = [
             registration_data['rating_total'],
             registration_data['rating_experience'],
@@ -93,6 +101,6 @@ def get_export_values(export_type, registration_data):
             registration_data['guardian_phone'],
         ]
 
-        return values_placement + values_info + values_ratings + values_additional_info + values_payment
+        return values_placement + values_group + values_info + values_ratings + values_additional_info + values_payment
 
     return values_placement + values_info + values_payment

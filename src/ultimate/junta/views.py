@@ -241,10 +241,9 @@ def registrationexport(request, year=None, season=None, division=None):
                 except PayPalIPN.DoesNotExist:
                     paypal_row = None
 
-                team_member_captain = 0
-                team_member_models = TeamMember.objects.filter(user=registration.user, team__league=registration.league)
-                if team_member_models.count():
-                    team_member_captain = team_member_models[:1].get().captain
+                team_member_captain = TeamMember.objects.filter(user=registration.user,
+                                                                team__league=registration.league,
+                                                                captain=True).exists()
 
                 try:
                     gender = reduce(getattr, 'user.profile.gender'.split('.'), registration)
@@ -255,8 +254,6 @@ def registrationexport(request, year=None, season=None, division=None):
 
                 registration_data = {
                     'team_id': registration.get_team_id(),
-                    'baggage_id': registration.baggage,
-                    'baggage_size': int(registration.baggage_size),
                     'is_captain': int(team_member_captain),
                     'first_name': registration.user.first_name,
                     'last_name': registration.user.last_name,
@@ -266,6 +263,7 @@ def registrationexport(request, year=None, season=None, division=None):
                     'registration_status': registration.status,
                     'registration_timestamp': registration.registered,
                     'registration_waitlisted': int(registration.waitlist),
+                    'registration_refunded': int(registration.refunded),
                     'payment_type': registration.pay_type,
                     'paypal_email': paypal_row.payer_email.encode('ascii', 'ignore') if paypal_row else '',
                     'paypal_amount': paypal_row.mc_gross if paypal_row else '',
@@ -283,6 +281,8 @@ def registrationexport(request, year=None, season=None, division=None):
                         guardian_name = None
                         guardian_phone = None
 
+                    registration_data['baggage_id'] = registration.baggage
+                    registration_data['baggage_size'] = int(registration.baggage_size)
                     registration_data['rating_total'] = registration.user.rating_total
                     registration_data['rating_experience'] = registration.average_experience
                     registration_data['rating_strategy'] = registration.average_strategy
