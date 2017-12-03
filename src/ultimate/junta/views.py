@@ -17,10 +17,12 @@ from django.template import RequestContext
 
 from ultimate.forms import ScheduleGenerationForm
 
-from ultimate.captain.models import GameReport, GameReportComment
+from ultimate.captain.models import GameReport
 from ultimate.leagues.models \
     import (FieldNames, Game, GameTeams, League, Registrations, Team, TeamMember)
 from ultimate.user.models import Player
+
+from ultimate.utils.export_helpers import get_export_headers, get_export_values
 
 from paypal.standard.ipn.models import PayPalIPN
 
@@ -196,53 +198,40 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
 def registrationexport(request, year=None, season=None, division=None):
     leagues = League.objects.all().order_by('-league_start_date')
 
-    if year and season and division:
-        league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
-
-        # TODO need to use better "complete" registration query
-        registrations = Registrations.objects.filter(league=league) \
-            .extra(select={'average_experience': 'SELECT COALESCE(AVG(user_playerratings.experience), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.experience != 0'}) \
-            .extra(select={'average_strategy': 'SELECT COALESCE(AVG(user_playerratings.strategy), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.strategy != 0'}) \
-            .extra(select={'average_throwing': 'SELECT COALESCE(AVG(user_playerratings.throwing), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.throwing != 0'}) \
-            .extra(select={'average_athleticism': 'SELECT COALESCE(AVG(user_playerratings.athleticism), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.athleticism != 0'}) \
-            .extra(select={'average_competitiveness': 'SELECT COALESCE(AVG(user_playerratings.competitiveness), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.competitiveness != 0'}) \
-            .extra(select={'average_spirit': 'SELECT COALESCE(AVG(user_playerratings.spirit), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.spirit != 0'}) \
-            .extra(select={'num_teams': 'SELECT COUNT(team_member.id) FROM team_member WHERE team_member.user_id = registrations.user_id GROUP BY team_member.user_id'})
+    if request.method == 'POST':
+        export_type = None
+        registrations = Registrations.objects.filter(Q(payment_complete=True) | Q(check_complete=True) | Q(paypal_complete=True))
 
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="' + league.__unicode__() + '.csv"'
-
         writer = csv.writer(response)
-        writer.writerow([
-            'Team',
-            'Group',
-            'Group Size',
-            'Captain',
-            'Firstname',
-            'Lastname',
-            'Gender',
-            'Email',
-            'Rating Total',
-            'Experience',
-            'Strategy',
-            'Throwing',
-            'Athleticism',
-            'Competitiveness',
-            'Spirit',
-            'Number of Leagues',
-            'Height Inches',
-            'Age',
-            'Guardian Name',
-            'Guardian Phone',
-            'Registration Status',
-            'Registration Timestamp',
-            'Registration Waitlisted',
-            'Payment Type',
-            'PayPal Email',
-            'PayPal Amount',
-            'Attendance',
-            'Captaining',
-        ])
+
+        if 'export_league' in request.POST:
+            export_type = 'league'
+            league_id = int(request.POST.get('league_id', 0))
+            league = get_object_or_404(League, id=league_id)
+            response['Content-Disposition'] = 'attachment; filename="a2u_{}.csv"'.format(league)
+
+            if league_id:
+                registrations = registrations.filter(league=league)
+
+            registrations = registrations \
+                .extra(select={'average_experience': 'SELECT COALESCE(AVG(user_playerratings.experience), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.experience != 0'}) \
+                .extra(select={'average_strategy': 'SELECT COALESCE(AVG(user_playerratings.strategy), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.strategy != 0'}) \
+                .extra(select={'average_throwing': 'SELECT COALESCE(AVG(user_playerratings.throwing), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.throwing != 0'}) \
+                .extra(select={'average_athleticism': 'SELECT COALESCE(AVG(user_playerratings.athleticism), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.athleticism != 0'}) \
+                .extra(select={'average_competitiveness': 'SELECT COALESCE(AVG(user_playerratings.competitiveness), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.competitiveness != 0'}) \
+                .extra(select={'average_spirit': 'SELECT COALESCE(AVG(user_playerratings.spirit), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.spirit != 0'}) \
+                .extra(select={'num_teams': 'SELECT COUNT(team_member.id) FROM team_member WHERE team_member.user_id = registrations.user_id GROUP BY team_member.user_id'})
+
+        if 'export_year' in request.POST:
+            export_type = 'year'
+            year = int(request.POST.get('year', 0))
+            response['Content-Disposition'] = 'attachment; filename="a2u_{}.csv"'.format(year)
+
+            if year:
+                registrations = registrations.filter(league__year=year)
+
+        writer.writerow(get_export_headers(export_type))
 
         registration_list = []
         for registration in registrations:
@@ -252,50 +241,29 @@ def registrationexport(request, year=None, season=None, division=None):
                 except PayPalIPN.DoesNotExist:
                     paypal_row = None
 
-                try:
-                    registration_profile = registration.user.profile
-
-                    gender = getattr(registration_profile, 'gender', '').encode('ascii', 'ignore')
-                    age = getattr(registration_profile, 'age', 0)
-                    height_inches = getattr(registration_profile, 'height_inches', 0)
-
-                    guardian_name = getattr(registration_profile, 'guardian_name', '').encode('ascii', 'ignore')
-                    guardian_phone = getattr(registration_profile, 'guardian_phone', '').encode('ascii', 'ignore')
-                except:
-                    gender = None
-                    age = 0
-                    height_inches = 0
-
-                    guardian_name = None
-                    guardian_phone = None
-
                 team_member_captain = 0
                 team_member_models = TeamMember.objects.filter(user=registration.user, team__league=registration.league)
                 if team_member_models.count():
                     team_member_captain = team_member_models[:1].get().captain
 
-                registration_list.append({
+                try:
+                    gender = reduce(getattr, 'user.profile.gender'.split('.'), registration)
+                    age = reduce(getattr, 'user.profile.age'.split('.'), registration)
+                except AttributeError:
+                    gender = None
+                    age = 0
+
+                registration_data = {
                     'team_id': registration.get_team_id(),
                     'baggage_id': registration.baggage,
                     'baggage_size': int(registration.baggage_size),
                     'is_captain': int(team_member_captain),
                     'first_name': registration.user.first_name,
                     'last_name': registration.user.last_name,
-                    'gender': gender,
                     'email': registration.user.email,
-                    'rating_total': registration.user.rating_total,
-                    'rating_experience': registration.average_experience,
-                    'rating_strategy': registration.average_strategy,
-                    'rating_throwing': registration.average_throwing,
-                    'rating_athleticism': registration.average_athleticism,
-                    'rating_competitiveness': registration.average_competitiveness,
-                    'rating_spirit': registration.average_spirit,
-                    'num_teams': registration.num_teams,
-                    'height': height_inches,
+                    'gender': gender,
                     'age': int(0 if age is None else age),
-                    'guardian_name': guardian_name,
-                    'guardian_phone': guardian_phone,
-                    'registration_status': registration.status.encode('ascii', 'ignore'),
+                    'registration_status': registration.status,
                     'registration_timestamp': registration.registered,
                     'registration_waitlisted': int(registration.waitlist),
                     'payment_type': registration.pay_type,
@@ -303,43 +271,38 @@ def registrationexport(request, year=None, season=None, division=None):
                     'paypal_amount': paypal_row.mc_gross if paypal_row else '',
                     'attendance': int(0 if registration.attendance is None else registration.attendance),
                     'captaining': int(0 if registration.captain is None else registration.captain),
-                })
+                }
+
+                if export_type == 'league':
+                    try:
+                        height_inches = reduce(getattr, 'user.profile.height_inches'.split('.'), registration)
+                        guardian_name = reduce(getattr, 'user.profile.guardian_name'.split('.'), registration)
+                        guardian_phone = reduce(getattr, 'user.profile.guardian_phone'.split('.'), registration)
+                    except AttributeError:
+                        height_inches = 0
+                        guardian_name = None
+                        guardian_phone = None
+
+                    registration_data['rating_total'] = registration.user.rating_total
+                    registration_data['rating_experience'] = registration.average_experience
+                    registration_data['rating_strategy'] = registration.average_strategy
+                    registration_data['rating_throwing'] = registration.average_throwing
+                    registration_data['rating_athleticism'] = registration.average_athleticism
+                    registration_data['rating_competitiveness'] = registration.average_competitiveness
+                    registration_data['rating_spirit'] = registration.average_spirit
+                    registration_data['num_teams'] = registration.num_teams
+                    registration_data['height'] = height_inches
+                    registration_data['guardian_name'] = guardian_name
+                    registration_data['guardian_phone'] = guardian_phone
+
+                registration_list.append(registration_data)
 
         registration_list.sort(key=lambda k: k['last_name'].lower())
         registration_list.sort(key=lambda k: k['is_captain'], reverse=True)
         registration_list.sort(key=lambda k: k['team_id'])
 
         for registration in registration_list:
-            writer.writerow([
-                registration['team_id'],
-                registration['baggage_id'],
-                registration['baggage_size'],
-                registration['is_captain'],
-                registration['first_name'],
-                registration['last_name'],
-                registration['gender'],
-                registration['email'],
-                registration['rating_total'],
-                registration['rating_experience'],
-                registration['rating_strategy'],
-                registration['rating_throwing'],
-                registration['rating_athleticism'],
-                registration['rating_competitiveness'],
-                registration['rating_spirit'],
-                registration['num_teams'],
-                registration['height'],
-                registration['age'],
-                registration['guardian_name'],
-                registration['guardian_phone'],
-                registration['registration_status'],
-                registration['registration_timestamp'],
-                registration['registration_waitlisted'],
-                registration['payment_type'],
-                registration['paypal_email'],
-                registration['paypal_amount'],
-                registration['attendance'],
-                registration['captaining'],
-            ])
+            writer.writerow(get_export_values(export_type, registration))
 
         return response
 
