@@ -295,6 +295,9 @@ def registrationexport(request, year=None, season=None, division=None):
                     registration_data['guardian_name'] = guardian_name
                     registration_data['guardian_phone'] = guardian_phone
 
+                if export_type == 'year':
+                    registration_data['league'] = registration.league
+
                 registration_list.append(registration_data)
 
         registration_list.sort(key=lambda k: k['last_name'].lower())

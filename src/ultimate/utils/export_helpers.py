@@ -49,6 +49,13 @@ def get_export_headers(export_type):
 
         return headers_placement + headers_group + headers_info + headers_ratings + headers_additional_info + headers_payment
 
+    if export_type == 'year':
+        headers_league = [
+            'League',
+        ]
+
+        return headers_league + headers_placement + headers_info + headers_payment
+
     return headers_placement + headers_info + headers_payment
 
 
@@ -103,4 +110,9 @@ def get_export_values(export_type, registration_data):
 
         return values_placement + values_group + values_info + values_ratings + values_additional_info + values_payment
 
-    return values_placement + values_info + values_payment
+    if export_type == 'year':
+        values_league = [
+            registration_data['league'],
+        ]
+
+        return values_league + values_placement + values_info + values_payment
