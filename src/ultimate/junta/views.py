@@ -214,14 +214,7 @@ def registrationexport(request, year=None, season=None, division=None):
             if league_id:
                 registrations = registrations.filter(league=league)
 
-            registrations = registrations \
-                .extra(select={'average_experience': 'SELECT COALESCE(AVG(user_playerratings.experience), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.experience != 0'}) \
-                .extra(select={'average_strategy': 'SELECT COALESCE(AVG(user_playerratings.strategy), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.strategy != 0'}) \
-                .extra(select={'average_throwing': 'SELECT COALESCE(AVG(user_playerratings.throwing), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.throwing != 0'}) \
-                .extra(select={'average_athleticism': 'SELECT COALESCE(AVG(user_playerratings.athleticism), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.athleticism != 0'}) \
-                .extra(select={'average_competitiveness': 'SELECT COALESCE(AVG(user_playerratings.competitiveness), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.competitiveness != 0'}) \
-                .extra(select={'average_spirit': 'SELECT COALESCE(AVG(user_playerratings.spirit), 0) FROM user_playerratings WHERE user_playerratings.user_id = registrations.user_id AND user_playerratings.spirit != 0'}) \
-                .extra(select={'num_teams': 'SELECT COUNT(team_member.id) FROM team_member WHERE team_member.user_id = registrations.user_id GROUP BY team_member.user_id'})
+            registrations = registrations.extra(select={'num_teams': 'SELECT COUNT(team_member.id) FROM team_member WHERE team_member.user_id = registrations.user_id GROUP BY team_member.user_id'})
 
         if 'export_year' in request.POST:
             export_type = 'year'
@@ -236,10 +229,7 @@ def registrationexport(request, year=None, season=None, division=None):
         registration_list = []
         for registration in registrations:
             if registration.is_complete and not registration.refunded:
-                try:
-                    paypal_row = PayPalIPN.objects.filter(invoice=registration.paypal_invoice_id)[:1].get()
-                except PayPalIPN.DoesNotExist:
-                    paypal_row = None
+                paypal_row = PayPalIPN.objects.filter(invoice=registration.paypal_invoice_id).first()
 
                 team_member_captain = TeamMember.objects.filter(user=registration.user,
                                                                 team__league=registration.league,
@@ -281,15 +271,17 @@ def registrationexport(request, year=None, season=None, division=None):
                         guardian_name = None
                         guardian_phone = None
 
+                    rating_totals = registration.user.rating_totals
+
                     registration_data['baggage_id'] = registration.baggage
                     registration_data['baggage_size'] = int(registration.baggage_size)
-                    registration_data['rating_total'] = registration.user.rating_total
-                    registration_data['rating_experience'] = registration.average_experience
-                    registration_data['rating_strategy'] = registration.average_strategy
-                    registration_data['rating_throwing'] = registration.average_throwing
-                    registration_data['rating_athleticism'] = registration.average_athleticism
-                    registration_data['rating_competitiveness'] = registration.average_competitiveness
-                    registration_data['rating_spirit'] = registration.average_spirit
+                    registration_data['rating_total'] = rating_totals['total']
+                    registration_data['rating_experience'] = rating_totals['experience']
+                    registration_data['rating_strategy'] = rating_totals['strategy']
+                    registration_data['rating_throwing'] = rating_totals['throwing']
+                    registration_data['rating_athleticism'] = rating_totals['athleticism']
+                    registration_data['rating_competitiveness'] = registration.user.self_rating.competitiveness
+                    registration_data['rating_spirit'] = rating_totals['spirit']
                     registration_data['num_teams'] = registration.num_teams
                     registration_data['height'] = height_inches
                     registration_data['guardian_name'] = guardian_name
