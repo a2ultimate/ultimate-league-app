@@ -69,24 +69,22 @@ def exportteam(request, team_id):
         'Captain',
         'Firstname',
         'Lastname',
-        'Gender',
         'Email',
+        'Gender',
         'Age',
         'Height Inches',
         'Number of Leagues',
-        'Attendance',
+        'Estimated Absences',
     ])
 
     team_members = team.teammember_set.all()
 
     for team_member in team_members:
-        user_profile = team_member.user.profile
-
         try:
-            gender = getattr(user_profile, 'gender', '').encode('ascii', 'ignore')
-            age = getattr(user_profile, 'age', 0)
-            height_inches = getattr(user_profile, 'height_inches', 0)
-        except:
+            gender = reduce(getattr, 'user.profile.gender'.split('.'), team_member)
+            age = reduce(getattr, 'user.profile.age'.split('.'), team_member)
+            height_inches = reduce(getattr, 'user.profile.height_inches'.split('.'), team_member)
+        except AttributeError:
             gender = None
             age = 0
             height_inches = 0
@@ -96,8 +94,8 @@ def exportteam(request, team_id):
             int(team_member.captain),
             team_member.user.first_name,
             team_member.user.last_name,
-            gender,
             team_member.user.email,
+            gender,
             int(0 if age is None else age),
             height_inches,
             TeamMember.objects.filter(user=team_member.user).count(),
@@ -105,7 +103,6 @@ def exportteam(request, team_id):
         ])
 
     return response
-
 
 
 @atomic
@@ -130,10 +127,10 @@ def playersurvey(request, team_id):
     except IntegrityError:
         ratings_report = PlayerRatingsReport.objects.get(submitted_by=request.user, team=team)
 
-    RatingsFormSet = formset_factory(PlayerSurveyForm, extra=0)
+    ratings_form_set = formset_factory(PlayerSurveyForm, extra=0)
 
     if request.method == 'POST':
-        formset = RatingsFormSet(request.POST)
+        formset = ratings_form_set(request.POST)
 
         if formset.is_valid():
             for rating_data in formset.cleaned_data:
@@ -172,7 +169,7 @@ def playersurvey(request, team_id):
                 last_rating = {'user_id': team_member_user.id}
             ratings.append(last_rating)
 
-        formset = RatingsFormSet(initial=ratings)
+        formset = ratings_form_set(initial=ratings)
 
     survey = []
     for (i, form) in enumerate(formset.forms):
@@ -218,12 +215,12 @@ def gamereport(request, team_id, game_id):
         game_report_comment = None
 
     attendance = []
-    ScoreFormset = modelformset_factory(GameReportScore, form=GameReportScoreForm, extra=2, max_num=2)
+    score_formset_factory = modelformset_factory(GameReportScore, form=GameReportScoreForm, extra=2, max_num=2)
 
     if request.method == 'POST':
 
         comment_form = GameReportCommentForm(request.POST, instance=game_report_comment)
-        score_formset = ScoreFormset(request.POST)
+        score_formset = score_formset_factory(request.POST)
         for form in score_formset.forms:
             form.empty_permitted = False
 
@@ -277,12 +274,12 @@ def gamereport(request, team_id, game_id):
         if game_report:
             for attendance_record in GameReportAttendance.objects.filter(report=game_report):
                 attendance.append(attendance_record.user.id)
-            score_formset = ScoreFormset(queryset=GameReportScore.objects.filter(report=game_report))
+            score_formset = score_formset_factory(queryset=GameReportScore.objects.filter(report=game_report))
         else:
             game_teams = game.gameteams_set
             user_team = game_teams.filter(team=team).get().team
             opponent_team = game_teams.exclude(team=team).get().team
-            score_formset = ScoreFormset(queryset=GameReportScore.objects.none(),
+            score_formset = score_formset_factory(queryset=GameReportScore.objects.none(),
                 initial=[{'team': user_team}, {'team': opponent_team}])
 
         score_us_form = score_formset.forms[0]
