@@ -90,27 +90,35 @@
     {% endif %}
 
     {% if league.coupons_accepted %}
-      <hr>
       {% if registration.coupon %}
-        <form class="form" method="post">{% csrf_token %}
-          <p>
-            You have entered a coupon code
-            "<strong>{{ registration.coupon.code }}</strong>"
-            good for <em>{{ registration.coupon.display_value }}</em>.
-
+        <div class="message">
+          <form method="post">{% csrf_token %}
+            <p>
+              {% if coupon_is_valid %}
+                You have entered a coupon code
+                "<strong>{{ registration.coupon.code }}</strong>"
+                good for <em>{{ registration.coupon.display_value }}</em>.
+              {% else %}
+                The coupon code you have attached to your registration,
+                "<strong>{{ registration.coupon.code }}</strong>",
+                is no longer valid. The code could be expired or past its use limit.
+              {% endif %}
+            </p>
             <button class="button button-info" name="remove_coupon" type="submit">
               Remove It?
             </button>
-          </p>
-        </form>
+          </form>
+        </div>
       {% else %}
-        <form class="form" method="post">{% csrf_token %}
-          <h4><label for="coupon-code-input">Do you have a coupon code?</label></h4>
-          <input name="coupon_code" id="coupon-code-input" type="text">
-          <button class="button button-success" type="submit">
-            Submit
-          </button>
-        </form>
+        <div class="message">
+          <form method="post">{% csrf_token %}
+            <h4><label for="coupon-code-input">Do you have a coupon code?</label></h4>
+            <input name="coupon_code" id="coupon-code-input" type="text">
+            <button class="button button-success" type="submit">
+              Submit
+            </button>
+          </form>
+        </div>
       {% endif %}
     {% endif %}
 

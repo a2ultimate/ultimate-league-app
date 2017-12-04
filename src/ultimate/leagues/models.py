@@ -6,14 +6,12 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Count
+from django.db.models import Count, F
 from django.db.transaction import atomic
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 
-from pybb.models import *
-
-from ultimate.utils.email_groups import *
+from ultimate.utils.email_groups import add_to_group, generate_email_list_address, generate_email_list_name
 
 
 def generateLeagueCoverImagePath(instance, filename):
@@ -185,7 +183,7 @@ class League(models.Model):
         ordering = ['-year', '-season__order', 'league_start_date']
 
     def get_absolute_url(self):
-        return reverse('league_summary', args=[self.year, self.season.slug, self.night_slug, ])
+        return reverse('league_summary', kwargs={'year': self.year, 'season': self.season.slug, 'division': self.night_slug})
 
     def __unicode__(self):
         return ('%s %d %s' % (self.season, self.year, self.night))
@@ -246,14 +244,14 @@ class League(models.Model):
 
     @property
     def paypal_price(self):
-        if self.paypal_cost == 0 or timezone.now() < self.price_increase_start_date:
+        if timezone.now() < self.price_increase_start_date:
             return self.paypal_cost
 
         return self.paypal_cost + self.late_cost_increase
 
     @property
     def check_price(self):
-        if self.paypal_cost + self.check_cost_increase == 0 or timezone.now() < self.price_increase_start_date:
+        if timezone.now() < self.price_increase_start_date:
             return self.paypal_cost + self.check_cost_increase
 
         return self.paypal_cost + self.check_cost_increase + self.late_cost_increase
@@ -325,14 +323,14 @@ class League(models.Model):
         return '#95a5a6'
 
     def is_accepting_registrations(self, user=None):
-        # always accepting registrations for admins
-        if user and user.is_authenticated() and user.is_junta and \
-                self.state in [self.LEAGUE_STATE_OPEN, self.LEAGUE_STATE_PREVIEW]:
-            return True
-
         # not before league ends
         if not timezone.now().date() <= self.league_end_date:
             return False
+
+        # admins and junta can register in preview mode
+        if user and user.is_authenticated() and user.is_junta and \
+                self.state in [self.LEAGUE_STATE_OPEN, self.LEAGUE_STATE_PREVIEW]:
+            return True
 
         # not open to public
         if self.state not in [self.LEAGUE_STATE_OPEN]:
@@ -380,6 +378,9 @@ class League(models.Model):
             return True
 
         return False
+
+    def get_visible_teams(self):
+        return self.team_set.filter(hidden=False)
 
     def get_user_games(self, user):
         return self.game_set.filter(gameteams__team__teammember__user=user).order_by('date')
@@ -672,14 +673,14 @@ class Registrations(models.Model):
     @property
     def check_price(self):
         if self.coupon:
-            return self.coupon.get_adjusted_price(self.league.check_price)
+            return self.coupon.get_adjusted_price(self.league.check_price, self.league, self.user)
 
         return self.league.check_price
 
     @property
     def paypal_price(self):
         if self.coupon:
-            return self.coupon.get_adjusted_price(self.league.paypal_price)
+            return self.coupon.get_adjusted_price(self.league.paypal_price, self.league, self.user)
 
         return self.league.paypal_price
 
@@ -720,18 +721,13 @@ class Registrations(models.Model):
                 if self.attendance is not None:
                     percentage += interval
 
-                    if self.league.check_price > 0 or \
-                            self.league.paypal_price > 0:
+                    if self.league.checks_accepted and \
+                            (self.pay_type or self.payment_complete):
+                        percentage += interval
 
-                        if self.league.checks_accepted and \
-                                (self.pay_type or self.payment_complete):
-                            percentage += interval
-
-                        if self.check_complete or \
-                                self.paypal_complete or \
-                                self.payment_complete:
-                            percentage += interval
-                    else:
+                    if self.check_complete or \
+                            self.paypal_complete or \
+                            self.payment_complete:
                         percentage += interval
 
         return int(round(percentage))
@@ -754,14 +750,11 @@ class Registrations(models.Model):
         if not self.is_ready_for_payment:
             return False
 
-        if self.league.check_price > 0 or \
-                self.league.paypal_price > 0:
+        if not self.check_complete and \
+                not self.paypal_complete and \
+                not self.payment_complete:
 
-            if not self.check_complete and \
-                    not self.paypal_complete and \
-                    not self.payment_complete:
-
-                return False
+            return False
 
         if self.refunded:
             return False
@@ -773,14 +766,11 @@ class Registrations(models.Model):
         if not self.is_ready_for_payment:
             return False
 
-        if self.league.check_price > 0 or \
-                self.league.paypal_price > 0:
+        if not self.check_complete and \
+                not self.paypal_complete and \
+                not self.payment_complete:
 
-            if not self.check_complete and \
-                    not self.paypal_complete and \
-                    not self.payment_complete:
-
-                return False
+            return False
 
         if not self.refunded:
             return False
@@ -1217,15 +1207,18 @@ class Coupon(models.Model):
                             help_text='Leaving this field empty will generate a random code.')
 
     type = models.CharField(max_length=20, choices=COUPON_TYPE_CHOICES)
-
-    use_count = models.IntegerField(default=0)
-    use_limit = models.IntegerField(default=1)
     value = models.IntegerField(blank=True, null=True, default=None)
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    use_count = models.IntegerField(default=0,
+                                    help_text='How many times the coupon has been used')
+    use_limit = models.IntegerField(default=1,
+                                    help_text='How many uses the coupon should have')
+
+    note = models.TextField(blank=True, help_text='What is the coupon for?')
+
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    redeemed_at = models.DateTimeField(blank=True, null=True)
     valid_until = models.DateTimeField(blank=True, null=True,
                                        help_text='Leave empty for coupons that never expire')
 
@@ -1251,14 +1244,17 @@ class Coupon(models.Model):
             return '{}% off'.format(self.value)
 
     def _generate_code(self):
-        while(1):
+        while 1:
             code = '-'.join(''.join(random.choice(self.CODE_CHARACTERS) for i in range(self.CODE_SEGMENT_LENGTH)) for j in range(self.CODE_SEGMENT_COUNT))
             try:
                 Coupon.objects.get(code=code)
             except ObjectDoesNotExist:
                 return code
 
-    def get_adjusted_price(self, price):
+    def get_adjusted_price(self, price, league=None, user=None):
+        if not self.is_valid(league, user):
+            return price
+
         if self.type == self.COUPON_TYPE_AMOUNT:
             return max(price - self.value, 0)
         elif self.type == self.COUPON_TYPE_FULL:
@@ -1266,7 +1262,7 @@ class Coupon(models.Model):
         elif self.type == self.COUPON_TYPE_PERCENTAGE:
             return int(max(price * (1 - (self.value / 100.0)), 0))
 
-    def is_valid(self, league=None):
+    def is_valid(self, league=None, user=None):
         # if there is a use limit and uses have exceeded it
         if self.use_limit is not None and self.use_limit <= self.use_count:
             return False
@@ -1276,7 +1272,35 @@ class Coupon(models.Model):
             return False
 
         if league is not None:
-            # TODO check to see if league is supported by coupon
             pass
 
+        if user is not None:
+            if self.couponredemtion_set.filter(redeemed_by=user).exists():
+                return False
+
         return True
+
+    def process(self, user):
+        self.use_count = F('use_count') + 1
+        self.save()
+        coupon_redemption = CouponRedemtion.create(self, user)
+        coupon_redemption.save()
+
+
+class CouponRedemtion(models.Model):
+    coupon = models.ForeignKey('leagues.Coupon')
+    redeemed_by = models.ForeignKey(settings.AUTH_USER_MODEL)
+
+    redeemed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = u'coupon_redemption'
+        ordering = ['-redeemed_at', 'redeemed_by', ]
+
+    def __unicode__(self):
+        return '%s by %s at %s' % (self.coupon.code, self.redeemed_by.email, self.redeemed_at)
+
+    @classmethod
+    def create(cls, coupon, user):
+        coupon_redemption = cls(coupon=coupon, redeemed_by=user)
+        return coupon_redemption

@@ -11,16 +11,16 @@ def add_to_group(group_id=None, group_email_address=None, email_address=None, fi
 
     elif file_path:
         try:
-            f = open(file_path, 'r')
-            email_list = f.read().splitlines()
+            opened_file = open(file_path, 'r')
+            email_list = opened_file.read().splitlines()
 
             for email_address in email_list:
                 if api.add_group_member(email_address, group_id=group_id, group_email_address=group_email_address):
                     success_count = success_count + 1
 
         finally:
-            if f is not None:
-                f.close()
+            if opened_file is not None:
+                opened_file.close()
 
     return success_count
 

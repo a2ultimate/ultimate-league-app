@@ -1,0 +1,13 @@
+.page-player-survey {
+}
+
+.page-player-survey-table {
+  overflow: hidden;
+
+  border-radius: $border-radius;
+}
+
+.page-player-survey-table-cell-error {
+  color: $color-white;
+  background-color: $color-red;
+}

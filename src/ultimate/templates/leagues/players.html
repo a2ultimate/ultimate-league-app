@@ -28,17 +28,17 @@
       <div class="message message-caution">
         The registration deadline has passed. All new registrations will be added to the waitlist.
       </div>
-    {% elif registrations_remaining <= 0 %}
+    {% elif num_registrations_remaining <= 0 %}
       <div class="message message-caution">
         This division is currently at capacity. All new registrations will be added to the waitlist.
       </div>
-    {% elif registrations_remaining == league.max_players %}
+    {% elif num_registrations_remaining == league.max_players %}
       <div class="message message-info">
         There are {{ league.max_players }} spaces available. Be the first!
       </div>
     {% else %}
       <h4>
-        There are {{ registrations_remaining }} of {{ league.max_players }} spaces available.
+        There are {{ num_registrations_remaining }} of {{ league.max_players }} spaces available.
       </h4>
     {% endif %}
 
@@ -47,7 +47,7 @@
 
       <ol>
         {% for registration in waitlist_registrations %}
-          <li>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>{{ registration.user.profile.nickname }}</em></li>
+          <li>{{ registration.user.get_full_name }}&nbsp;<em>{{ registration.user.profile.nickname }}</em></li>
         {% endfor %}
       </ol>
     {% endif %}
@@ -94,7 +94,7 @@
             <tbody>
               {% for registration in unassigned_registrations|dictsort:'progress' %}
                 <tr>
-                  <td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>({{ registration.user.profile.gender }})</em></td>
+                  <td>{{ registration.user.get_full_name }}&nbsp;<em>({{ registration.user.profile.gender }})</em></td>
                   <td>{{ registration.status }}</td>
                   <td>{{ registration.registered|date:'Y/m/d h:iA' }}</td>
                 </tr>
@@ -116,7 +116,7 @@
             <tbody>
               {% for registration in incomplete_registrations|dictsort:'progress'|dictsort:'updated' %}
                 <tr>
-                  <td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>({{ registration.user.profile.gender }})</em></td>
+                  <td>{{ registration.user.get_full_name }}&nbsp;<em>({{ registration.user.profile.gender }})</em></td>
                   <td>{{ registration.status }}</td>
                   <td>{{ registration.updated|date:'Y/m/d h:iA' }}</td>
                 </tr>
@@ -131,7 +131,7 @@
             <tbody>
               {% for registration in refunded_registrations|dictsort:'updated' %}
                 <tr>
-                  <td>{{ registration.user.first_name }} {{ registration.user.last_name }} <em>({{ registration.user.profile.gender }})</em></td>
+                  <td>{{ registration.user.get_full_name }}&nbsp;<em>({{ registration.user.profile.gender }})</em></td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -142,11 +142,11 @@
           <dt>Complete Registrations:</dt>
           <dd>{{ complete_registrations|length }}</dd>
           <dt>Female Registrations:</dt>
-          <dd>{{ registrations_female }}</dd>
+          <dd>{{ num_registrations_female }}</dd>
           <dt>Male Registrations:</dt>
-          <dd>{{ registrations_male }}</dd>
+          <dd>{{ num_registrations_male }}</dd>
           <dt>Minor Registrations:</dt>
-          <dd>{{ registrations_minor }}</dd>
+          <dd>{{ num_registrations_minor }}</dd>
         </dl>
       </div>
     </div>

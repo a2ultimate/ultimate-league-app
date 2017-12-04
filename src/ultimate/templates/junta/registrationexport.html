@@ -7,8 +7,8 @@
 {% block title %}Registration Export &middot; Junta Resources &middot; {{ block.super }}{% endblock %}
 
 {% block content %}
-
-	{% include '_partials/account_tabs.html' with selected_tab='junta' %}
+<div class="page-registration-export">
+  {% include '_partials/account_tabs.html' with selected_tab='junta' %}
 
   <div class="breadcrumbs">
     <ul class="breadcrumbs-list">
@@ -21,8 +21,44 @@
     </ul>
   </div>
 
-	<h1>Registration Export</h1>
+  <h1 class="page-registration-export-header">Registration Export</h1>
 
-	{% include '_partials/league_list.html' with leagues=leagues link_view='registrationexport_league' only %}
+  <div class="page-registration-export-section">
+    <h2 class="page-registration-export-section-header">By League</h2>
 
+    <form class="form" method="post">{% csrf_token %}
+      <p>
+        <select name="league_id">
+          <option>Select a League</option>
+
+          {% for league in leagues %}
+            <option value="{{ league.id }}">{{ league }}</option>
+          {% endfor %}
+        </select>
+      </p>
+
+      <input class="button button-info" type="submit" name="export_league" value="Export Registrations For League">
+    </form>
+  </div>
+
+  <div class="page-registration-export-section">
+    <h2 class="page-registration-export-section-header">By Year</h2>
+
+    <form class="form" method="post">{% csrf_token %}
+      <p>
+        <select name="year">
+          <option>Select a Year</option>
+
+          {% regroup leagues by year as years %}
+
+          {% for year in years %}
+            <option value="{{ year.grouper }}">{{ year.grouper }}</option>
+          {% endfor %}
+        </select>
+      </p>
+
+      <input class="button button-info" type="submit" name="export_year" value="Export Registrations For Year">
+    </form>
+  </div>
+</div>
 {% endblock %}

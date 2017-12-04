@@ -4,6 +4,7 @@
 {% block title %}Player Survey &middot; Captain Resources &middot; {{ block.super }}{% endblock %}
 
 {% block content %}
+<div class="page-player-survey">
   {% include '_partials/account_tabs.html' with selected_tab='captain' %}
 
   <div class="breadcrumbs">
@@ -65,7 +66,7 @@
   <form class="form" method="post" action="{% url 'playersurvey' team_id=team.id  %}">{% csrf_token %}
     {{ formset.management_form }}
 
-    <table class="table table-centered table-striped">
+    <table class="page-player-survey-table table table-centered table-striped">
       <tbody>
         <tr>
           <td></td>
@@ -86,21 +87,26 @@
               </div>
             </th>
             {% for field in row.form.visible_fields %}
-              <td>
-                <div class="{% if field.errors %}state_error{% endif %}">
-                  {{ field }}
-                  {% if not forloop.last %}
-                    <div class="small strong">{{ row.user|get_average:field.label }}</div>
-                  {% endif %}
-                </div>
+              <td class="{% if field.errors %}page-player-survey-table-cell-error{% endif %}">
+                {{ field }}
+                {% if not forloop.last %}
+                  <div class="small strong">{{ row.user|get_average:field.label }}</div>
+                {% endif %}
               </td>
             {% endfor %}
           </tr>
-        </tbody>
-      {% endfor %}
+        {% endfor %}
+      </tbody>
     </table>
+
+    {% if formset.errors %}
+      <div class="message message-danger">
+        Make sure that for all players you have either filled out all ratings with non-zero values or checked the "Not Sure" box.
+      </div>
+    {% endif %}
 
     <input class="button button-success" type="submit" value="Update" />
     <a class="button button-link" href="{% url 'captain' %}">Cancel</a>
   </form>
+</div>
 {% endblock %}

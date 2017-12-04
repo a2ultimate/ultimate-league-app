@@ -49,7 +49,7 @@
 
                     <div class="page-home-leagues-content-list-element-list-element-footer">
                       {% if league|has_complete_user_registration:request.user %}
-                        {% if league.team_set.exists and league.game_set.exists %}
+                        {% if league.get_visible_teams.exists and league.game_set.exists %}
                           <a class="page-home-leagues-content-list-element-list-element-footer-action button button-block" href="{% url 'league_teams' year=league.year season=league.season.slug division=league.night_slug %}">
                             View Teams
                           </a>

@@ -1,11 +1,12 @@
-from datetime import timedelta
+import uuid
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
-from django.db.models import F, Q
+from django.db.models import ObjectDoesNotExist, Q
+from django.db.transaction import atomic
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
@@ -13,8 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 
 from ultimate.forms import RegistrationAttendanceForm
-from ultimate.leagues.models import *
-from ultimate.middleware.http import Http403
+from ultimate.leagues.models import Baggage, Coupon, League, Registrations, Team
 
 from paypal.standard.forms import PayPalPaymentsForm
 
@@ -89,10 +89,10 @@ def players(request, year, season, division):
             'refunded_registrations': refunded_registrations,
             'unassigned_registrations': unassigned_registrations,
 
-            'registrations_female': len([r for r in complete_registrations if hasattr(r.user, 'profile') and r.user.profile.is_female()]),
-            'registrations_male': len([r for r in complete_registrations if hasattr(r.user, 'profile') and r.user.profile.is_male()]),
-            'registrations_minor': len([r for r in complete_registrations if hasattr(r.user, 'profile') and r.user.profile.is_minor(league.league_start_date)]),
-            'registrations_remaining': max(0, league.max_players - len(complete_registrations)),
+            'num_registrations_female': len([r for r in complete_registrations if hasattr(r.user, 'profile') and r.user.profile.is_female()]),
+            'num_registrations_male': len([r for r in complete_registrations if hasattr(r.user, 'profile') and r.user.profile.is_male()]),
+            'num_registrations_minor': len([r for r in complete_registrations if hasattr(r.user, 'profile') and r.user.profile.is_minor(league.league_start_date)]),
+            'num_registrations_remaining': max(0, league.max_players - len(complete_registrations)),
         },
         context_instance=RequestContext(request))
 
@@ -173,7 +173,8 @@ def registration(request, year, season, division, section=None):
         registration = Registrations.objects.get(user=request.user, league=league)
 
     if not league.is_open(request.user):
-        return render_to_response('leagues/registration/error.html', {
+        return render_to_response('leagues/registration/error.html',
+            {
                 'league': league,
                 'registration': registration,
                 'errors': ['closed'],
@@ -258,10 +259,6 @@ def registration(request, year, season, division, section=None):
                     registration.baggage_id = baggage.id
                     registration.save()
 
-                if league.check_price == 0 and league.paypal_price == 0:
-                    registration.registered = timezone.now()
-                    registration.save()
-
                 if league.type == 'league':
                     messages.success(request, 'Attendance and captaining response saved.')
                 else:
@@ -300,38 +297,41 @@ def registration(request, year, season, division, section=None):
 
         if 'coupon_code' in request.POST:
             if league.coupons_accepted:
-                try:
-                    coupon = Coupon.objects.get(code=request.POST.get('coupon_code'))
-                except ObjectDoesNotExist:
-                    coupon = None
+                if not registration.is_complete and not registration.is_refunded:
+                    try:
+                        coupon_code = request.POST.get('coupon_code')
+                        coupon = Coupon.objects.get(code=coupon_code)
+                    except ObjectDoesNotExist:
+                        coupon = None
 
-                if coupon and coupon.is_valid():
-                    registration.coupon = coupon
-                    registration.save()
+                    if coupon:
+                        if coupon.is_valid(league, request.user):
+                            registration.coupon = coupon
+                            registration.save()
 
-                    registration.coupon.use_count = F('use_count') + 1
-                    registration.coupon.save()
-
-                    messages.success(request, 'Your coupon code has been applied.')
+                            messages.success(request, 'Your coupon code has been added and will be redeemed when your registration is completed.')
+                        else:
+                            success = False
+                            messages.error(request, 'The coupon code entered is not valid. The code could be expired or past its use limit.')
+                    else:
+                        success = False
+                        messages.error(request, 'The coupon code entered does not exist.')
                 else:
                     success = False
-                    messages.error(request, 'You have entered an invalid coupon code.')
+                    messages.error(request, 'Your registration is already complete or refunded.')
             else:
                 success = False
                 messages.error(request, 'Coupon codes are not accepted for this division.')
 
         if 'remove_coupon' in request.POST:
             if registration.coupon:
-                registration.coupon.use_count = F('use_count') - 1
-                registration.coupon.save()
-
                 registration.coupon = None
                 registration.save()
 
                 messages.success(request, 'Your coupon has been removed and will not be used with this registration.')
             else:
                 success = False
-                messages.error(request, 'No coupon has been added to this registration.')
+                messages.error(request, 'Could not remove coupon; no coupon is associated with this registration.')
 
         if 'process_registration' in request.POST:
             if registration.is_ready_for_payment:
@@ -403,15 +403,15 @@ def registration(request, year, season, division, section=None):
             registration.save()
 
         if not registration.paypal_complete and not registration.check_complete:
-            baseUrl = request.build_absolute_uri(getattr(settings, 'FORCE_SCRIPT_NAME', '/')).replace(request.path_info.replace(' ', '%20'), '')
+            base_url = request.build_absolute_uri(getattr(settings, 'FORCE_SCRIPT_NAME', '/')).replace(request.path_info.replace(' ', '%20'), '')
 
             paypal_dict = {
                 'amount': registration.paypal_price,
-                'cancel_return': '{}/leagues/{}/{}/{}/registration/'.format(baseUrl, league.year, league.season.slug, league.night_slug),
+                'cancel_return': '{}/leagues/{}/{}/{}/registration/'.format(base_url, league.year, league.season.slug, league.night_slug),
                 'invoice': registration.paypal_invoice_id,
                 'item_name': '{} {} {}'.format(league.season_title, league.year, league.night_title),
-                'notify_url': '{}/leagues/registration/payment/{}'.format(baseUrl, getattr(settings, 'PAYPAL_CALLBACK_SECRET', 'notification/callback/for/a2ultimate/secret/')),
-                'return_url': '{}/leagues/{}/{}/{}/registration-complete/'.format(baseUrl, league.year, league.season.slug, league.night_slug),
+                'notify_url': '{}/leagues/registration/payment/{}'.format(base_url, getattr(settings, 'PAYPAL_CALLBACK_SECRET', 'notification/callback/for/a2ultimate/secret/')),
+                'return_url': '{}/leagues/{}/{}/{}/registration-complete/'.format(base_url, league.year, league.season.slug, league.night_slug),
             }
 
             paypal_form = PayPalPaymentsForm(initial=paypal_dict)
@@ -423,7 +423,8 @@ def registration(request, year, season, division, section=None):
             'league': league,
             'registration': registration,
             'section': 'status',
-            'tick_percentage': tick_percentage
+            'tick_percentage': tick_percentage,
+            'coupon_is_valid': registration.coupon.is_valid(league, request.user) if registration.coupon else False,
         },
         context_instance=RequestContext(request))
 

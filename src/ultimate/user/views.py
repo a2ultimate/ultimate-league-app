@@ -2,30 +2,38 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+from django.db.transaction import atomic
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils import timezone
 
-from ultimate.leagues.models import *
-from ultimate.user.models import *
-from ultimate.forms import *
+from ultimate.leagues.models import Game, League
+from ultimate.user.models import Player, PlayerRatings
+from ultimate.forms import EditPlayerForm, EditPlayerRatingsForm, EditProfileForm, SignupForm
 
 
 @login_required
 def index(request):
     leagues = League.objects.filter(state__in=['closed', 'open', 'preview']).order_by('league_start_date')
-    leagues = [r for r in leagues if r.is_visible(request.user)]
+    leagues = [l for l in leagues if l.is_visible(request.user)]
 
-    next_games = Game.objects.filter(~Q(league__state=League.LEAGUE_STATE_HIDDEN) & Q(date__gte=timezone.now().date()) & Q(Q(gameteams__team__teammember__user=request.user) | Q(gameteams__team__teammember__user=request.user))).order_by('date')[0:2]
+    future_games = Game.objects.filter(
+        Q(league__in=leagues) &
+        Q(date__gte=timezone.datetime(2017, 6, 20, 22, 18, 51, 892210).date()) &
+        Q(teams__teammember__user=request.user)
+    ).order_by('date')
+
+    future_games = [game for game in future_games if game.get_display_teams().exists()]
+
     try:
-        next_game = next_games[0:1].get()
-    except Game.DoesNotExist:
+        next_game = future_games.pop(0)
+    except IndexError, Game.DoesNotExist:
         next_game = None
 
     try:
-        following_game = next_games[1:2].get()
-    except Game.DoesNotExist:
+        following_game = future_games.pop(0)
+    except IndexError, Game.DoesNotExist:
         following_game = None
 
     registrations = []
@@ -52,7 +60,7 @@ def signup(request):
         if form.is_valid():
             user = form.save()
 
-            player, created = Player.objects.get_or_create(user=user,
+            Player.objects.get_or_create(user=user,
                 defaults={'date_of_birth': form.cleaned_data.get('date_of_birth'),
                     'gender': form.cleaned_data.get('gender')})
 
