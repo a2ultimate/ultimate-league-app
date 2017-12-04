@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.db import models
 
 
@@ -28,7 +29,7 @@ class StaticContent(models.Model):
         return self.url
 
     def get_absolute_url(self):
-        return '/{}'.format(self.url)
+        return reverse('static_page', kwargs={'content_url': self.url})
 
     @property
     def is_html(self):

@@ -16,5 +16,5 @@ urlpatterns = [
     url(r'^welcome/$', views.static, {'content_url': 'welcome'}, 'welcome'),
     url(r'^youth/$', views.static, {'content_url': 'youth'}, 'youth'),
 
-    url(r'^pages/(?P<content_url>[^/]+)/$', views.static),
+    url(r'^pages/(?P<content_url>[^/]+)/$', views.static, {}, 'static_page'),
 ]

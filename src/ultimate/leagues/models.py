@@ -183,7 +183,7 @@ class League(models.Model):
         ordering = ['-year', '-season__order', 'league_start_date']
 
     def get_absolute_url(self):
-        return reverse('league_summary', args=[self.year, self.season.slug, self.night_slug, ])
+        return reverse('league_summary', kwargs={'year': self.year, 'season': self.season.slug, 'division': self.night_slug})
 
     def __unicode__(self):
         return ('%s %d %s' % (self.season, self.year, self.night))
