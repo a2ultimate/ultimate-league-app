@@ -20,7 +20,7 @@ def index(request):
 
     future_games = Game.objects.filter(
         Q(league__in=leagues) &
-        Q(date__gte=timezone.datetime(2017, 6, 20, 22, 18, 51, 892210).date()) &
+        Q(date__gte=timezone.now().date()) &
         Q(teams__teammember__user=request.user)
     ).order_by('date')
 
