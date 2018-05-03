@@ -154,6 +154,7 @@ class League(models.Model):
     captaining_note = models.TextField(blank=True, help_text='note for captaining, typically captain meeting date and time')
 
     num_games_per_week = models.IntegerField(default=1, help_text='number of games per week, used to calculate number of games for a league')
+    num_skip_weeks = models.IntegerField(default=0, help_text='number of weeks skipped, e.g. skipping 4th of July')
     reg_start_date = models.DateTimeField(help_text='date and time that registration process is open (not currently automated)')
     price_increase_start_date = models.DateTimeField(help_text='date and time when cost increases for league')
     waitlist_start_date = models.DateTimeField(help_text='date and time that waitlist is started (regardless of number of registrations)')
@@ -395,8 +396,14 @@ class League(models.Model):
 
         if self.num_games_per_week > 1:
             num_games = num_weeks * self.num_games_per_week
+
+            if self.num_skip_weeks > 0:
+                num_games = num_games - (self.num_skip_weeks * self.num_games_per_week)
         else:
             num_games = num_weeks
+
+            if self.num_skip_weeks > 0:
+                num_games = num_games - self.num_skip_weeks
 
         return num_games
 
