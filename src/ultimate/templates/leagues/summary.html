@@ -44,6 +44,10 @@
     {{ league.summary_info|safe }}
   {% endif %}
 
+  {% if league.captaining_note %}
+    {{ league.captaining_note|safe }}
+  {% endif %}
+
   {% include '_partials/league_summary.html' with league=league show_links=0 %}
 
   {% if league|is_open:user %}
