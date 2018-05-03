@@ -35,7 +35,7 @@
       {% regroup game_locations by start as start_list %}
       {% for start in start_list %}
         <th colspan="{{ start.list|length }}">
-          {{ start.grouper|date:'h:iA'|lower }}
+          {{ start.grouper|date:'g:iA'|lower }}
         </th>
       {% endfor %}
     </tr>
