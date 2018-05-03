@@ -147,7 +147,9 @@ class League(models.Model):
     start_time = models.TimeField(null=True, help_text='start time for league')
     end_time = models.TimeField(null=True, help_text='end time for league')
     num_time_slots = models.IntegerField(default=1, help_text='number of time slots')
+
     schedule_note = models.TextField(blank=True, help_text='note to appear under the schedule')
+    captaining_note = models.TextField(blank=True, help_text='note for captaining, typically captain meeting date and time')
 
     num_games_per_week = models.IntegerField(default=1, help_text='number of games per week, used to calculate number of games for a league')
     reg_start_date = models.DateTimeField(help_text='date and time that registration process is open (not currently automated)')
