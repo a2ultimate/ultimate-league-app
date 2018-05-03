@@ -28,7 +28,7 @@
       <h2>
         {{ league.night_title|smart_title }}
         {% if league.type == 'league' %}Division{% endif %}
-        ({{ league.gender_title|smart_title }})
+        ({{ league.display_gender|smart_title }})
 
         {% if league.state == 'preview' %}
           <em>({{ league.state|capfirst }})</em>
