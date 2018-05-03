@@ -101,11 +101,13 @@ class League(models.Model):
         (LEAGUE_STATE_PREVIEW, 'Preview - visible only to admins, registration conditionally open only to admins'),
     )
 
+    LEAGUE_GENDER_MENS = 'corec'
     LEAGUE_GENDER_MENS = 'mens'
     LEAGUE_GENDER_MIXED = 'mixed'
     LEAGUE_GENDER_OPEN = 'open'
     LEAGUE_GENDER_WOMENS = 'womens'
     LEAGUE_GENDER_CHOICES = (
+        (LEAGUE_GENDER_MENS, 'Co-Rec'),
         (LEAGUE_GENDER_MENS, 'Men\'s'),
         (LEAGUE_GENDER_MIXED, 'Mixed'),
         (LEAGUE_GENDER_OPEN, 'Open'),
@@ -147,9 +149,12 @@ class League(models.Model):
     start_time = models.TimeField(null=True, help_text='start time for league')
     end_time = models.TimeField(null=True, help_text='end time for league')
     num_time_slots = models.IntegerField(default=1, help_text='number of time slots')
+
     schedule_note = models.TextField(blank=True, help_text='note to appear under the schedule')
+    captaining_note = models.TextField(blank=True, help_text='note for captaining, typically captain meeting date and time')
 
     num_games_per_week = models.IntegerField(default=1, help_text='number of games per week, used to calculate number of games for a league')
+    num_skip_weeks = models.IntegerField(default=0, help_text='number of weeks skipped, e.g. skipping 4th of July')
     reg_start_date = models.DateTimeField(help_text='date and time that registration process is open (not currently automated)')
     price_increase_start_date = models.DateTimeField(help_text='date and time when cost increases for league')
     waitlist_start_date = models.DateTimeField(help_text='date and time that waitlist is started (regardless of number of registrations)')
@@ -391,8 +396,14 @@ class League(models.Model):
 
         if self.num_games_per_week > 1:
             num_games = num_weeks * self.num_games_per_week
+
+            if self.num_skip_weeks > 0:
+                num_games = num_games - (self.num_skip_weeks * self.num_games_per_week)
         else:
             num_games = num_weeks
+
+            if self.num_skip_weeks > 0:
+                num_games = num_games - self.num_skip_weeks
 
         return num_games
 

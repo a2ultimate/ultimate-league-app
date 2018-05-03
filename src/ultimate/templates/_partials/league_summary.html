@@ -117,7 +117,7 @@
   {% if not league.is_after_price_increase and league.late_cost_increase > 0 %}
     <tr>
       <td colspan="4">
-        <em>The price will increase by ${{ league.late_cost_increase }} on {{ league.price_increase_start_date|date:'F d, Y' }} at {{ league.price_increase_start_date|date:'h:iA'|lower }}</em>
+        <em>The price will increase by ${{ league.late_cost_increase }} on {{ league.price_increase_start_date|date:'F d, Y' }} at {{ league.price_increase_start_date|date:'g:iA'|lower }}</em>
       </td>
     </tr>
   {% endif %}
@@ -131,7 +131,7 @@
       Registration Deadline
     </td>
     <td colspan="3">
-      {{ league.waitlist_start_date|date:'F d, Y' }} at {{ league.waitlist_start_date|date:'h:iA'|lower }} or {{ league.max_players }} Players
+      {{ league.waitlist_start_date|date:'F d, Y' }} at {{ league.waitlist_start_date|date:'g:iA'|lower }} or {{ league.max_players }} Players
     </td>
   </tr>
   {% if league.baggage > 1 %}
@@ -140,7 +140,7 @@
         Group Edit Deadline
       </td>
       <td colspan="3">
-        {{ league.waitlist_start_date|date:'F d, Y' }} at {{ league.waitlist_start_date|date:'h:iA'|lower }}
+        {{ league.waitlist_start_date|date:'F d, Y' }} at {{ league.waitlist_start_date|date:'g:iA'|lower }}
       </td>
     </tr>
   {% endif %}

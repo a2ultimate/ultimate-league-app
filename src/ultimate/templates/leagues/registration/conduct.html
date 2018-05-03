@@ -14,15 +14,26 @@
   {% include 'leagues/registration/_progress.html' with league=league registration=registration section=section tick_percentage=tick_percentage only %}
 
   <h2>Player Code of Conduct</h2>
-  <p>As a player I agree to the following:
+  <p>
+    <h4>As a player I agree to the following:</h4>
     <ol>
-      <li>I will uphold the spirit of the game and to treat other players with respect.</li>
-      <li>I will never engage in physical violence against another player in any form for any reason (including in retaliation for the same).</li>
-      <li>I will never enact verbal abuse against another player, in any form, for any reason.</li>
+      <li>I will uphold the spirit of the game and treat others with respect.</li>
+      <li>I will never engage in physical violence against another player for any reason (including retaliation).</li>
+      <li>I will never enact verbal abuse against another player for any reason (e.g. yelling, swearing).</li>
+      <li>I will never play in such a way that endangers or frightens other players (e.g. overly aggressive play or dangerous bids).</li>
+    </ol>
+  </p>
+  <p>
+    <h4>Additionally, I understand and agree to the following:</h4>
+    <ol>
+      <li>Registering does not guarantee me the right to play; captains and/or league officials may remove a player from play at any time for a violation of this Code of Conduct.</li>
+      <li>Failing to comply with this Code of Conduct could result in my suspension from the league, possibly permanently, per the jurisdiction of the Ann Arbor Ultimate Board of Directors.</li>
     </ol>
   </p>
 
-  <p>I acknowledge that any violation of this agreement will result in my suspension from the league, possibly permanently, per the jurisdiction of the league directors.</p>
+  <p>
+    <h5>Last Updated: May 2nd, 2018</h5>
+  </p>
 
   <form class="form" method="post">{% csrf_token %}
     <input class="button button-success"type="submit" value="Accept" name="conduct_accept">

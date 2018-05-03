@@ -49,12 +49,16 @@
     </div>
 
     <ul>
-      <li>0 - I refuse to captain.</li>
-      <li>1 - I will captain if absolutely necessary.</li>
-      <li>2 - I am willing to captain.</li>
-      <li>3 - I would like to captain.</li>
-      <li>4 - I will be very sad if I don't get to captain.</li>
+      <li>0 – I refuse to captain.</li>
+      <li>1 – I will captain if absolutely necessary.</li>
+      <li>2 – I am willing to captain.</li>
+      <li>3 – I would like to captain.</li>
+      <li>4 – I will be very sad if I don't get to captain.</li>
     </ul>
+
+    {% if league.captaining_note %}
+      {{ league.captaining_note|safe }}
+    {% endif %}
   {% endif %}
 
   <input class="button button-success" type="submit" value="Submit" name="submit">
