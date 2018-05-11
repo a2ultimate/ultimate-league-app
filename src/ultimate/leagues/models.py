@@ -1150,6 +1150,10 @@ class TeamMember(models.Model):
     def attendance_total(self):
         return Registrations.objects.get(league=self.team.league, user=self.user).attendance
 
+    @property
+    def baggage_id(self):
+        return Registrations.objects.get(league=self.team.league, user=self.user).baggage_id
+
 
 class Game(models.Model):
     id = models.AutoField(primary_key=True)
