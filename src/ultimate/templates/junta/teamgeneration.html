@@ -89,28 +89,24 @@
               </tr>
             </thead>
             <tbody id="team-{{ team.id }}" class="sortable-table sortable-table-connected">
-              {% regroup team.get_members_with_baggage by baggage_id as baggage_list %}
-
-              {% for baggage_group in baggage_list %}
-                {% for team_member in baggage_group.list %}
-                  <tr class="team-member" data-baggage-id="{{ baggage_group.grouper }}" data-gender="{{ team_member.user.profile.gender }}" data-rating-total="{{ team_member.user.rating_total|floatformat:2 }}" data-attendance-total="{{ team_member.attendance_total|floatformat:2 }}">
-                    <td>
-                      <input class="team-member-input" name="team_member_{{ team.id }}" value="{{ team_member.user.id }}" type="hidden" />
-                      <label>
-                        <input class="team-member-captain-input" name="team_member_captain_{{ team.id }}" {% if team_member.captain %}checked="checked"{% endif %} value="{{ team_member.user.id }}" type="checkbox" />
-                        {{ team_member.user.get_full_name }}
-                      </label>
-                    </td>
-                    <td></td>
-                    <td>{{ team_member.user.rating_total|floatformat:2 }}</td>
-                    <td>1</td>
-                    <td>{% if team_member.user.profile.gender == 'F' %}1{% endif %}</td>
-                    <td>{% if team_member.user.profile.gender == 'M' %}1{% endif %}</td>
-                    <td>{{ team_member.attendance_total }}</td>
-                    <td></td>
-                    <td>{{ baggage_group.grouper }}</td>
-                  </tr>
-                {% endfor %}
+              {% for team_member in team.teammember_set.all|dictsortreversed:"user.rating_total"|dictsort:"user.profile.gender" %}
+                <tr class="team-member" data-baggage-id="{{ team_member.baggage_id }}" data-gender="{{ team_member.user.profile.gender }}" data-rating-total="{{ team_member.user.rating_total|floatformat:2 }}" data-attendance-total="{{ team_member.attendance_total|floatformat:2 }}">
+                  <td>
+                    <input class="team-member-input" name="team_member_{{ team.id }}" value="{{ team_member.user.id }}" type="hidden" />
+                    <label>
+                      <input class="team-member-captain-input" name="team_member_captain_{{ team.id }}" {% if team_member.captain %}checked="checked"{% endif %} value="{{ team_member.user.id }}" type="checkbox" />
+                      {{ team_member.user.get_full_name }}
+                    </label>
+                  </td>
+                  <td></td>
+                  <td>{{ team_member.user.rating_total|floatformat:2 }}</td>
+                  <td>1</td>
+                  <td>{% if team_member.user.profile.gender == 'F' %}1{% endif %}</td>
+                  <td>{% if team_member.user.profile.gender == 'M' %}1{% endif %}</td>
+                  <td>{{ team_member.attendance_total }}</td>
+                  <td></td>
+                  <td>{{ team_member.baggage_id }}</td>
+                </tr>
               {% endfor %}
             </tbody>
           {% endfor %}
@@ -132,28 +128,24 @@
             </tr>
           </thead>
           <tbody id="team_0" class="sortable-table sortable-table-connected">
-            {% regroup unassigned_registrations by baggage_id as baggage_list %}
-
-            {% for baggage_group in baggage_list %}
-              {% for unassigned_registration in baggage_group.list %}
-                <tr class="team-member" data-baggage-id="{{ baggage_group.grouper }}" data-gender="{{ unassigned_registration.user.profile.gender }}" data-rating-total="{{ unassigned_registration.user.rating_total|floatformat:2 }}" data-attendance-total="{{ unassigned_registration.attendance|floatformat:2 }}">
-                  <td>
-                    <input class="team-member-input" name="team_member_0" value="{{ unassigned_registration.user.id }}" type="hidden" />
-                    <label>
-                      <input class="team-member-captain-input" name="team_member_captain-0" value="{{ unassigned_registration.user.id }}" type="checkbox" />
-                      {{ unassigned_registration.user.get_full_name }}
-                    </label>
-                  </td>
-                  <td></td>
-                  <td>{{ unassigned_registration.user.rating_total|floatformat:2 }}</td>
-                  <td>1</td>
-                  <td>{% if unassigned_registration.user.profile.gender == 'F' %}1{% endif %}</td>
-                  <td>{% if unassigned_registration.user.profile.gender == 'M' %}1{% endif %}</td>
-                  <td>{{ unassigned_registration.attendance_total }}</td>
-                  <td></td>
-                  <td>{{ baggage_group.grouper }}</td>
-                </tr>
-              {% endfor %}
+            {% for unassigned_registration in unassigned_registrations %}
+              <tr class="team-member" data-baggage-id="{{ unassigned_registration.baggage_id }}" data-gender="{{ unassigned_registration.user.profile.gender }}" data-rating-total="{{ unassigned_registration.user.rating_total|floatformat:2 }}" data-attendance-total="{{ unassigned_registration.attendance|floatformat:2 }}">
+                <td>
+                  <input class="team-member-input" name="team_member_0" value="{{ unassigned_registration.user.id }}" type="hidden" />
+                  <label>
+                    <input class="team-member-captain-input" name="team_member_captain-0" value="{{ unassigned_registration.user.id }}" type="checkbox" />
+                    {{ unassigned_registration.user.get_full_name }}
+                  </label>
+                </td>
+                <td></td>
+                <td>{{ unassigned_registration.user.rating_total|floatformat:2 }}</td>
+                <td>1</td>
+                <td>{% if unassigned_registration.user.profile.gender == 'F' %}1{% endif %}</td>
+                <td>{% if unassigned_registration.user.profile.gender == 'M' %}1{% endif %}</td>
+                <td>{{ unassigned_registration.attendance_total }}</td>
+                <td></td>
+                <td>{{ unassigned_registration.baggage_id }}</td>
+              </tr>
             {% endfor %}
           </tbody>
         </table>
