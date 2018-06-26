@@ -37,7 +37,7 @@
 			<thead>
 				<tr>
 					<th></th>
-					{% regroup league.game_set.all by date as games %}
+					{% regroup league.game_set.all|dictsort:"date" by date as games %}
 					{% for game_date in games %}
 						<th>{{ game_date.grouper|date:'m/d' }}</th>
 					{% endfor %}
