@@ -107,8 +107,8 @@ class RegistrationsAdmin(admin.ModelAdmin):
     save_as = True
     save_on_top = True
 
-    list_display = ('id', 'league', 'user_details', 'registered', 'waitlist', 'status',)
-    list_filter = ('league__year', 'league__season', 'league__night', 'paypal_complete', 'check_complete', 'waitlist', 'refunded',)
+    list_display = ('id', 'league', 'user_details', 'registered', 'waitlist', 'flagged', 'status',)
+    list_filter = ('league__year', 'league__season', 'league__night', 'paypal_complete', 'check_complete', 'waitlist', 'refunded', 'flagged',)
     search_fields = ['user__first_name', 'user__last_name', 'user__email', 'paypal_invoice_id', 'baggage__id', 'coupon__code']
 
     def get_form(self, request, obj=None, **kwargs):

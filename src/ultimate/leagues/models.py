@@ -669,6 +669,7 @@ class Registrations(models.Model):
     payment_complete = models.BooleanField(default=False)
     refunded = models.BooleanField(default=False)
     waitlist = models.BooleanField(default=False)
+    flagged = models.BooleanField(default=False)
     attendance = models.IntegerField(null=True, blank=True)
     captain = models.IntegerField(null=True, blank=True, choices=REGISTRATION_CAPTAIN_CHOICES)
     coupon = models.ForeignKey('leagues.Coupon', null=True, blank=True)
