@@ -320,6 +320,7 @@ def teamgeneration(request, year=None, season=None, division=None):
         for registration in league.get_complete_registrations():
             rating_totals = registration.user.rating_totals
             players.append({
+                'baggage': registration.baggage,
                 'baggage_id': registration.baggage.id,
                 'rating_totals': rating_totals,
                 'rating_total': rating_totals['total'],

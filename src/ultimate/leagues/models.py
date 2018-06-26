@@ -1152,8 +1152,8 @@ class TeamMember(models.Model):
         return Registrations.objects.get(league=self.team.league, user=self.user).attendance
 
     @property
-    def baggage_id(self):
-        return Registrations.objects.get(league=self.team.league, user=self.user).baggage_id
+    def baggage(self):
+        return Registrations.objects.get(league=self.team.league, user=self.user).baggage
 
 
 class Game(models.Model):
