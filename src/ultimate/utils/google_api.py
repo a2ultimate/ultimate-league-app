@@ -63,7 +63,7 @@ class GoogleAppsApi:
 
         try:
             logger.debug('Looking for existing group...')
-            groups_response = service.groups().list(customer='my_customer', domain='lists.annarborultimate.org').execute(http=self.http)
+            groups_response = service.groups().list(customer='my_customer', domain='lists.annarborultimate.org', query='email={}'.format(group_email_address)).execute(http=self.http)
         except Exception as e:
             return None
 
@@ -95,7 +95,7 @@ class GoogleAppsApi:
         if group_email_address and not group_id:
             try:
                 logger.debug('Looking for existing group...')
-                groups_response = service.groups().list(customer='my_customer', domain='lists.annarborultimate.org').execute(http=self.http)
+                groups_response = service.groups().list(customer='my_customer', domain='lists.annarborultimate.org', query='email={}'.format(group_email_address)).execute(http=self.http)
 
                 if groups_response:
                     for group in groups_response.get('groups'):
