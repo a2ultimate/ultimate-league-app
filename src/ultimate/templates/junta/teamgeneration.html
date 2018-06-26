@@ -90,7 +90,7 @@
             </thead>
             <tbody id="team-{{ team.id }}" class="sortable-table sortable-table-connected">
               {% for team_member in team.teammember_set.all|dictsortreversed:"user.rating_total"|dictsort:"user.profile.gender" %}
-                <tr class="team-member" data-baggage-id="{{ team_member.baggage_id }}" data-gender="{{ team_member.user.profile.gender }}" data-rating-total="{{ team_member.user.rating_total|floatformat:2 }}" data-attendance-total="{{ team_member.attendance_total|floatformat:2 }}">
+                <tr class="team-member" data-baggage-id="{{ team_member.baggage.id }}" data-gender="{{ team_member.user.profile.gender }}" data-rating-total="{{ team_member.user.rating_total|floatformat:2 }}" data-attendance-total="{{ team_member.attendance_total|floatformat:2 }}">
                   <td>
                     <input class="team-member-input" name="team_member_{{ team.id }}" value="{{ team_member.user.id }}" type="hidden" />
                     <label>
@@ -105,7 +105,7 @@
                   <td>{% if team_member.user.profile.gender == 'M' %}1{% endif %}</td>
                   <td>{{ team_member.attendance_total }}</td>
                   <td></td>
-                  <td>{{ team_member.baggage_id }}</td>
+                  <td>{{ team_member.baggage }}</td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -129,7 +129,7 @@
           </thead>
           <tbody id="team_0" class="sortable-table sortable-table-connected">
             {% for unassigned_registration in unassigned_registrations %}
-              <tr class="team-member" data-baggage-id="{{ unassigned_registration.baggage_id }}" data-gender="{{ unassigned_registration.user.profile.gender }}" data-rating-total="{{ unassigned_registration.user.rating_total|floatformat:2 }}" data-attendance-total="{{ unassigned_registration.attendance|floatformat:2 }}">
+              <tr class="team-member" data-baggage-id="{{ unassigned_registration.baggage }}" data-gender="{{ unassigned_registration.user.profile.gender }}" data-rating-total="{{ unassigned_registration.user.rating_total|floatformat:2 }}" data-attendance-total="{{ unassigned_registration.attendance|floatformat:2 }}">
                 <td>
                   <input class="team-member-input" name="team_member_0" value="{{ unassigned_registration.user.id }}" type="hidden" />
                   <label>
@@ -144,7 +144,7 @@
                 <td>{% if unassigned_registration.user.profile.gender == 'M' %}1{% endif %}</td>
                 <td>{{ unassigned_registration.attendance_total }}</td>
                 <td></td>
-                <td>{{ unassigned_registration.baggage_id }}</td>
+                <td>{{ unassigned_registration.baggage }}</td>
               </tr>
             {% endfor %}
           </tbody>
@@ -202,7 +202,7 @@
                 <td>{{ player.user.profile.gender }}</td>
                 <td title="{{ player.rating_totals|pprint }}">{{ player.rating_total|floatformat:2 }}</td>
                 <td>{{ player.attendance }}</td>
-                <td>{{ player.baggage_id }}</td>
+                <td>{{ player.baggage }}</td>
                 <td>{{ player.team_id }}</td>
               </tr>
             {% endfor %}
