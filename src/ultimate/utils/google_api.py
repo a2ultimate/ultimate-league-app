@@ -97,7 +97,7 @@ class GoogleAppsApi:
                 logger.debug('Looking for existing group...')
                 groups_response = service.groups().list(customer='my_customer', domain='lists.annarborultimate.org', query='email={}'.format(group_email_address)).execute(http=self.http)
 
-                if groups_response:
+                if groups_response and groups_response.get('groups'):
                     for group in groups_response.get('groups'):
                         if group.get('email') == group_email_address:
                             logger.debug('Group found!')
