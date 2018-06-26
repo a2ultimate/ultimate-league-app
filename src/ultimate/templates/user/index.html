@@ -114,11 +114,13 @@
               </td>
               <td>{{ registration.status }}</td>
               <td>
-                {% for baggage_reg in registration.baggage.get_registrations %}
-                  <div>{{ baggage_reg.user.get_full_name }}</div>
-                {% empty %}
+                {% if registration.baggage.get_registrations|length > 1 %}
+                  {% for baggage_reg in registration.baggage.get_registrations %}
+                    {{ baggage_reg.user.get_full_name }}<br>
+                  {% endfor %}
+                {% else %}
                   No Group
-                {% endfor %}
+                {% endif %}
 
                 {% if registration.is_complete and registration.league.baggage > 1 and not registration.waitlist and not registration.league.waitlist_start_date|is_past_deadline %}
                   <div><a href="{% url 'league_group' year=league.year season=league.season.slug division=league.night_slug %}">Edit Group</a></div>
