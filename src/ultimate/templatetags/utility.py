@@ -25,7 +25,11 @@ def groups_sort(groups):
 def smart_title(value):
     """Converts a string into titlecase."""
     """Excludes [a, an, the, and, but, or, for, nor, of]"""
-    t = re.sub(r'([a-z])\'([A-Z])', lambda m: m.group(0).lower(), value.title())
+    # strip smart single quotes
+    t = re.sub(u'\u2018|\u2019','\'', value.title())
+    # fix the plural
+    t = re.sub(r'([a-z])\'([A-Z])', lambda m: m.group(0).lower(), t)
+    # fix the letter following a number
     t = re.sub(r'\d([A-Z])', lambda m: m.group(0).lower(), t)
     return re.sub(r'(?i)\s(a|an|and|for|of|the)\b', lambda m: m.group(0).lower(), t)
 
