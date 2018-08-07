@@ -67,7 +67,7 @@ class GoogleAppsApi:
         except Exception as e:
             return None
 
-        if groups_response:
+        if groups_response and groups_response.get('groups'):
             for group in groups_response.get('groups'):
                 if group.get('email') == group_email_address:
                     logger.debug('Group found!')
