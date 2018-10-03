@@ -15,7 +15,7 @@ from ultimate.utils.email_groups import add_to_group, generate_email_list_addres
 
 
 def generateLeagueCoverImagePath(instance, filename):
-    return 'images/{}/{}/{}/{}'.format(instance.year, instance.season.slug, instance.night_slug, filename)
+    return u'images/{}/{}/{}/{}'.format(instance.year, instance.season.slug, instance.night_slug, filename)
 
 
 class Field(models.Model):
@@ -65,7 +65,7 @@ class FieldNames(models.Model):
         ordering = ['field__name', 'name']
 
     def __unicode__(self):
-        return '%s %s' % (self.field.name, self.name)
+        return u'{} {}'.format(self.field.name, self.name)
 
 
 class Season(models.Model):
@@ -78,7 +78,7 @@ class Season(models.Model):
         ordering = ['order', 'name']
 
     def __unicode__(self):
-        return '{}'.format(self.name)
+        return self.name
 
     def save(self):
         if not self.slug:
@@ -191,7 +191,7 @@ class League(models.Model):
         return reverse('league_summary', kwargs={'year': self.year, 'season': self.season.slug, 'division': self.night_slug})
 
     def __unicode__(self):
-        return ('%s %d %s' % (self.season, self.year, self.night))
+        return u'{} {} {}'.format(self.season, self.year, self.night)
 
     def save(self):
         if not self.night_slug:
@@ -217,19 +217,22 @@ class League(models.Model):
 
     @property
     def night_title(self):
-        return ('%s' % (self.night)).replace('_', ' ')
+        return self.night \
+            .replace('_', ' ')
 
     @property
     def season_title(self):
-        return ('%s' % (self.season)).replace('_', ' ')
+        return self.season.__unicode__() \
+            .replace('_', ' ')
 
     @property
     def season_year(self):
-        return '{} {}'.format(self.season, self.year)
+        return u'{} {}'.format(self.season, self.year)
 
     @property
     def gender_title(self):
-        return ('%s' % (self.gender)).replace('_', ' ')
+        return self.gender \
+            .replace('_', ' ')
 
     @property
     def league_start_datetime(self):
@@ -290,7 +293,7 @@ class League(models.Model):
     @property
     def status_text(self):
         if self.is_cancelled:
-            return '{} Cancelled'.format(self.display_type)
+            return u'{} Cancelled'.format(self.display_type)
 
         if timezone.now() < self.reg_start_date:
             return 'Coming Soon'
@@ -303,9 +306,9 @@ class League(models.Model):
                 return 'Accepting Registrations'
 
         if timezone.now() <= self.league_end_datetime:
-            return '{} In Progress'.format(self.display_type)
+            return u'{} In Progress'.format(self.display_type)
 
-        return '{} Completed'.format(self.display_type)
+        return u'{} Completed'.format(self.display_type)
 
     @property
     def status_color(self):
@@ -479,7 +482,7 @@ class League(models.Model):
             game_field = game.field_name.field.pk
             game_start = game.start.time() if game.start else game.start
             game_field_name = game.field_name.pk
-            location_id = '{}_{}_{}'.format(game_field, game_start, game_field_name)
+            location_id = u'{}_{}_{}'.format(game_field, game_start, game_field_name)
 
             if location_id not in locations:
                 locations[location_id] = {
@@ -523,7 +526,7 @@ class League(models.Model):
             game_field = game.field_name.field.pk
             game_start = game.start.time() if game.start else game.start
             game_field_name = game.field_name.pk
-            column_id = '{}_{}_{}'.format(game_field, game_start, game_field_name)
+            column_id = u'{}_{}_{}'.format(game_field, game_start, game_field_name)
 
             while game_locations[current_column_index]['id'] != column_id:
                 game_dates[current_date].append(None)
@@ -629,7 +632,7 @@ class Baggage(models.Model):
         db_table = u'baggage'
 
     def __unicode__(self):
-        return '%d (%d)' % (self.id, self.size)
+        return u'{} ({})'.format(self.id, self.size)
 
     @property
     def size(self):
@@ -680,7 +683,7 @@ class Registrations(models.Model):
         unique_together = ('user', 'league',)
 
     def __unicode__(self):
-        return '%d %s %s - %s %s' % (self.league.year, self.league.season, self.league.night, self.user, self.status)
+        return u'{} {} {} - {} {}'.format(self.league.year, self.league.season, self.league.night, self.user, self.status)
 
     @property
     def check_price(self):
@@ -889,12 +892,16 @@ class Team(models.Model):
         db_table = u'team'
 
     def __unicode__(self):
-        name = 'Team %d' % (self.id)
+        return self.pretty_name
+
+    @property
+    def pretty_name(self):
+        name = u'Team {}'.format(self.id)
 
         if self.name:
-            name = name + ' - ' + self.name
+            name = u'{} - {}'.format(name, self.name)
         if self.color:
-            return name + (' (%s)' % (self.color))
+            return u'{} {}'.format(name, self.color)
 
         return name
 
@@ -1145,7 +1152,7 @@ class TeamMember(models.Model):
         ordering = ['-captain', 'user__last_name']
 
     def __unicode__(self):
-        return '%s %s' % (self.user.first_name, self.user.last_name)
+        return u'{} {}'.format(self.user.first_name, self.user.last_name)
 
     @property
     def attendance_total(self):
@@ -1169,7 +1176,7 @@ class Game(models.Model):
         ordering = ['-date', 'field_name']
 
     def __unicode__(self):
-        return '{} {} {} {}'.format(self.league, self.date, self.start, self.field_name)
+        return u'{} {} {} {}'.format(self.league, self.date, self.start, self.field_name)
 
     def get_teams(self):
         return self.teams.all()
@@ -1253,11 +1260,11 @@ class Coupon(models.Model):
     @property
     def display_value(self):
         if self.type == self.COUPON_TYPE_AMOUNT:
-            return '${} off'.format(self.value)
+            return u'${} off'.format(self.value)
         elif self.type == self.COUPON_TYPE_FULL:
             return 'one free registration'
         elif self.type == self.COUPON_TYPE_PERCENTAGE:
-            return '{}% off'.format(self.value)
+            return u'{}% off'.format(self.value)
 
     def _generate_code(self):
         while 1:
@@ -1314,7 +1321,7 @@ class CouponRedemtion(models.Model):
         ordering = ['-redeemed_at', 'redeemed_by', ]
 
     def __unicode__(self):
-        return '%s by %s at %s' % (self.coupon.code, self.redeemed_by.email, self.redeemed_at)
+        return u'{} by {} at {}'.format(self.coupon.code, self.redeemed_by.email, self.redeemed_at)
 
     @classmethod
     def create(cls, coupon, user):

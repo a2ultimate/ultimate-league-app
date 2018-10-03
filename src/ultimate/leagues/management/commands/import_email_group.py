@@ -72,20 +72,20 @@ class Command(BaseCommand):
 
         if email_address:
             self.stdout.write(self.style.MIGRATE_HEADING('Adding email address to group:'))
-            self.stdout.write('Adding {} to {}...'.format(email_address, group_address))
+            self.stdout.write(u'Adding {} to {}...'.format(email_address, group_address))
 
             success_count = add_to_group(group_email_address=group_address, email_address=email_address)
 
             if success_count == 1:
                 self.stdout.write(self.style.MIGRATE_SUCCESS('DONE'))
-                self.stdout.write('Added {} to {}...'.format(email_address, group_address))
+                self.stdout.write(u'Added {} to {}...'.format(email_address, group_address))
             else:
                 self.stdout.write(self.style.ERROR(' HMMM...'))
                 self.stdout.write(self.style.ERROR('No email addresses added...'))
 
         elif file_path:
             self.stdout.write(self.style.MIGRATE_HEADING('Adding file to group:'))
-            self.stdout.write('Adding file to {}...'.format(group_address), ending="")
+            self.stdout.write(u'Adding file to {}...'.format(group_address), ending="")
             success_count = add_to_group(group_email_address=group_address, file_path=file_path)
             if success_count > 0:
                 self.stdout.write(self.style.MIGRATE_SUCCESS('DONE'))
@@ -100,13 +100,13 @@ class Command(BaseCommand):
             try:
                 team = Team.objects.get(id=team_id)
 
-                self.stdout.write('Adding Team {}...'.format(team))
+                self.stdout.write(u'Adding Team {}...'.format(team))
 
                 success_count, group_address = team.sync_email_group(force)
 
                 if success_count > 0:
                     self.stdout.write(self.style.MIGRATE_SUCCESS('DONE'))
-                    self.stdout.write(self.style.MIGRATE_SUCCESS('Added {} email addresses to {}'.format(success_count, group_address)))
+                    self.stdout.write(self.style.MIGRATE_SUCCESS(u'Added {} email addresses to {}'.format(success_count, group_address)))
                 else:
                     self.stdout.write(self.style.ERROR(' HMMM...'))
                     self.stdout.write(self.style.ERROR('No email addresses added...'))
@@ -121,15 +121,15 @@ class Command(BaseCommand):
             try:
                 league = League.objects.get(id=league_id)
 
-                self.stdout.write('Adding {}...'.format(league))
+                self.stdout.write(u'Adding {}...'.format(league))
 
                 success_count, group_address, captains_success_count, captains_group_address = \
                     league.sync_email_groups(force)
 
                 if success_count > 0:
                     self.stdout.write(self.style.MIGRATE_SUCCESS('DONE'))
-                    self.stdout.write(self.style.MIGRATE_SUCCESS('Added {} email addresses to {}'.format(success_count, group_address)))
-                    self.stdout.write(self.style.MIGRATE_SUCCESS('Added {} email addresses to {}'.format(captains_success_count, captains_group_address)))
+                    self.stdout.write(self.style.MIGRATE_SUCCESS(u'Added {} email addresses to {}'.format(success_count, group_address)))
+                    self.stdout.write(self.style.MIGRATE_SUCCESS(u'Added {} email addresses to {}'.format(captains_success_count, captains_group_address)))
                 else:
                     self.stdout.write(self.style.ERROR(' HMMM...'))
                     self.stdout.write(self.style.ERROR('No email addresses added...'))

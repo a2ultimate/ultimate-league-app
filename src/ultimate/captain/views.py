@@ -61,7 +61,7 @@ def exportteam(request, team_id):
         raise Http403
 
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="{}.csv"'.format(team.__unicode__().encode('ascii', 'ignore'))
+    response['Content-Disposition'] = u'attachment; filename="{}.csv"'.format(team)
 
     writer = csv.writer(response)
     writer.writerow([

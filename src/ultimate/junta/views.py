@@ -209,7 +209,7 @@ def registrationexport(request, year=None, season=None, division=None):
             export_type = 'league'
             league_id = int(request.POST.get('league_id', 0))
             league = get_object_or_404(League, id=league_id)
-            response['Content-Disposition'] = 'attachment; filename="a2u_{}.csv"'.format(league)
+            response['Content-Disposition'] = u'attachment; filename="a2u_{}.csv"'.format(league)
 
             if league_id:
                 registrations = registrations.filter(league=league)
@@ -219,7 +219,7 @@ def registrationexport(request, year=None, season=None, division=None):
         if 'export_year' in request.POST:
             export_type = 'year'
             year = int(request.POST.get('year', 0))
-            response['Content-Disposition'] = 'attachment; filename="a2u_{}.csv"'.format(year)
+            response['Content-Disposition'] = u'attachment; filename="a2u_{}.csv"'.format(year)
 
             if year:
                 registrations = registrations.filter(league__year=year)
@@ -457,7 +457,7 @@ def teamgeneration(request, year=None, season=None, division=None):
                         team['rating_average_male'] = team['rating_total_male'] / team['num_males']
 
                 def debug_group(group):
-                    print('\n\nPLACING GROUP: {} players, {} average rating'.format(group['num_players'], group['rating_average']))
+                    print(u'\n\nPLACING GROUP: {} players, {} average rating'.format(group['num_players'], group['rating_average']))
                     print('PLAYERS')
                     for player in group['players']:
                         print(player['user'])
@@ -466,7 +466,7 @@ def teamgeneration(request, year=None, season=None, division=None):
                     print('TEAMS')
                     print('=====')
                     for team in teams:
-                        print('{} players, {} females, {} average rating, {} average female rating, {}'.format(team['num_players'], team['num_females'], team['rating_average'], team['rating_average_female'], team['players'][0]['user'] if len(team['players']) else None))
+                        print(u'{} players, {} females, {} average rating, {} average female rating, {}'.format(team['num_players'], team['num_females'], team['rating_average'], team['rating_average_female'], team['players'][0]['user'] if len(team['players']) else None))
 
                 # distribute the groups with captains in them, one per team
                 for group in captain_groups:

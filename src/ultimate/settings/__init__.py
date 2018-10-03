@@ -10,5 +10,5 @@ elif app_runmode == 'prod':
     logging.info('Loading PRODUCTION environment...')
     from .prod import *
 else:
-    logging.info('Invalid value for APP_RUNMODE `{}`, loading DEVELOPMENT environment...:'.format(app_runmode))
+    logging.info(u'Invalid value for APP_RUNMODE `{}`, loading DEVELOPMENT environment...:'.format(app_runmode))
     from .dev import *
