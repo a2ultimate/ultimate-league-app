@@ -27,11 +27,15 @@ def add_to_group(group_id=None, group_email_address=None, email_address=None, fi
 
 def generate_email_list_address(league, team=None, suffix=None):
     if league.type == 'league':
+        descriptor = league.level
+        if not league.gender == 'corec':
+            descriptor = '{}-{}'.format(league.level, league.gender)
+
         group_address = u'{}{}-{}-{}'.format(
             league.season.slug,
             str(league.year)[-2:],
             league.league_start_date.strftime('%a'),
-            league.level,
+            descriptor,
         )
     else:
         group_address = u'{}{}-{}'.format(
@@ -46,16 +50,20 @@ def generate_email_list_address(league, team=None, suffix=None):
     if suffix is not None:
         group_address += '-' + suffix
 
-    return (group_address + '@lists.annarborultimate.org').lower()
+    return u'{}@lists.annarborultimate.org'.format(group_address).lower()
 
 
 def generate_email_list_name(league, team=None, suffix=None):
     if league.type == 'league':
+        descriptor = league.display_level
+        if not league.gender == 'corec':
+            descriptor = '{} {}'.format(league.display_level, league.display_gender)
+
         group_name = u'{} {} {} {}'.format(
             league.season.name,
             league.year,
             league.league_start_date.strftime('%A'),
-            league.display_level,
+            descriptor,
         )
     else:
         group_name = u'{} {} {}'.format(
@@ -65,9 +73,9 @@ def generate_email_list_name(league, team=None, suffix=None):
         )
 
     if team is not None:
-        group_name += ' Team ' + str(team.id)
+        group_name += ' - Team ' + str(team.id)
 
     if suffix is not None:
-        group_name += ' ' + suffix
+        group_name += ' - ' + suffix
 
     return group_name

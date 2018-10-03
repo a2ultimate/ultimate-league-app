@@ -472,6 +472,12 @@ class League(models.Model):
 
         return [r for r in registrations if r.is_complete and not r.refunded]
 
+    def get_player_count(self):
+        return TeamMember.objects.filter(team__league=self).count()
+
+    def get_captain_count(self):
+        return TeamMember.objects.filter(team__league=self, captain=True).count()
+
     def get_game_locations(self, games=None):
         if games is None:
             games = self.game_set.order_by('date', 'start', 'field_name', 'field_name__field')

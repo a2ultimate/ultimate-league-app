@@ -85,8 +85,10 @@ class Command(BaseCommand):
 
         elif file_path:
             self.stdout.write(self.style.MIGRATE_HEADING('Adding file to group:'))
-            self.stdout.write(u'Adding file to {}...'.format(group_address), ending="")
+            self.stdout.write(u'Adding file to {}...'.format(group_address), ending='')
+
             success_count = add_to_group(group_email_address=group_address, file_path=file_path)
+
             if success_count > 0:
                 self.stdout.write(self.style.MIGRATE_SUCCESS('DONE'))
             else:
@@ -103,12 +105,16 @@ class Command(BaseCommand):
                 self.stdout.write(u'Adding Team {}...'.format(team))
 
                 success_count, group_address = team.sync_email_group(force)
+                target_count = team.size
 
-                if success_count > 0:
-                    self.stdout.write(self.style.MIGRATE_SUCCESS('DONE'))
-                    self.stdout.write(self.style.MIGRATE_SUCCESS(u'Added {} email addresses to {}'.format(success_count, group_address)))
+                if success_count == target_count:
+                    self.stdout.write(self.style.MIGRATE_SUCCESS('SUCCESS'))
+                    self.stdout.write(self.style.MIGRATE_SUCCESS(u'Added {} of {} email addresses to {}'.format(success_count, target_count, group_address)))
+                elif success_count > 0:
+                    self.stdout.write(self.style.ERROR('HMMM...'))
+                    self.stdout.write(self.style.ERROR(u'Added {} of {} email addresses to {}'.format(success_count, target_count, group_address)))
                 else:
-                    self.stdout.write(self.style.ERROR(' HMMM...'))
+                    self.stdout.write(self.style.ERROR('HMMM...'))
                     self.stdout.write(self.style.ERROR('No email addresses added...'))
 
             except Team.DoesNotExist:
@@ -123,15 +129,22 @@ class Command(BaseCommand):
 
                 self.stdout.write(u'Adding {}...'.format(league))
 
-                success_count, group_address, captains_success_count, captains_group_address = \
+                all_success_count, group_address, captains_success_count, captains_group_address = \
                     league.sync_email_groups(force)
 
-                if success_count > 0:
-                    self.stdout.write(self.style.MIGRATE_SUCCESS('DONE'))
-                    self.stdout.write(self.style.MIGRATE_SUCCESS(u'Added {} email addresses to {}'.format(success_count, group_address)))
-                    self.stdout.write(self.style.MIGRATE_SUCCESS(u'Added {} email addresses to {}'.format(captains_success_count, captains_group_address)))
+                all_target_count = league.get_player_count()
+                captains_target_count = league.get_captain_count()
+
+                if all_success_count == all_target_count and captains_success_count == captains_target_count:
+                    self.stdout.write(self.style.MIGRATE_SUCCESS('SUCCESS'))
+                    self.stdout.write(self.style.MIGRATE_SUCCESS(u'Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, group_address)))
+                    self.stdout.write(self.style.MIGRATE_SUCCESS(u'Added {} of {} email addresses to {}'.format(captains_success_count, captains_target_count, captains_group_address)))
+                elif all_success_count > 0 or captains_success_count > 0:
+                    self.stdout.write(self.style.ERROR('HMMM...'))
+                    self.stdout.write(self.style.ERROR(u'Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, group_address)))
+                    self.stdout.write(self.style.ERROR(u'Added {} of {} email addresses to {}'.format(captains_success_count, captains_target_count, captains_group_address)))
                 else:
-                    self.stdout.write(self.style.ERROR(' HMMM...'))
+                    self.stdout.write(self.style.ERROR('HMMM...'))
                     self.stdout.write(self.style.ERROR('No email addresses added...'))
 
             except League.DoesNotExist:
