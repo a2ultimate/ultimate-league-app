@@ -236,11 +236,12 @@ def registrationexport(request, year=None, season=None, division=None):
                                                                 captain=True).exists()
 
                 try:
-                    gender = reduce(getattr, 'user.profile.gender'.split('.'), registration)
-                    age = reduce(getattr, 'user.profile.age'.split('.'), registration)
+                    profile = reduce(getattr, 'user.profile'.split('.'), registration)
+                    gender = profile.gender
+                    age_on_start_date = profile.get_age_on(registration.league.league_start_date)
                 except AttributeError:
                     gender = None
-                    age = 0
+                    age_on_start_date = 0
 
                 registration_data = {
                     'team_id': registration.get_team_id(),
@@ -249,7 +250,7 @@ def registrationexport(request, year=None, season=None, division=None):
                     'last_name': registration.user.last_name,
                     'email': registration.user.email,
                     'gender': gender,
-                    'age': int(0 if age is None else age),
+                    'age': int(0 if age_on_start_date is None else age_on_start_date),
                     'registration_status': registration.status,
                     'registration_timestamp': registration.registered,
                     'registration_waitlisted': int(registration.waitlist),
@@ -263,9 +264,10 @@ def registrationexport(request, year=None, season=None, division=None):
 
                 if export_type == 'league':
                     try:
-                        height_inches = reduce(getattr, 'user.profile.height_inches'.split('.'), registration)
-                        guardian_name = reduce(getattr, 'user.profile.guardian_name'.split('.'), registration)
-                        guardian_phone = reduce(getattr, 'user.profile.guardian_phone'.split('.'), registration)
+                        profile = reduce(getattr, 'user.profile'.split('.'), registration)
+                        height_inches = profile.height_inches
+                        guardian_name = profile.guardian_name
+                        guardian_phone = profile.guardian_phone
                     except AttributeError:
                         height_inches = 0
                         guardian_name = None
