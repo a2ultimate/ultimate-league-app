@@ -21,6 +21,10 @@ class GameReport(models.Model):
         return self.gamereportcomment_set.exclude(comment='').exists()
 
     @property
+    def has_poor_spirit_comment(self):
+        return self.gamereportcomment_set.filter(spirit__lte=5).exists()
+
+    @property
     def num_players_in_attendance(self):
         return self.gamereportattendance_set.count()
 
@@ -44,17 +48,17 @@ class GameReportAttendance(models.Model):
 class GameReportComment(models.Model):
     SPIRIT_CHOICES = (
         ('', u''),
-        (10, u'10 - Awesome'),
+        (10, u'10'),
         (9, u'9'),
-        (8, u'8 - Great'),
-        (7, u'7'),
-        (6, u'6 - Good'),
+        (8, u'8'),
+        (7, u'7 - Average'),
+        (6, u'6'),
         (5, u'5'),
-        (4, u'4 - Okay'),
+        (4, u'4'),
         (3, u'3'),
-        (2, u'2 - Bad'),
+        (2, u'2'),
         (1, u'1'),
-        (0, u'0 - Awful'),
+        (0, u'0'),
     )
 
     report = models.ForeignKey('captain.GameReport')

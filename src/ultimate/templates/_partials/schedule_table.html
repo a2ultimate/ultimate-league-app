@@ -71,7 +71,7 @@
 
                   {% if link_game_report %}
                     {% for report in game|get_report_for_team:team %}
-                      <div>
+                      <div{% if report.has_poor_spirit_comment %} class="schedule-table-game-team-highlight-danger"{% endif %}>
                         {% if report.has_comment %}
                         <strong>
                         {% endif %}
