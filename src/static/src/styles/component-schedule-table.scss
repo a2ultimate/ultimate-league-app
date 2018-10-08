@@ -25,6 +25,11 @@
   }
 }
 
+.schedule-table-game-team-highlight-danger {
+  background-color: $color-red;
+  color: $color-white;
+}
+
 .schedule-table-game-team-link,
 .schedule-table-game-team-jump {
   display: block;

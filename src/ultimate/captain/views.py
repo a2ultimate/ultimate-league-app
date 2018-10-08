@@ -61,7 +61,7 @@ def exportteam(request, team_id):
         raise Http403
 
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="{}.csv"'.format(team.__unicode__().encode('ascii', 'ignore'))
+    response['Content-Disposition'] = u'attachment; filename="{}.csv"'.format(team)
 
     writer = csv.writer(response)
     writer.writerow([
@@ -81,12 +81,14 @@ def exportteam(request, team_id):
 
     for team_member in team_members:
         try:
-            gender = reduce(getattr, 'user.profile.gender'.split('.'), team_member)
-            age = reduce(getattr, 'user.profile.age'.split('.'), team_member)
-            height_inches = reduce(getattr, 'user.profile.height_inches'.split('.'), team_member)
+            profile = reduce(getattr, 'user.profile'.split('.'), team_member)
+
+            gender = profile.gender
+            height_inches = profile.height_inches
+            age_on_start_date = profile.get_age_on(team.league.league_start_date)
         except AttributeError:
             gender = None
-            age = 0
+            age_on_start_date = 0
             height_inches = 0
 
         writer.writerow([
@@ -96,7 +98,7 @@ def exportteam(request, team_id):
             team_member.user.last_name,
             team_member.user.email,
             gender,
-            int(0 if age is None else age),
+            int(0 if age_on_start_date is None else age_on_start_date),
             height_inches,
             TeamMember.objects.filter(user=team_member.user).count(),
             getattr(Registrations.objects.get(user=team_member.user, league=team.league), 'attendance', 0),
