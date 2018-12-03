@@ -13,16 +13,14 @@
   {% if not season %}
     {% include '_partials/league_list.html' with leagues=leagues link_view='league_summary' only %}
   {% else %}
-    {% with league=leagues|first %}
-      <h1>{% include '_partials/league_header.html' with league=league only %}</h1>
+    <h1>{% include '_partials/league_header.html' with league=first_division only %}</h1>
 
-      <h4>
-        Ann Arbor Ultimate is proud to present {{ league.season_title|smart_title }} League {{ year }}.
-        There {{ leagues|pluralize:'is,are' }} <strong>{{ leagues|length }}</strong> division{{ leagues|pluralize }}.
-      </h4>
+    <h4>
+      Ann Arbor Ultimate is proud to present {{ league.season_title|smart_title }} League {{ year }}.
+      There {{ leagues|pluralize:'is,are' }} <strong>{{ leagues|length }}</strong> division{{ leagues|pluralize }}.
+    </h4>
 
-      <hr>
-    {% endwith %}
+    <hr>
 
     {% for league in leagues %}
       <h2>
