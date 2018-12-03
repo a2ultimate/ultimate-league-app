@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.db.models import ObjectDoesNotExist, Q
 from django.db.transaction import atomic
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
@@ -28,9 +28,10 @@ def index(request, year=None, season=None):
         leagues = League.objects.all().order_by('-league_start_date')
 
     if not request.user.is_superuser and not request.user.groups.filter(name='junta').exists():
-        leagues = leagues.filter(state__in=['closed', 'open'])
-    elif not request.user.is_superuser:
-        leagues = leagues.filter(state__in=['closed', 'open', 'preview'])
+        leagues = leagues.filter(state__in=['cancelled', 'closed', 'open'])
+
+    if not leagues:
+        raise Http404('Season Not Found')
 
     first_division = leagues.first()
 
@@ -46,7 +47,20 @@ def index(request, year=None, season=None):
 
 
 def summary(request, year, season, division):
-    league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
+    valid_division_states = ['cancelled', 'closed', 'open']
+    if request.user.is_superuser or request.user.groups.filter(name='junta').exists():
+        valid_division_states = valid_division_states + ['hidden', 'preview']
+
+    try:
+        league = League.objects.get(
+            Q(year=year),
+            Q(season__name=season) | Q(season__slug=season),
+            Q(night=division) | Q(night_slug=division),
+            state__in=valid_division_states,
+        )
+    except League.DoesNotExist:
+        raise Http404('Division Not Found')
+
     return render_to_response('leagues/summary.html',
         {
             'league': league
@@ -55,7 +69,20 @@ def summary(request, year, season, division):
 
 
 def details(request, year, season, division):
-    league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
+    valid_division_states = ['cancelled', 'closed', 'open']
+    if request.user.is_superuser or request.user.groups.filter(name='junta').exists():
+        valid_division_states = valid_division_states + ['hidden', 'preview']
+
+    try:
+        league = League.objects.get(
+            Q(year=year),
+            Q(season__name=season) | Q(season__slug=season),
+            Q(night=division) | Q(night_slug=division),
+            state__in=valid_division_states,
+        )
+    except League.DoesNotExist:
+        raise Http404('Division Not Found')
+
     return render_to_response('leagues/details.html',
         {
             'league': league
@@ -64,7 +91,19 @@ def details(request, year, season, division):
 
 
 def players(request, year, season, division):
-    league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
+    valid_division_states = ['cancelled', 'closed', 'open']
+    if request.user.is_superuser or request.user.groups.filter(name='junta').exists():
+        valid_division_states = valid_division_states + ['hidden', 'preview']
+
+    try:
+        league = League.objects.get(
+            Q(year=year),
+            Q(season__name=season) | Q(season__slug=season),
+            Q(night=division) | Q(night_slug=division),
+            state__in=valid_division_states,
+        )
+    except League.DoesNotExist:
+        raise Http404('Division Not Found')
 
     user_registration = None
     if request.user.is_authenticated():
@@ -98,7 +137,20 @@ def players(request, year, season, division):
 
 
 def teams(request, year, season, division):
-    league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
+    valid_division_states = ['cancelled', 'closed', 'open']
+    if request.user.is_superuser or request.user.groups.filter(name='junta').exists():
+        valid_division_states = valid_division_states + ['hidden', 'preview']
+
+    try:
+        league = League.objects.get(
+            Q(year=year),
+            Q(season__name=season) | Q(season__slug=season),
+            Q(night=division) | Q(night_slug=division),
+            state__in=valid_division_states,
+        )
+    except League.DoesNotExist:
+        raise Http404('Division Not Found')
+
     user_games = None
 
     games = league.game_set.order_by('date', 'start', 'field_name', 'field_name__field')
@@ -131,7 +183,20 @@ def teams(request, year, season, division):
 @atomic
 @login_required
 def group(request, year, season, division):
-    league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
+    valid_division_states = ['cancelled', 'closed', 'open']
+    if request.user.is_superuser or request.user.groups.filter(name='junta').exists():
+        valid_division_states = valid_division_states + ['hidden', 'preview']
+
+    try:
+        league = League.objects.get(
+            Q(year=year),
+            Q(season__name=season) | Q(season__slug=season),
+            Q(night=division) | Q(night_slug=division),
+            state__in=valid_division_states,
+        )
+    except League.DoesNotExist:
+        raise Http404('Division Not Found')
+
     registration = get_object_or_404(Registrations, league=league, user=request.user)
 
     if request.method == 'POST':
@@ -165,7 +230,19 @@ def group(request, year, season, division):
 @atomic
 @login_required
 def registration(request, year, season, division, section=None):
-    league = get_object_or_404(League, Q(year=year), Q(season__name=season) | Q(season__slug=season), Q(night=division) | Q(night_slug=division))
+    valid_division_states = ['cancelled', 'closed', 'open']
+    if request.user.is_superuser or request.user.groups.filter(name='junta').exists():
+        valid_division_states = valid_division_states + ['hidden', 'preview']
+
+    try:
+        league = League.objects.get(
+            Q(year=year),
+            Q(season__name=season) | Q(season__slug=season),
+            Q(night=division) | Q(night_slug=division),
+            state__in=valid_division_states,
+        )
+    except League.DoesNotExist:
+        raise Http404('Division Not Found')
 
     try:
         registration, created = Registrations.objects.get_or_create(user=request.user, league=league)
