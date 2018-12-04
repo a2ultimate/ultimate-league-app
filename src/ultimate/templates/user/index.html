@@ -70,10 +70,10 @@
 
         {% if following_game.start %}
           at <strong>{{ following_game.start|date:'g:iA'|lower }}</strong>
-          on <strong>{{ following_game.date|date:'l F jS, Y' }}</strong><br />
+          on <strong>{{ following_game.date|date:'l F jS, Y' }}</strong><br>
         {% else %}
           on <strong>{{ following_game.date|date:'l F jS, Y' }}</strong>
-          from <strong>{{ following_game.league.times }}</strong><br />
+          from <strong>{{ following_game.league.times }}</strong><br>
         {% endif %}
 
         at <strong>{{ following_game.field_name.field.name }} {{ following_game.field_name.name }}</strong>.
@@ -134,10 +134,8 @@
 
     <p class="page-user-index-registrations-note">
       PayPal payments occasionally take some time to clear. Try reloading after a few minutes have passed.
-      <br />
+      <br>
       If you used the e-check feature of Paypal it may take up to a week to clear.
-      <br />
-      If paying by check, the status will remain unconfirmed until your check is received and deposited.
     </p>
   {% else %}
     <h3>No Registrations Found</h3>
