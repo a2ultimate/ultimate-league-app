@@ -17,7 +17,9 @@ def settings_value(name):
 
 @register.filter()
 def groups_sort(groups):
-    return sorted(groups, key=lambda group: len(group['list']))
+    groups = sorted(groups, key=lambda group: group['list'][0].registered)
+    groups = sorted(groups, key=lambda group: len(group['list']))
+    return groups
 
 
 @register.filter(is_safe=True)

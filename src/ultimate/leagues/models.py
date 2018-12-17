@@ -431,7 +431,8 @@ class League(models.Model):
         return user_registration
 
     def get_registrations(self):
-        return self.registrations_set.filter(league=self).order_by('registered') \
+        return self.registrations_set \
+            .order_by('registered', 'updated', 'created') \
             .prefetch_related('baggage') \
             .prefetch_related('league') \
             .prefetch_related('user') \
@@ -687,6 +688,7 @@ class Registrations(models.Model):
         db_table = u'registrations'
         verbose_name_plural = 'registrations'
         unique_together = ('user', 'league',)
+        ordering = ['-registered', '-updated', '-created']
 
     def __unicode__(self):
         return u'{} {} {} - {} {}'.format(self.league.year, self.league.season, self.league.night, self.user, self.status)

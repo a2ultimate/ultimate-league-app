@@ -53,7 +53,7 @@
     {% endif %}
 
     <div class="page-division-players-list">
-      {% regroup complete_registrations|dictsort:'baggage.id' by baggage as baggage_group %}
+      {% regroup complete_registrations by baggage.id as baggage_group %}
       {% for baggage in baggage_group|groups_sort %}
       <ul class="page-division-players-list-group">
         {% for registration in baggage.list %}
@@ -69,8 +69,7 @@
     <div class="message message-small">
       <h4>Name not on the list?</h4>
       <ul class="no-spacing-list">
-        <li>Did you pay by check? If so, maybe we don't have your check yet.</li>
-        <li>Anything else? <a href="mailto:registration@annarborultimate.org">Email us at registration@annarborultimate.org.</a></li>
+        <li>Feel free to <a href="mailto:registration@annarborultimate.org">email us at registration@annarborultimate.org</a>.</li>
       </ul>
     </div>
 
