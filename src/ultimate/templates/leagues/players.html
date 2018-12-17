@@ -53,7 +53,7 @@
     {% endif %}
 
     <div class="page-division-players-list">
-      {% regroup complete_registrations|dictsort:'baggage.id' by baggage as baggage_group %}
+      {% regroup complete_registrations by baggage.id as baggage_group %}
       {% for baggage in baggage_group|groups_sort %}
       <ul class="page-division-players-list-group">
         {% for registration in baggage.list %}
