@@ -93,6 +93,30 @@ class LeagueAdmin(admin.ModelAdmin):
     search_fields = ['year', 'season__name', 'season__slug', 'night', 'night_slug', 'gender',]
 
 
+def mark_flagged(modeladmin, request, queryset):
+    queryset.update(flagged=True)
+mark_flagged.short_description = "Mark selected registrations as flagged"
+
+def mark_not_flagged(modeladmin, request, queryset):
+    queryset.update(flagged=False)
+mark_not_flagged.short_description = "Mark selected registrations as not flagged"
+
+def mark_refunded(modeladmin, request, queryset):
+    queryset.update(refunded=True)
+mark_refunded.short_description = "Mark selected registrations as refunded"
+
+def mark_not_refunded(modeladmin, request, queryset):
+    queryset.update(refunded=False)
+mark_not_refunded.short_description = "Mark selected registrations as not refunded"
+
+def mark_waitlisted(modeladmin, request, queryset):
+    queryset.update(waitlist=True)
+mark_waitlisted.short_description = "Mark selected registrations as waitlisted"
+
+def mark_not_waitlisted(modeladmin, request, queryset):
+    queryset.update(waitlist=False)
+mark_not_waitlisted.short_description = "Mark selected registrations as not waitlisted"
+
 class RegistrationsAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
@@ -110,6 +134,8 @@ class RegistrationsAdmin(admin.ModelAdmin):
     list_display = ('id', 'league', 'user_details', 'registered', 'waitlist', 'flagged', 'status',)
     list_filter = ('league__year', 'league__season', 'league__night', 'paypal_complete', 'check_complete', 'waitlist', 'refunded', 'flagged',)
     search_fields = ['user__first_name', 'user__last_name', 'user__email', 'paypal_invoice_id', 'baggage__id', 'coupon__code']
+
+    actions = [mark_flagged, mark_not_flagged, mark_refunded, mark_not_refunded, mark_waitlisted, mark_not_waitlisted]
 
     def get_form(self, request, obj=None, **kwargs):
         # just save obj reference for future processing in Inline

@@ -1,4 +1,5 @@
 import collections
+import datetime
 import re
 
 from django import template
@@ -17,7 +18,7 @@ def settings_value(name):
 
 @register.filter()
 def groups_sort(groups):
-    groups = sorted(groups, key=lambda group: group['list'][0].registered)
+    groups = sorted(groups, key=lambda group: group['list'][0].registered or datetime.datetime.now())
     groups = sorted(groups, key=lambda group: len(group['list']))
     return groups
 
