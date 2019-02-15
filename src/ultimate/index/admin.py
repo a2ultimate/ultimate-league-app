@@ -1,5 +1,14 @@
 from django.contrib import admin
-from ultimate.index.models import (StaticContent, StaticMenuItems)
+from ultimate.index.models import (NewsArticle, StaticContent, StaticMenuItems)
+
+
+class NewsArticleAdmin(admin.ModelAdmin):
+    list_display = ('title', 'url', 'created', 'updated', 'is_published',)
+    list_display_links = ('title',)
+    prepopulated_fields = {'url': ('title',),}
+    save_as = True
+    save_on_top = True
+    search_fields = ['title', 'content',]
 
 
 class StaticContentAdmin(admin.ModelAdmin):
@@ -16,5 +25,6 @@ class StaticMenuItemsAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
+admin.site.register(NewsArticle, NewsArticleAdmin)
 admin.site.register(StaticContent, StaticContentAdmin)
 admin.site.register(StaticMenuItems, StaticMenuItemsAdmin)

@@ -1,0 +1,38 @@
+{% extends 'layout/layout_home.html' %}
+
+{% load admin_urls %}
+{% load markdown_deux_tags %}
+
+{% block title %}{{ article.title }} &middot; {{ block.super }}{% endblock %}
+{% block og_title %}{{ article.title }} &middot; {{ block.super }}{% endblock %}
+
+{% block content %}
+  <h1>{{ article.title }}</h1>
+
+  {% if article.is_markdown %}
+    {{ article.content|markdown }}
+  {% elif article.is_html %}
+    {{ article.content|safe }}
+  {% else %}
+    {{ article.content }}
+  {% endif %}
+
+  {% if article.updated %}
+    <hr>
+    <p>
+      <small>Last Updated: {{ article.updated|date:'F jS, Y' }}</small>
+    </p>
+  {% endif %}
+
+  {% if 'index.change_staticcontent' in perms %}
+    <div class="page-division-teams-notes">
+      <h4 class="page-division-teams-notes-title">
+        Admin Only
+      </h4>
+
+      <div class="page-division-teams-notes-content">
+        <a href="{% url 'admin:index_newsarticle_change' article.id %}">Edit Page</a>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
