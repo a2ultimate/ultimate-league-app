@@ -13,8 +13,6 @@ urlpatterns = patterns('',
     (r'^leagues/', include('ultimate.leagues.urls')),
     (r'^user/', include('ultimate.user.urls')),
 
-    (r'^forum/', include('pybb.urls', namespace='pybb')),
-
     (r'^captcha/', include('captcha.urls')),
     (r'^hijack/', include('hijack.urls')),
 )

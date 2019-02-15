@@ -15,7 +15,6 @@ module.exports = {
       'webpack-dev-server/client?http://localhost:8080',
       path.resolve(__dirname, 'static/src/main.js'),
     ],
-    forum: path.resolve(__dirname, 'static/src/forum.js'),
   },
   output: {
     path: path.resolve(__dirname, 'static/build'),

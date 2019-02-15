@@ -7,8 +7,6 @@ from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from pybb.models import PybbProfile
-
 
 class UserManager(BaseUserManager):
 
@@ -218,7 +216,7 @@ class User(AbstractUser):
         return self.playerratings_set.filter(ratings_type=PlayerRatings.RATING_TYPE_USER).first()
 
 
-class Player(PybbProfile):
+class Player(models.Model):
     GENDER_FEMALE = 'F'
     GENDER_MALE = 'M'
     GENDER_CHOICES = (
