@@ -73,9 +73,9 @@ strong {
 }
 
 hr {
-  margin-top: $spacer-y;
-  margin-bottom: $spacer-y;
+  padding-top: $spacer-y;
+  margin-bottom: ($spacer-y * 2);
 
   border: 0;
-  border-top: $hr-border-width solid $hr-border-color;
+  border-bottom: $hr-thickness solid $hr-color;
 }

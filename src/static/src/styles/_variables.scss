@@ -23,12 +23,12 @@ $font-size-h6: 0.75rem;
 
 $small-font-size: 80%;
 
-$hr-border-color: rgba(0,0,0,.1);
-$hr-border-width: $border-width;
+$hr-color: rgba(0, 0, 0, 0.1);
+$hr-thickness: $border-width;
 
 
-$headings-margin-bottom: ($spacer / 2);
+$headings-margin-bottom: $spacer;
 $headings-font-family: $font-family-lato;
 $headings-font-weight: 600;
-$headings-line-height: 1.1;
+$headings-line-height: 1.5;
 $headings-color: inherit;
