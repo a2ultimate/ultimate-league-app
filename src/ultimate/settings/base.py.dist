@@ -2,7 +2,6 @@ import os
 import sys
 
 PROJECT_ROOT = os.path.dirname(__file__)
-sys.path.insert(0, os.path.join(PROJECT_ROOT, '../../apps'))
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -76,7 +75,6 @@ INSTALLED_APPS = (
     'hijack',
     'hijack_admin',
     'paypal.standard.ipn',
-    'pybb',
     'pytils',
     'webpack_loader',
 
@@ -106,8 +104,6 @@ TEMPLATES = [
                 'django.template.context_processors.media',
                 'django.template.context_processors.request',
                 'django.template.context_processors.static',
-
-                'pybb.context_processors.processor',
 
                 'ultimate.context_processors.google_analytics',
                 'ultimate.context_processors.menu_leagues',
@@ -225,11 +221,6 @@ PAYPAL_CALLBACKS = [
   'change/me/',
 ]
 
-
-# PYBB - http://www.pybbm.org/
-PYBB_DEFAULT_TITLE = 'A2Ultimate Forums'
-PYBB_TEMPLATE = 'layout/forum_base.html'
-PYBB_DEFAULT_TIME_ZONE = -5
 
 # SOCIAL
 SOCIAL = [

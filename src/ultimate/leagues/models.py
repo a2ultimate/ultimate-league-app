@@ -152,6 +152,7 @@ class League(models.Model):
 
     schedule_note = models.TextField(blank=True, help_text='note to appear under the schedule')
     captaining_note = models.TextField(blank=True, help_text='note for captaining, typically captain meeting date and time')
+    registration_prompt = models.TextField(blank=True, help_text='prompt to show during registration, e.g. to collect data around format preference')
 
     num_games_per_week = models.IntegerField(default=1, help_text='number of games per week, used to calculate number of games for a league')
     num_skip_weeks = models.IntegerField(default=0, help_text='number of weeks skipped, e.g. skipping 4th of July')
@@ -683,6 +684,7 @@ class Registrations(models.Model):
     attendance = models.IntegerField(null=True, blank=True)
     captain = models.IntegerField(null=True, blank=True, choices=REGISTRATION_CAPTAIN_CHOICES)
     coupon = models.ForeignKey('leagues.Coupon', null=True, blank=True)
+    prompt_response = models.CharField(max_length=255, null=True, blank=True, help_text='response to the registration prompt for a division')
 
     class Meta:
         db_table = u'registrations'

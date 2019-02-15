@@ -1,5 +1,62 @@
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.template.defaultfilters import slugify
+from django.utils import timezone
+
+
+class NewsArticle(models.Model):
+    NEWS_TYPE_HTML = 'html'
+    NEWS_TYPE_MARKDOWN = 'markdown'
+    NEWS_TYPE_PLAIN = 'plain'
+    NEWS_TYPE_CHOICES = (
+        (NEWS_TYPE_HTML, 'HTML'),
+        (NEWS_TYPE_MARKDOWN, 'Markdown'),
+        (NEWS_TYPE_PLAIN, 'Plain'),
+    )
+
+    id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=255)
+    url = models.SlugField(null=True, blank=True)
+    type = models.CharField(max_length=8, choices=NEWS_TYPE_CHOICES)
+    content = models.TextField()
+
+    created = models.DateTimeField(auto_now_add=True)
+    published = models.DateTimeField()
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = u'news_article'
+        ordering = ['-published', '-created', '-updated']
+
+    def __unicode__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        idOrUrl = self.url if self.url else self.id
+        return reverse('news_acticle', kwargs={'url': idOrUrl})
+
+    def save(self):
+        if not self.url:
+            self.url = slugify(self.title[:50])
+
+        super(NewsArticle, self).save()
+
+    @property
+    def is_html(self):
+        return self.type == self.NEWS_TYPE_HTML
+
+    @property
+    def is_markdown(self):
+        return self.type == self.NEWS_TYPE_MARKDOWN
+
+    @property
+    def is_plain(self):
+        return self.type == self.NEWS_TYPE_PLAIN
+
+    @property
+    def is_published(self):
+        return self.published <= timezone.now()
+
 
 
 class StaticContent(models.Model):

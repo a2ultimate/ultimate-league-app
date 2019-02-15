@@ -12,7 +12,6 @@ require('es6-promise').polyfill();
 module.exports = {
   entry: {
     main: path.resolve(__dirname, 'static/src/main.js'),
-    forum: path.resolve(__dirname, 'static/src/forum.js'),
   },
   output: {
     path: path.resolve(__dirname, 'static/build'),

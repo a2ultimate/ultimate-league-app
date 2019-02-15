@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     url(r'^$', views.index, {}, 'home'),
     url(r'^announcements/$', views.announcements, {}, 'announcements'),
+    url(r'^news/(?P<url>[^/]+)$', views.news, {}, 'news_acticle'),
 
     url(r'^about/$', views.static, {'content_url': 'about'}, 'about'),
     url(r'^club/$', views.static, {'content_url': 'club'}, 'club'),

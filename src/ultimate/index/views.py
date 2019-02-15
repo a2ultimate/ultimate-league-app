@@ -1,29 +1,43 @@
 from django.conf import settings
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 
-from pybb.models import Topic
-
-from ultimate.index.models import StaticContent
+from ultimate.index.models import NewsArticle, StaticContent
 from ultimate.forms import AnnoucementsForm
 from ultimate.utils.calendar import get_events
 from ultimate.utils.email_groups import add_to_group
 
 
 def index(request):
-    announcements_list = Topic.objects.filter(
-        forum__name__exact='Announcements').order_by('-created')[:5]
+    news_articles = NewsArticle.objects.all()[:5]
 
     events = get_events()[:7]
 
     return render_to_response('index/index.html',
                               {
-                                  'announcements': announcements_list,
+                                  'news_articles': news_articles,
                                   'events': events,
                               },
+                              context_instance=RequestContext(request))
+
+
+def news(request, url):
+    try:
+        if url.isdigit():
+            news_article = NewsArticle.objects.get(id=url)
+        else:
+            news_article = NewsArticle.objects.get(url=url)
+    except NewsArticle.DoesNotExist:
+        news_article = None
+
+    if not news_article:
+        raise Http404('Season Not Found')
+
+    return render_to_response('index/news.html',
+                              {'article': news_article},
                               context_instance=RequestContext(request))
 
 

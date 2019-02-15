@@ -103,14 +103,14 @@
         </h1>
         <div class="page-home-info-section-content">
           <ul class="page-home-info-section-content-list">
-            {% for announcement in announcements %}
+            {% for news_article in news_articles %}
               <li class="page-home-info-section-content-list-element">
-                <a class="page-home-info-section-content-list-element-link" href="{{ announcement.get_absolute_url }}">
+                <a class="page-home-info-section-content-list-element-link" href="{{ news_article.get_absolute_url }}">
                   <div class="page-home-info-section-content-list-element-link-content">
-                    {{ announcement.name }}
+                    {{ news_article.title }}
                   </div>
                   <div class="page-home-info-section-content-list-element-link-footer">
-                    {{ announcement.created|timesince }} ago
+                    {{ news_article.published|timesince }} ago
                   </div>
                 </a>
               </li>

@@ -120,11 +120,11 @@ mark_not_waitlisted.short_description = "Mark selected registrations as not wait
 class RegistrationsAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
-            'fields': ('user', 'league', 'registered', 'payment_complete', 'paypal_complete', 'check_complete', 'coupon', 'waitlist', 'refunded', 'flagged', 'attendance', 'captain', 'baggage', )
+            'fields': ('user', 'league', 'registered', 'payment_complete', 'paypal_complete', 'check_complete', 'coupon', 'waitlist', 'refunded', 'flagged', 'attendance', 'captain', 'baggage', 'prompt_response', 'paypal_details', )
         }),
         ('Advanced Options', {
             'classes': ('collapse',),
-            'fields': ('created', 'updated', 'conduct_complete', 'waiver_complete', 'pay_type', 'paypal_invoice_id', 'paypal_details', )
+            'fields': ('created', 'updated', 'conduct_complete', 'waiver_complete', 'pay_type', 'paypal_invoice_id', )
         }),
     )
     readonly_fields = ('created', 'updated', 'paypal_details',)

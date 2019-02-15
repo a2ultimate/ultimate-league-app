@@ -34,20 +34,22 @@
     </div>
   </div>
 
+  <hr>
+
   {% if league.type == 'league' %}
     <div id="captain" class="slider" data-slider-min="0" data-slider-max="4">
       <label for="id_captain">
         <h3>Would you like to captain a team?</h3>
       </label>
-      <p>
-        The Ann Arbor Ultimate captains' committee uses the following values to determine captains
-        for league. In general, the higher your value, the more willing you are to captain.
-      </p>
       {{ attendance_form.captain }}
       <div class="slider-element"></div>
       <div class="slider-errors">{{ attendance_form.captain.errors }}</div>
     </div>
 
+    <p>
+      The A2U Captains Committee uses the following values to help determine captains.
+      In general, a higher value indicates more willingness to captain a team for this division.
+    </p>
     <ul>
       <li>0 – I refuse to captain.</li>
       <li>1 – I will captain if absolutely necessary.</li>
@@ -59,6 +61,15 @@
     {% if league.captaining_note %}
       {{ league.captaining_note|safe }}
     {% endif %}
+  {% endif %}
+
+  {% if league.registration_prompt %}
+    <hr>
+
+    <h3>{{ league.registration_prompt|safe }}</h3>
+    <p>
+      {{ attendance_form.prompt_response }}
+    </p>
   {% endif %}
 
   <input class="button button-success" type="submit" value="Submit" name="submit">
