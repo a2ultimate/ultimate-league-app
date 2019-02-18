@@ -101,12 +101,14 @@ class League(models.Model):
         (LEAGUE_STATE_PREVIEW, 'Preview - visible only to admins, registration conditionally open only to admins'),
     )
 
+    LEAGUE_GENDER_CAPANDFILL = 'capandfill'
     LEAGUE_GENDER_COREC = 'corec'
     LEAGUE_GENDER_MENS = 'mens'
     LEAGUE_GENDER_MIXED = 'mixed'
     LEAGUE_GENDER_OPEN = 'open'
     LEAGUE_GENDER_WOMENS = 'womens'
     LEAGUE_GENDER_CHOICES = (
+        (LEAGUE_GENDER_CAPANDFILL, 'Cap-and-Fill'),
         (LEAGUE_GENDER_COREC, 'Co-Rec'),
         (LEAGUE_GENDER_MENS, 'Men\'s'),
         (LEAGUE_GENDER_MIXED, 'Mixed'),
