@@ -45,6 +45,7 @@ def get_export_headers(export_type):
             'Height Inches',
             'Guardian Name',
             'Guardian Phone',
+            'Prompt Response',
         ]
 
         return headers_placement + headers_group + headers_info + headers_ratings + headers_additional_info + headers_payment
@@ -106,6 +107,7 @@ def get_export_values(export_type, registration_data):
             registration_data['height'],
             registration_data['guardian_name'],
             registration_data['guardian_phone'],
+            registration_data['prompt_response'],
         ]
 
         return values_placement + values_group + values_info + values_ratings + values_additional_info + values_payment
