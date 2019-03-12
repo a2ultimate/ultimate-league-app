@@ -637,6 +637,7 @@ class LeagueFields(models.Model):
 
 class Baggage(models.Model):
     id = models.AutoField(primary_key=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     class Meta:
         db_table = u'baggage'
