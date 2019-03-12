@@ -56,6 +56,7 @@ class PlayerRatingsAdmin(admin.ModelAdmin):
     list_display = ('updated', 'user_details',
                     'submitted_by_details', 'ratings_type',)
     list_filter = ('ratings_type',)
+    readonly_fields = ('ratings_report',)
     search_fields = ['user__first_name', 'user__last_name', 'user__email',
                      'submitted_by__first_name', 'submitted_by__last_name', 'submitted_by__email',]
 
