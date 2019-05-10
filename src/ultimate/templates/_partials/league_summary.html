@@ -126,6 +126,16 @@
       Important Dates
     </th>
   </tr>
+  {% if league.baggage > 1 %}
+    <tr>
+      <td>
+        Group Edit Deadline
+      </td>
+      <td colspan="3">
+        {{ league.group_lock_start_date|date:'F d, Y' }} at {{ league.group_lock_start_date|date:'g:iA'|lower }}
+      </td>
+    </tr>
+  {% endif %}
   <tr>
     <td>
       Registration Deadline
@@ -134,14 +144,4 @@
       {{ league.waitlist_start_date|date:'F d, Y' }} at {{ league.waitlist_start_date|date:'g:iA'|lower }} or {{ league.max_players }} Players
     </td>
   </tr>
-  {% if league.baggage > 1 %}
-    <tr>
-      <td>
-        Group Edit Deadline
-      </td>
-      <td colspan="3">
-        {{ league.waitlist_start_date|date:'F d, Y' }} at {{ league.waitlist_start_date|date:'g:iA'|lower }}
-      </td>
-    </tr>
-  {% endif %}
 </table>

@@ -19,11 +19,6 @@
       Players are not yet available.
     </div>
   {% else %}
-    {% if user_registration.is_complete and user_registration.league.baggage > 1 and not user_registration.waitlist and not league.is_after_waitlist_start %}
-      <p>To add someone to your group, you need to know their email address.</p>
-      <p>You may <a href="{% url 'league_group' year=league.year season=league.season.slug division=league.night_slug %}">form a baggage group here</a>.</p>
-    {% endif %}
-
     {% if league.is_after_waitlist_start %}
       <div class="message message-caution">
         The registration deadline has passed. All new registrations will be added to the waitlist.
@@ -40,6 +35,21 @@
       <h4>
         There are {{ num_registrations_remaining }} of {{ league.max_players }} spaces available.
       </h4>
+    {% endif %}
+
+    {% if user_registration.is_complete and user_registration.league.baggage > 1 and not user_registration.waitlist and not league.is_after_group_lock_start %}
+      <h3>Form a Group</h3>
+      <p>
+        The deadline for group changes is <strong>{{ league.group_lock_start_date|date:'l, F jS' }} at {{ league.group_lock_start_date|date:'g:iA'|lower }}</strong>.
+        This division allows groups of up to <strong>{{ league.baggage }}</strong> (including you).
+      </p>
+      <p>
+        <a class="button button-info button-small" href="{% url 'league_group' year=league.year season=league.season.slug division=league.night_slug  %}">
+          Form a Group
+        </a>
+      </p>
+
+      <hr>
     {% endif %}
 
     {% if waitlist_registrations|length %}

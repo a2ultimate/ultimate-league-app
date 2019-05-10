@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu
+set -e
 
 here=`dirname ${BASH_SOURCE[0]}`
 source "$here/_common.sh" $1

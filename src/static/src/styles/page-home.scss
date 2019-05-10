@@ -85,7 +85,7 @@
 
   display: block;
 
-  min-height: 9rem;
+  min-height: 10rem;
   padding: 2.5rem 0.75rem 0.25rem 0.75rem;
 
   color: $color-primary;
@@ -135,6 +135,7 @@
 
   font-family: $font-family-oswald;
   font-weight: 200;
+  line-height: 1.2;
 
   &:after {
     position: absolute;

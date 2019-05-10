@@ -160,12 +160,13 @@ class League(models.Model):
     num_skip_weeks = models.IntegerField(default=0, help_text='number of weeks skipped, e.g. skipping 4th of July')
     reg_start_date = models.DateTimeField(help_text='date and time that registration process is open (not currently automated)')
     price_increase_start_date = models.DateTimeField(help_text='date and time when cost increases for league')
+    group_lock_start_date = models.DateTimeField(help_text='date and time that groups are locked')
     waitlist_start_date = models.DateTimeField(help_text='date and time that waitlist is started (regardless of number of registrations)')
     league_start_date = models.DateField(help_text='date of first game')
     league_end_date = models.DateField(help_text='date of last game')
 
     max_players = models.IntegerField(help_text='max players for league, extra registrations will be placed on waitlist')
-    baggage = models.IntegerField(help_text='max baggage group size')
+    baggage = models.IntegerField(help_text='max group size')
     min_age = models.IntegerField(help_text='minimum age (in years)', default=0)
 
     paypal_cost = models.IntegerField(help_text='base cost of league if paying by PayPal')
@@ -282,6 +283,10 @@ class League(models.Model):
     @property
     def is_after_price_increase(self):
         return timezone.now() >= self.price_increase_start_date
+
+    @property
+    def is_after_group_lock_start(self):
+        return timezone.now() >= self.group_lock_start_date
 
     @property
     def is_after_waitlist_start(self):
@@ -827,17 +832,17 @@ class Registrations(models.Model):
 
     @atomic
     def add_to_baggage_group(self, email):
-        if timezone.now() > self.league.waitlist_start_date:
-            return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
+        if timezone.now() > self.league.group_lock_start_date:
+            return 'You may not edit a group after the group change deadline (' + self.league.group_lock_start_date.strftime('%Y-%m-%d') + ').'
 
         if self.user.email == email:
-            return 'You cannot form a baggage group with yourself.'
+            return 'You cannot form a group with yourself.'
 
         if not self.is_complete:
-            return 'Your registration is currently incomplete and is ineligible to form baggage groups.'
+            return 'Your registration is currently incomplete and is ineligible to form groups.'
 
         if self.waitlist:
-            return 'You are currently on the waitlist and are ineligible to form baggage groups.'
+            return 'You are currently on the waitlist and are ineligible to form groups.'
 
         try:
             registration = Registrations.objects.get(user__email=email, league=self.league)
@@ -845,10 +850,10 @@ class Registrations(models.Model):
             return 'No registration found for ' + email + '.'
 
         if not registration.is_complete:
-            return email + ' has an incomplete registration and is ineligible to form baggage groups.'
+            return email + ' has an incomplete registration and is ineligible to form groups.'
 
         if registration.waitlist:
-            return email + ' is currently on the waitlist and is ineligible to form baggage groups.'
+            return email + ' is currently on the waitlist and is ineligible to form groups.'
 
         baggage_limit = self.league.baggage
 
@@ -858,10 +863,10 @@ class Registrations(models.Model):
         target_baggage = registration.baggage
 
         if target_baggage == current_baggage:
-            return email + ' is already part of your baggage group.'
+            return email + ' is already part of your group.'
 
         if (current_baggage_registrations.count() + target_baggage.size) > baggage_limit:
-            return 'Baggage group with ' + email + ' exceeds limit.'
+            return 'Group with ' + email + ' exceeds limit.'
 
         for current_baggage_registration in current_baggage_registrations:
             current_baggage_registration.baggage = target_baggage
@@ -873,8 +878,8 @@ class Registrations(models.Model):
 
     @atomic
     def leave_baggage_group(self):
-        if timezone.now() >= self.league.waitlist_start_date:
-            return 'You may not edit a baggage group after the group change deadline (' + self.league.waitlist_start_date.strftime('%Y-%m-%d') + ').'
+        if timezone.now() >= self.league.group_lock_start_date:
+            return 'You may not edit a group after the group change deadline (' + self.league.group_lock_start_date.strftime('%Y-%m-%d') + ').'
 
         try:
             baggage = Baggage()

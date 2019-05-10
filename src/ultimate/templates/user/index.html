@@ -122,7 +122,7 @@
                   No Group
                 {% endif %}
 
-                {% if registration.is_complete and registration.league.baggage > 1 and not registration.waitlist and not registration.league.waitlist_start_date|is_past_deadline %}
+                {% if registration.is_complete and registration.league.baggage > 1 and not registration.waitlist and not registration.league.is_after_group_lock_start %}
                   <div><a href="{% url 'league_group' year=league.year season=league.season.slug division=league.night_slug %}">Edit Group</a></div>
                 {% endif %}
               </td>
