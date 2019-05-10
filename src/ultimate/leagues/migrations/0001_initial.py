@@ -114,7 +114,7 @@ class Migration(migrations.Migration):
                 ('league_start_date', models.DateField(help_text=b'date of first game')),
                 ('league_end_date', models.DateField(help_text=b'date of last game')),
                 ('max_players', models.IntegerField(help_text=b'max players for league, extra registrations will be placed on waitlist')),
-                ('baggage', models.IntegerField(help_text=b'max baggage group size')),
+                ('baggage', models.IntegerField(help_text=b'max group size')),
                 ('min_age', models.IntegerField(default=0, help_text=b'minimum age (in years)')),
                 ('paypal_cost', models.IntegerField(help_text=b'base cost of league if paying by PayPal')),
                 ('checks_accepted', models.BooleanField(default=True)),

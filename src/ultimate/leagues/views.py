@@ -203,11 +203,11 @@ def group(request, year, season, division):
         if 'leave_group' in request.POST:
             message = registration.leave_baggage_group()
             if message is True:
-                messages.success(request, 'You were successfully removed from your baggage group.')
+                messages.success(request, 'You were successfully removed from your group.')
             elif isinstance(message, str):
                 messages.error(request, message)
             else:
-                messages.error(request, 'You could not be removed from your baggage group.')
+                messages.error(request, 'You could not be removed from your group.')
 
         elif 'add_group' in request.POST and 'email' in request.POST:
             email = request.POST.get('email')

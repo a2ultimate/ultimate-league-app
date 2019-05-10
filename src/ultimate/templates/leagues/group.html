@@ -13,11 +13,11 @@
 
   {% include '_partials/league_tabs.html' with selected_tab='registration' %}
 
-  <h2>Edit Baggage Group</h2>
+  <h2>Edit Group</h2>
 
   <p>
-    This league allows groups of up to <strong>{{ league.baggage }}</strong> (including you).
-    The deadline for group changes is <strong>{{ league.waitlist_start_date|date:'l, F jS' }} at {{ league.waitlist_start_date|date:'g:iA'|lower }}</strong>.
+    The deadline for group changes is <strong>{{ league.group_lock_start_date|date:'l, F jS' }} at {{ league.group_lock_start_date|date:'g:iA'|lower }}</strong>.
+    This division allows groups of up to <strong>{{ league.baggage }}</strong> (including you).
   </p>
 
   {% if registration.waitlist %}
@@ -33,7 +33,7 @@
     </ol>
 
     {% if league.baggage > 1 %}
-      {% if registration.is_complete and not registration.league.waitlist_start_date|is_past_deadline and not registration.waitlist %}
+      {% if registration.is_complete and not registration.league.is_after_group_lock_start and not registration.waitlist %}
         {% if registration.baggage_size > 1 %}
           <form class="form" method="post">{% csrf_token %}
             <input class="button button-danger" type="submit" name="leave_group" value="Leave Group">
@@ -49,14 +49,14 @@
 
             <input class="button button-success" name="add_group" value="Add Player" type="submit">
           {% else %}
-            <h3>Your group is full for this league.</h3>
+            <h3>Your group is full for this division.</h3>
           {% endif %}
         </form>
       {% else %}
-        <p>Only complete, non-waitlisted registrations are eligible to form baggage groups.</p>
+        <p>Only complete, non-waitlisted registrations are eligible to form groups.</p>
       {% endif %}
     {% else %}
-      <p>This league does not support baggage groups.</p>
+      <p>This division does not support groups.</p>
     {% endif %}
   {% endif %}
 

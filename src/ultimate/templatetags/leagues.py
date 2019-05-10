@@ -34,11 +34,6 @@ def is_waitlist(league, user):
 
 
 @register.filter
-def is_past_deadline(league_date):
-    return bool(timezone.now() > league_date)
-
-
-@register.filter
 def is_free(league):
     return bool(league.check_price == 0 and league.paypal_price == 0)
 
