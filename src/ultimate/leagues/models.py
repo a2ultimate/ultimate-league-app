@@ -487,6 +487,30 @@ class League(models.Model):
     def get_captain_count(self):
         return TeamMember.objects.filter(team__league=self, captain=True).count()
 
+    def get_event_locations(self, games=None):
+        if games is None:
+            games = self.game_set.order_by('date', 'start', 'field_name', 'field_name__field')
+
+        locations = {}
+
+        for game in games:
+            game_field = game.field_name.field.pk
+            game_field_name = game.field_name.pk
+            location_id = u'{}_{}'.format(game_field, game_field_name)
+
+            if location_id not in locations:
+                locations[location_id] = {
+                    'id': location_id,
+                    'field': game.field_name.field,
+                    'field_name': game.field_name,
+                }
+
+        locations = locations.values()
+        locations.sort(key=lambda k: k['field'].name)
+        locations.sort(key=lambda k: k['field_name'].name)
+
+        return locations
+
     def get_game_locations(self, games=None):
         if games is None:
             games = self.game_set.order_by('date', 'start', 'field_name', 'field_name__field')
@@ -497,7 +521,7 @@ class League(models.Model):
             game_field = game.field_name.field.pk
             game_start = game.start.time() if game.start else game.start
             game_field_name = game.field_name.pk
-            location_id = u'{}_{}_{}'.format(game_field, game_start, game_field_name)
+            location_id = u'{}_{}_{}'.format(game_start, game_field, game_field_name)
 
             if location_id not in locations:
                 locations[location_id] = {
@@ -508,11 +532,55 @@ class League(models.Model):
                 }
 
         locations = locations.values()
+        locations.sort(key=lambda k: k['field'].name)
         locations.sort(key=lambda k: k['field_name'].name)
         locations.sort(key=lambda k: k['start'])
-        locations.sort(key=lambda k: k['field'].name)
 
         return locations
+
+    def get_event_dates(self, games=None, event_locations=None):
+        if games is None:
+            games = self.game_set.order_by('date', 'start', 'field_name', 'field_name__field')
+
+        if event_locations is None:
+            event_locations = self.get_event_locations()
+
+        num_columns = len(event_locations)
+        current_column_index = 0
+        current_date = getattr(games.first(), 'start', None)
+        game_dates = {}
+        game_dates[current_date] = []
+
+        for game in games:
+            if current_date != game.start:
+                game_dates[game.start] = []
+
+                while current_column_index < num_columns:
+                    game_dates[current_date].append(None)
+                    current_column_index += 1
+
+                current_date = game.start
+                current_column_index = 0
+
+            game_field = game.field_name.field.pk
+            game_start = game.start.time() if game.start else game.start
+            game_field_name = game.field_name.pk
+            column_id = u'{}_{}'.format(game_field, game_field_name)
+
+            while event_locations[current_column_index]['id'] != column_id:
+                game_dates[current_date].append(None)
+                current_column_index += 1
+
+            game_dates[current_date].append(game)
+            current_column_index += 1
+
+        game_dates = [{'date': i, 'games': game_dates[i]} for i in sorted(game_dates)]
+
+        for i, game_date in enumerate(game_dates):
+            while len(game_dates[i]['games']) < len(event_locations):
+                game_dates[i]['games'].append(None)
+
+        return game_dates
 
     def get_game_dates(self, games=None, game_locations=None):
         if games is None:
@@ -541,7 +609,7 @@ class League(models.Model):
             game_field = game.field_name.field.pk
             game_start = game.start.time() if game.start else game.start
             game_field_name = game.field_name.pk
-            column_id = u'{}_{}_{}'.format(game_field, game_start, game_field_name)
+            column_id = u'{}_{}_{}'.format(game_start, game_field, game_field_name)
 
             while game_locations[current_column_index]['id'] != column_id:
                 game_dates[current_date].append(None)

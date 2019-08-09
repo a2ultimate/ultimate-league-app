@@ -157,6 +157,9 @@ def teams(request, year, season, division):
     game_locations = league.get_game_locations(games=games)
     game_dates = league.get_game_dates(games=games, game_locations=game_locations)
 
+    event_locations = league.get_event_locations(games=games)
+    event_dates = league.get_event_dates(games=games, event_locations=event_locations)
+
     next_game_date = getattr(games.filter(date__gte=timezone.now().date()).first(), 'date', None)
 
     if request.user.is_authenticated():
@@ -171,6 +174,9 @@ def teams(request, year, season, division):
 
             'game_locations': game_locations,
             'game_dates': game_dates,
+
+            'event_locations': event_locations,
+            'event_dates': event_dates,
 
             'teams': Team.objects.filter(league=league, hidden=False)
                          .prefetch_related('teammember_set')
