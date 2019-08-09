@@ -23,7 +23,11 @@
 
   <div class="page-division-teams-schedule">
     {% if game_locations %}
-      {% include '_partials/schedule_table.html' with league=league game_locations=game_locations game_dates=game_dates user_games=user_games next_game_date=next_game_date only %}
+      {% if league.type == 'tournament' %}
+        {% include '_partials/table_schedule_event.html' with league=league event_locations=event_locations event_dates=event_dates user_games=user_games next_game_date=next_game_date only %}
+      {% else %}
+        {% include '_partials/table_schedule_league.html' with league=league game_locations=game_locations game_dates=game_dates game_starts=game_starts event_schedule=event_schedule user_games=user_games next_game_date=next_game_date only %}
+      {% endif %}
 
       {% if league.schedule_note %}
         <div class="message message-info">
