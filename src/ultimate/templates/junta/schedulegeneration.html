@@ -40,7 +40,7 @@
 
     {% if game_locations|length %}
 
-      {% include '_partials/schedule_table.html' with league=league game_locations=game_locations game_dates=game_dates show_teams=1 only %}
+      {% include '_partials/table_schedule_league.html' with league=league game_locations=game_locations game_dates=game_dates show_teams=1 only %}
 
       <p>
         There is aleady a schedule created for this division. You must first clear the existing one to create a new one.
