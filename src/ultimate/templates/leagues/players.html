@@ -63,15 +63,12 @@
     {% endif %}
 
     <div class="page-division-players-list">
-      {% regroup complete_registrations by baggage.id as baggage_group %}
-      {% for baggage in baggage_group|groups_sort %}
+      {% for registration in complete_registrations %}
       <ul class="page-division-players-list-group">
-        {% for registration in baggage.list %}
-          <li>
-            {{ registration.user.get_full_name }}
-            <em>{{ registration.user.profile.nickname }}</em>
-          </li>
-        {% endfor %}
+        <li>
+          {{ registration.user.get_full_name }}
+          <em>{{ registration.user.profile.nickname }}</em>
+        </li>
       </ul>
       {% endfor %}
     </div>
