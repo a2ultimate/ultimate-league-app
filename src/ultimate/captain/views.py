@@ -73,7 +73,7 @@ def exportteam(request, team_id):
         'Gender',
         'Age',
         'Height Inches',
-        'Number of Leagues',
+        'Number of Teams',
         'Estimated Absences',
     ])
 

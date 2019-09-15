@@ -5,8 +5,8 @@
 {% load user_roles %}
 {% load utility %}
 
-{% block title %}Teams and Schedules &middot; {{ league.night_title|smart_title }} &middot; {{ league.season_title|smart_title }} League {{ league.year }} &middot; {{ block.super }}{% endblock %}
-{% block og_title %}{{ block.super }} {{ league.year }} {{ league.season_title|smart_title }} League {{ league.night_title|smart_title }} Division Teams and Schedules{% endblock %}
+{% block title %}Teams and Schedules &middot; {{ league.night_title|smart_title }} &middot; {{ league.season_title|smart_title }} {{ league.year }} &middot; {{ block.super }}{% endblock %}
+{% block og_title %}{{ block.super }} {{ league.year }} {{ league.season_title|smart_title }} {{ league.night_title|smart_title }} Division Teams and Schedules{% endblock %}
 
 {% block content %}
 <div class="page-division-teams">

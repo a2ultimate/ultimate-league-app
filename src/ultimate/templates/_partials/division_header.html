@@ -1,6 +1,6 @@
 {% load utility %}
 
-{{ league.season_title|smart_title }} League {{ league.year }} {{ league.night_title|smart_title }} {% if league.type == 'league' %}Division{% endif %}
+{{ league.season_title|smart_title }} {{ league.year }} {{ league.night_title|smart_title }} {% if league.type == 'league' %}Division{% endif %}
 ({{ league.display_gender }})
 
 {% if header %}{{ header }}{% endif %}
