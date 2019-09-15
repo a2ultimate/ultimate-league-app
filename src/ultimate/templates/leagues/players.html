@@ -62,15 +62,15 @@
       </ol>
     {% endif %}
 
-    <div class="page-division-players-list">
-      {% for registration in complete_registrations %}
-      <ul class="page-division-players-list-group">
-        <li>
+    <div class="page-division-players-players">
+      <ul class="page-division-players-players-list">
+        {% for registration in complete_registrations %}
+        <li class="page-division-players-players-list-item">
           {{ registration.user.get_full_name }}
           <em>{{ registration.user.profile.nickname }}</em>
         </li>
+        {% endfor %}
       </ul>
-      {% endfor %}
     </div>
 
     <div class="message message-small">
