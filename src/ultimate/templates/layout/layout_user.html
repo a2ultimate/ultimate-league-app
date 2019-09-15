@@ -123,13 +123,19 @@
 
             {% if not request.user.has_completed_player_rating %}
               <div class="message message-warning">
-                <p>{% trans 'You are required to rate your skills before registering for a league. This gives us a better picture of you as a player and helps us generate more balanced teams.' %}</p>
-                <a class="button button-small button-primary" href="{% url 'editratings' %}">{% trans 'Complete Your Ratings' %}</a>
+                <p>
+                  {% trans 'You are required to self-assess your ability before registering for a division.' %}
+                  {% trans 'This gives us a better picture of you as a player and helps us generate balanced teams.' %}
+                </p>
+                <a class="button button-small button-primary" href="{% url 'editratings' %}">{% trans 'Complete Your Player Ratings' %} &rarr;</a>
               </div>
             {% elif request.user.has_expired_player_rating %}
               <div class="message message-warning">
-                <p>{% trans 'Every ' %}{% settings_value 'A2U_RATING_EXPIRATION_MONTHS' %}{% trans ' months, you are required to resubmit your player ratings. This gives us a better picture of you as a player and helps us generate balanced teams.' %}</p>
-                <a class="button button-small button-primary" href="{% url 'editratings' %}">{% trans 'Update Your Ratings' %}</a>
+                <p>
+                  {% trans 'You are required to update your player ratings every ' %}{% settings_value 'A2U_RATING_EXPIRATION_MONTHS' %}{% trans ' months.' %}
+                  {% trans 'This gives us a better picture of you as a player and helps us generate balanced teams.' %}
+                </p>
+                <a class="button button-small button-primary" href="{% url 'editratings' %}">{% trans 'Update Your Player Ratings' %} &rarr;</a>
               </div>
             {% endif %}
           {% endif %}
