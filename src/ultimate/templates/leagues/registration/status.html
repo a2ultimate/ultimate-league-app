@@ -91,7 +91,7 @@
       Your registration is <strong>not complete</strong>. You must complete the payment process.
     </div>
 
-    {% if league.is_waitlist %}
+    {% if league|is_waitlisting_registrations:user %}
       <div class="message message-small message-caution">
         Note: This division is currently either at capacity or the waitlist deadline has passed.
         Upon completion of of your registration, you will be placed on the waitlist.

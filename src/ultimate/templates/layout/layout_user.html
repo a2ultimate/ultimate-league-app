@@ -73,8 +73,8 @@
                               </div>
                               <div class="content-inner-left-leagues-list-element-divisions-list-element-links">
                                 <ul class="content-inner-left-leagues-list-element-divisions-list-element-links-list">
-                                  {% if league|is_open:request.user %}
-                                    {% if league|is_waitlist:request.user %}
+                                  {% if league|is_open:user %}
+                                    {% if league|is_waitlisting_registrations:user %}
                                       <li class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element">
                                         <a class="content-inner-left-leagues-list-element-divisions-list-element-links-list-element-link" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">Register for Waitlist</a>
                                       </li>

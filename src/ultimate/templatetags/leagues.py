@@ -29,11 +29,6 @@ def is_open(league, user):
 
 
 @register.filter
-def is_waitlist(league, user):
-    return league.is_waitlist(user)
-
-
-@register.filter
 def is_free(league):
     return bool(league.check_price == 0 and league.paypal_price == 0)
 

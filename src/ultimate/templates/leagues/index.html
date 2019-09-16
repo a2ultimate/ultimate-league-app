@@ -53,7 +53,7 @@
 
       {% if league|is_open:user %}
         <p>
-          {% if league|is_waitlist:user %}
+          {% if league|is_waitlisting_registrations:user %}
             <a class="button button-info" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">Join Waitlist</a>
           {% else %}
             <a class="button button-success" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">Register Now</a>
