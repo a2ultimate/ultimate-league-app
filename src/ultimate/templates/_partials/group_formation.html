@@ -1,0 +1,28 @@
+{% with registration_baggage_registrations=registration.baggage.get_registrations %}
+  <h3>Group Formation</h3>
+
+  <p>
+    The deadline for group changes is <strong>{{ league.group_lock_start_date|date:'l, F jS' }} at {{ league.group_lock_start_date|date:'g:iA'|lower }}</strong>.
+    This division allows groups of up to <strong>{{ league.baggage }}</strong> (including you).
+  </p>
+
+  {% if registration_baggage_registrations|length > 1 %}
+  <h4>Your current group is:</h4>
+
+  <ul>
+    {% for baggage_reg in registration_baggage_registrations %}
+    <li>{{ baggage_reg.user.get_full_name }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  {% if registration.waitlist %}
+  <em>You are currently on the waitlist and are ineligible to form a group at this time.</em>
+  {% elif league.is_after_group_lock_start %}
+  <em>The group edit deadline has passed.</em>
+  {% else %}
+  <a class="button button-info button-small" href="{% url 'league_group' year=league.year season=league.season.slug division=league.night_slug  %}">
+    Form a Group
+  </a>
+  {% endif %}
+{% endwith %}

@@ -36,19 +36,12 @@
       {% endif %}
 
 
-      {% if league.baggage > 1 and not league.is_after_group_lock_start %}
+      {% if league.baggage > 1 %}
         <hr>
 
-        <h3>Form a Group</h3>
-        <p>
-          The deadline for group changes is <strong>{{ league.group_lock_start_date|date:'l, F jS' }} at {{ league.group_lock_start_date|date:'g:iA'|lower }}</strong>.
-          This division allows groups of up to <strong>{{ league.baggage }}</strong> (including you).
-        </p>
-        <p>
-          <a class="button button-info button-small" href="{% url 'league_group' year=league.year season=league.season.slug division=league.night_slug  %}">
-            Form a Group
-          </a>
-        </p>
+        {% if registration.is_complete and league.baggage > 1 %}
+          {% include '_partials/group_formation.html' with league=league registration=registration only %}
+        {% endif %}
       {% endif %}
     {% else %}
       <div class="message message-caution">

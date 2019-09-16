@@ -14,42 +14,35 @@
 
   {% include '_partials/league_tabs.html' with selected_tab='players' %}
 
-  {% if not league.is_after_registration_start and not request.user|in_group:'junta' %}
+  {% if not league.is_after_registration_start and not request.user.is_junta %}
     <div class="message">
       Players are not yet available.
     </div>
   {% else %}
-    {% if league.is_after_waitlist_start %}
+    {% if league|is_accepting_registrations:user %}
+      {% if league|is_waitlisting_registrations:user %}
       <div class="message message-caution">
-        The registration deadline has passed. All new registrations will be added to the waitlist.
+        Registrations for this division are currently being placed on the waitlist.
       </div>
-    {% elif num_registrations_remaining <= 0 %}
-      <div class="message message-caution">
-        This division is currently at capacity. All new registrations will be added to the waitlist.
-      </div>
-    {% elif num_registrations_remaining == league.max_players %}
+      {% elif num_registrations_remaining == league.max_players %}
       <div class="message message-info">
         There are {{ league.max_players }} spaces available. Be the first!
       </div>
-    {% else %}
-      <h4>
+      {% else %}
+      <div class="message message-info">
         There are {{ num_registrations_remaining }} of {{ league.max_players }} spaces available.
-      </h4>
+      </div>
+      {% endif %}
+    {% else %}
+      <div class="message message-info">
+        Registration for this division is currently closed.
+      </div>
     {% endif %}
 
-    {% if user_registration.is_complete and user_registration.league.baggage > 1 and not user_registration.waitlist and not league.is_after_group_lock_start %}
-      <h3>Form a Group</h3>
-      <p>
-        The deadline for group changes is <strong>{{ league.group_lock_start_date|date:'l, F jS' }} at {{ league.group_lock_start_date|date:'g:iA'|lower }}</strong>.
-        This division allows groups of up to <strong>{{ league.baggage }}</strong> (including you).
-      </p>
-      <p>
-        <a class="button button-info button-small" href="{% url 'league_group' year=league.year season=league.season.slug division=league.night_slug  %}">
-          Form a Group
-        </a>
-      </p>
-
-      <hr>
+    {% if user_registration.is_complete and league.baggage > 1 %}
+    <div class="message">
+      {% include '_partials/group_formation.html' with league=league registration=user_registration only %}
+    </div>
     {% endif %}
 
     {% if waitlist_registrations|length %}
@@ -57,7 +50,11 @@
 
       <ol>
         {% for registration in waitlist_registrations %}
-          <li>{{ registration.user.get_full_name }}&nbsp;<em>{{ registration.user.profile.nickname }}</em></li>
+          <li>
+            {{ registration.user.get_full_name }}
+            <em>{{ registration.user.profile.nickname }}</em>
+          </li>
+
         {% endfor %}
       </ol>
     {% endif %}
@@ -80,7 +77,7 @@
       <a class="button button-small" href="mailto:registration@annarborultimate.org">Email Us At registration@annarborultimate.org</a>
     </div>
 
-    {% if request.user|in_group:'junta' %}
+    {% if request.user.is_junta %}
     <div class="page-division-players-notes">
       <h4 class="page-division-players-notes-title">
         Admin Only
