@@ -9,7 +9,7 @@
 {% block title %}League Results &middot; Junta Resources &middot; {{ block.super }}{% endblock %}
 
 {% block content %}
-	{% include '_partials/account_tabs.html' with selected_tab='junta' %}
+  {% include '_partials/account_tabs.html' with selected_tab='junta' %}
 
   <div class="breadcrumbs">
     <ul class="breadcrumbs-list">
@@ -27,13 +27,13 @@
     </ul>
   </div>
 
-	{% if leagues %}
-		<h1>League Results</h1>
+  {% if leagues %}
+    <h1>League Results</h1>
 
-		{% include '_partials/league_list.html' with leagues=leagues link_view='leagueresults_league' only %}
-	{% else %}
+    {% include '_partials/league_list.html' with leagues=leagues link_view='leagueresults_league' only %}
+  {% else %}
 
-		{% include '_partials/division_header.html' with league=league header='Results' only %}
+    {% include '_partials/division_header.html' with league=league header='Results' only %}
 
     {% if game_dates|length %}
       {% include '_partials/table_schedule_league.html' with league=league game_locations=game_locations game_dates=game_dates user_games=user_games next_game_date=next_game_date show_game_result=1 condensed=1 show_teams=1 only %}
@@ -47,37 +47,37 @@
       </h4>
     {% endif %}
 
-		{% if team_records|length %}
-			<table class="table table-centered table-striped">
-				<thead>
-					<tr>
-						<th>Team Number</th>
-						<th>Wins</th>
-						<th>Losses</th>
-						<th>Ties</th>
-						<th>Conflicts</th>
-						<th>Blanks</th>
-						<th>Points For</th>
-						<th>Points Against</th>
-						<th>Point Differential</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for team_record in team_records %}
-						<tr>
-							<td>{{ team_record.team_id }}</td>
-							<td>{{ team_record.wins }}</td>
-							<td>{{ team_record.losses }}</td>
-							<td>{{ team_record.ties }}</td>
-							<td>{{ team_record.conflicts }}</td>
-							<td>{{ team_record.blanks }}</td>
-							<td>{{ team_record.points_for }}</td>
-							<td>{{ team_record.points_against }}</td>
-							<td>{{ team_record.points_for|subtract:team_record.points_against }}</td>
-						</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		{% endif %}
-	{% endif %}
+    {% if team_records|length %}
+      <table class="table table-centered table-striped">
+        <thead>
+          <tr>
+            <th>Team Number</th>
+            <th>Wins</th>
+            <th>Losses</th>
+            <th>Ties</th>
+            <th>Conflicts</th>
+            <th>Blanks</th>
+            <th>Points For</th>
+            <th>Points Against</th>
+            <th>Point Differential</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for team_record in team_records %}
+            <tr>
+              <td>{{ team_record.team_id }}</td>
+              <td>{{ team_record.wins }}</td>
+              <td>{{ team_record.losses }}</td>
+              <td>{{ team_record.ties }}</td>
+              <td>{{ team_record.conflicts }}</td>
+              <td>{{ team_record.blanks }}</td>
+              <td>{{ team_record.points_for }}</td>
+              <td>{{ team_record.points_against }}</td>
+              <td>{{ team_record.points_for|subtract:team_record.points_against }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  {% endif %}
 {% endblock %}
