@@ -801,7 +801,10 @@ class Registrations(models.Model):
                     else:
                         status = 'Waiting for Payment'
                     if self.check_complete or self.paypal_complete or self.payment_complete:
-                        status = 'Complete'
+                        if self.waitlist:
+                            status = 'Complete (Waitlist)'
+                        else:
+                            status = 'Complete'
 
         return status
 
