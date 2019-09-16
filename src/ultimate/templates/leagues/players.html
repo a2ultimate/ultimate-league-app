@@ -10,7 +10,7 @@
 
 {% block content %}
 <div class="page-division-players">
-  <h1>{% include '_partials/division_header.html' with league=league only %}</h1>
+  {% include '_partials/division_header.html' with league=league only %}
 
   {% include '_partials/league_tabs.html' with selected_tab='players' %}
 

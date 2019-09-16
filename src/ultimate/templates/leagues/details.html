@@ -6,7 +6,7 @@
 {% block og_title %}{{ block.super }} {{ league.year }} {{ league.season_title|smart_title }} {{ league.night_title|smart_title }} Division Details{% endblock %}
 {% block content %}
 
-  <h1>{% include '_partials/division_header.html' with league=league only %}</h1>
+  {% include '_partials/division_header.html' with league=league only %}
 
   {% include '_partials/league_tabs.html' with selected_tab='details' %}
 

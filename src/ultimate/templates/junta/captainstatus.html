@@ -31,7 +31,7 @@
 
 		{% include '_partials/league_list.html' with leagues=leagues link_view='captainstatus_league' only %}
 	{% else %}
-		<h1>{% include '_partials/division_header.html' with league=league header='Captain Status' only %}</h1>
+		{% include '_partials/division_header.html' with league=league header='Captain Status' only %}
 
 		<table class="table table-centered table-striped">
 			<thead>

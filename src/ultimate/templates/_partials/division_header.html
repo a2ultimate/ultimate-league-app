@@ -1,10 +1,12 @@
 {% load utility %}
 
-{{ league.season_title|smart_title }} {{ league.year }} {{ league.night_title|smart_title }} {% if league.type == 'league' %}Division{% endif %}
-({{ league.display_gender }})
+<h1>
+  {{ league.season_title|smart_title }} {{ league.year }} {{ league.night_title|smart_title }} {% if league.type == 'league' %}Division{% endif %}
+  ({{ league.display_gender }})
 
-{% if header %}{{ header }}{% endif %}
+  {% if header %}{{ header }}{% endif %}
 
-{% if not hide_state and league.state == 'preview' %}
-  <em>({{ league.state|capfirst }})</em>
-{% endif %}
+  {% if not hide_state and league.state == 'preview' %}
+    <em>({{ league.state|capfirst }})</em>
+  {% endif %}
+</h1>

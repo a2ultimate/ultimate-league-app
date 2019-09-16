@@ -36,7 +36,7 @@
 
   {% else %}
 
-    <h1>{% include '_partials/division_header.html' with league=league header='Schedule Generation' only %}</h1>
+    {% include '_partials/division_header.html' with league=league header='Schedule Generation' only %}
 
     {% if game_locations|length %}
 
