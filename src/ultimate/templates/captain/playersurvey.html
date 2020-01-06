@@ -87,11 +87,13 @@
               </div>
             </th>
             {% for field in row.form.visible_fields %}
-              <td class="{% if field.errors %}page-player-survey-table-cell-error{% endif %}">
-                {{ field }}
-                {% if not forloop.last %}
-                  <div class="small strong">{{ row.user|get_average:field.label }}</div>
-                {% endif %}
+              <td class="page-player-survey-table-cell">
+                <div class="page-player-survey-table-cell-field{% if field.errors %} page-player-survey-table-cell-field-error{% endif %}">
+                  {{ field }}
+                  {% if not forloop.last %}
+                    <div class="small strong">{{ row.user|get_average:field.label }}</div>
+                  {% endif %}
+                </div>
               </td>
             {% endfor %}
           </tr>

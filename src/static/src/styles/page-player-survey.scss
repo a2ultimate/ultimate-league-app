@@ -7,7 +7,14 @@
   border-radius: $border-radius;
 }
 
-.page-player-survey-table-cell-error {
+.page-player-survey-table-cell {
+}
+
+.page-player-survey-table-cell-field {
+  padding: 0.5rem;
+}
+
+.page-player-survey-table-cell-field-error {
   color: $color-white;
   background-color: $color-red;
 }
