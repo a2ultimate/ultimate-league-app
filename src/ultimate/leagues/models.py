@@ -310,7 +310,7 @@ class League(models.Model):
     @property
     def status_text(self):
         if self.is_cancelled:
-            return u'{} Cancelled'.format(self.display_type)
+            return u'Cancelled'
 
         if timezone.now() < self.reg_start_date:
             return 'Coming Soon'
@@ -322,10 +322,14 @@ class League(models.Model):
             else:
                 return 'Accepting Registrations'
 
-        if timezone.now() <= self.league_end_datetime:
-            return u'{} In Progress'.format(self.display_type)
+        final_game = self.game_set.order_by('-date', '-start').first()
 
-        return u'{} Completed'.format(self.display_type)
+        if final_game and timezone.now().date() <= final_game.date:
+            return u'In Progress'
+        elif timezone.today() <= self.league_end_datetime:
+            return u'In Progress'
+
+        return u'Completed'
 
     @property
     def status_color(self):
