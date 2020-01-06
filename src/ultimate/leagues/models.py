@@ -57,6 +57,7 @@ class FieldNames(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.TextField()
     field = models.ForeignKey('leagues.Field')
+    hidden = models.BooleanField(default=False)
     type = models.CharField(max_length=32, choices=FIELD_TYPE_CHOICES)
 
     class Meta:

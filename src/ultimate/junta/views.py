@@ -712,7 +712,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
         else:
             form = ScheduleGenerationForm()
 
-        form.fields['field_names'].queryset = FieldNames.objects.filter(field__league=league)
+        form.fields['field_names'].queryset = FieldNames.objects.filter(field__league=league, hidden=False)
 
     else:
         leagues = League.objects.all().order_by('-league_start_date')
