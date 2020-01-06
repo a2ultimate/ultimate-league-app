@@ -43,6 +43,20 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
+            '-s',
+            default='',
+            dest='season',
+            help='Sync a season + year ("winter", "spring", "summer", "fall", "late-fall")',
+        )
+
+        parser.add_argument(
+            '-y',
+            default='',
+            dest='year',
+            help='Sync a season + year (e.g. 2019)',
+        )
+
+        parser.add_argument(
             '-g',
             default='',
             dest='group_address',
@@ -62,6 +76,8 @@ class Command(BaseCommand):
         file_path = options.get('file', None)
         team_id = options.get('team', None)
         league_id = options.get('league', None)
+        season_slug = options.get('season', None)
+        year = options.get('year', None)
         group_address = options.get('group_address', None)
         force = options.get('force', None)
 
@@ -96,13 +112,11 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.ERROR('No email addresses added...'))
 
         elif team_id:
-            self.stdout.write(self.style.MIGRATE_HEADING('Adding team email addresses to group:'))
+            self.stdout.write(self.style.MIGRATE_HEADING('Syncing team email addresses:'))
 
             from ultimate.leagues.models import Team
             try:
                 team = Team.objects.get(id=team_id)
-
-                self.stdout.write(u'Adding Team {}...'.format(team))
 
                 success_count, group_address = team.sync_email_group(force)
                 target_count = team.size
@@ -121,13 +135,11 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.ERROR('No team found with that id'))
 
         elif league_id:
-            self.stdout.write(self.style.MIGRATE_HEADING('Adding division email addresses with group:'))
+            self.stdout.write(self.style.MIGRATE_HEADING('Syncing division email addresses:'))
 
             from ultimate.leagues.models import League
             try:
                 league = League.objects.get(id=league_id)
-
-                self.stdout.write(u'Adding {}...'.format(league))
 
                 all_success_count, group_address, captains_success_count, captains_group_address = \
                     league.sync_email_groups(force)
@@ -149,3 +161,93 @@ class Command(BaseCommand):
 
             except League.DoesNotExist:
                 self.stdout.write(self.style.ERROR('No league division found with that id'))
+
+        elif season_slug and year:
+            self.stdout.write(self.style.MIGRATE_HEADING(u'Syncing season email addresses for {} {}:'.format(season_slug, year[-2:])))
+
+            from ultimate.leagues.models import Season, TeamMember
+            try:
+                season = Season.objects.get(slug=season_slug)
+
+                from ultimate.utils.google_api import GoogleAppsApi
+                api = GoogleAppsApi()
+
+                # ALL
+
+                all_group_address = u'{}{}@lists.annarborultimate.org'.format(season.slug, year[-2:])
+                all_group_name = u'{} {}'.format(season.name, year)
+                all_group_id = api.prepare_group_for_sync(
+                    group_name=all_group_name,
+                    group_email_address=all_group_address,
+                    force=force)
+
+                all_team_members = TeamMember.objects.filter(team__league__season__slug=season.slug, team__league__year=year)
+                all_target_count = all_team_members.count()
+                all_success_count = 0
+                for team_member in all_team_members:
+                    all_success_count += add_to_group(
+                        group_email_address=all_group_address,
+                        group_id=all_group_id,
+                        email_address=team_member.user.email)
+
+                # MEN
+
+                men_group_address = u'{}{}-men@lists.annarborultimate.org'.format(season.slug, year[-2:])
+                men_group_name = u'{} {} Men'.format(season.name, year)
+                men_group_id = api.prepare_group_for_sync(
+                    group_name=men_group_name,
+                    group_email_address=men_group_address,
+                    force=force)
+
+                men_team_members = TeamMember.objects.filter(team__league__season__slug=season.slug, team__league__year=year, user__profile__gender__iexact='M')
+                men_target_count = men_team_members.count()
+                men_success_count = 0
+                for team_member in men_team_members:
+                    men_success_count += add_to_group(
+                        group_email_address=men_group_address,
+                        group_id=men_group_id,
+                        email_address=team_member.user.email)
+
+                # WOMEN
+
+                women_group_address = u'{}{}-women@lists.annarborultimate.org'.format(season.slug, year[-2:])
+                women_group_name = u'{} {} Women'.format(season.name, year)
+                women_group_id = api.prepare_group_for_sync(
+                    group_name=women_group_name,
+                    group_email_address=women_group_address,
+                    force=force)
+
+                women_team_members = TeamMember.objects.filter(team__league__season__slug=season.slug, team__league__year=year, user__profile__gender__iexact='F')
+                women_target_count = women_team_members.count()
+                women_success_count = 0
+                for team_member in women_team_members:
+                    women_success_count += add_to_group(
+                        group_email_address=women_group_address,
+                        group_id=women_group_id,
+                        email_address=team_member.user.email)
+
+
+                if all_success_count == all_team_members.count():
+                    self.stdout.write(self.style.MIGRATE_SUCCESS('SUCCESS'))
+                    self.stdout.write(self.style.MIGRATE_SUCCESS(u'Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, all_group_address)))
+                else:
+                    self.stdout.write(self.style.ERROR('HMMM...'))
+                    self.stdout.write(self.style.ERROR(u'Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, all_group_address)))
+
+                if men_success_count == men_team_members.count():
+                    self.stdout.write(self.style.MIGRATE_SUCCESS('SUCCESS'))
+                    self.stdout.write(self.style.MIGRATE_SUCCESS(u'Added {} of {} email addresses to {}'.format(men_success_count, men_target_count, men_group_address)))
+                else:
+                    self.stdout.write(self.style.ERROR('HMMM...'))
+                    self.stdout.write(self.style.ERROR(u'Added {} of {} email addresses to {}'.format(men_success_count, men_target_count, men_group_address)))
+
+                if women_success_count == women_team_members.count():
+                    self.stdout.write(self.style.MIGRATE_SUCCESS('SUCCESS'))
+                    self.stdout.write(self.style.MIGRATE_SUCCESS(u'Added {} of {} email addresses to {}'.format(women_success_count, women_target_count, women_group_address)))
+                else:
+                    self.stdout.write(self.style.ERROR('HMMM...'))
+                    self.stdout.write(self.style.ERROR(u'Added {} of {} email addresses to {}'.format(women_success_count, women_target_count, women_group_address)))
+
+
+            except Season.DoesNotExist:
+                self.stdout.write(self.style.ERROR('No season found with that slug'))
