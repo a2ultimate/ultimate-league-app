@@ -33,7 +33,7 @@
 
     {% include '_partials/league_list.html' with leagues=leagues link_view='teamgeneration_league' only %}
   {% else %}
-    <h1>{% include '_partials/division_header.html' with league=league header='Team Generation' only %}</h1>
+    {% include '_partials/division_header.html' with league=league header='Team Generation' only %}
 
     <form class="form" method="post">{% csrf_token %}
       {% if teams %}

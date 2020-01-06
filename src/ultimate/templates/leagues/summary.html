@@ -3,8 +3,8 @@
 {% load leagues %}
 {% load utility %}
 
-{% block title %}Summary &middot; {{ league.night_title|smart_title }} &middot; {{ league.season_title|smart_title }} League {{ league.year }} &middot; {{ block.super }}{% endblock %}
-{% block og_title %}{{ block.super }} {{ league.year }} {{ league.season_title|smart_title }} League {{ league.night_title|smart_title }} Division{% endblock %}
+{% block title %}Summary &middot; {{ league.night_title|smart_title }} &middot; {{ league.season_title|smart_title }} {{ league.year }} &middot; {{ block.super }}{% endblock %}
+{% block og_title %}{{ block.super }} {{ league.year }} {{ league.season_title|smart_title }} {{ league.night_title|smart_title }} Division{% endblock %}
 
 {% block description %}
   {% if league.tagline %}
@@ -24,7 +24,7 @@
 
 {% block content %}
 
-  <h1>{% include '_partials/division_header.html' with league=league only %}</h1>
+  {% include '_partials/division_header.html' with league=league only %}
 
   {% include '_partials/league_tabs.html' with selected_tab='summary' %}
 
@@ -52,7 +52,7 @@
 
   {% if league|is_open:user %}
     <p>
-      {% if league|is_waitlist:user %}
+      {% if league|is_waitlisting_registrations:user %}
         <a class="button button-info" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">Join Waitlist</a>
       {% else %}
         <a class="button button-success" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">Register Now</a>

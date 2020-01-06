@@ -15,7 +15,7 @@ def paypal_callback(sender, **kwargs):
         try:
             registration = Registrations.objects.get(paypal_invoice_id=ipn_obj.invoice)
 
-            if registration.league.is_waitlist(registration.user):
+            if registration.league.is_waitlisting_registrations(registration.user):
                 registration.waitlist = True
 
             registration.payment_complete = True

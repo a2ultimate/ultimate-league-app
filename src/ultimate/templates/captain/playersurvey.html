@@ -22,7 +22,7 @@
 
   <p>
     Please complete the following form to the best of your ability.
-    The team formation process relies heavily on the accuracy of
+    The team generation process relies heavily on the accuracy of
     these answers, as they will be used to help balance teams.
   </p>
 
@@ -87,11 +87,13 @@
               </div>
             </th>
             {% for field in row.form.visible_fields %}
-              <td class="{% if field.errors %}page-player-survey-table-cell-error{% endif %}">
-                {{ field }}
-                {% if not forloop.last %}
-                  <div class="small strong">{{ row.user|get_average:field.label }}</div>
-                {% endif %}
+              <td class="page-player-survey-table-cell">
+                <div class="page-player-survey-table-cell-field{% if field.errors %} page-player-survey-table-cell-field-error{% endif %}">
+                  {{ field }}
+                  {% if not forloop.last %}
+                    <div class="small strong">{{ row.user|get_average:field.label }}</div>
+                  {% endif %}
+                </div>
               </td>
             {% endfor %}
           </tr>

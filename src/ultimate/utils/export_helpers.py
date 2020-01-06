@@ -38,7 +38,7 @@ def get_export_headers(export_type):
             'Athleticism',
             'Competitiveness',
             'Spirit',
-            'Number of Leagues',
+            'Number of Teams',
         ]
 
         headers_additional_info = [
@@ -52,7 +52,7 @@ def get_export_headers(export_type):
 
     if export_type == 'year':
         headers_league = [
-            'League',
+            'Division',
         ]
 
         return headers_league + headers_placement + headers_info + headers_payment

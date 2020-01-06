@@ -13,7 +13,7 @@
   {% if not season %}
     {% include '_partials/league_list.html' with leagues=leagues link_view='league_summary' only %}
   {% else %}
-    <h1>{% include '_partials/league_header.html' with league=first_division only %}</h1>
+    <h1>{% include '_partials/league_header.html' with league=first_division only %}
 
     <h4>
       Ann Arbor Ultimate is proud to present {{ league.season_title|smart_title }} League {{ year }}.
@@ -53,7 +53,7 @@
 
       {% if league|is_open:user %}
         <p>
-          {% if league|is_waitlist:user %}
+          {% if league|is_waitlisting_registrations:user %}
             <a class="button button-info" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">Join Waitlist</a>
           {% else %}
             <a class="button button-success" href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug %}">Register Now</a>

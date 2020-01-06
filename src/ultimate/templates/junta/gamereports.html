@@ -44,7 +44,7 @@
     {% include '_partials/league_list.html' with leagues=leagues link_view='gamereports_league' only %}
 
   {% elif league and game and team %}
-    <h1>{% include '_partials/division_header.html' with league=league header='Game Reports' only %}</h1>
+    {% include '_partials/division_header.html' with league=league header='Game Reports' only %}
 
     {% for game_report in game_reports %}
       <h2>Attendance for Team {{ team.id }}</h2>
@@ -83,7 +83,7 @@
     {% endfor %}
 
   {% else %}
-    <h1>{% include '_partials/division_header.html' with league=league header='Game Reports' only %}</h1>
+    {% include '_partials/division_header.html' with league=league header='Game Reports' only %}
 
     {% if game_dates|length %}
       {% include '_partials/table_schedule_league.html' with league=league game_locations=game_locations game_dates=game_dates user_games=user_games next_game_date=next_game_date link_game_report=1 show_teams=1 only %}

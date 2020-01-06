@@ -1,14 +1,18 @@
-.page-division-players-list {
+.page-division-players-players {
   margin-bottom: 1rem;
 
   @include outer-container;
 }
 
-.page-division-players-list-group {
+.page-division-players-players-list {
   margin: 0;
-  padding: 0.75rem;
+  padding: 0;
 
   list-style: none;
+}
+
+.page-division-players-players-list-item {
+  padding: 0.75rem;
 
   border-radius: $border-radius;
 

@@ -32,12 +32,22 @@ class FieldAdmin(admin.ModelAdmin):
     list_filter = ('type',)
 
 
+def mark_hidden(modeladmin, request, queryset):
+    queryset.update(hidden=True)
+mark_hidden.short_description = "Mark selected field names as hidden"
+
+def mark_not_hidden(modeladmin, request, queryset):
+    queryset.update(hidden=False)
+mark_not_hidden.short_description = "Mark selected field names as not hidden"
+
 class FieldNameAdmin(admin.ModelAdmin):
     save_as = True
     save_on_top = True
 
-    list_display = ('name', 'field', 'type',)
-    list_filter = ('field', 'field__type', 'type',)
+    list_display = ('name', 'field', 'type', 'hidden',)
+    list_filter = ('hidden', 'type', 'field__type', 'field',)
+
+    actions = [mark_hidden, mark_not_hidden,]
 
 
 class GameTeamsInline(admin.TabularInline):
@@ -135,7 +145,7 @@ class RegistrationsAdmin(admin.ModelAdmin):
     list_filter = ('league__year', 'league__season', 'league__night', 'paypal_complete', 'check_complete', 'waitlist', 'refunded', 'flagged',)
     search_fields = ['user__first_name', 'user__last_name', 'user__email', 'paypal_invoice_id', 'baggage__id', 'coupon__code']
 
-    actions = [mark_flagged, mark_not_flagged, mark_refunded, mark_not_refunded, mark_waitlisted, mark_not_waitlisted]
+    actions = [mark_flagged, mark_not_flagged, mark_refunded, mark_not_refunded, mark_waitlisted, mark_not_waitlisted,]
 
     def get_form(self, request, obj=None, **kwargs):
         # just save obj reference for future processing in Inline

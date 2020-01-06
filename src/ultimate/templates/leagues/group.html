@@ -5,15 +5,15 @@
 {% load teams %}
 {% load utility %}
 
-{% block title %}Grouping &middot; {{ league.night_title|smart_title }} &middot; {{ league.season_title|smart_title }} League {{ league.year }} &middot; {{ block.super }}{% endblock %}
-{% block og_title %}{{ block.super }} {{ league.year }} {{ league.season_title|smart_title }} League {{ league.night_title|smart_title }} Division Grouping{% endblock %}
+{% block title %}Grouping &middot; {{ league.night_title|smart_title }} &middot; {{ league.season_title|smart_title }} {{ league.year }} &middot; {{ block.super }}{% endblock %}
+{% block og_title %}{{ block.super }} {{ league.year }} {{ league.season_title|smart_title }} {{ league.night_title|smart_title }} Division Grouping{% endblock %}
 {% block content %}
 
-  <h1>{% include '_partials/division_header.html' with league=league only %}</h1>
+  {% include '_partials/division_header.html' with league=league only %}
 
   {% include '_partials/league_tabs.html' with selected_tab='registration' %}
 
-  <h2>Edit Group</h2>
+  <h2>Group Formation</h2>
 
   <p>
     The deadline for group changes is <strong>{{ league.group_lock_start_date|date:'l, F jS' }} at {{ league.group_lock_start_date|date:'g:iA'|lower }}</strong>.
@@ -21,16 +21,16 @@
   </p>
 
   {% if registration.waitlist %}
-    <p>You are currently on the wait list and are ineligible to form a group.</p>
+    <p>You are currently on the waitlist and are ineligible to form a group at this time.</p>
   {% else %}
 
     <h3>Your current group is{% if not registration.baggage.get_registrations %} empty.{% else %}:{% endif %}</h3>
 
-    <ol>
+    <ul>
       {% for baggage_reg in registration.baggage.get_registrations %}
       <li>{{ baggage_reg.user.get_full_name }}</li>
       {% endfor %}
-    </ol>
+    </ul>
 
     {% if league.baggage > 1 %}
       {% if registration.is_complete and not registration.league.is_after_group_lock_start and not registration.waitlist %}

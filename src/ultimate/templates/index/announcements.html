@@ -18,8 +18,8 @@
 
   <form class="form" method="post">{% csrf_token %}
     {% for hidden in form.hidden_fields %}
-  		{{ hidden }}
-  	{% endfor %}
+      {{ hidden }}
+    {% endfor %}
 
     {% with field=form.email %}
     <div class="form-field form-field-inline{% if field.errors %} form-field-error{% endif %}">

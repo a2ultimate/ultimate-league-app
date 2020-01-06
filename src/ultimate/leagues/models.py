@@ -57,6 +57,7 @@ class FieldNames(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.TextField()
     field = models.ForeignKey('leagues.Field')
+    hidden = models.BooleanField(default=False)
     type = models.CharField(max_length=32, choices=FIELD_TYPE_CHOICES)
 
     class Meta:
@@ -277,8 +278,16 @@ class League(models.Model):
         return self.state == self.LEAGUE_STATE_CLOSED
 
     @property
+    def is_at_capacity(self):
+        return len(self.get_complete_registrations()) >= self.max_players
+
+    @property
     def is_after_registration_start(self):
         return timezone.now() >= self.reg_start_date
+
+    @property
+    def is_before_league_end(self):
+        return timezone.now().date() <= self.league_end_date
 
     @property
     def is_after_price_increase(self):
@@ -301,7 +310,7 @@ class League(models.Model):
     @property
     def status_text(self):
         if self.is_cancelled:
-            return u'{} Cancelled'.format(self.display_type)
+            return u'Cancelled'
 
         if timezone.now() < self.reg_start_date:
             return 'Coming Soon'
@@ -313,10 +322,14 @@ class League(models.Model):
             else:
                 return 'Accepting Registrations'
 
-        if timezone.now() <= self.league_end_datetime:
-            return u'{} In Progress'.format(self.display_type)
+        final_game = self.game_set.order_by('-date', '-start').first()
 
-        return u'{} Completed'.format(self.display_type)
+        if final_game and timezone.now().date() <= final_game.date:
+            return u'In Progress'
+        elif timezone.today() <= self.league_end_datetime:
+            return u'In Progress'
+
+        return u'Completed'
 
     @property
     def status_color(self):
@@ -339,36 +352,31 @@ class League(models.Model):
         return '#95a5a6'
 
     def is_accepting_registrations(self, user=None):
-        # not before league ends
-        if not timezone.now().date() <= self.league_end_date:
-            return False
-
         # admins and junta can register in preview mode
         if user and user.is_authenticated() and user.is_junta and \
                 self.state in [self.LEAGUE_STATE_OPEN, self.LEAGUE_STATE_PREVIEW]:
             return True
 
-        # not open to public
+        # not state=open
         if self.state not in [self.LEAGUE_STATE_OPEN]:
             return False
 
-        # not after registration date start
-        if not timezone.now() >= self.reg_start_date:
+        if not self.is_before_league_end:
+            return False
+
+        if not self.is_after_registration_start:
             return False
 
         return True
 
     def is_waitlisting_registrations(self, user=None):
-        # not accepting registrations
         if not self.is_accepting_registrations(user):
             return False
 
-        # not after waitlist date start
-        if timezone.now() >= self.waitlist_start_date:
+        if self.is_after_waitlist_start:
             return True
 
-        # not full
-        if len(self.get_complete_registrations()) >= self.max_players:
+        if self.is_at_capacity:
             return True
 
         return False
@@ -379,21 +387,8 @@ class League(models.Model):
 
         # if the user is not a league admin and the league is "open" and falls between valid dates
         return self.state in ['open'] and \
-            (timezone.now() >= self.reg_start_date) and \
-            (timezone.now().date() <= self.league_end_date)
-
-    def is_waitlist(self, user=None):
-        # if the league is open and its after the waitlist date or league is full
-        if not self.is_open(user):
-            return True
-
-        if timezone.now() >= self.waitlist_start_date:
-            return True
-
-        if len(self.get_complete_registrations()) >= self.max_players:
-            return True
-
-        return False
+            self.is_after_registration_start and \
+            self.is_before_league_end
 
     def get_visible_teams(self):
         return self.team_set.filter(hidden=False)
@@ -482,7 +477,10 @@ class League(models.Model):
         return [r for r in registrations if r.is_complete and not r.refunded]
 
     def get_player_count(self):
-        return TeamMember.objects.filter(team__league=self).count()
+        if Team.objects.filter(league=self).exists():
+            return TeamMember.objects.filter(team__league=self).count()
+
+        return len(self.get_complete_registrations())
 
     def get_captain_count(self):
         return TeamMember.objects.filter(team__league=self, captain=True).count()
@@ -801,7 +799,10 @@ class Registrations(models.Model):
                     else:
                         status = 'Waiting for Payment'
                     if self.check_complete or self.paypal_complete or self.payment_complete:
-                        status = 'Complete'
+                        if self.waitlist:
+                            status = 'Complete (Waitlist)'
+                        else:
+                            status = 'Complete'
 
         return status
 

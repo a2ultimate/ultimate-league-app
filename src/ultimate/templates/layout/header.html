@@ -92,7 +92,7 @@
                         </a>
                         <ul class="nav-inner-list-dropdown">
                           {% if league|is_open:user %}
-                            {% if league|is_waitlist:user %}
+                            {% if league|is_waitlisting_registrations:user %}
                               <li><a href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug  %}">Register for Waitlist</a></li>
                             {% else %}
                               <li><a href="{% url 'league_registration' year=league.year season=league.season.slug division=league.night_slug  %}">Register</a></li>

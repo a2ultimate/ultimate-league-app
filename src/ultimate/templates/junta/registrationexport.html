@@ -24,12 +24,12 @@
   <h1 class="page-registration-export-header">Registration Export</h1>
 
   <div class="page-registration-export-section">
-    <h2 class="page-registration-export-section-header">By League</h2>
+    <h2 class="page-registration-export-section-header">By Division</h2>
 
     <form class="form" method="post">{% csrf_token %}
       <p>
         <select name="league_id">
-          <option>Select a League</option>
+          <option>Select a Division</option>
 
           {% for league in leagues %}
             <option value="{{ league.id }}">{{ league }}</option>
@@ -37,7 +37,7 @@
         </select>
       </p>
 
-      <input class="button button-info" type="submit" name="export_league" value="Export Registrations For League">
+      <input class="button button-info" type="submit" name="export_league" value="Export Registrations For Division">
     </form>
   </div>
 

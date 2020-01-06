@@ -3,11 +3,11 @@
 {% load leagues %}
 {% load utility %}
 
-{% block title %}Registration &middot; {{ league.night_title|smart_title }} &middot; {{ league.season_title|smart_title }} League {{ league.year }} &middot; {{ block.super }}{% endblock %}
-{% block og_title %}{{ block.super }} {{ league.year }} {{ league.season_title|smart_title }} League {{ league.night_title|smart_title }} Division Registration{% endblock %}
+{% block title %}Registration &middot; {{ league.night_title|smart_title }} &middot; {{ league.season_title|smart_title }} {{ league.year }} &middot; {{ block.super }}{% endblock %}
+{% block og_title %}{{ block.super }} {{ league.year }} {{ league.season_title|smart_title }} {{ league.night_title|smart_title }} Division Registration{% endblock %}
 {% block content %}
 
-  <h1>{% include '_partials/division_header.html' with league=league only %}</h1>
+  {% include '_partials/division_header.html' with league=league only %}
 
   {% include '_partials/league_tabs.html' with selected_tab='registration' %}
 
@@ -36,19 +36,12 @@
       {% endif %}
 
 
-      {% if league.baggage > 1 and not league.is_after_group_lock_start %}
+      {% if league.baggage > 1 %}
         <hr>
 
-        <h3>Form a Group</h3>
-        <p>
-          The deadline for group changes is <strong>{{ league.group_lock_start_date|date:'l, F jS' }} at {{ league.group_lock_start_date|date:'g:iA'|lower }}</strong>.
-          This division allows groups of up to <strong>{{ league.baggage }}</strong> (including you).
-        </p>
-        <p>
-          <a class="button button-info button-small" href="{% url 'league_group' year=league.year season=league.season.slug division=league.night_slug  %}">
-            Form a Group
-          </a>
-        </p>
+        {% if registration.is_complete and league.baggage > 1 %}
+          {% include '_partials/group_formation.html' with league=league registration=registration only %}
+        {% endif %}
       {% endif %}
     {% else %}
       <div class="message message-caution">
@@ -91,7 +84,7 @@
       Your registration is <strong>not complete</strong>. You must complete the payment process.
     </div>
 
-    {% if league.is_waitlist %}
+    {% if league|is_waitlisting_registrations:user %}
       <div class="message message-small message-caution">
         Note: This division is currently either at capacity or the waitlist deadline has passed.
         Upon completion of of your registration, you will be placed on the waitlist.

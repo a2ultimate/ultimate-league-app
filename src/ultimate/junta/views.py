@@ -635,7 +635,6 @@ def schedulegeneration(request, year=None, season=None, division=None):
             teams = teams[0::2] + list(reversed(teams[1::2]))
             teams = teams[:1] + teams[2:] + teams[1:2]
 
-            field_shift = 0
             for event_num in range(0, num_events):
                 teams = teams[:1] + teams[-1:] + teams[1:-1]
 
@@ -643,9 +642,9 @@ def schedulegeneration(request, year=None, season=None, division=None):
                 bottom = list(reversed(teams[num_teams // 2:]))
                 games = zip(top, bottom)
 
-                field_shift = (event_num * 2) % (num_teams // 2)
-
-                games = games[-field_shift:] + games[:-field_shift]
+                # for each time through loop, shift the games by one
+                shift = (event_num) / (num_teams - 1)
+                games = games[shift:] + games[:shift]
 
                 schedule_teams = [team for game in games for team in sorted(game, key=lambda k: k.id)]
                 schedule.append(schedule_teams)
@@ -712,7 +711,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
         else:
             form = ScheduleGenerationForm()
 
-        form.fields['field_names'].queryset = FieldNames.objects.filter(field__league=league)
+        form.fields['field_names'].queryset = FieldNames.objects.filter(field__league=league, hidden=False)
 
     else:
         leagues = League.objects.all().order_by('-league_start_date')

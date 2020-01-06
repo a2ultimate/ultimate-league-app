@@ -213,7 +213,7 @@ class RegistrationAttendanceForm(forms.ModelForm):
 
 
 class ScheduleGenerationForm(forms.Form):
-    field_names = forms.ModelMultipleChoiceField(FieldNames.objects.all(), required=True, label=_('Fields'), help_text=_('You must pick enough fields to cover the number of games for an event. (Hold CTRL or Command to select more than one.)'))
+    field_names = forms.ModelMultipleChoiceField(FieldNames.objects.filter(hidden=False), required=True, label=_('Fields'), help_text=_('You must pick enough fields to cover the number of games for an event. (Hold CTRL or Command to select more than one.)'))
 
 
 class AnnoucementsForm(forms.Form):
