@@ -477,7 +477,10 @@ class League(models.Model):
         return [r for r in registrations if r.is_complete and not r.refunded]
 
     def get_player_count(self):
-        return TeamMember.objects.filter(team__league=self).count()
+        if Team.objects.filter(league=self).exists():
+            return TeamMember.objects.filter(team__league=self).count()
+
+        return len(self.get_complete_registrations())
 
     def get_captain_count(self):
         return TeamMember.objects.filter(team__league=self, captain=True).count()
