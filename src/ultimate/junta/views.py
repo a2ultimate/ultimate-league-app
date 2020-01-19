@@ -12,7 +12,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.db.transaction import atomic
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import get_object_or_404, render_to_response
+from django.shortcuts import get_object_or_404, render
 from django.template import RequestContext
 
 from ultimate.forms import ScheduleGenerationForm
@@ -31,9 +31,8 @@ from paypal.standard.ipn.models import PayPalIPN
 @user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='junta').exists())
 def index(request):
 
-    return render_to_response('junta/index.html',
-        {},
-        context_instance=RequestContext(request))
+    return render(request, 'junta/index.html',
+        {})
 
 
 @login_required
@@ -48,10 +47,8 @@ def captainstatus(request, year=None, season=None, division=None):
     else:
         leagues = League.objects.all().order_by('-league_start_date')
 
-    return render_to_response(
-        'junta/captainstatus.html',
-        {'league': league, 'leagues': leagues},
-        context_instance=RequestContext(request))
+    return render('junta/captainstatus.html',
+        {'league': league, 'leagues': leagues})
 
 
 @login_required
@@ -78,15 +75,14 @@ def leagueresults(request, year=None, season=None, division=None):
     else:
         leagues = League.objects.all().order_by('-league_start_date')
 
-    return render_to_response('junta/leagueresults.html',
+    return render(request, 'junta/leagueresults.html',
         {
             'leagues': leagues,
             'league': league,
             'game_locations': game_locations,
             'game_dates': game_dates,
             'team_records': team_records,
-        },
-        context_instance=RequestContext(request))
+        })
 
 
 @login_required
@@ -178,7 +174,7 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
     else:
         leagues = League.objects.all().order_by('-league_start_date')
 
-    return render_to_response('junta/gamereports.html',
+    return render(request, 'junta/gamereports.html',
         {
             'leagues': leagues,
             'league': league,
@@ -189,8 +185,7 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
             'game_dates': game_dates,
 
             'team_data': team_data,
-        },
-        context_instance=RequestContext(request))
+        })
 
 
 @login_required
@@ -306,11 +301,10 @@ def registrationexport(request, year=None, season=None, division=None):
 
         return response
 
-    return render_to_response('junta/registrationexport.html',
+    return render(request, 'junta/registrationexport.html',
         {
             'leagues': leagues
-        },
-        context_instance=RequestContext(request))
+        })
 
 
 @login_required
@@ -600,9 +594,8 @@ def teamgeneration(request, year=None, season=None, division=None):
         leagues = League.objects.all().order_by('-league_start_date')
         response_dictionary = {'leagues': leagues}
 
-    return render_to_response('junta/teamgeneration.html',
-        response_dictionary,
-        context_instance=RequestContext(request))
+    return render(request, 'junta/teamgeneration.html',
+        response_dictionary)
 
 
 @login_required
@@ -718,7 +711,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
     else:
         leagues = League.objects.all().order_by('-league_start_date')
 
-    return render_to_response('junta/schedulegeneration.html',
+    return render(request, 'junta/schedulegeneration.html',
         {
             'leagues': leagues,
             'league': league,
@@ -728,5 +721,4 @@ def schedulegeneration(request, year=None, season=None, division=None):
             'form': form,
             'schedule': schedule,
             'num_necessary_fields': num_necessary_fields,
-        },
-        context_instance=RequestContext(request))
+        })

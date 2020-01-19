@@ -8,7 +8,7 @@ from django.db import IntegrityError
 from django.db.models import ObjectDoesNotExist, Q
 from django.db.transaction import atomic
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect, render_to_response
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
@@ -35,15 +35,14 @@ def index(request, year=None, season=None):
 
     first_division = leagues.first()
 
-    return render_to_response('leagues/index.html',
+    return render(request, 'leagues/index.html',
         {
             'leagues': leagues,
             'year': year,
             'season': season,
 
             'first_division': first_division,
-        },
-        context_instance=RequestContext(request))
+        })
 
 
 def summary(request, year, season, division):
@@ -61,11 +60,10 @@ def summary(request, year, season, division):
     except League.DoesNotExist:
         raise Http404('Division Not Found')
 
-    return render_to_response('leagues/summary.html',
+    return render(request, 'leagues/summary.html',
         {
             'league': league
-        },
-        context_instance=RequestContext(request))
+        })
 
 
 def details(request, year, season, division):
@@ -83,11 +81,10 @@ def details(request, year, season, division):
     except League.DoesNotExist:
         raise Http404('Division Not Found')
 
-    return render_to_response('leagues/details.html',
+    return render(request, 'leagues/details.html',
         {
             'league': league
-        },
-        context_instance=RequestContext(request))
+        })
 
 
 def players(request, year, season, division):
@@ -118,7 +115,7 @@ def players(request, year, season, division):
     refunded_registrations = league.get_refunded_registrations()
     unassigned_registrations = league.get_unassigned_registrations()
 
-    return render_to_response('leagues/players.html',
+    return render(request, 'leagues/players.html',
         {
             'league': league,
             'user_registration': user_registration,
@@ -132,8 +129,7 @@ def players(request, year, season, division):
             'num_registrations_male': len([r for r in complete_registrations if hasattr(r.user, 'profile') and r.user.profile.is_male()]),
             'num_registrations_minor': len([r for r in complete_registrations if hasattr(r.user, 'profile') and r.user.profile.is_minor(league.league_start_date)]),
             'num_registrations_remaining': max(0, league.max_players - len(complete_registrations)),
-        },
-        context_instance=RequestContext(request))
+        })
 
 
 def teams(request, year, season, division):
@@ -165,7 +161,7 @@ def teams(request, year, season, division):
     if request.user.is_authenticated():
         user_games = games.filter(league=league, gameteams__team__teammember__user=request.user).order_by('date')
 
-    return render_to_response('leagues/teams.html',
+    return render(request, 'leagues/teams.html',
         {
             'league': league,
 
@@ -182,8 +178,7 @@ def teams(request, year, season, division):
                          .prefetch_related('teammember_set')
                          .prefetch_related('teammember_set__user')
                          .prefetch_related('teammember_set__user__profile'),
-        },
-        context_instance=RequestContext(request))
+        })
 
 
 @atomic
@@ -225,12 +220,11 @@ def group(request, year, season, division):
 
         return HttpResponseRedirect(reverse('league_group', kwargs={'year': year, 'season': season, 'division': division}))
 
-    return render_to_response('leagues/group.html',
+    return render(request, 'leagues/group.html',
         {
             'league': league,
             'registration': registration
-        },
-        context_instance=RequestContext(request))
+        })
 
 
 @atomic
@@ -256,13 +250,12 @@ def registration(request, year, season, division, section=None):
         registration = Registrations.objects.get(user=request.user, league=league)
 
     if not league.is_open(request.user):
-        return render_to_response('leagues/registration/error.html',
+        return render(request, 'leagues/registration/error.html',
             {
                 'league': league,
                 'registration': registration,
                 'errors': ['closed'],
-            },
-            context_instance=RequestContext(request))
+            })
 
     if not registration.is_complete:
         errors = []
@@ -286,13 +279,12 @@ def registration(request, year, season, division, section=None):
             errors.append('unknown')
 
         if len(errors):
-            return render_to_response('leagues/registration/error.html',
+            return render(request, 'leagues/registration/error.html',
                 {
                     'league': league,
                     'registration': registration,
                     'errors': errors,
-                },
-                context_instance=RequestContext(request))
+                })
 
     num_steps = 4
     if league.checks_accepted:
@@ -432,24 +424,22 @@ def registration(request, year, season, division, section=None):
             return HttpResponseRedirect(reverse('league_registration', kwargs={'year': year, 'season': season, 'division': division}))
 
     if section == 'conduct' or not registration.conduct_complete:
-        return render_to_response('leagues/registration/conduct.html',
+        return render(request, 'leagues/registration/conduct.html',
             {
                 'league': league,
                 'registration': registration,
                 'section': 'conduct',
                 'tick_percentage': tick_percentage
-            },
-            context_instance=RequestContext(request))
+            })
 
     if section == 'waiver' or not registration.waiver_complete:
-        return render_to_response('leagues/registration/waiver.html',
+        return render(request, 'leagues/registration/waiver.html',
             {
                 'league': league,
                 'registration': registration,
                 'section': 'waiver',
                 'tick_percentage': tick_percentage
-            },
-            context_instance=RequestContext(request))
+            })
 
     if section == 'attendance' or \
             registration.attendance is None or \
@@ -458,28 +448,26 @@ def registration(request, year, season, division, section=None):
         if not attendance_form:
             attendance_form = RegistrationAttendanceForm(instance=registration)
 
-        return render_to_response('leagues/registration/attendance.html',
+        return render(request, 'leagues/registration/attendance.html',
             {
                 'league': league,
                 'registration': registration,
                 'attendance_form': attendance_form,
                 'section': 'attendance',
                 'tick_percentage': tick_percentage
-            },
-            context_instance=RequestContext(request))
+            })
 
     if registration.check_price > 0 or registration.paypal_price > 0:
 
         if league.checks_accepted and (section == 'pay_type' or not registration.pay_type or (registration.pay_type != 'check' and registration.pay_type != 'paypal')):
 
-            return render_to_response('leagues/registration/payment.html',
+            return render(request, 'leagues/registration/payment.html',
                 {
                     'league': league,
                     'registration': registration,
                     'section': 'pay_type',
                     'tick_percentage': tick_percentage
-                },
-                context_instance=RequestContext(request))
+                })
 
         if not registration.paypal_invoice_id:
             registration.paypal_invoice_id = str(uuid.uuid4())
@@ -500,7 +488,7 @@ def registration(request, year, season, division, section=None):
             paypal_form = PayPalPaymentsForm(initial=paypal_dict)
             # https://ppmts.custhelp.com/app/answers/detail/a_id/165
 
-    return render_to_response('leagues/registration/status.html',
+    return render(request, 'leagues/registration/status.html',
         {
             'paypal_form': paypal_form,
             'league': league,
@@ -508,8 +496,7 @@ def registration(request, year, season, division, section=None):
             'section': 'status',
             'tick_percentage': tick_percentage,
             'coupon_is_valid': registration.coupon.is_valid(league, request.user) if registration.coupon else False,
-        },
-        context_instance=RequestContext(request))
+        })
 
 
 @csrf_exempt

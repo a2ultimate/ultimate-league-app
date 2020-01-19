@@ -157,8 +157,6 @@ A2U_RATING_LIMIT_MONTHS = 0
 AUTH_USER_MODEL = 'user.User'
 LOGIN_URL = '/user/log-in/'
 LOGIN_REDIRECT_URL = '/user/'
-LOGOUT_URL = '/user/log-out/'
-LOGOUT_REDIRECT_URL = '/'
 
 
 # CAPTCHA

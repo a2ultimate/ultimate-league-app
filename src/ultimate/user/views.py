@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.db.transaction import atomic
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.template import RequestContext
 from django.utils import timezone
 
@@ -41,14 +41,13 @@ def index(request):
         for registration in league.get_registrations_for_user(request.user):
             registrations.append(registration)
 
-    return render_to_response('user/index.html',
+    return render(request, 'user/index.html',
         {
             'current_leagues': leagues,
             'following_game': following_game,
             'next_game': next_game,
             'registrations': registrations
-        },
-        context_instance=RequestContext(request))
+        })
 
 
 @atomic
@@ -72,9 +71,8 @@ def signup(request):
     if not form:
         form = SignupForm()
 
-    return render_to_response('user/signup.html',
-        {'form': form},
-        context_instance=RequestContext(request))
+    return render(request, 'user/signup.html',
+        {'form': form})
 
 
 @login_required
@@ -102,9 +100,8 @@ def editprofile(request):
     else:
         form = EditProfileForm(instance=request.user)
         player_form = EditPlayerForm(instance=player)
-    return render_to_response('user/editprofile.html',
-        {'form': form, 'player_form': player_form},
-        context_instance=RequestContext(request))
+    return render(request, 'user/editprofile.html',
+        {'form': form, 'player_form': player_form})
 
 
 @login_required
@@ -131,9 +128,8 @@ def editratings(request):
     else:
         form = EditPlayerRatingsForm(instance=ratings)
 
-    return render_to_response('user/editratings.html',
+    return render(request, 'user/editratings.html',
         {
             'form': form
-        },
-        context_instance=RequestContext(request)
+        }
     )
