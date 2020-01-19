@@ -1,9 +1,11 @@
-from django.conf.urls import patterns, url, include
+from django.conf.urls import url, include
 
-urlpatterns = patterns('ultimate.captain.views',
-    (r'^$', 'index', {}, 'captain'),
-    (r'^team/(?P<team_id>[^/]+)/edit/$', 'editteam', {}, 'captaineditteam'),
-    (r'^team/(?P<team_id>[^/]+)/export/$', 'exportteam', {}, 'captain_team_export'),
-    (r'^team/(?P<team_id>[^/]+)/playersurvey/$', 'playersurvey', {}, 'playersurvey'),
-    (r'^team/(?P<team_id>[^/]+)/game/(?P<game_id>[^/]+)/gamereport/$', 'gamereport', {}, 'gamereport'),
-)
+from . import views
+
+urlpatterns = [
+    url(r'^$', views.index, {}, 'captain'),
+    url(r'^team/(?P<team_id>[^/]+)/edit/$', views.editteam, {}, 'captaineditteam'),
+    url(r'^team/(?P<team_id>[^/]+)/export/$', views.exportteam, {}, 'captain_team_export'),
+    url(r'^team/(?P<team_id>[^/]+)/playersurvey/$', views.playersurvey, {}, 'playersurvey'),
+    url(r'^team/(?P<team_id>[^/]+)/game/(?P<game_id>[^/]+)/gamereport/$', views.gamereport, {}, 'gamereport'),
+    ]

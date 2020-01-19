@@ -326,7 +326,7 @@ class League(models.Model):
 
         if final_game and timezone.now().date() <= final_game.date:
             return u'In Progress'
-        elif timezone.today() <= self.league_end_datetime:
+        elif timezone.now() <= self.league_end_datetime:
             return u'In Progress'
 
         return u'Completed'

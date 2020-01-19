@@ -1,25 +1,26 @@
 from django.conf import settings
 from django.conf.urls import patterns, url, include
 
-from ultimate.leagues.signals import paypal_callback
+from .signals import paypal_callback
+from . import views
 
 payment_callbacks = getattr(settings, 'PAYPAL_CALLBACKS', [])
 payment_callback_regex = r'^registration/payment/(' + '|'.join(payment_callbacks) + ')'
 
-urlpatterns = patterns('ultimate.leagues.views',
-    (r'^(?P<year>\d{4})/$', 'index', {}, 'league_index_year'),
-    (r'^(?P<year>\d{4})/(?P<season>[^/]+)/$', 'index', {}, 'league_index_season'),
+urlpatterns = [
+    url(r'^(?P<year>\d{4})/$', views.index, {}, 'league_index_year'),
+    url(r'^(?P<year>\d{4})/(?P<season>[^/]+)/$', views.index, {}, 'league_index_season'),
 
-    (r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', 'summary', {}, 'league_summary'),
-    (r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/details/$', 'details', {}, 'league_details'),
-    (r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/players/$', 'players', {}, 'league_players'),
-    (r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/teams/$', 'teams', {}, 'league_teams'),
+    url(r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', views.summary, {}, 'league_summary'),
+    url(r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/details/$', views.details, {}, 'league_details'),
+    url(r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/players/$', views.players, {}, 'league_players'),
+    url(r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/teams/$', views.teams, {}, 'league_teams'),
 
-    (r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/group/$', 'group', {}, 'league_group'),
+    url(r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/group/$', views.group, {}, 'league_group'),
 
-    (r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/registration/$', 'registration', {}, 'league_registration'),
-    (r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/registration/section/(?P<section>[^/]+)/$', 'registration', {}, 'league_registration_section'),
-    (r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/registration-complete/$', 'registrationcomplete', {}, 'league_registration_complete'),
+    url(r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/registration/$', views.registration, {}, 'league_registration'),
+    url(r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/registration/section/(?P<section>[^/]+)/$', views.registration, {}, 'league_registration_section'),
+    url(r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/registration-complete/$', views.registrationcomplete, {}, 'league_registration_complete'),
 
-    (payment_callback_regex, include('paypal.standard.ipn.urls')),
-)
+    url(payment_callback_regex, include('paypal.standard.ipn.urls')),
+    ]

@@ -1,21 +1,20 @@
 from django.conf import settings
-from django.conf.urls import patterns, url, include
-
-
+from django.conf.urls import url, include
 from django.contrib import admin
+
 admin.autodiscover()
 
-urlpatterns = patterns('',
-    (r'^', include('ultimate.index.urls')),
-    (r'^admin/', include(admin.site.urls)),
-    (r'^captain/', include('ultimate.captain.urls')),
-    (r'^junta/', include('ultimate.junta.urls')),
-    (r'^leagues/', include('ultimate.leagues.urls')),
-    (r'^user/', include('ultimate.user.urls')),
+urlpatterns = [
+    url(r'^', include('ultimate.index.urls')),
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^captain/', include('ultimate.captain.urls')),
+    url(r'^junta/', include('ultimate.junta.urls')),
+    url(r'^leagues/', include('ultimate.leagues.urls')),
+    url(r'^user/', include('ultimate.user.urls')),
 
-    (r'^captcha/', include('captcha.urls')),
-    (r'^hijack/', include('hijack.urls')),
-)
+    url(r'^captcha/', include('captcha.urls')),
+    url(r'^hijack/', include('hijack.urls')),
+    ]
 
 if settings.DEBUG:
     from django.conf.urls.static import static

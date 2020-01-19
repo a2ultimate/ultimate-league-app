@@ -18,4 +18,4 @@ urlpatterns = [
     url(r'^youth/$', views.static, {'content_url': 'youth'}, 'youth'),
 
     url(r'^pages/(?P<content_url>[^/]+)/$', views.static, {}, 'static_page'),
-]
+    ]
