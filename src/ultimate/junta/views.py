@@ -642,9 +642,11 @@ def schedulegeneration(request, year=None, season=None, division=None):
                 bottom = list(reversed(teams[num_teams // 2:]))
                 games = zip(top, bottom)
 
-                # for each time through loop, shift the games by one
-                shift = (event_num) / (num_teams - 1)
-                games = games[shift:] + games[:shift]
+                num_slots = num_teams // 2
+                num_unique_games = num_teams - 1
+
+                shift = (event_num // num_unique_games) + ((event_num * 2) % num_slots)
+                games = games[-shift:] + games[:-shift]
 
                 schedule_teams = [team for game in games for team in sorted(game, key=lambda k: k.id)]
                 schedule.append(schedule_teams)
