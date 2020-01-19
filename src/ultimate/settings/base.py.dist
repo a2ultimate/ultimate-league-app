@@ -204,14 +204,10 @@ MARKDOWN_DEUX_STYLES = {
 
 
 # Paypal Info
-PAYPAL_RECEIVER_EMAIL = ''
 PAYPAL_TEST = True      # Testing mode on
-PAYPAL_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
-PAYPAL_SUBSCRIPTION_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
-PAYPAL_DONATION_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
-PAYPAL_SANDBOX_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
-PAYPAL_SUBSCRIPTION_SANDBOX_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
-PAYPAL_DONATION_SANDBOX_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
+PAYPAL_BUY_BUTTON_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
+PAYPAL_SUBSCRIPTION_BUTTON_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
+PAYPAL_DONATION_BUTTON_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
 PAYPAL_CALLBACK_SECRET = 'replace/this/path/with/a/secret/'
 PAYPAL_CALLBACKS = [
   'an/example/url/',
