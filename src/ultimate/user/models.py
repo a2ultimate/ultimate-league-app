@@ -372,7 +372,7 @@ class PlayerRatings(models.Model):
             self.spirit = None
         super(PlayerRatings, self).save(*args, **kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         return '{} {} <- {}'.format(str(self.updated), self.user, self.submitted_by)
 
 
@@ -383,5 +383,5 @@ class PlayerRatingsReport(models.Model):
     team = models.ForeignKey('leagues.Team')
     updated = models.DateTimeField()
 
-    def __unicode__(self):
+    def __str__(self):
         return '{}, {}, {}'.format(self.team, self.team.league, self.submitted_by)

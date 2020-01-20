@@ -28,7 +28,7 @@ class NewsArticle(models.Model):
         db_table = 'news_article'
         ordering = ['-published', '-created', '-updated']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     def get_absolute_url(self):
@@ -82,7 +82,7 @@ class StaticContent(models.Model):
         db_table = 'static_content'
         verbose_name_plural = 'static content'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.url
 
     def get_absolute_url(self):
@@ -123,5 +123,5 @@ class StaticMenuItems(models.Model):
         ordering = ['location', 'parent__id', 'position']
         verbose_name_plural = 'static menu items'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.content

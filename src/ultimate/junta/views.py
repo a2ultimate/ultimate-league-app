@@ -112,7 +112,7 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
             if request.method == 'POST':
                 if 'export' in request.POST:
                     response = HttpResponse()
-                    response['Content-Disposition'] = 'attachment; filename="' + league.__unicode__() + '.csv"'
+                    response['Content-Disposition'] = 'attachment; filename="' + league.__str__() + '.csv"'
 
                     writer = csv.writer(response)
                     writer.writerow([

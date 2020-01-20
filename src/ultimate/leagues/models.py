@@ -38,7 +38,7 @@ class Field(models.Model):
         db_table = 'field'
         ordering = ['name']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @property
@@ -65,7 +65,7 @@ class FieldNames(models.Model):
         verbose_name_plural = 'field names'
         ordering = ['field__name', 'name']
 
-    def __unicode__(self):
+    def __str__(self):
         return '{} {}'.format(self.field.name, self.name)
 
 
@@ -78,7 +78,7 @@ class Season(models.Model):
     class Meta:
         ordering = ['order', 'name']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def save(self):
@@ -195,7 +195,7 @@ class League(models.Model):
     def get_absolute_url(self):
         return reverse('league_summary', kwargs={'year': self.year, 'season': self.season.slug, 'division': self.night_slug})
 
-    def __unicode__(self):
+    def __str__(self):
         return '{} {} {}'.format(self.season, self.year, self.night)
 
     def save(self):
@@ -227,11 +227,12 @@ class League(models.Model):
 
     @property
     def season_title(self):
-        return self.season.__unicode__() \
+        return self.season.__str__() \
             .replace('_', ' ')
 
     @property
     def season_year(self):
+        print('{} {}'.format(self.season, self.year))
         return '{} {}'.format(self.season, self.year)
 
     @property
@@ -713,7 +714,7 @@ class Baggage(models.Model):
     class Meta:
         db_table = 'baggage'
 
-    def __unicode__(self):
+    def __str__(self):
         return '{} ({})'.format(self.id, self.size)
 
     @property
@@ -766,7 +767,7 @@ class Registrations(models.Model):
         unique_together = ('user', 'league',)
         ordering = ['-registered', '-updated', '-created']
 
-    def __unicode__(self):
+    def __str__(self):
         return '{} {} {} - {} {}'.format(self.league.year, self.league.season, self.league.night, self.user, self.status)
 
     @property
@@ -978,7 +979,7 @@ class Team(models.Model):
     class Meta:
         db_table = 'team'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.pretty_name
 
     @property
@@ -1238,7 +1239,7 @@ class TeamMember(models.Model):
         db_table = 'team_member'
         ordering = ['-captain', 'user__last_name']
 
-    def __unicode__(self):
+    def __str__(self):
         return '{} {}'.format(self.user.first_name, self.user.last_name)
 
     @property
@@ -1262,7 +1263,7 @@ class Game(models.Model):
         db_table = 'game'
         ordering = ['-date', 'field_name']
 
-    def __unicode__(self):
+    def __str__(self):
         return '{} {} {} {}'.format(self.league, self.date, self.start, self.field_name)
 
     def get_teams(self):
@@ -1336,7 +1337,7 @@ class Coupon(models.Model):
         db_table = 'coupons'
         ordering = ['-created_at', ]
 
-    def __unicode__(self):
+    def __str__(self):
         return self.code
 
     def save(self, *args, **kwargs):
@@ -1407,7 +1408,7 @@ class CouponRedemtion(models.Model):
         db_table = 'coupon_redemption'
         ordering = ['-redeemed_at', 'redeemed_by', ]
 
-    def __unicode__(self):
+    def __str__(self):
         return '{} by {} at {}'.format(self.coupon.code, self.redeemed_by.email, self.redeemed_at)
 
     @classmethod
