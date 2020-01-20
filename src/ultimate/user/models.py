@@ -78,7 +78,7 @@ class AbstractUser(AbstractBaseUser, PermissionsMixin):
         """
         Returns the first_name plus the last_name, with a space in between.
         """
-        full_name = '%s %s' % (self.first_name, self.last_name)
+        full_name = '{} {}'.format(self.first_name, self.last_name)
         return full_name.strip()
 
     def get_short_name(self):
@@ -151,7 +151,7 @@ class User(AbstractUser):
                 player_ratings_collected['throwing'].append(rating.throwing)
 
         player_ratings_averaged = {}
-        for key, values in player_ratings_collected.items():
+        for key, values in list(player_ratings_collected.items()):
             player_ratings_averaged[key] = 1
 
             if len(values):
@@ -200,7 +200,7 @@ class User(AbstractUser):
         player_ratings_weighted['throwing'] = calculate_weighted_throwing_rating(player_ratings_averaged['throwing'], 3, 32)
 
         # rating cannot be less than 0
-        player_ratings_weighted['total'] = max(sum(player_ratings_weighted.itervalues()), 0)
+        player_ratings_weighted['total'] = max(sum(player_ratings_weighted.values()), 0)
 
         # spirt is calculated after total because spirit is not included in that calculation
         player_ratings_weighted['spirit'] = calculate_weighted_spirit_rating(player_ratings_averaged['spirit'], 10, 100)
@@ -373,7 +373,7 @@ class PlayerRatings(models.Model):
         super(PlayerRatings, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return '%s %s <- %s' % (str(self.updated), self.user, self.submitted_by)
+        return '{} {} <- {}'.format(str(self.updated), self.user, self.submitted_by)
 
 
 class PlayerRatingsReport(models.Model):
@@ -384,4 +384,4 @@ class PlayerRatingsReport(models.Model):
     updated = models.DateTimeField()
 
     def __unicode__(self):
-        return '%s, %s, %s' % (self.team, self.team.league, self.submitted_by)
+        return '{}, {}, {}'.format(self.team, self.team.league, self.submitted_by)

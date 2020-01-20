@@ -479,11 +479,11 @@ def registration(request, year, season, division, section=None):
             paypal_dict = {
                 'business': 'treasurer@annarborultimate.org',
                 'amount': registration.paypal_price,
-                'cancel_return': u'{}/leagues/{}/{}/{}/registration/'.format(base_url, league.year, league.season.slug, league.night_slug),
+                'cancel_return': '{}/leagues/{}/{}/{}/registration/'.format(base_url, league.year, league.season.slug, league.night_slug),
                 'invoice': registration.paypal_invoice_id,
-                'item_name': u'{} {} {}'.format(league.season_title, league.year, league.night_title),
-                'notify_url': u'{}/leagues/registration/payment/{}'.format(base_url, getattr(settings, 'PAYPAL_CALLBACK_SECRET', 'notification/callback/for/a2ultimate/secret/')),
-                'return': u'{}/leagues/{}/{}/{}/registration-complete/'.format(base_url, league.year, league.season.slug, league.night_slug),
+                'item_name': '{} {} {}'.format(league.season_title, league.year, league.night_title),
+                'notify_url': '{}/leagues/registration/payment/{}'.format(base_url, getattr(settings, 'PAYPAL_CALLBACK_SECRET', 'notification/callback/for/a2ultimate/secret/')),
+                'return': '{}/leagues/{}/{}/{}/registration-complete/'.format(base_url, league.year, league.season.slug, league.night_slug),
             }
 
             paypal_form = PayPalPaymentsForm(initial=paypal_dict)

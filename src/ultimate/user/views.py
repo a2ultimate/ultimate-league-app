@@ -28,12 +28,12 @@ def index(request):
 
     try:
         next_game = future_games.pop(0)
-    except IndexError, Game.DoesNotExist:
+    except (IndexError, Game.DoesNotExist) as e:
         next_game = None
 
     try:
         following_game = future_games.pop(0)
-    except IndexError, Game.DoesNotExist:
+    except (IndexError, Game.DoesNotExist) as e:
         following_game = None
 
     registrations = []

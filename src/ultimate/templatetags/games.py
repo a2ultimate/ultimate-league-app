@@ -47,4 +47,4 @@ def get_result(report, team):
 
 @register.filter
 def get_report_scores_formatted(report):
-    return '%d - %d' % (report.gamereportscore_set.all()[0].score, report.gamereportscore_set.all()[1].score)
+    return '{} - {}'.format(report.gamereportscore_set.all()[0].score, report.gamereportscore_set.all()[1].score)

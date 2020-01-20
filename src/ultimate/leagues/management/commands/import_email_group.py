@@ -88,20 +88,20 @@ class Command(BaseCommand):
 
         if email_address:
             self.stdout.write(self.style.MIGRATE_HEADING('Adding email address to group:'))
-            self.stdout.write(u'Adding {} to {}...'.format(email_address, group_address))
+            self.stdout.write('Adding {} to {}...'.format(email_address, group_address))
 
             success_count = add_to_group(group_email_address=group_address, email_address=email_address)
 
             if success_count == 1:
                 self.stdout.write(self.style.MIGRATE_SUCCESS('DONE'))
-                self.stdout.write(u'Added {} to {}...'.format(email_address, group_address))
+                self.stdout.write('Added {} to {}...'.format(email_address, group_address))
             else:
                 self.stdout.write(self.style.ERROR(' HMMM...'))
                 self.stdout.write(self.style.ERROR('No email addresses added...'))
 
         elif file_path:
             self.stdout.write(self.style.MIGRATE_HEADING('Adding file to group:'))
-            self.stdout.write(u'Adding file to {}...'.format(group_address), ending='')
+            self.stdout.write('Adding file to {}...'.format(group_address), ending='')
 
             success_count = add_to_group(group_email_address=group_address, file_path=file_path)
 
@@ -123,10 +123,10 @@ class Command(BaseCommand):
 
                 if success_count == target_count:
                     self.stdout.write(self.style.MIGRATE_SUCCESS('SUCCESS'))
-                    self.stdout.write(self.style.MIGRATE_SUCCESS(u'Added {} of {} email addresses to {}'.format(success_count, target_count, group_address)))
+                    self.stdout.write(self.style.MIGRATE_SUCCESS('Added {} of {} email addresses to {}'.format(success_count, target_count, group_address)))
                 elif success_count > 0:
                     self.stdout.write(self.style.ERROR('HMMM...'))
-                    self.stdout.write(self.style.ERROR(u'Added {} of {} email addresses to {}'.format(success_count, target_count, group_address)))
+                    self.stdout.write(self.style.ERROR('Added {} of {} email addresses to {}'.format(success_count, target_count, group_address)))
                 else:
                     self.stdout.write(self.style.ERROR('HMMM...'))
                     self.stdout.write(self.style.ERROR('No email addresses added...'))
@@ -149,12 +149,12 @@ class Command(BaseCommand):
 
                 if all_success_count == all_target_count and captains_success_count == captains_target_count:
                     self.stdout.write(self.style.MIGRATE_SUCCESS('SUCCESS'))
-                    self.stdout.write(self.style.MIGRATE_SUCCESS(u'Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, group_address)))
-                    self.stdout.write(self.style.MIGRATE_SUCCESS(u'Added {} of {} email addresses to {}'.format(captains_success_count, captains_target_count, captains_group_address)))
+                    self.stdout.write(self.style.MIGRATE_SUCCESS('Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, group_address)))
+                    self.stdout.write(self.style.MIGRATE_SUCCESS('Added {} of {} email addresses to {}'.format(captains_success_count, captains_target_count, captains_group_address)))
                 elif all_success_count > 0 or captains_success_count > 0:
                     self.stdout.write(self.style.ERROR('HMMM...'))
-                    self.stdout.write(self.style.ERROR(u'Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, group_address)))
-                    self.stdout.write(self.style.ERROR(u'Added {} of {} email addresses to {}'.format(captains_success_count, captains_target_count, captains_group_address)))
+                    self.stdout.write(self.style.ERROR('Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, group_address)))
+                    self.stdout.write(self.style.ERROR('Added {} of {} email addresses to {}'.format(captains_success_count, captains_target_count, captains_group_address)))
                 else:
                     self.stdout.write(self.style.ERROR('HMMM...'))
                     self.stdout.write(self.style.ERROR('No email addresses added...'))
@@ -163,7 +163,7 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.ERROR('No league division found with that id'))
 
         elif season_slug and year:
-            self.stdout.write(self.style.MIGRATE_HEADING(u'Syncing season email addresses for {} {}:'.format(season_slug, year[-2:])))
+            self.stdout.write(self.style.MIGRATE_HEADING('Syncing season email addresses for {} {}:'.format(season_slug, year[-2:])))
 
             from ultimate.leagues.models import Season, TeamMember
             try:
@@ -174,8 +174,8 @@ class Command(BaseCommand):
 
                 # ALL
 
-                all_group_address = u'{}{}@lists.annarborultimate.org'.format(season.slug, year[-2:])
-                all_group_name = u'{} {}'.format(season.name, year)
+                all_group_address = '{}{}@lists.annarborultimate.org'.format(season.slug, year[-2:])
+                all_group_name = '{} {}'.format(season.name, year)
                 all_group_id = api.prepare_group_for_sync(
                     group_name=all_group_name,
                     group_email_address=all_group_address,
@@ -192,8 +192,8 @@ class Command(BaseCommand):
 
                 # MEN
 
-                men_group_address = u'{}{}-men@lists.annarborultimate.org'.format(season.slug, year[-2:])
-                men_group_name = u'{} {} Men'.format(season.name, year)
+                men_group_address = '{}{}-men@lists.annarborultimate.org'.format(season.slug, year[-2:])
+                men_group_name = '{} {} Men'.format(season.name, year)
                 men_group_id = api.prepare_group_for_sync(
                     group_name=men_group_name,
                     group_email_address=men_group_address,
@@ -210,8 +210,8 @@ class Command(BaseCommand):
 
                 # WOMEN
 
-                women_group_address = u'{}{}-women@lists.annarborultimate.org'.format(season.slug, year[-2:])
-                women_group_name = u'{} {} Women'.format(season.name, year)
+                women_group_address = '{}{}-women@lists.annarborultimate.org'.format(season.slug, year[-2:])
+                women_group_name = '{} {} Women'.format(season.name, year)
                 women_group_id = api.prepare_group_for_sync(
                     group_name=women_group_name,
                     group_email_address=women_group_address,
@@ -229,24 +229,24 @@ class Command(BaseCommand):
 
                 if all_success_count == all_team_members.count():
                     self.stdout.write(self.style.MIGRATE_SUCCESS('SUCCESS'))
-                    self.stdout.write(self.style.MIGRATE_SUCCESS(u'Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, all_group_address)))
+                    self.stdout.write(self.style.MIGRATE_SUCCESS('Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, all_group_address)))
                 else:
                     self.stdout.write(self.style.ERROR('HMMM...'))
-                    self.stdout.write(self.style.ERROR(u'Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, all_group_address)))
+                    self.stdout.write(self.style.ERROR('Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, all_group_address)))
 
                 if men_success_count == men_team_members.count():
                     self.stdout.write(self.style.MIGRATE_SUCCESS('SUCCESS'))
-                    self.stdout.write(self.style.MIGRATE_SUCCESS(u'Added {} of {} email addresses to {}'.format(men_success_count, men_target_count, men_group_address)))
+                    self.stdout.write(self.style.MIGRATE_SUCCESS('Added {} of {} email addresses to {}'.format(men_success_count, men_target_count, men_group_address)))
                 else:
                     self.stdout.write(self.style.ERROR('HMMM...'))
-                    self.stdout.write(self.style.ERROR(u'Added {} of {} email addresses to {}'.format(men_success_count, men_target_count, men_group_address)))
+                    self.stdout.write(self.style.ERROR('Added {} of {} email addresses to {}'.format(men_success_count, men_target_count, men_group_address)))
 
                 if women_success_count == women_team_members.count():
                     self.stdout.write(self.style.MIGRATE_SUCCESS('SUCCESS'))
-                    self.stdout.write(self.style.MIGRATE_SUCCESS(u'Added {} of {} email addresses to {}'.format(women_success_count, women_target_count, women_group_address)))
+                    self.stdout.write(self.style.MIGRATE_SUCCESS('Added {} of {} email addresses to {}'.format(women_success_count, women_target_count, women_group_address)))
                 else:
                     self.stdout.write(self.style.ERROR('HMMM...'))
-                    self.stdout.write(self.style.ERROR(u'Added {} of {} email addresses to {}'.format(women_success_count, women_target_count, women_group_address)))
+                    self.stdout.write(self.style.ERROR('Added {} of {} email addresses to {}'.format(women_success_count, women_target_count, women_group_address)))
 
 
             except Season.DoesNotExist:

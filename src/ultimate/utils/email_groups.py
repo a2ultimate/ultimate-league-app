@@ -31,14 +31,14 @@ def generate_email_list_address(league, team=None, suffix=None):
         if not league.gender == 'corec':
             descriptor = '{}-{}'.format(league.level, league.gender)
 
-        group_address = u'{}{}-{}-{}'.format(
+        group_address = '{}{}-{}-{}'.format(
             league.season.slug,
             str(league.year)[-2:],
             league.league_start_date.strftime('%a'),
             descriptor,
         )
     else:
-        group_address = u'{}{}-{}'.format(
+        group_address = '{}{}-{}'.format(
             league.season.slug,
             str(league.year)[-2:],
             league.night_slug,
@@ -50,7 +50,7 @@ def generate_email_list_address(league, team=None, suffix=None):
     if suffix is not None:
         group_address += '-' + suffix
 
-    return u'{}@lists.annarborultimate.org'.format(group_address).lower()
+    return '{}@lists.annarborultimate.org'.format(group_address).lower()
 
 
 def generate_email_list_name(league, team=None, suffix=None):
@@ -59,14 +59,14 @@ def generate_email_list_name(league, team=None, suffix=None):
         if not league.gender == 'corec':
             descriptor = '{} {}'.format(league.display_level, league.display_gender)
 
-        group_name = u'{} {} {} {}'.format(
+        group_name = '{} {} {} {}'.format(
             league.season.name,
             league.year,
             league.league_start_date.strftime('%A'),
             descriptor,
         )
     else:
-        group_name = u'{} {} {}'.format(
+        group_name = '{} {} {}'.format(
             league.season.name,
             league.year,
             league.night,

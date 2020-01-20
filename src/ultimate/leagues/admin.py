@@ -159,19 +159,19 @@ class RegistrationsAdmin(admin.ModelAdmin):
         return super(RegistrationsAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     def year(self, obj):
-        return u'%d' % (obj.league.year)
+        return '{}'.format(obj.league.year)
     year.admin_order_field = 'league__year'
 
     def season(self, obj):
-        return u'%s' % (obj.league.season)
+        return '{}'.format(obj.league.season)
     season.admin_order_field = 'league__season'
 
     def night(self, obj):
-        return u'%s' % (obj.league.night)
+        return '{}'.format(obj.league.night)
     night.admin_order_field = 'league__night'
 
     def user_details(self, obj):
-        return u'%s <br /> %s' % (obj.user.get_full_name(), obj.user.email)
+        return '{} <br /> {}'.format(obj.user.get_full_name(), obj.user.email)
     user_details.allow_tags = True
 
     def captain_value(self, obj):
@@ -182,7 +182,7 @@ class RegistrationsAdmin(admin.ModelAdmin):
         paypal_row = PayPalIPN.objects.filter(invoice=obj.paypal_invoice_id).order_by('-payment_date')[:1].get()
         if not paypal_row:
             return None
-        return u'Name: {} {}<br />Email: {}<br />Date: {}<br />Status: {}<br />Amount: {}'.format(paypal_row.first_name, paypal_row.last_name, paypal_row.payer_email, paypal_row.payment_date, paypal_row.payment_status, paypal_row.mc_gross)
+        return 'Name: {} {}<br />Email: {}<br />Date: {}<br />Status: {}<br />Amount: {}'.format(paypal_row.first_name, paypal_row.last_name, paypal_row.payer_email, paypal_row.payment_date, paypal_row.payment_status, paypal_row.mc_gross)
     paypal_details.allow_tags = True
 
 
@@ -196,7 +196,7 @@ class SeasonAdmin(admin.ModelAdmin):
 class TeamMemberModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, team_member):
         # Return a string of the format: "firstname lastname (username)"
-        return '%s, %s (%s)' % (team_member.last_name, team_member.first_name, team_member.email)
+        return '{}, {} ({})'.format(team_member.last_name, team_member.first_name, team_member.email)
 
     class Meta:
         label = ''

@@ -1,5 +1,6 @@
 import csv
 import re
+from functools import reduce
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -59,7 +60,7 @@ def exportteam(request, team_id):
         raise Http403
 
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = u'attachment; filename="{}.csv"'.format(team)
+    response['Content-Disposition'] = 'attachment; filename="{}.csv"'.format(team)
 
     writer = csv.writer(response)
     writer.writerow([
@@ -144,9 +145,9 @@ def playersurvey(request, team_id):
 
                 if rating_data['not_sure']:
                     data = {'not_sure': True}
-                    data = dict(data.items() + user_data.items())
+                    data = dict(list(data.items()) + list(user_data.items()))
                 else:
-                    data = dict(rating_data.items() + user_data.items())
+                    data = dict(list(rating_data.items()) + list(user_data.items()))
                     del data['user_id']
 
                 ratings_row, created = PlayerRatings.objects.get_or_create(ratings_report=ratings_report, user=data['user'], defaults=data)
