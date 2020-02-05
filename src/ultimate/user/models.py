@@ -235,9 +235,10 @@ class Player(models.Model):
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='profile')
     groups = models.TextField()
-    nickname = models.CharField(max_length=30, blank=True)
     date_of_birth = models.DateField(blank=True, null=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    personal_pronoun = models.TextField(blank=True)
+    nickname = models.CharField(max_length=30, blank=True)
     phone = models.CharField(max_length=15, blank=True)
     zip_code = models.CharField(max_length=15, blank=True)
     height_inches = models.IntegerField(default=0)
