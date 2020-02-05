@@ -220,8 +220,8 @@ class Player(models.Model):
     GENDER_FEMALE = 'F'
     GENDER_MALE = 'M'
     GENDER_CHOICES = (
-        (GENDER_FEMALE, 'Female'),
-        (GENDER_MALE, 'Male'),
+        (GENDER_MALE, 'Man'),
+        (GENDER_FEMALE, 'Woman'),
     )
 
     JERSEY_SIZE_CHOICES = (

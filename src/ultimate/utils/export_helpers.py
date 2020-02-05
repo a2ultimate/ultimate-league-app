@@ -8,7 +8,7 @@ def get_export_headers(export_type):
         'Firstname',
         'Lastname',
         'Email',
-        'Gender',
+        'Match Pref',
         'Age',
     ]
 

@@ -83,9 +83,9 @@
         </div>
 
         <div class="team-card-footer-content">
-          {{ team.teammember_set.all|length }} Player{{ team.teammember_set.all|length|pluralize }},
-          {{ team.get_male_members|length }} Male{{ team.get_male_members|length|pluralize }},
-          {{ team.get_female_members|length }} Female{{ team.get_female_members|length|pluralize }}
+          {{ team.teammember_set.all|length }} Total{{ team.teammember_set.all|length|pluralize }},
+          {{ team.get_male_members|length }} Man Matcher{{ team.get_male_members|length|pluralize }},
+          {{ team.get_female_members|length }} Woman Matcher{{ team.get_female_members|length|pluralize }}
         </div>
       {% endif %}
     {% endblock %}

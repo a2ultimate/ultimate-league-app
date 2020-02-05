@@ -22,9 +22,9 @@ class SignupForm(forms.ModelForm):
 
     date_of_birth = forms.DateField(label='Date of Birth',
         widget=SelectDateWidget(empty_label=('Year', 'Month', 'Day'),
-        years=range(timezone.now().year, timezone.now().year - 70, -1)))
+        years=range(timezone.now().year, timezone.now().year - 100, -1)))
 
-    gender = forms.CharField(label='Gender', widget=forms.Select(choices=(('', ''),) + Player.GENDER_CHOICES))
+    gender = forms.CharField(label='Matching Preference', widget=forms.Select(choices=(('', ''),) + Player.GENDER_CHOICES))
 
     honeypot = forms.CharField(required=False, label=_('Honeypot'),
         help_text=_('If you enter anything in this field your form submission will be treated as spam'))
@@ -104,8 +104,8 @@ class EditProfileForm(forms.ModelForm):
 class EditPlayerForm(forms.ModelForm):
     date_of_birth = forms.DateField(label='Date of Birth*',
         widget=SelectDateWidget(empty_label=('Year', 'Month', 'Day'),
-        years=range(timezone.now().year, timezone.now().year - 70, -1)))
-    gender = forms.CharField(label='Gender*', widget=forms.Select(choices=(('', ''),) + Player.GENDER_CHOICES))
+        years=range(timezone.now().year, timezone.now().year - 100, -1)))
+    gender = forms.CharField(label='Matching Preference*', widget=forms.Select(choices=(('', ''),) + Player.GENDER_CHOICES))
     nickname = forms.CharField(required=False)
     phone = forms.CharField(required=False)
     zip_code = forms.CharField(label='Postal/Zip Code', required=False)

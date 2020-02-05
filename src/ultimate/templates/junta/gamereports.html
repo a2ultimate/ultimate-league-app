@@ -51,9 +51,9 @@
       <dl>
         <dt>Players</dt>
         <dd>{{ game_report.num_players_in_attendance }}</dd>
-        <dt>Females</dt>
+        <dt>Woman Matchers</dt>
         <dd>{{ game_report.num_females_in_attendance }}</dd>
-        <dt>Males</dt>
+        <dt>Man Matchers</dt>
         <dd>{{ game_report.num_males_in_attendance }}</dd>
       </dl>
 
@@ -94,8 +94,8 @@
             <th>Team Number</th>
             <th>Spirit</th>
             <th>Avg Players</th>
-            <th>Avg Females</th>
-            <th>Avg Males</th>
+            <th>Avg Man Matchers</th>
+            <th>Avg Woman Matchers</th>
           </tr>
         </thead>
         <tbody>
@@ -104,8 +104,8 @@
               <td>{{ team_id }}</td>
               <td>{{ data.spirit_values|average_list|floatformat:1 }}</td>
               <td>{{ data.attendance_values_player|average_list|floatformat:1 }} of {{ data.player_count }}</td>
-              <td>{{ data.attendance_values_female|average_list|floatformat:1 }} of {{ data.female_count }}</td>
               <td>{{ data.attendance_values_male|average_list|floatformat:1 }} of {{ data.male_count }}</td>
+              <td>{{ data.attendance_values_female|average_list|floatformat:1 }} of {{ data.female_count }}</td>
             </tr>
           {% endfor %}
         </tbody>
