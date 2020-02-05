@@ -232,7 +232,6 @@ class League(models.Model):
 
     @property
     def season_year(self):
-        print('{} {}'.format(self.season, self.year))
         return '{} {}'.format(self.season, self.year)
 
     @property
