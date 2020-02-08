@@ -93,7 +93,7 @@ class Command(BaseCommand):
             success_count = add_to_group(group_email_address=group_address, email_address=email_address)
 
             if success_count == 1:
-                self.stdout.write(self.style.MIGRATE_SUCCESS('DONE'))
+                self.stdout.write(self.style.SUCCESS('DONE'))
                 self.stdout.write('Added {} to {}...'.format(email_address, group_address))
             else:
                 self.stdout.write(self.style.ERROR(' HMMM...'))
@@ -106,7 +106,7 @@ class Command(BaseCommand):
             success_count = add_to_group(group_email_address=group_address, file_path=file_path)
 
             if success_count > 0:
-                self.stdout.write(self.style.MIGRATE_SUCCESS('DONE'))
+                self.stdout.write(self.style.SUCCESS('DONE'))
             else:
                 self.stdout.write(self.style.ERROR(' HMMM...'))
                 self.stdout.write(self.style.ERROR('No email addresses added...'))
@@ -122,8 +122,8 @@ class Command(BaseCommand):
                 target_count = team.size
 
                 if success_count == target_count:
-                    self.stdout.write(self.style.MIGRATE_SUCCESS('SUCCESS'))
-                    self.stdout.write(self.style.MIGRATE_SUCCESS('Added {} of {} email addresses to {}'.format(success_count, target_count, group_address)))
+                    self.stdout.write(self.style.SUCCESS('SUCCESS'))
+                    self.stdout.write(self.style.SUCCESS('Added {} of {} email addresses to {}'.format(success_count, target_count, group_address)))
                 elif success_count > 0:
                     self.stdout.write(self.style.ERROR('HMMM...'))
                     self.stdout.write(self.style.ERROR('Added {} of {} email addresses to {}'.format(success_count, target_count, group_address)))
@@ -148,9 +148,9 @@ class Command(BaseCommand):
                 captains_target_count = league.get_captain_count()
 
                 if all_success_count == all_target_count and captains_success_count == captains_target_count:
-                    self.stdout.write(self.style.MIGRATE_SUCCESS('SUCCESS'))
-                    self.stdout.write(self.style.MIGRATE_SUCCESS('Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, group_address)))
-                    self.stdout.write(self.style.MIGRATE_SUCCESS('Added {} of {} email addresses to {}'.format(captains_success_count, captains_target_count, captains_group_address)))
+                    self.stdout.write(self.style.SUCCESS('SUCCESS'))
+                    self.stdout.write(self.style.SUCCESS('Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, group_address)))
+                    self.stdout.write(self.style.SUCCESS('Added {} of {} email addresses to {}'.format(captains_success_count, captains_target_count, captains_group_address)))
                 elif all_success_count > 0 or captains_success_count > 0:
                     self.stdout.write(self.style.ERROR('HMMM...'))
                     self.stdout.write(self.style.ERROR('Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, group_address)))
@@ -228,22 +228,22 @@ class Command(BaseCommand):
 
 
                 if all_success_count == all_team_members.count():
-                    self.stdout.write(self.style.MIGRATE_SUCCESS('SUCCESS'))
-                    self.stdout.write(self.style.MIGRATE_SUCCESS('Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, all_group_address)))
+                    self.stdout.write(self.style.SUCCESS('SUCCESS'))
+                    self.stdout.write(self.style.SUCCESS('Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, all_group_address)))
                 else:
                     self.stdout.write(self.style.ERROR('HMMM...'))
                     self.stdout.write(self.style.ERROR('Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, all_group_address)))
 
                 if men_success_count == men_team_members.count():
-                    self.stdout.write(self.style.MIGRATE_SUCCESS('SUCCESS'))
-                    self.stdout.write(self.style.MIGRATE_SUCCESS('Added {} of {} email addresses to {}'.format(men_success_count, men_target_count, men_group_address)))
+                    self.stdout.write(self.style.SUCCESS('SUCCESS'))
+                    self.stdout.write(self.style.SUCCESS('Added {} of {} email addresses to {}'.format(men_success_count, men_target_count, men_group_address)))
                 else:
                     self.stdout.write(self.style.ERROR('HMMM...'))
                     self.stdout.write(self.style.ERROR('Added {} of {} email addresses to {}'.format(men_success_count, men_target_count, men_group_address)))
 
                 if women_success_count == women_team_members.count():
-                    self.stdout.write(self.style.MIGRATE_SUCCESS('SUCCESS'))
-                    self.stdout.write(self.style.MIGRATE_SUCCESS('Added {} of {} email addresses to {}'.format(women_success_count, women_target_count, women_group_address)))
+                    self.stdout.write(self.style.SUCCESS('SUCCESS'))
+                    self.stdout.write(self.style.SUCCESS('Added {} of {} email addresses to {}'.format(women_success_count, women_target_count, women_group_address)))
                 else:
                     self.stdout.write(self.style.ERROR('HMMM...'))
                     self.stdout.write(self.style.ERROR('Added {} of {} email addresses to {}'.format(women_success_count, women_target_count, women_group_address)))
