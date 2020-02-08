@@ -28,6 +28,11 @@
     </li>
     {% if request.user.is_superuser %}
       <li class="selection-list-item">
+        <a class="selection-list-item-link" href="{% url 'concussion_compliance' %}">
+          Concussion Compliance
+        </a>
+      </li>
+      <li class="selection-list-item">
         <a class="selection-list-item-link" href="{% url 'teamgeneration' %}">
           Team Generation
         </a>

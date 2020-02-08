@@ -1,0 +1,26 @@
+{% extends 'layout/layout_user.html' %}
+
+{% load games %}
+{% load leagues %}
+{% load utility %}
+
+{% block title %}Concussion Compliance &middot; Junta Resources &middot; {{ block.super }}{% endblock %}
+
+{% block content %}
+
+  {% include '_partials/account_tabs.html' with selected_tab='junta' %}
+
+  <div class="breadcrumbs">
+    <ul class="breadcrumbs-list">
+      <li class="breadcrumb">
+        <a href="{% url 'junta' %}">Junta Resources</a>
+      </li>
+      <li class="breadcrumb">
+        <a href="{% url 'concussion_compliance' %}">Concussion Compliance</a>
+      </li>
+    </ul>
+  </div>
+
+  <h1>Concussion Compliance</h1>
+
+{% endblock %}

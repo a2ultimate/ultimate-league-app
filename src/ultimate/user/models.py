@@ -386,3 +386,31 @@ class PlayerRatingsReport(models.Model):
 
     def __str__(self):
         return '{}, {}, {}'.format(self.team, self.team.league, self.submitted_by)
+
+
+class PlayerConcussionWaiver(models.Model):
+    PLAYER_CONCUSSION_WAIVER_SUBMITTED = 'submitted'
+    PLAYER_CONCUSSION_WAIVER_APPROVED = 'approved'
+    PLAYER_CONCUSSION_WAIVER_DENIED = 'denied'
+    PLAYER_CONCUSSION_WAIVER_CHOICES = (
+        (PLAYER_CONCUSSION_WAIVER_SUBMITTED, 'Submitted'),
+        (PLAYER_CONCUSSION_WAIVER_APPROVED, 'Approved'),
+        (PLAYER_CONCUSSION_WAIVER_DENIED, 'Denied'),
+    )
+
+    id = models.AutoField(primary_key=True)
+
+    file = models.FileField(upload_to='concussion_waivers/%Y/%m/%d/', blank=True, null=True)
+
+    status = models.CharField(max_length=32, choices=PLAYER_CONCUSSION_WAIVER_CHOICES)
+
+    submitted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='player_concussion_waiver_submitted_by_set')
+    submitted_at = models.DateTimeField()
+
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='player_concussion_waiver_reviewed_by_set')
+    reviewed_at = models.DateTimeField()
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)

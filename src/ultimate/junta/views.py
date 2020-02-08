@@ -37,6 +37,20 @@ def index(request):
 
 
 @login_required
+@user_passes_test(lambda u: u.is_superuser)
+def concussion_compliance(request):
+    leagues = League.objects.all().order_by('-league_start_date')
+    leagues = [league for league in leagues if league.is_visible(request.user)]
+
+    # get list of minor registrations for visible leagues
+    # determine status for each registration
+    # link to detail page for each registration
+
+    return render(request, 'junta/concussion_compliance.html',
+        {'league': league, 'leagues': leagues})
+
+
+@login_required
 @user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='junta').exists())
 def captainstatus(request, year=None, season=None, division=None):
     league = None
@@ -48,7 +62,7 @@ def captainstatus(request, year=None, season=None, division=None):
     else:
         leagues = League.objects.all().order_by('-league_start_date')
 
-    return render('junta/captainstatus.html',
+    return render(request, 'junta/captainstatus.html',
         {'league': league, 'leagues': leagues})
 
 

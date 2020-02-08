@@ -5,6 +5,8 @@ from . import views
 urlpatterns = [
     url(r'^$', views.index, {}, 'junta'),
 
+    url(r'^concussion-compliance/$', views.concussion_compliance, {}, 'concussion_compliance'),
+
     url(r'^captainstatus/$', views.captainstatus, {}, 'captainstatus'),
     url(r'^captainstatus/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', views.captainstatus, {}, 'captainstatus_league'),
 
