@@ -435,4 +435,4 @@ class PlayerConcussionWaiver(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return '{} – {}'.format(self.submitted_by, self.status)
+        return '{} - {}'.format(self.submitted_by, self.status)
