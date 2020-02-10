@@ -13,9 +13,9 @@ def paypal_callback(sender, **kwargs):
     print(('PayPal IPN Incoming: {} - {}'.format(ipn_obj.invoice, ipn_obj.payment_status)))
 
     if ipn_obj.payment_status == ST_PP_COMPLETED:
-        if ipn_obj.receiver_email != getattr(settings, 'PAYPAL_RECEIVER_EMAIL'):
+        if ipn_obj.business != getattr(settings, 'PAYPAL_BUSINESS_EMAIL'):
             # Not a valid payment
-            print(('PayPal IPN Error: {} - invalid receiver_email'.format(ipn_obj.invoice)))
+            print(('PayPal IPN Error: {} - invalid business "{}"'.format(ipn_obj.invoice, ipn_obj.business)))
             return
 
         try:
@@ -23,7 +23,7 @@ def paypal_callback(sender, **kwargs):
 
             if ipn_obj.mc_gross != registration.paypal_price or ipn_obj.mc_currency != 'USD':
                 # Not a valid payment amount
-                print(('PayPal IPN Error: {} - invalid mc_gross'.format(ipn_obj.invoice)))
+                print(('PayPal IPN Error: {} - invalid mc_gross "{}"'.format(ipn_obj.invoice, ipn_obj.mc_gross)))
                 return
 
             if registration.league.is_waitlisting_registrations(registration.user):

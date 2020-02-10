@@ -477,7 +477,7 @@ def registration(request, year, season, division, section=None):
             base_url = request.build_absolute_uri(getattr(settings, 'FORCE_SCRIPT_NAME', '/')).replace(request.path_info.replace(' ', '%20'), '')
 
             paypal_dict = {
-                'business': getattr(settings, 'PAYPAL_RECEIVER_EMAIL'),
+                'business': getattr(settings, 'PAYPAL_BUSINESS_EMAIL'),
                 'amount': registration.paypal_price,
                 'cancel_return': request.build_absolute_uri(reverse('league_registration', kwargs={'year': year, 'season': season, 'division': division})),
                 'invoice': registration.paypal_invoice_id,
