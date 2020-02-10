@@ -3,6 +3,7 @@
 {% load games %}
 {% load leagues %}
 {% load utility %}
+{% load webpack_static from webpack_loader %}
 
 {% block title %}Concussion Compliance &middot; Junta Resources &middot; {{ block.super }}{% endblock %}
 
@@ -89,6 +90,11 @@
               {% endfor %}
             </td>
             <td>
+              {% if minor_user.grouper.concussion_waiver and minor_user.grouper.concussion_waiver.status == 'approved' %}
+                <img class="icon" src="{% webpack_static 'images/assets/check-circle-solid.svg' %}">
+              {% else %}
+                <img class="icon" src="{% webpack_static 'images/assets/exclamation-triangle-solid.svg' %}">
+              {% endif %}
               {{ minor_user.grouper.concussion_waiver_status }}
             </td>
             <td>
