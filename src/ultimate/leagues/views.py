@@ -482,7 +482,7 @@ def registration(request, year, season, division, section=None):
                 'cancel_return': request.build_absolute_uri(reverse('league_registration', kwargs={'year': year, 'season': season, 'division': division})),
                 'invoice': registration.paypal_invoice_id,
                 'item_name': '{} {} {}'.format(league.season_title, league.year, league.night_title),
-                'notify_url': '{}/leagues/registration/payment/{}'.format(base_url, getattr(settings, 'PAYPAL_CALLBACK_SECRET', 'notification/callback/for/a2ultimate/secret/')),
+                'notify_url': request.build_absolute_uri(reverse('paypal-ipn')),
                 'return': request.build_absolute_uri(reverse('league_registration_complete', kwargs={'year': year, 'season': season, 'division': division})),
             }
 
