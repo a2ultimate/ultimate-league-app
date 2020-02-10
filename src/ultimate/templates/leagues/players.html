@@ -74,7 +74,7 @@
       <p>
         Name not on the list?
       </p>
-      <a class="button button-small" href="mailto:registration@annarborultimate.org">Email Us At registration@annarborultimate.org</a>
+      <a class="button button-small" href="mailto:registration@annarborultimate.org">Email us at registration@annarborultimate.org</a>
     </div>
 
     {% if request.user.is_junta %}
@@ -144,10 +144,10 @@
         <dl>
           <dt>Complete Registrations:</dt>
           <dd>{{ complete_registrations|length }}</dd>
-          <dt>Female Registrations:</dt>
-          <dd>{{ num_registrations_female }}</dd>
-          <dt>Male Registrations:</dt>
+          <dt>Man-Matching Registrations:</dt>
           <dd>{{ num_registrations_male }}</dd>
+          <dt>Woman-Matching Registrations:</dt>
+          <dd>{{ num_registrations_female }}</dd>
           <dt>Minor Registrations:</dt>
           <dd>{{ num_registrations_minor }}</dd>
         </dl>

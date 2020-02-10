@@ -1,24 +1,29 @@
-from django.conf.urls import patterns, url, include
+from django.conf.urls import url, include
 
-urlpatterns = patterns('ultimate.junta.views',
-    (r'^$', 'index', {}, 'junta'),
+from . import views
 
-    (r'^captainstatus/$', 'captainstatus', {}, 'captainstatus'),
-    (r'^captainstatus/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', 'captainstatus', {}, 'captainstatus_league'),
+urlpatterns = [
+    url(r'^$', views.index, {}, 'junta'),
 
-    (r'^leagueresults/$', 'leagueresults', {}, 'leagueresults'),
-    (r'^leagueresults/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', 'leagueresults', {}, 'leagueresults_league'),
+    url(r'^concussion-compliance/$', views.concussion_compliance, {}, 'concussion_compliance'),
+    url(r'^concussion-compliance/(?P<player_user_id>[^/]+)/$', views.concussion_compliance, {}, 'concussion_compliance_user'),
 
-    (r'^gamereports/$', 'gamereports', {}, 'gamereports'),
-    (r'^gamereports/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', 'gamereports', {}, 'gamereports_league'),
-    (r'^gamereports/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/(?P<game_id>[^/]+)/(?P<team_id>[^/]+)/$', 'gamereports', {}, 'gamereports_game'),
+    url(r'^captainstatus/$', views.captainstatus, {}, 'captainstatus'),
+    url(r'^captainstatus/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', views.captainstatus, {}, 'captainstatus_league'),
 
-    (r'^registrationexport/$', 'registrationexport', {}, 'registrationexport'),
-    (r'^registrationexport/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', 'registrationexport', {}, 'registrationexport_league'),
+    url(r'^leagueresults/$', views.leagueresults, {}, 'leagueresults'),
+    url(r'^leagueresults/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', views.leagueresults, {}, 'leagueresults_league'),
 
-    (r'^schedulegeneration/$', 'schedulegeneration', {}, 'schedulegeneration'),
-    (r'^schedulegeneration/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', 'schedulegeneration', {}, 'schedulegeneration_league'),
+    url(r'^gamereports/$', views.gamereports, {}, 'gamereports'),
+    url(r'^gamereports/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', views.gamereports, {}, 'gamereports_league'),
+    url(r'^gamereports/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/(?P<game_id>[^/]+)/(?P<team_id>[^/]+)/$', views.gamereports, {}, 'gamereports_game'),
 
-    (r'^teamgeneration/$', 'teamgeneration', {}, 'teamgeneration'),
-    (r'^teamgeneration/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', 'teamgeneration', {}, 'teamgeneration_league'),
-)
+    url(r'^registrationexport/$', views.registrationexport, {}, 'registrationexport'),
+    url(r'^registrationexport/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', views.registrationexport, {}, 'registrationexport_league'),
+
+    url(r'^schedulegeneration/$', views.schedulegeneration, {}, 'schedulegeneration'),
+    url(r'^schedulegeneration/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', views.schedulegeneration, {}, 'schedulegeneration_league'),
+
+    url(r'^teamgeneration/$', views.teamgeneration, {}, 'teamgeneration'),
+    url(r'^teamgeneration/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', views.teamgeneration, {}, 'teamgeneration_league'),
+    ]

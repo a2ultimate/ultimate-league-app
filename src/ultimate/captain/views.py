@@ -1,5 +1,6 @@
 import csv
 import re
+from functools import reduce
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -10,7 +11,7 @@ from django.db.transaction import atomic
 from django.forms.formsets import formset_factory
 from django.forms.models import model_to_dict, modelformset_factory
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render_to_response
+from django.shortcuts import get_object_or_404, render
 from django.template import RequestContext
 from django.utils import timezone
 
@@ -25,9 +26,8 @@ from ultimate.user.models import PlayerRatings, PlayerRatingsReport
 def index(request):
     captain_teams = Team.objects.filter(teammember__user=request.user, teammember__captain=True, hidden=False).order_by('-league__league_start_date')
 
-    return render_to_response('captain/index.html',
-        {'captain_teams': captain_teams},
-        context_instance=RequestContext(request))
+    return render(request, 'captain/index.html',
+        {'captain_teams': captain_teams})
 
 
 @login_required
@@ -48,9 +48,8 @@ def editteam(request, team_id):
     else:
         form = EditTeamInformationForm(instance=team)
 
-    return render_to_response('captain/editteam.html',
-        {'team': team, 'form': form},
-        context_instance=RequestContext(request))
+    return render(request, 'captain/editteam.html',
+        {'team': team, 'form': form})
 
 
 @login_required
@@ -61,7 +60,7 @@ def exportteam(request, team_id):
         raise Http403
 
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = u'attachment; filename="{}.csv"'.format(team)
+    response['Content-Disposition'] = 'attachment; filename="{}.csv"'.format(team)
 
     writer = csv.writer(response)
     writer.writerow([
@@ -146,9 +145,9 @@ def playersurvey(request, team_id):
 
                 if rating_data['not_sure']:
                     data = {'not_sure': True}
-                    data = dict(data.items() + user_data.items())
+                    data = dict(list(data.items()) + list(user_data.items()))
                 else:
-                    data = dict(rating_data.items() + user_data.items())
+                    data = dict(list(rating_data.items()) + list(user_data.items()))
                     del data['user_id']
 
                 ratings_row, created = PlayerRatings.objects.get_or_create(ratings_report=ratings_report, user=data['user'], defaults=data)
@@ -180,7 +179,7 @@ def playersurvey(request, team_id):
             'form': form
         })
 
-    return render_to_response('captain/playersurvey.html',
+    return render(request, 'captain/playersurvey.html',
         {
             'formset': formset,
             'ratings_choices': {
@@ -190,8 +189,7 @@ def playersurvey(request, team_id):
             },
             'survey': survey,
             'team': team
-        },
-        context_instance=RequestContext(request))
+        })
 
 
 @login_required
@@ -287,7 +285,7 @@ def gamereport(request, team_id, game_id):
         score_us_form = score_formset.forms[0]
         score_them_form = score_formset.forms[1]
 
-    return render_to_response('captain/gamereport.html',
+    return render(request, 'captain/gamereport.html',
         {
             'game_report': game_report,
             'game': game,
@@ -297,5 +295,4 @@ def gamereport(request, team_id, game_id):
             'score_formset': score_formset,
             'score_us_form': score_us_form,
             'score_them_form': score_them_form
-        },
-        context_instance=RequestContext(request))
+        })

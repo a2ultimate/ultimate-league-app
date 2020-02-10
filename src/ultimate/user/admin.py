@@ -8,7 +8,7 @@ from hijack_admin.admin import HijackUserAdminMixin
 from paypal.standard.ipn.admin import PayPalIPNAdmin
 from paypal.standard.ipn.models import PayPalIPN
 
-from ultimate.user.models import Player, PlayerRatings
+from ultimate.user.models import Player, PlayerRatings, PlayerConcussionWaiver
 
 
 class PlayerInline(admin.StackedInline):
@@ -61,11 +61,28 @@ class PlayerRatingsAdmin(admin.ModelAdmin):
                      'submitted_by__first_name', 'submitted_by__last_name', 'submitted_by__email',]
 
     def user_details(self, obj):
-        return u'%s <br /> %s' % (obj.user.get_full_name(), obj.user.email)
+        return '{} <br /> {}'.format(obj.user.get_full_name(), obj.user.email)
     user_details.allow_tags = True
 
     def submitted_by_details(self, obj):
-        return u'%s <br /> %s' % (obj.submitted_by.get_full_name(), obj.submitted_by.email)
+        return '{} <br /> {}'.format(obj.submitted_by.get_full_name(), obj.submitted_by.email)
+    submitted_by_details.allow_tags = True
+
+
+class PlayerConcussionWaiverAdmin(admin.ModelAdmin):
+    save_on_top = True
+
+    list_display = ('submitted_by_details', 'submitted_at', 'reviewed_by_details', 'status',)
+    list_filter = ('status',)
+    readonly_fields = ('reviewed_by', 'reviewed_at', 'created', 'updated')
+    search_fields = ['submitted_by__first_name', 'submitted_by__last_name', 'submitted_by__email',]
+
+    def reviewed_by_details(self, obj):
+        return '{} <br /> {}'.format(obj.reviewed_by.get_full_name(), obj.reviewed_by.email)
+    reviewed_by_details.allow_tags = True
+
+    def submitted_by_details(self, obj):
+        return '{} <br /> {}'.format(obj.submitted_by.get_full_name(), obj.submitted_by.email)
     submitted_by_details.allow_tags = True
 
 
@@ -75,6 +92,7 @@ class CustomPayPalIPNAdmin(PayPalIPNAdmin):
 
 admin.site.register(get_user_model(), UserAdmin)
 admin.site.register(PlayerRatings, PlayerRatingsAdmin)
+admin.site.register(PlayerConcussionWaiver, PlayerConcussionWaiverAdmin)
 
 admin.site.unregister(PayPalIPN)
 admin.site.register(PayPalIPN, CustomPayPalIPNAdmin)

@@ -45,4 +45,6 @@ npm run build
 ./manage.py collectstatic
 ```
 
+*Do not forget to check for settings changes!*
+
 Then, you will want to restart your server service.

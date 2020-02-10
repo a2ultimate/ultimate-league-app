@@ -68,7 +68,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.staticfiles',
-    'django.contrib.webdesign',
 
     'captcha',
     'compat',
@@ -158,8 +157,6 @@ A2U_RATING_LIMIT_MONTHS = 0
 AUTH_USER_MODEL = 'user.User'
 LOGIN_URL = '/user/log-in/'
 LOGIN_REDIRECT_URL = '/user/'
-LOGOUT_URL = '/user/log-out/'
-LOGOUT_REDIRECT_URL = '/'
 
 
 # CAPTCHA
@@ -207,14 +204,10 @@ MARKDOWN_DEUX_STYLES = {
 
 
 # Paypal Info
-PAYPAL_RECEIVER_EMAIL = ''
 PAYPAL_TEST = True      # Testing mode on
-PAYPAL_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
-PAYPAL_SUBSCRIPTION_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
-PAYPAL_DONATION_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
-PAYPAL_SANDBOX_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
-PAYPAL_SUBSCRIPTION_SANDBOX_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
-PAYPAL_DONATION_SANDBOX_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
+PAYPAL_BUY_BUTTON_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
+PAYPAL_SUBSCRIPTION_BUTTON_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
+PAYPAL_DONATION_BUTTON_IMAGE = STATIC_URL + 'images/assets/paypal_checkout.png'
 PAYPAL_CALLBACK_SECRET = 'replace/this/path/with/a/secret/'
 PAYPAL_CALLBACKS = [
   'an/example/url/',

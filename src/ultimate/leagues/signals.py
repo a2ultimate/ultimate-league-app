@@ -9,11 +9,21 @@ from paypal.standard.ipn.signals import valid_ipn_received
 def paypal_callback(sender, **kwargs):
     ipn_obj = sender
 
-    print u'PayPal IPN Incoming: {} - {}'.format(ipn_obj.invoice, ipn_obj.payment_status)
+    print(('PayPal IPN Incoming: {} - {}'.format(ipn_obj.invoice, ipn_obj.payment_status)))
 
     if ipn_obj.payment_status == ST_PP_COMPLETED:
+        if ipn_obj.receiver_email != 'treasurer@annarborultimate.org':
+            # Not a valid payment
+            print(('PayPal IPN Error: {} - invalid receiver_email'.format(ipn_obj.invoice)))
+            return
+
         try:
             registration = Registrations.objects.get(paypal_invoice_id=ipn_obj.invoice)
+
+            if ipn_obj.mc_gross != registration.paypal_price or ipn_obj.mc_currency != 'USD':
+                # Not a valid payment amount
+                print(('PayPal IPN Error: {} - invalid mc_gross'.format(ipn_obj.invoice)))
+                return
 
             if registration.league.is_waitlisting_registrations(registration.user):
                 registration.waitlist = True
@@ -26,15 +36,15 @@ def paypal_callback(sender, **kwargs):
             if registration.coupon:
                 registration.coupon.process(registration.user)
 
-            print u'PayPal IPN Complete: {} - {} - {} - {}'.format(ipn_obj.invoice, registration.id, ipn_obj.mc_gross, registration.paypal_price)
+            print(('PayPal IPN Complete: {} - {} - {} - {}'.format(ipn_obj.invoice, registration.id, ipn_obj.mc_gross, registration.paypal_price)))
         except Registrations.DoesNotExist:
-            print u'PayPal IPN Error: {} - Registration does not exist'.format(ipn_obj.invoice)
-        except Exception, ex:
-            print u'PayPal IPN Error: {} - Unknown error'.format(ipn_obj.invoice)
-            print u'{}'.format(ex)
+            print(('PayPal IPN Error: {} - Registration does not exist'.format(ipn_obj.invoice)))
+        except Exception as ex:
+            print(('PayPal IPN Error: {} - Unknown error'.format(ipn_obj.invoice)))
+            print(('{}'.format(ex)))
 
     else:
-        print u'PayPal IPN Not Complete: {} - {}'.format(ipn_obj.invoice, ipn_obj.payment_status)
+        print(('PayPal IPN Not Complete: {} - {}'.format(ipn_obj.invoice, ipn_obj.payment_status)))
 
 
 valid_ipn_received.connect(paypal_callback)

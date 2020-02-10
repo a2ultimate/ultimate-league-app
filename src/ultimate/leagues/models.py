@@ -15,7 +15,7 @@ from ultimate.utils.email_groups import add_to_group, generate_email_list_addres
 
 
 def generateLeagueCoverImagePath(instance, filename):
-    return u'images/{}/{}/{}/{}'.format(instance.year, instance.season.slug, instance.night_slug, filename)
+    return 'images/{}/{}/{}/{}'.format(instance.year, instance.season.slug, instance.night_slug, filename)
 
 
 class Field(models.Model):
@@ -35,10 +35,10 @@ class Field(models.Model):
     type = models.CharField(max_length=32, choices=FIELD_TYPE_CHOICES)
 
     class Meta:
-        db_table = u'field'
+        db_table = 'field'
         ordering = ['name']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @property
@@ -61,12 +61,12 @@ class FieldNames(models.Model):
     type = models.CharField(max_length=32, choices=FIELD_TYPE_CHOICES)
 
     class Meta:
-        db_table = u'field_names'
+        db_table = 'field_names'
         verbose_name_plural = 'field names'
         ordering = ['field__name', 'name']
 
-    def __unicode__(self):
-        return u'{} {}'.format(self.field.name, self.name)
+    def __str__(self):
+        return '{} {}'.format(self.field.name, self.name)
 
 
 class Season(models.Model):
@@ -78,7 +78,7 @@ class Season(models.Model):
     class Meta:
         ordering = ['order', 'name']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def save(self):
@@ -189,14 +189,14 @@ class League(models.Model):
     image_cover = models.ImageField(upload_to=generateLeagueCoverImagePath, blank=True, null=True)
 
     class Meta:
-        db_table = u'league'
+        db_table = 'league'
         ordering = ['-year', '-season__order', 'league_start_date']
 
     def get_absolute_url(self):
         return reverse('league_summary', kwargs={'year': self.year, 'season': self.season.slug, 'division': self.night_slug})
 
-    def __unicode__(self):
-        return u'{} {} {}'.format(self.season, self.year, self.night)
+    def __str__(self):
+        return '{} {} {}'.format(self.season, self.year, self.night)
 
     def save(self):
         if not self.night_slug:
@@ -227,12 +227,12 @@ class League(models.Model):
 
     @property
     def season_title(self):
-        return self.season.__unicode__() \
+        return self.season.__str__() \
             .replace('_', ' ')
 
     @property
     def season_year(self):
-        return u'{} {}'.format(self.season, self.year)
+        return '{} {}'.format(self.season, self.year)
 
     @property
     def gender_title(self):
@@ -310,7 +310,7 @@ class League(models.Model):
     @property
     def status_text(self):
         if self.is_cancelled:
-            return u'Cancelled'
+            return 'Cancelled'
 
         if timezone.now() < self.reg_start_date:
             return 'Coming Soon'
@@ -325,11 +325,11 @@ class League(models.Model):
         final_game = self.game_set.order_by('-date', '-start').first()
 
         if final_game and timezone.now().date() <= final_game.date:
-            return u'In Progress'
-        elif timezone.today() <= self.league_end_datetime:
-            return u'In Progress'
+            return 'In Progress'
+        elif timezone.now() <= self.league_end_datetime:
+            return 'In Progress'
 
-        return u'Completed'
+        return 'Completed'
 
     @property
     def status_color(self):
@@ -476,6 +476,11 @@ class League(models.Model):
 
         return [r for r in registrations if r.is_complete and not r.refunded]
 
+    def get_minor_registrations(self, registrations=None):
+        if not registrations:
+            registrations = self.get_complete_registrations()
+        return [r for r in registrations if hasattr(r.user, 'profile') and r.user.profile.is_minor(self.league_start_date)]
+
     def get_player_count(self):
         if Team.objects.filter(league=self).exists():
             return TeamMember.objects.filter(team__league=self).count()
@@ -494,7 +499,7 @@ class League(models.Model):
         for game in games:
             game_field = game.field_name.field.pk
             game_field_name = game.field_name.pk
-            location_id = u'{}_{}'.format(game_field, game_field_name)
+            location_id = '{}_{}'.format(game_field, game_field_name)
 
             if location_id not in locations:
                 locations[location_id] = {
@@ -503,7 +508,7 @@ class League(models.Model):
                     'field_name': game.field_name,
                 }
 
-        locations = locations.values()
+        locations = list(locations.values())
         locations.sort(key=lambda k: k['field'].name)
         locations.sort(key=lambda k: k['field_name'].name)
 
@@ -519,7 +524,7 @@ class League(models.Model):
             game_field = game.field_name.field.pk
             game_start = game.start.time() if game.start else game.start
             game_field_name = game.field_name.pk
-            location_id = u'{}_{}_{}'.format(game_start, game_field, game_field_name)
+            location_id = '{}_{}_{}'.format(game_start, game_field, game_field_name)
 
             if location_id not in locations:
                 locations[location_id] = {
@@ -529,7 +534,7 @@ class League(models.Model):
                     'field_name': game.field_name,
                 }
 
-        locations = locations.values()
+        locations = list(locations.values())
         locations.sort(key=lambda k: k['field'].name)
         locations.sort(key=lambda k: k['field_name'].name)
         locations.sort(key=lambda k: k['start'])
@@ -563,7 +568,7 @@ class League(models.Model):
             game_field = game.field_name.field.pk
             game_start = game.start.time() if game.start else game.start
             game_field_name = game.field_name.pk
-            column_id = u'{}_{}'.format(game_field, game_field_name)
+            column_id = '{}_{}'.format(game_field, game_field_name)
 
             while event_locations[current_column_index]['id'] != column_id:
                 game_dates[current_date].append(None)
@@ -607,7 +612,7 @@ class League(models.Model):
             game_field = game.field_name.field.pk
             game_start = game.start.time() if game.start else game.start
             game_field_name = game.field_name.pk
-            column_id = u'{}_{}_{}'.format(game_start, game_field, game_field_name)
+            column_id = '{}_{}_{}'.format(game_start, game_field, game_field_name)
 
             while game_locations[current_column_index]['id'] != column_id:
                 game_dates[current_date].append(None)
@@ -702,7 +707,7 @@ class LeagueFields(models.Model):
     field = models.ForeignKey('leagues.Field')
 
     class Meta:
-        db_table = u'field_league'
+        db_table = 'field_league'
         verbose_name_plural = 'league fields'
 
 
@@ -711,10 +716,10 @@ class Baggage(models.Model):
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     class Meta:
-        db_table = u'baggage'
+        db_table = 'baggage'
 
-    def __unicode__(self):
-        return u'{} ({})'.format(self.id, self.size)
+    def __str__(self):
+        return '{} ({})'.format(self.id, self.size)
 
     @property
     def size(self):
@@ -731,11 +736,11 @@ class Registrations(models.Model):
     )
 
     REGISTRATION_CAPTAIN_CHOICES = (
-        (0, u'I refuse to captain.'),
-        (1, u'I will captain if absolutely necessary.'),
-        (2, u'I am willing to captain.'),
-        (3, u'I would like to captain.'),
-        (4, u'I will be very sad if I don\'t get to captain.'),
+        (0, 'I refuse to captain.'),
+        (1, 'I will captain if absolutely necessary.'),
+        (2, 'I am willing to captain.'),
+        (3, 'I would like to captain.'),
+        (4, 'I will be very sad if I don\'t get to captain.'),
     )
 
     id = models.AutoField(primary_key=True)
@@ -761,13 +766,13 @@ class Registrations(models.Model):
     prompt_response = models.CharField(max_length=255, null=True, blank=True, help_text='response to the registration prompt for a division')
 
     class Meta:
-        db_table = u'registrations'
+        db_table = 'registrations'
         verbose_name_plural = 'registrations'
         unique_together = ('user', 'league',)
         ordering = ['-registered', '-updated', '-created']
 
-    def __unicode__(self):
-        return u'{} {} {} - {} {}'.format(self.league.year, self.league.season, self.league.night, self.user, self.status)
+    def __str__(self):
+        return '{} {} {} - {} {}'.format(self.league.year, self.league.season, self.league.night, self.user, self.status)
 
     @property
     def check_price(self):
@@ -976,19 +981,19 @@ class Team(models.Model):
     group_id = models.CharField(max_length=128, blank=True, null=True)
 
     class Meta:
-        db_table = u'team'
+        db_table = 'team'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.pretty_name
 
     @property
     def pretty_name(self):
-        name = u'Team {}'.format(self.id)
+        name = 'Team {}'.format(self.id)
 
         if self.name:
-            name = u'{} - {}'.format(name, self.name)
+            name = '{} - {}'.format(name, self.name)
         if self.color:
-            return u'{} {}'.format(name, self.color)
+            return '{} {}'.format(name, self.color)
 
         return name
 
@@ -1235,11 +1240,11 @@ class TeamMember(models.Model):
     captain = models.BooleanField(default=False)
 
     class Meta:
-        db_table = u'team_member'
+        db_table = 'team_member'
         ordering = ['-captain', 'user__last_name']
 
-    def __unicode__(self):
-        return u'{} {}'.format(self.user.first_name, self.user.last_name)
+    def __str__(self):
+        return '{} {}'.format(self.user.first_name, self.user.last_name)
 
     @property
     def attendance_total(self):
@@ -1259,11 +1264,11 @@ class Game(models.Model):
     teams = models.ManyToManyField('leagues.Team', through='leagues.GameTeams')
 
     class Meta:
-        db_table = u'game'
+        db_table = 'game'
         ordering = ['-date', 'field_name']
 
-    def __unicode__(self):
-        return u'{} {} {} {}'.format(self.league, self.date, self.start, self.field_name)
+    def __str__(self):
+        return '{} {} {} {}'.format(self.league, self.date, self.start, self.field_name)
 
     def get_teams(self):
         return self.teams.all()
@@ -1296,7 +1301,7 @@ class GameTeams(models.Model):
     team = models.ForeignKey('leagues.Team')
 
     class Meta:
-        db_table = u'game_teams'
+        db_table = 'game_teams'
 
 
 class Coupon(models.Model):
@@ -1333,10 +1338,10 @@ class Coupon(models.Model):
                                        help_text='Leave empty for coupons that never expire')
 
     class Meta:
-        db_table = u'coupons'
+        db_table = 'coupons'
         ordering = ['-created_at', ]
 
-    def __unicode__(self):
+    def __str__(self):
         return self.code
 
     def save(self, *args, **kwargs):
@@ -1347,11 +1352,11 @@ class Coupon(models.Model):
     @property
     def display_value(self):
         if self.type == self.COUPON_TYPE_AMOUNT:
-            return u'${} off'.format(self.value)
+            return '${} off'.format(self.value)
         elif self.type == self.COUPON_TYPE_FULL:
             return 'one free registration'
         elif self.type == self.COUPON_TYPE_PERCENTAGE:
-            return u'{}% off'.format(self.value)
+            return '{}% off'.format(self.value)
 
     def _generate_code(self):
         while 1:
@@ -1404,11 +1409,11 @@ class CouponRedemtion(models.Model):
     redeemed_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = u'coupon_redemption'
+        db_table = 'coupon_redemption'
         ordering = ['-redeemed_at', 'redeemed_by', ]
 
-    def __unicode__(self):
-        return u'{} by {} at {}'.format(self.coupon.code, self.redeemed_by.email, self.redeemed_at)
+    def __str__(self):
+        return '{} by {} at {}'.format(self.coupon.code, self.redeemed_by.email, self.redeemed_at)
 
     @classmethod
     def create(cls, coupon, user):

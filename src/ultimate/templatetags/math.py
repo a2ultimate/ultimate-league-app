@@ -33,9 +33,9 @@ def limit_floor(value, arg):
 @register.filter
 def get_range(value, end=False):
     if end != False:
-        return range(value, end)
+        return list(range(value, end))
 
-    return range(value)
+    return list(range(value))
 
 @register.filter
 def average_list(value):

@@ -25,10 +25,10 @@ class NewsArticle(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = u'news_article'
+        db_table = 'news_article'
         ordering = ['-published', '-created', '-updated']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     def get_absolute_url(self):
@@ -79,10 +79,10 @@ class StaticContent(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = u'static_content'
+        db_table = 'static_content'
         verbose_name_plural = 'static content'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.url
 
     def get_absolute_url(self):
@@ -103,11 +103,11 @@ class StaticContent(models.Model):
 
 class StaticMenuItems(models.Model):
     STATIC_MENU_ITEM_TYPES = (
-        ('header', u'Header'),
-        ('external_link', u'External Link'),
-        ('internal_link', u'Internal Link'),
-        ('static_link', u'Static Link'),
-        ('text', u'Text'),
+        ('header', 'Header'),
+        ('external_link', 'External Link'),
+        ('internal_link', 'Internal Link'),
+        ('static_link', 'Static Link'),
+        ('text', 'Text'),
     )
 
     id = models.AutoField(primary_key=True)
@@ -119,9 +119,9 @@ class StaticMenuItems(models.Model):
     parent = models.ForeignKey('index.StaticMenuItems', default=None, blank=True, null=True)
 
     class Meta:
-        db_table = u'static_menu_items'
+        db_table = 'static_menu_items'
         ordering = ['location', 'parent__id', 'position']
         verbose_name_plural = 'static menu items'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.content

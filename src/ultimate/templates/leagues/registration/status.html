@@ -85,7 +85,7 @@
     </div>
 
     {% if league|is_waitlisting_registrations:user %}
-      <div class="message message-small message-caution">
+      <div class="message message-caution">
         Note: This division is currently either at capacity or the waitlist deadline has passed.
         Upon completion of of your registration, you will be placed on the waitlist.
       </div>
@@ -127,7 +127,7 @@
     {% if registration.paypal_price > 0 or registration.check_price > 0 %}
       {% if registration.pay_type == 'check' %}
         <p>
-          You're currently set to pay by check. Please send a check for
+          You are currently set to pay by check. Please send a check for
           <strong>${{ registration.check_price }}</strong> to:
         </p>
 

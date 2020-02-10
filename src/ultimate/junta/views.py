@@ -1,26 +1,28 @@
 import copy
 import csv
-from datetime import datetime, timedelta
+import re
+from datetime import date, datetime, timedelta
+from functools import reduce
 from itertools import groupby
 from math import ceil, floor
-import re
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.urlresolvers import reverse
-from django.db.models import Q
+from django.db.models import F, Q
 from django.db.transaction import atomic
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import get_object_or_404, render_to_response
+from django.shortcuts import get_object_or_404, render
 from django.template import RequestContext
+from django.utils import timezone
 
 from ultimate.forms import ScheduleGenerationForm
 
 from ultimate.captain.models import GameReport
 from ultimate.leagues.models \
     import (FieldNames, Game, GameTeams, League, Registrations, Team, TeamMember)
-from ultimate.user.models import Player
+from ultimate.user.models import Player, PlayerConcussionWaiver
 
 from ultimate.utils.export_helpers import get_export_headers, get_export_values
 
@@ -31,9 +33,82 @@ from paypal.standard.ipn.models import PayPalIPN
 @user_passes_test(lambda u: u.is_superuser or u.groups.filter(name='junta').exists())
 def index(request):
 
-    return render_to_response('junta/index.html',
-        {},
-        context_instance=RequestContext(request))
+    return render(request, 'junta/index.html',
+        {})
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def concussion_compliance(request, player_user_id=None):
+    leagues = League.objects.all().order_by('-league_start_date')
+    leagues = [league for league in leagues if league.is_visible(request.user)]
+    cutoff_year = date(timezone.now().year - 18, 1, 1)
+    player = None
+
+    registrations = Registrations.objects \
+        .select_related('user') \
+        .filter(league__in=leagues, user__profile__date_of_birth__gte=cutoff_year) \
+        .order_by('user__last_name', 'user__first_name', 'league__league_start_date')
+
+    minor_registrations = [r for r in registrations if hasattr(r.user, 'profile') and r.user.profile.is_minor(r.league.league_start_date) and r.is_complete and not r.waitlist and not r.refunded]
+
+    if player_user_id:
+        try:
+            player = get_user_model().objects.get(id=player_user_id)
+        except get_user_model().DoesNotExist:
+            player = None
+
+    if request.method == 'POST':
+        if 'approve' in request.POST:
+            PlayerConcussionWaiver.objects.update_or_create(
+                submitted_by=player,
+                defaults={
+                    'reviewed_at': timezone.now(),
+                    'reviewed_by': request.user,
+                    'status': PlayerConcussionWaiver.PLAYER_CONCUSSION_WAIVER_APPROVED,
+                },
+            )
+
+        if 'deny' in request.POST:
+            PlayerConcussionWaiver.objects.update_or_create(
+                submitted_by=player,
+                defaults={
+                    'reviewed_at': timezone.now(),
+                    'reviewed_by': request.user,
+                    'status': PlayerConcussionWaiver.PLAYER_CONCUSSION_WAIVER_DENIED,
+                },
+            )
+
+        if 'export' in request.POST:
+            response = HttpResponse()
+            response['Content-Disposition'] = 'attachment; filename="a2u_concusson_compliance.csv"'
+
+            writer = csv.writer(response)
+            writer.writerow([
+                'name',
+                'email',
+                'league',
+                'team',
+                'status',
+            ])
+
+            for minor_registration in minor_registrations:
+                writer.writerow([
+                    minor_registration.user.get_full_name(),
+                    minor_registration.user.email,
+                    minor_registration.league,
+                    minor_registration.get_team_id(),
+                    minor_registration.user.concussion_waiver_status(),
+                ])
+
+            return response
+
+    return render(request, 'junta/concussion_compliance.html',
+        {
+            'leagues': leagues,
+            'minor_registrations': minor_registrations,
+            'player': player,
+        })
 
 
 @login_required
@@ -48,10 +123,8 @@ def captainstatus(request, year=None, season=None, division=None):
     else:
         leagues = League.objects.all().order_by('-league_start_date')
 
-    return render_to_response(
-        'junta/captainstatus.html',
-        {'league': league, 'leagues': leagues},
-        context_instance=RequestContext(request))
+    return render(request, 'junta/captainstatus.html',
+        {'league': league, 'leagues': leagues})
 
 
 @login_required
@@ -78,15 +151,14 @@ def leagueresults(request, year=None, season=None, division=None):
     else:
         leagues = League.objects.all().order_by('-league_start_date')
 
-    return render_to_response('junta/leagueresults.html',
+    return render(request, 'junta/leagueresults.html',
         {
             'leagues': leagues,
             'league': league,
             'game_locations': game_locations,
             'game_dates': game_dates,
             'team_records': team_records,
-        },
-        context_instance=RequestContext(request))
+        })
 
 
 @login_required
@@ -115,15 +187,15 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
             if request.method == 'POST':
                 if 'export' in request.POST:
                     response = HttpResponse()
-                    response['Content-Disposition'] = 'attachment; filename="' + league.__unicode__() + '.csv"'
+                    response['Content-Disposition'] = 'attachment; filename="' + league.__str__() + '.csv"'
 
                     writer = csv.writer(response)
                     writer.writerow([
                         'Date',
                         'Team',
                         'Players',
-                        'Females',
-                        'Males',
+                        'Women Matchers',
+                        'Man Matchers',
                         'Email',
                         'First Name',
                         'Last Name',
@@ -178,7 +250,7 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
     else:
         leagues = League.objects.all().order_by('-league_start_date')
 
-    return render_to_response('junta/gamereports.html',
+    return render(request, 'junta/gamereports.html',
         {
             'leagues': leagues,
             'league': league,
@@ -189,8 +261,7 @@ def gamereports(request, year=None, season=None, division=None, game_id=None, te
             'game_dates': game_dates,
 
             'team_data': team_data,
-        },
-        context_instance=RequestContext(request))
+        })
 
 
 @login_required
@@ -209,7 +280,7 @@ def registrationexport(request, year=None, season=None, division=None):
             export_type = 'league'
             league_id = int(request.POST.get('league_id', 0))
             league = get_object_or_404(League, id=league_id)
-            response['Content-Disposition'] = u'attachment; filename="a2u_{}.csv"'.format(league)
+            response['Content-Disposition'] = 'attachment; filename="a2u_{}.csv"'.format(league)
 
             if league_id:
                 registrations = registrations.filter(league=league)
@@ -219,7 +290,7 @@ def registrationexport(request, year=None, season=None, division=None):
         if 'export_year' in request.POST:
             export_type = 'year'
             year = int(request.POST.get('year', 0))
-            response['Content-Disposition'] = u'attachment; filename="a2u_{}.csv"'.format(year)
+            response['Content-Disposition'] = 'attachment; filename="a2u_{}.csv"'.format(year)
 
             if year:
                 registrations = registrations.filter(league__year=year)
@@ -306,11 +377,10 @@ def registrationexport(request, year=None, season=None, division=None):
 
         return response
 
-    return render_to_response('junta/registrationexport.html',
+    return render(request, 'junta/registrationexport.html',
         {
             'leagues': leagues
-        },
-        context_instance=RequestContext(request))
+        })
 
 
 @login_required
@@ -462,16 +532,16 @@ def teamgeneration(request, year=None, season=None, division=None):
                         team['rating_average_male'] = team['rating_total_male'] / team['num_males']
 
                 def debug_group(group):
-                    print(u'\n\nPLACING GROUP: {} players, {} average rating'.format(group['num_players'], group['rating_average']))
+                    print(('\n\nPLACING GROUP: {} players, {} average rating'.format(group['num_players'], group['rating_average'])))
                     print('PLAYERS')
                     for player in group['players']:
-                        print(player['user'])
+                        print((player['user']))
 
                 def debug_teams(teams):
                     print('TEAMS')
                     print('=====')
                     for team in teams:
-                        print(u'{} players, {} females, {} average rating, {} average female rating, {}'.format(team['num_players'], team['num_females'], team['rating_average'], team['rating_average_female'], team['players'][0]['user'] if len(team['players']) else None))
+                        print(('{} players, {} females, {} average rating, {} average female rating, {}'.format(team['num_players'], team['num_females'], team['rating_average'], team['rating_average_female'], team['players'][0]['user'] if len(team['players']) else None)))
 
                 # distribute the groups with captains in them, one per team
                 for group in captain_groups:
@@ -518,7 +588,7 @@ def teamgeneration(request, year=None, season=None, division=None):
                 # reorganize new teams so that they can be saved
                 for team in teams_object:
                     new_teams.append({
-                        'captains': list(get_user_model().objects.get(id=user_id) for user_id in captain_users.keys()),
+                        'captains': list(get_user_model().objects.get(id=user_id) for user_id in list(captain_users.keys())),
                         'team_id': None,
                         'users': [player['user'] for player in team['players']]
                     })
@@ -600,9 +670,8 @@ def teamgeneration(request, year=None, season=None, division=None):
         leagues = League.objects.all().order_by('-league_start_date')
         response_dictionary = {'leagues': leagues}
 
-    return render_to_response('junta/teamgeneration.html',
-        response_dictionary,
-        context_instance=RequestContext(request))
+    return render(request, 'junta/teamgeneration.html',
+        response_dictionary)
 
 
 @login_required
@@ -640,11 +709,13 @@ def schedulegeneration(request, year=None, season=None, division=None):
 
                 top = teams[:num_teams // 2]
                 bottom = list(reversed(teams[num_teams // 2:]))
-                games = zip(top, bottom)
+                games = list(zip(top, bottom))
 
-                # for each time through loop, shift the games by one
-                shift = (event_num) / (num_teams - 1)
-                games = games[shift:] + games[:shift]
+                num_slots = num_teams // 2
+                num_unique_games = num_teams - 1
+
+                shift = (event_num // num_unique_games) + ((event_num * 2) % num_slots)
+                games = games[-shift:] + games[:-shift]
 
                 schedule_teams = [team for game in games for team in sorted(game, key=lambda k: k.id)]
                 schedule.append(schedule_teams)
@@ -716,7 +787,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
     else:
         leagues = League.objects.all().order_by('-league_start_date')
 
-    return render_to_response('junta/schedulegeneration.html',
+    return render(request, 'junta/schedulegeneration.html',
         {
             'leagues': leagues,
             'league': league,
@@ -726,5 +797,4 @@ def schedulegeneration(request, year=None, season=None, division=None):
             'form': form,
             'schedule': schedule,
             'num_necessary_fields': num_necessary_fields,
-        },
-        context_instance=RequestContext(request))
+        })

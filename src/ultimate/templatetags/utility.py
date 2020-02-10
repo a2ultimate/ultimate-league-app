@@ -29,7 +29,7 @@ def smart_title(value):
     """Converts a string into titlecase."""
     """Excludes [a, an, the, and, but, or, for, nor, of]"""
     # strip smart single quotes
-    t = re.sub(u'\u2018|\u2019','\'', value.title())
+    t = re.sub('\\u2018|\\u2019','\'', value.title())
     # fix the plural
     t = re.sub(r'([a-z])\'([A-Z])', lambda m: m.group(0).lower(), t)
     # fix the letter following a number

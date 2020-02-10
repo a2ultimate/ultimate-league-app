@@ -25,7 +25,7 @@ def get_game_opponent_team_name(game, user):
         if game.get_user_opponent(user).name:
             return game.get_user_opponent(user).name
         else:
-            return 'Team %d' % (game.get_user_opponent(user).id)
+            return 'Team {}'.format(game.get_user_opponent(user).id)
     except AttributeError:
         pass
 
@@ -36,5 +36,5 @@ def get_game_opponent_team_name(game, user):
 @register.filter
 def get_average(row, label):
     if row.__dict__['average_' + label.lower()]:
-        return '%.1f' % row.__dict__['average_' + label.lower()]
+        return '{:.1f}'.format(row.__dict__['average_' + label.lower()])
     return 0

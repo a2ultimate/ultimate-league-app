@@ -13,7 +13,7 @@ class GameReportAdmin(admin.ModelAdmin):
         report_scores = obj.gamereportscore_set.all()
 
         for report_score in report_scores:
-            scores.append('%s %d' % (report_score.team, report_score.score))
+            scores.append('{} {}'.format(report_score.team, report_score.score))
 
         return ', '.join(map(str, scores))
 

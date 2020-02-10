@@ -31,7 +31,7 @@ class GoogleAppsApi:
             self.http = credentials.authorize(self.http)
 
     def prepare_group_for_sync(self, group_name, group_id=None, group_email_address=None, force=False):
-        logger.debug(u'Preparing group "{}" for sync...'.format(group_name))
+        logger.debug('Preparing group "{}" for sync...'.format(group_name))
 
         if force:
             self.delete_group(group_id=group_id, group_email_address=group_email_address)
@@ -46,7 +46,7 @@ class GoogleAppsApi:
 
     # TODO need paging for when you have over 200 groups
     def get_or_create_group(self, group_email_address, group_name=''):
-        logger.debug(u'  Getting or creating group {}...'.format(group_email_address))
+        logger.debug('  Getting or creating group {}...'.format(group_email_address))
 
         service = build('admin', 'directory_v1', http=self.http, cache_discovery=False)
 
@@ -55,7 +55,7 @@ class GoogleAppsApi:
 
         try:
             logger.debug('    Looking for existing group...')
-            groups_response = service.groups().list(customer='my_customer', domain='lists.annarborultimate.org', query=u'email={}'.format(group_email_address)).execute(http=self.http)
+            groups_response = service.groups().list(customer='my_customer', domain='lists.annarborultimate.org', query='email={}'.format(group_email_address)).execute(http=self.http)
         except Exception as e:
             return None
 
@@ -67,7 +67,7 @@ class GoogleAppsApi:
 
         # couldn't find group, create it
         if not target_group:
-            logger.debug(u'    Group not found...creating {}...'.format(group_email_address))
+            logger.debug('    Group not found...creating {}...'.format(group_email_address))
 
             body = { 'email': group_email_address, }
             if group_name:
@@ -85,13 +85,13 @@ class GoogleAppsApi:
         return group_id
 
     def delete_group(self, group_id=None, group_email_address=None):
-        logger.debug(u'  Deleting existing group...')
+        logger.debug('  Deleting existing group...')
 
         service = build('admin', 'directory_v1', http=self.http, cache_discovery=False)
 
         if group_email_address and not group_id:
             try:
-                groups_response = service.groups().list(customer='my_customer', domain='lists.annarborultimate.org', query=u'email={}'.format(group_email_address)).execute(http=self.http)
+                groups_response = service.groups().list(customer='my_customer', domain='lists.annarborultimate.org', query='email={}'.format(group_email_address)).execute(http=self.http)
 
                 if groups_response and groups_response.get('groups'):
                     for group in groups_response.get('groups'):
@@ -111,13 +111,13 @@ class GoogleAppsApi:
         return True
 
     def remove_all_group_members(self, group_id=None, group_email_address=None, group_name=None):
-        logger.debug(u'  Removing all members from {}...'.format(group_email_address))
+        logger.debug('  Removing all members from {}...'.format(group_email_address))
 
         service = build('admin', 'directory_v1', http=self.http, cache_discovery=False)
 
         if group_email_address and not group_id:
             try:
-                groups_response = service.groups().list(customer='my_customer', domain='lists.annarborultimate.org', query=u'email={}'.format(group_email_address)).execute(http=self.http)
+                groups_response = service.groups().list(customer='my_customer', domain='lists.annarborultimate.org', query='email={}'.format(group_email_address)).execute(http=self.http)
 
                 if groups_response and groups_response.get('groups'):
                     for group in groups_response.get('groups'):
@@ -141,7 +141,7 @@ class GoogleAppsApi:
         logger.debug('    Done')
 
     def add_group_member(self, email_address, group_id=None, group_email_address=None, group_name=None):
-        logger.debug(u'Adding {} to {}...'.format(email_address, group_email_address or 'group'))
+        logger.debug('Adding {} to {}...'.format(email_address, group_email_address or 'group'))
 
         service = build('admin', 'directory_v1', http=self.http, cache_discovery=False)
 

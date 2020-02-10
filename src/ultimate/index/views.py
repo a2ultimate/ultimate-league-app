@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render_to_response
+from django.shortcuts import get_object_or_404, render
 from django.template import RequestContext
 
 from ultimate.index.models import NewsArticle, StaticContent
@@ -16,12 +16,11 @@ def index(request):
 
     events = get_events()[:7]
 
-    return render_to_response('index/index.html',
+    return render(request, 'index/index.html',
                               {
                                   'news_articles': news_articles,
                                   'events': events,
-                              },
-                              context_instance=RequestContext(request))
+                              })
 
 
 def news(request, url):
@@ -36,9 +35,8 @@ def news(request, url):
     if not news_article:
         raise Http404('Season Not Found')
 
-    return render_to_response('index/news.html',
-                              {'article': news_article},
-                              context_instance=RequestContext(request))
+    return render(request, 'index/news.html',
+                              {'article': news_article})
 
 
 def announcements(request):
@@ -67,11 +65,10 @@ def announcements(request):
     else:
         form = AnnoucementsForm()
 
-    return render_to_response('index/announcements.html',
+    return render(request, 'index/announcements.html',
                               {
                                   'form': form,
-                              },
-                              context_instance=RequestContext(request))
+                              })
 
 
 def static(request, content_url):
@@ -79,6 +76,5 @@ def static(request, content_url):
         page_content = get_object_or_404(StaticContent, url=content_url)
     except StaticContent.DoesNotExist:
         page_content = ''
-    return render_to_response('index/static.html',
-                              {'content': page_content},
-                              context_instance=RequestContext(request))
+    return render(request, 'index/static.html',
+                              {'content': page_content})
