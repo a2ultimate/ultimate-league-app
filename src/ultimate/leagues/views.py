@@ -477,13 +477,13 @@ def registration(request, year, season, division, section=None):
             base_url = request.build_absolute_uri(getattr(settings, 'FORCE_SCRIPT_NAME', '/')).replace(request.path_info.replace(' ', '%20'), '')
 
             paypal_dict = {
-                'business': 'treasurer@annarborultimate.org',
+                'business': getattr(settings, 'PAYPAL_RECEIVER_EMAIL'),
                 'amount': registration.paypal_price,
-                'cancel_return': '{}/leagues/{}/{}/{}/registration/'.format(base_url, league.year, league.season.slug, league.night_slug),
+                'cancel_return': request.build_absolute_uri(reverse('league_registration', kwargs={'year': year, 'season': season, 'division': division})),
                 'invoice': registration.paypal_invoice_id,
                 'item_name': '{} {} {}'.format(league.season_title, league.year, league.night_title),
                 'notify_url': '{}/leagues/registration/payment/{}'.format(base_url, getattr(settings, 'PAYPAL_CALLBACK_SECRET', 'notification/callback/for/a2ultimate/secret/')),
-                'return': '{}/leagues/{}/{}/{}/registration-complete/'.format(base_url, league.year, league.season.slug, league.night_slug),
+                'return': request.build_absolute_uri(reverse('league_registration_complete', kwargs={'year': year, 'season': season, 'division': division})),
             }
 
             paypal_form = PayPalPaymentsForm(initial=paypal_dict)

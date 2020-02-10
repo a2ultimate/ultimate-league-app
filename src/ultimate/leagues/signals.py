@@ -1,9 +1,10 @@
 # leagues/signals.py
-
-from ultimate.leagues.models import Registrations
+from django.conf import settings
 
 from paypal.standard.models import ST_PP_COMPLETED
 from paypal.standard.ipn.signals import valid_ipn_received
+
+from ultimate.leagues.models import Registrations
 
 
 def paypal_callback(sender, **kwargs):
@@ -12,7 +13,7 @@ def paypal_callback(sender, **kwargs):
     print(('PayPal IPN Incoming: {} - {}'.format(ipn_obj.invoice, ipn_obj.payment_status)))
 
     if ipn_obj.payment_status == ST_PP_COMPLETED:
-        if ipn_obj.receiver_email != 'treasurer@annarborultimate.org':
+        if ipn_obj.receiver_email != getattr(settings, 'PAYPAL_RECEIVER_EMAIL'):
             # Not a valid payment
             print(('PayPal IPN Error: {} - invalid receiver_email'.format(ipn_obj.invoice)))
             return
