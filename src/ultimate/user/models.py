@@ -67,7 +67,7 @@ class AbstractUser(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name', ]
+    NOT_SUBMITTED_FIELDS = ['first_name', 'last_name', ]
 
     class Meta:
         verbose_name = _('user')
@@ -214,6 +214,23 @@ class User(AbstractUser):
     @property
     def self_rating(self):
         return self.playerratings_set.filter(ratings_type=PlayerRatings.RATING_TYPE_USER).first()
+
+    def concussion_waiver(self, now=None):
+        if not now:
+            now = timezone.now().date()
+
+        if self.profile.get_age_on(now) > 18:
+            return False
+
+        return self.player_concussion_waiver_submitted_by_set.first()
+
+    def concussion_waiver_status(self):
+        waiver = self.concussion_waiver()
+        status_choices = dict(PlayerConcussionWaiver.PLAYER_CONCUSSION_WAIVER_CHOICES)
+        if waiver:
+            return status_choices[waiver.status]
+
+        return status_choices[PlayerConcussionWaiver.PLAYER_CONCUSSION_WAIVER_NOT_SUBMITTED]
 
 
 class Player(models.Model):
@@ -389,10 +406,12 @@ class PlayerRatingsReport(models.Model):
 
 
 class PlayerConcussionWaiver(models.Model):
+    PLAYER_CONCUSSION_WAIVER_NOT_SUBMITTED = 'not_submitted'
     PLAYER_CONCUSSION_WAIVER_SUBMITTED = 'submitted'
     PLAYER_CONCUSSION_WAIVER_APPROVED = 'approved'
     PLAYER_CONCUSSION_WAIVER_DENIED = 'denied'
     PLAYER_CONCUSSION_WAIVER_CHOICES = (
+        (PLAYER_CONCUSSION_WAIVER_NOT_SUBMITTED, 'Not Submitted'),
         (PLAYER_CONCUSSION_WAIVER_SUBMITTED, 'Submitted'),
         (PLAYER_CONCUSSION_WAIVER_APPROVED, 'Approved'),
         (PLAYER_CONCUSSION_WAIVER_DENIED, 'Denied'),
@@ -402,15 +421,18 @@ class PlayerConcussionWaiver(models.Model):
 
     file = models.FileField(upload_to='concussion_waivers/%Y/%m/%d/', blank=True, null=True)
 
-    status = models.CharField(max_length=32, choices=PLAYER_CONCUSSION_WAIVER_CHOICES)
+    status = models.CharField(max_length=32, choices=PLAYER_CONCUSSION_WAIVER_CHOICES, default=PLAYER_CONCUSSION_WAIVER_NOT_SUBMITTED)
 
     submitted_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='player_concussion_waiver_submitted_by_set')
-    submitted_at = models.DateTimeField()
+    submitted_at = models.DateTimeField(blank=True, null=True)
 
     reviewed_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name='player_concussion_waiver_reviewed_by_set')
-    reviewed_at = models.DateTimeField()
+        settings.AUTH_USER_MODEL, related_name='player_concussion_waiver_reviewed_by_set', blank=True, null=True)
+    reviewed_at = models.DateTimeField(blank=True, null=True)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return '{} – {}'.format(self.submitted_by, self.status)

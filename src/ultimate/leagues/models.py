@@ -476,6 +476,11 @@ class League(models.Model):
 
         return [r for r in registrations if r.is_complete and not r.refunded]
 
+    def get_minor_registrations(self, registrations=None):
+        if not registrations:
+            registrations = self.get_complete_registrations()
+        return [r for r in registrations if hasattr(r.user, 'profile') and r.user.profile.is_minor(self.league_start_date)]
+
     def get_player_count(self):
         if Team.objects.filter(league=self).exists():
             return TeamMember.objects.filter(team__league=self).count()

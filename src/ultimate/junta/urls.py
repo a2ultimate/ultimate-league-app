@@ -6,6 +6,7 @@ urlpatterns = [
     url(r'^$', views.index, {}, 'junta'),
 
     url(r'^concussion-compliance/$', views.concussion_compliance, {}, 'concussion_compliance'),
+    url(r'^concussion-compliance/(?P<player_user_id>[^/]+)/$', views.concussion_compliance, {}, 'concussion_compliance_user'),
 
     url(r'^captainstatus/$', views.captainstatus, {}, 'captainstatus'),
     url(r'^captainstatus/(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/$', views.captainstatus, {}, 'captainstatus_league'),

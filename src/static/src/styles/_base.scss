@@ -79,3 +79,7 @@ hr {
   border: 0;
   border-bottom: $hr-thickness solid $hr-color;
 }
+
+.subdued {
+  color: $color-gray-dark;
+}

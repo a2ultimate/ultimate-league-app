@@ -70,3 +70,7 @@ th {
 .table-striped-header th {
   background-color: $color-light-gray;
 }
+
+.table-align-top td {
+  vertical-align: top;
+}

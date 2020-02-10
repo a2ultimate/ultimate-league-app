@@ -1,7 +1,7 @@
 import copy
 import csv
 import re
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from functools import reduce
 from itertools import groupby
 from math import ceil, floor
@@ -10,18 +10,19 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.urlresolvers import reverse
-from django.db.models import Q
+from django.db.models import F, Q
 from django.db.transaction import atomic
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.template import RequestContext
+from django.utils import timezone
 
 from ultimate.forms import ScheduleGenerationForm
 
 from ultimate.captain.models import GameReport
 from ultimate.leagues.models \
     import (FieldNames, Game, GameTeams, League, Registrations, Team, TeamMember)
-from ultimate.user.models import Player
+from ultimate.user.models import Player, PlayerConcussionWaiver
 
 from ultimate.utils.export_helpers import get_export_headers, get_export_values
 
@@ -38,16 +39,76 @@ def index(request):
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
-def concussion_compliance(request):
+def concussion_compliance(request, player_user_id=None):
     leagues = League.objects.all().order_by('-league_start_date')
     leagues = [league for league in leagues if league.is_visible(request.user)]
+    cutoff_year = date(timezone.now().year - 18, 1, 1)
+    player = None
 
-    # get list of minor registrations for visible leagues
-    # determine status for each registration
-    # link to detail page for each registration
+    registrations = Registrations.objects \
+        .select_related('user') \
+        .filter(league__in=leagues, user__profile__date_of_birth__gte=cutoff_year) \
+        .order_by('user__last_name', 'user__first_name', 'league__league_start_date')
+
+    minor_registrations = [r for r in registrations if hasattr(r.user, 'profile') and r.user.profile.is_minor(r.league.league_start_date) and r.is_complete and not r.waitlist and not r.refunded]
+
+    if player_user_id:
+        try:
+            player = get_user_model().objects.get(id=player_user_id)
+        except get_user_model().DoesNotExist:
+            player = None
+
+    if request.method == 'POST':
+        if 'approve' in request.POST:
+            PlayerConcussionWaiver.objects.update_or_create(
+                submitted_by=player,
+                defaults={
+                    'reviewed_at': timezone.now(),
+                    'reviewed_by': request.user,
+                    'status': PlayerConcussionWaiver.PLAYER_CONCUSSION_WAIVER_APPROVED,
+                },
+            )
+
+        if 'deny' in request.POST:
+            PlayerConcussionWaiver.objects.update_or_create(
+                submitted_by=player,
+                defaults={
+                    'reviewed_at': timezone.now(),
+                    'reviewed_by': request.user,
+                    'status': PlayerConcussionWaiver.PLAYER_CONCUSSION_WAIVER_DENIED,
+                },
+            )
+
+        if 'export' in request.POST:
+            response = HttpResponse()
+            response['Content-Disposition'] = 'attachment; filename="a2u_concusson_compliance.csv"'
+
+            writer = csv.writer(response)
+            writer.writerow([
+                'name',
+                'email',
+                'league',
+                'team',
+                'status',
+            ])
+
+            for minor_registration in minor_registrations:
+                writer.writerow([
+                    minor_registration.user.get_full_name(),
+                    minor_registration.user.email,
+                    minor_registration.league,
+                    minor_registration.get_team_id(),
+                    minor_registration.user.concussion_waiver_status(),
+                ])
+
+            return response
 
     return render(request, 'junta/concussion_compliance.html',
-        {'league': league, 'leagues': leagues})
+        {
+            'leagues': leagues,
+            'minor_registrations': minor_registrations,
+            'player': player,
+        })
 
 
 @login_required
