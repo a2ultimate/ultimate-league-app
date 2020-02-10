@@ -37,7 +37,14 @@
     <div class="card">
       <dl>
         <dt>Status</dt>
-        <dd>{{ player.concussion_waiver_status }}</dd>
+        <dd>
+          {% if player.concussion_waiver and player.concussion_waiver.status == 'approved' %}
+            <img class="icon" src="{% webpack_static 'images/assets/check-circle-solid.svg' %}">
+          {% else %}
+            <img class="icon" src="{% webpack_static 'images/assets/exclamation-triangle-solid.svg' %}">
+          {% endif %}
+          {{ player.concussion_waiver_status }}
+        </dd>
         <dt>Reviewed By</dt>
         <dd>{{ player.concussion_waiver.reviewed_by|default:"N/A" }}</dd>
         <dt>Reviewed At</dt>
@@ -55,6 +62,7 @@
     <form class="form" method="post">{% csrf_token %}
       <input class="button button-success" type="submit" name="approve" value="Mark As Approved">
       <input class="button button-danger" type="submit" name="deny" value="Mark As Denied">
+      <a class="button button-link" href="{% url 'concussion_compliance' %}">Go Back</a>
     </form>
 
   {% else %}
