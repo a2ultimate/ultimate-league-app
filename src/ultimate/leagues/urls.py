@@ -19,5 +19,5 @@ urlpatterns = [
     url(r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/registration/section/(?P<section>[^/]+)/$', views.registration, {}, 'league_registration_section'),
     url(r'^(?P<year>\d{4})/(?P<season>[^/]+)/(?P<division>[^/]+)/registration-complete/$', views.registrationcomplete, {}, 'league_registration_complete'),
 
-    url(r'^paypal/$', include('paypal.standard.ipn.urls')),
+    url(r'^paypal/', include('paypal.standard.ipn.urls')),
     ]
