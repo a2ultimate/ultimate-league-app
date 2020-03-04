@@ -278,6 +278,10 @@ class Player(models.Model):
 
         return is_complete
 
+    @property
+    def matching_preference(self):
+        return dict(self.GENDER_CHOICES)[self.gender]
+
     def is_male(self):
         return self.gender == self.GENDER_MALE
 

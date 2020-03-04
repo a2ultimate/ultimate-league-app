@@ -308,10 +308,10 @@ def registrationexport(request, year=None, season=None, division=None):
 
                 try:
                     profile = reduce(getattr, 'user.profile'.split('.'), registration)
-                    gender = profile.gender
+                    matching_preference = profile.matching_preference
                     age_on_start_date = profile.get_age_on(registration.league.league_start_date)
                 except AttributeError:
-                    gender = None
+                    matching_preference = None
                     age_on_start_date = 0
 
                 registration_data = {
@@ -320,7 +320,7 @@ def registrationexport(request, year=None, season=None, division=None):
                     'first_name': registration.user.first_name,
                     'last_name': registration.user.last_name,
                     'email': registration.user.email,
-                    'gender': gender,
+                    'gender': matching_preference,
                     'age': int(0 if age_on_start_date is None else age_on_start_date),
                     'registration_status': registration.status,
                     'registration_timestamp': registration.registered,
@@ -370,7 +370,7 @@ def registrationexport(request, year=None, season=None, division=None):
 
         registration_list.sort(key=lambda k: k['last_name'].lower())
         registration_list.sort(key=lambda k: k['is_captain'], reverse=True)
-        registration_list.sort(key=lambda k: k['team_id'])
+        registration_list.sort(key=lambda k: int(0 if k['team_id'] is None else k['team_id']))
 
         for registration in registration_list:
             writer.writerow(get_export_values(export_type, registration))
