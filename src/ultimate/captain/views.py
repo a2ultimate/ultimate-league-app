@@ -69,7 +69,7 @@ def exportteam(request, team_id):
         'Firstname',
         'Lastname',
         'Email',
-        'Gender',
+        'Matching Pref',
         'Age',
         'Height Inches',
         'Number of Teams',
@@ -82,11 +82,11 @@ def exportteam(request, team_id):
         try:
             profile = reduce(getattr, 'user.profile'.split('.'), team_member)
 
-            gender = profile.gender
+            matching_preference = profile.matching_preference
             height_inches = profile.height_inches
             age_on_start_date = profile.get_age_on(team.league.league_start_date)
         except AttributeError:
-            gender = None
+            matching_preference = None
             age_on_start_date = 0
             height_inches = 0
 
@@ -96,7 +96,7 @@ def exportteam(request, team_id):
             team_member.user.first_name,
             team_member.user.last_name,
             team_member.user.email,
-            gender,
+            matching_preference,
             int(0 if age_on_start_date is None else age_on_start_date),
             height_inches,
             TeamMember.objects.filter(user=team_member.user).count(),
