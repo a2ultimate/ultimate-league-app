@@ -73,6 +73,7 @@ INSTALLED_APPS = (
     'compat',
     'hijack',
     'hijack_admin',
+    'markdown_deux',
     'paypal.standard.ipn',
     'pytils',
     'webpack_loader',
