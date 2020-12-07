@@ -1,6 +1,7 @@
 {% extends 'layout/layout_home.html' %}
 
 {% load i18n %}
+{% load webpack_static from webpack_loader %}
 
 {% block title %}Create Account &middot; {{ block.super }}{% endblock %}
 
@@ -25,7 +26,15 @@
         </label>
 
         <div class="form-field-input">
-          {{ field }}
+          <div class="form-field-input-wrapper">
+            {{ field }}
+
+            {% if field.name == 'gender' %}
+            <a class="form-field-input-wrapper-info" href="/pages/gender-policy" title="What is this used for?" target="_blank">
+              <img class="icon" src="{% webpack_static 'images/assets/info-circle-regular.svg' %}" alt="What is this used for?">
+            </a>
+            {% endif %}
+          </div>
 
           {% if field.errors %}
           <div class="form-field-input-errors">
