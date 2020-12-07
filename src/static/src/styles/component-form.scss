@@ -51,6 +51,15 @@
 
   .form-field-table & {
     @include span-columns(5);
+
+    > .form-field-input-wrapper {
+      > input[type=text],
+      > input[type=password],
+      > input[type=email],
+      > textarea {
+        width: 100%;
+      }
+    }
   }
 
   > input,
@@ -65,6 +74,23 @@
     .form-field-highlighted & {
       border-color: $color-gray;
     }
+  }
+}
+
+.form-field-input-wrapper {
+
+}
+
+.form-field-input-wrapper-info {
+  margin-left: 0.25rem;
+
+  img {
+    height: 18px;
+    width: 18px;
+
+    vertical-align: -5px;
+
+    filter: invert(50%) sepia(52%) saturate(590%) hue-rotate(161deg) brightness(96%) contrast(101%);
   }
 }
 
