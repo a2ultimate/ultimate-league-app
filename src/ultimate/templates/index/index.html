@@ -138,6 +138,8 @@
                   </div>
                 </a>
               </li>
+            {% empty %}
+              <p>No Upcoming Events</p>
             {% endfor %}
             <li class="page-home-info-section-content-list-element">
               <a class="page-home-info-section-content-list-element-link" href="https://calendar.google.com/calendar/embed?src={% settings_value 'GOOGLE_APPS_CALENDAR_ID' %}">

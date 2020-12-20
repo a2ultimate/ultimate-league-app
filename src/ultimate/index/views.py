@@ -14,12 +14,19 @@ from ultimate.utils.email_groups import add_to_group
 def index(request):
     news_articles = NewsArticle.objects.all()[:5]
 
-    events = get_events()[:7]
+    events = get_events()
+    display_events = None
+
+    if events:
+        display_events = events[:7]
+
+    print('>>>>>>>>>>')
+    print(display_events)
 
     return render(request, 'index/index.html',
                               {
                                   'news_articles': news_articles,
-                                  'events': events,
+                                  'events': display_events,
                               })
 
 
