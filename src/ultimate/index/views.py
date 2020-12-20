@@ -20,9 +20,6 @@ def index(request):
     if events:
         display_events = events[:7]
 
-    print('>>>>>>>>>>')
-    print(display_events)
-
     return render(request, 'index/index.html',
                               {
                                   'news_articles': news_articles,
