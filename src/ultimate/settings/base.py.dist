@@ -8,10 +8,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Django settings for ultimate-league-app project.
 
 ADMINS = (
-    ('Ann Arbor Ultimate', 'webmaster@annarborultimate.org'),
+    ('Ann Arbor Ultimate', 'web@annarborultimate.org'),
 )
 
-DEFAULT_FROM_EMAIL = 'Ann Arbor Ultimate <webmaster@a2ultimate.org>'
+DEFAULT_FROM_EMAIL = 'Ann Arbor Ultimate <web@annarborultimate.org>'
 
 MANAGERS = ADMINS
 
