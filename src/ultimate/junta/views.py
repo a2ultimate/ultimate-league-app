@@ -700,7 +700,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
         teams = list(Team.objects.filter(league=league))
         num_teams = len(teams)
 
-        if teams:
+        if teams and num_teams >= 2:
             teams = teams[0::2] + list(reversed(teams[1::2]))
             teams = teams[:1] + teams[2:] + teams[1:2]
 
