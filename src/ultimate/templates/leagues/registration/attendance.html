@@ -5,74 +5,73 @@
 {% block title %}Registration &middot; {{ league.night_title|smart_title }} &middot; {{ league.season_title|smart_title }} {{ league.year }} &middot; {{ block.super }}{% endblock %}
 {% block og_title %}{{ block.super }} {{ league.year }} {{ league.season_title|smart_title }} {{ league.night_title|smart_title }} Division Registration{% endblock %}
 {% block content %}
+<div class="page-division-registration-attendance">
 
-{% include '_partials/division_header.html' with league=league only %}
+  {% include '_partials/division_header.html' with league=league only %}
 
-{% include '_partials/league_tabs.html' with selected_tab='registration' %}
+  {% include '_partials/league_tabs.html' with selected_tab='registration' %}
 
-{% include 'leagues/registration/_progress.html' with league=league registration=registration section=section tick_percentage=tick_percentage only %}
-
-{% if league.type == 'league' %}
-  <h2>Attendance and Captaining</h2>
-{% else %}
-  <h2>Attendance</h2>
-{% endif %}
-
-<form class="form" method="post">{% csrf_token %}
-  {{ attendance_form.id }}
-
-  <div id="attendance" class="slider" data-slider-max="{{ league.get_num_game_events }}">
-    <label for="id_attendance">
-      <h3>There {{ league.get_num_game_events|pluralize:'is,are' }} {{ league.get_num_game_events }} game{{ league.get_num_game_events|pluralize }}. How many games will you miss?</h3>
-    </label>
-    {{ attendance_form.attendance }}
-    <div class="slider-element"></div>
-    <div class="slider-errors">{{ attendance_form.attendance.errors }}</div>
-    <div class="slider-description">
-      <div class="slider-description-left">I will not miss any games.</div>
-      <div class="slider-description-right">I will miss all the games (?!).</div>
-    </div>
-  </div>
-
-  <hr>
+  {% include 'leagues/registration/_progress.html' with league=league registration=registration section=section tick_percentage=tick_percentage only %}
 
   {% if league.type == 'league' %}
-    <div id="captain" class="slider" data-slider-min="0" data-slider-max="4">
-      <label for="id_captain">
-        <h3>Would you like to captain a team?</h3>
+    <h2>Attendance and Captaining</h2>
+  {% else %}
+    <h2>Attendance</h2>
+  {% endif %}
+
+  <form class="form" method="post">{% csrf_token %}
+    {{ attendance_form.id }}
+
+    <div id="attendance" class="slider" data-slider-max="{{ league.get_num_game_events }}">
+      <label for="id_attendance">
+        <h3>There {{ league.get_num_game_events|pluralize:'is,are' }} {{ league.get_num_game_events }} game{{ league.get_num_game_events|pluralize }}. How many games will you miss?</h3>
       </label>
-      {{ attendance_form.captain }}
+      {{ attendance_form.attendance }}
       <div class="slider-element"></div>
-      <div class="slider-errors">{{ attendance_form.captain.errors }}</div>
+      <div class="slider-errors">{{ attendance_form.attendance.errors }}</div>
+      <div class="slider-description">
+        <div class="slider-description-left">I will not miss any games.</div>
+        <div class="slider-description-right">I will miss all the games (?!).</div>
+      </div>
     </div>
 
-    <p>
-      The A2U Captains Committee uses the following values to help determine captains.
-      In general, a higher value indicates more willingness to captain a team for this division.
-    </p>
-    <ul>
-      <li>0 – I refuse to captain.</li>
-      <li>1 – I will captain if absolutely necessary.</li>
-      <li>2 – I am willing to captain.</li>
-      <li>3 – I would like to captain.</li>
-      <li>4 – I will be very sad if I don't get to captain.</li>
-    </ul>
-
-    {% if league.captaining_note %}
-      {{ league.captaining_note|safe }}
-    {% endif %}
-  {% endif %}
-
-  {% if league.registration_prompt %}
     <hr>
 
-    <h3>{{ league.registration_prompt|safe }}</h3>
-    <p>
-      {{ attendance_form.prompt_response }}
-    </p>
-  {% endif %}
+    {% if league.type == 'league' %}
+      <div id="captain" class="slider" data-slider-min="0" data-slider-max="2">
+        <label for="id_captain">
+          <h3>Would you like to captain this division?</h3>
+        </label>
+        {{ attendance_form.captain }}
+        <div class="slider-element"></div>
+        <div class="slider-errors">{{ attendance_form.captain.errors }}</div>
+      </div>
 
-  <input class="button button-success" type="submit" value="Submit" name="submit">
-</form>
+      <p>
+        The A2U Captains Committee uses this rating to help determine captains. Please provide your willingness to serve as a captain in this division.
+      </p>
+      <ul>
+        <li><strong>0 – I do not want to captain.</strong></li>
+        <li><strong>1 – I will captain.</strong> <em>(You should expect to be asked to captain.)</em></li>
+        <li><strong>2 – I really want to captain this division.</strong> <em>(You will be among the top considerations for captaining.)</em></li>
+      </ul>
+
+      {% if league.captaining_note %}
+        {{ league.captaining_note|safe }}
+      {% endif %}
+    {% endif %}
+
+    {% if league.registration_prompt %}
+      <hr>
+
+      <h3>{{ league.registration_prompt|safe }}</h3>
+      <p>
+        {{ attendance_form.prompt_response }}
+      </p>
+    {% endif %}
+
+    <input class="button button-success" type="submit" value="Submit" name="submit">
+  </form>
+</div>
 
 {% endblock %}
