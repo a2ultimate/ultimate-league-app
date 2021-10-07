@@ -344,7 +344,7 @@ def registration(request, year, season, division, section=None):
                 section = 'attendance'
 
                 if league.type == 'league':
-                    messages.error(request, 'You must provide a valid attendance and captaining rating to continue.')
+                    messages.error(request, 'You must provide a valid attendance and captaining preference to continue.')
                 else:
                     messages.error(request, 'You must provide a valid attendance rating to continue.')
 

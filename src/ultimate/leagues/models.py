@@ -735,13 +735,23 @@ class Registrations(models.Model):
         ('paypal', 'PayPal'),
     )
 
+    # REGISTRATION_CAPTAIN_CHOICES = (
+    #     (0, 'I refuse to captain.'),
+    #     (1, 'I will captain if absolutely necessary.'),
+    #     (2, 'I am willing to captain.'),
+    #     (3, 'I would like to captain.'),
+    #     (4, 'I will be very sad if I don\'t get to captain.'),
+    # )
+
     REGISTRATION_CAPTAIN_CHOICES = (
-        (0, 'I refuse to captain.'),
-        (1, 'I will captain if absolutely necessary.'),
-        (2, 'I am willing to captain.'),
-        (3, 'I would like to captain.'),
-        (4, 'I will be very sad if I don\'t get to captain.'),
+        (0, 'I do not want to captain'),
+        (1, 'I will captain'),
+        (2, 'I really want to captain this division'),
     )
+
+    # 0 - I do not want to captain
+    # 1 - I will captain (you should expect to be asked to captain!)
+    # 2 - I really want to captain in this league! (you will be among the top considerations for captaining).
 
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)

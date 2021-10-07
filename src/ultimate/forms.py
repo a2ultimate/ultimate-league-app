@@ -204,7 +204,7 @@ class GameReportScoreForm(forms.ModelForm):
 class RegistrationAttendanceForm(forms.ModelForm):
     id = forms.IntegerField(widget=forms.HiddenInput, required=True)
     attendance = forms.IntegerField(min_value=0, initial=0)
-    captain = forms.IntegerField(min_value=0, max_value=4, initial=0, required=False)
+    captain = forms.IntegerField(min_value=0, max_value=2, initial=0, required=False)
     prompt_response = forms.CharField(required=False, max_length=255, widget=forms.TextInput(attrs={'placeholder': 'Answer'}))
 
     class Meta:
