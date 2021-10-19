@@ -105,7 +105,7 @@ class EditPlayerForm(forms.ModelForm):
         widget=SelectDateWidget(empty_label=('Year', 'Month', 'Day'),
         years=range(timezone.now().year, timezone.now().year - 100, -1)))
     gender = forms.CharField(label='Matching Preference*', widget=forms.Select(choices=(('', ''),) + Player.GENDER_CHOICES))
-    personal_pronoun = forms.CharField(label='Personal Pronoun', required=False, widget=forms.TextInput({ 'placeholder': 'e.g. they/their/theirs'}))
+    personal_pronoun = forms.CharField(label='Personal Pronoun', required=False, widget=forms.TextInput({ 'placeholder': 'e.g. they/them'}))
     nickname = forms.CharField(required=False)
     phone = forms.CharField(required=False)
     zip_code = forms.CharField(label='Postal/Zip Code', required=False)

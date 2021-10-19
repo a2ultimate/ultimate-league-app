@@ -258,7 +258,7 @@ class Player(models.Model):
     nickname = models.CharField(max_length=30, blank=True)
     phone = models.CharField(max_length=15, blank=True)
     zip_code = models.CharField(max_length=15, blank=True)
-    height_inches = models.IntegerField(default=0)
+    height_inches = models.IntegerField(default=0, blank=True, null=True)
     highest_level = models.TextField(blank=True)
     jersey_size = models.CharField(max_length=45, choices=JERSEY_SIZE_CHOICES, blank=True)
 

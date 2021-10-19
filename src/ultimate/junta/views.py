@@ -271,16 +271,32 @@ def registrationexport(request, year=None, season=None, division=None):
 
     if request.method == 'POST':
         export_type = None
-        registrations = Registrations.objects.filter(Q(payment_complete=True) | Q(check_complete=True) | Q(paypal_complete=True))
+        report_format = request.POST.get('report_format')
+
+        registrations = None
 
         response = HttpResponse(content_type='text/csv')
         writer = csv.writer(response)
 
         if 'export_league' in request.POST:
             export_type = 'league'
-            league_id = int(request.POST.get('league_id', 0))
-            league = get_object_or_404(League, id=league_id)
+
+            try:
+                league_id = int(request.POST.get('league_id', 0))
+                league = get_object_or_404(League, id=league_id)
+
+                if not report_format in ['admin', 'captain']:
+                    raise Exception('bad report format')
+            except:
+                messages.error(request, 'You must specify a valid division and format to export.')
+                return render(request, 'junta/registrationexport.html',
+                    {
+                        'leagues': leagues
+                    })
+
             response['Content-Disposition'] = 'attachment; filename="a2u_{}.csv"'.format(league)
+
+            registrations = Registrations.objects.filter(Q(payment_complete=True) | Q(check_complete=True) | Q(paypal_complete=True))
 
             if league_id:
                 registrations = registrations.filter(league=league)
@@ -289,13 +305,27 @@ def registrationexport(request, year=None, season=None, division=None):
 
         if 'export_year' in request.POST:
             export_type = 'year'
-            year = int(request.POST.get('year', 0))
+
+            try:
+                year = int(request.POST.get('year', 0))
+
+                if not year:
+                    raise Exception('bad year')
+            except:
+                messages.error(request, 'You must specify a valid year to export.')
+                return render(request, 'junta/registrationexport.html',
+                    {
+                        'leagues': leagues
+                    })
+
             response['Content-Disposition'] = 'attachment; filename="a2u_{}.csv"'.format(year)
+
+            registrations = Registrations.objects.filter(Q(payment_complete=True) | Q(check_complete=True) | Q(paypal_complete=True))
 
             if year:
                 registrations = registrations.filter(league__year=year)
 
-        writer.writerow(get_export_headers(export_type))
+        writer.writerow(get_export_headers(export_type, report_format))
 
         registration_list = []
         for registration in registrations:
@@ -348,7 +378,7 @@ def registrationexport(request, year=None, season=None, division=None):
 
                     rating_totals = registration.user.rating_totals
 
-                    registration_data['baggage_id'] = registration.baggage
+                    registration_data['baggage_id'] = registration.baggage.id
                     registration_data['baggage_size'] = int(registration.baggage_size)
                     registration_data['rating_total'] = rating_totals['total']
                     registration_data['rating_experience'] = rating_totals['experience']
@@ -373,7 +403,7 @@ def registrationexport(request, year=None, season=None, division=None):
         registration_list.sort(key=lambda k: int(0 if k['team_id'] is None else k['team_id']))
 
         for registration in registration_list:
-            writer.writerow(get_export_values(export_type, registration))
+            writer.writerow(get_export_values(export_type, report_format, registration))
 
         return response
 
