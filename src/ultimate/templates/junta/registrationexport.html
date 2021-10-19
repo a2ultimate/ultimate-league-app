@@ -25,17 +25,36 @@
 
   <div class="page-registration-export-section">
     <h2 class="page-registration-export-section-header">By Division</h2>
-
     <form class="form" method="post">{% csrf_token %}
-      <p>
-        <select name="league_id">
-          <option>Select a Division</option>
+      <div class="form-field">
+        <label class="form-field-label" for="division_league_id">
+          Division
+        </label>
 
-          {% for league in leagues %}
-            <option value="{{ league.id }}">{{ league }}</option>
-          {% endfor %}
-        </select>
-      </p>
+        <div class="form-field-input">
+          <select id="division_league_id" name="league_id">
+            <option disabled selected>Select a Division...</option>
+
+            {% for league in leagues %}
+              <option value="{{ league.id }}">{{ league }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label class="form-field-label" for="division_export_type">
+          Format
+        </label>
+
+        <div class="form-field-input">
+          <select id="division_export_type" name="report_format">
+            <option disabled selected>Select a Format...</option>
+            <option value="admin">Admin Report</option>
+            <option value="captain">Captains Committee Report</option>
+          </select>
+        </div>
+      </div>
 
       <input class="button button-info" type="submit" name="export_league" value="Export Registrations For Division">
     </form>
@@ -47,10 +66,9 @@
     <form class="form" method="post">{% csrf_token %}
       <p>
         <select name="year">
-          <option>Select a Year</option>
+          <option disabled selected>Select a Year...</option>
 
           {% regroup leagues by year as years %}
-
           {% for year in years %}
             <option value="{{ year.grouper }}">{{ year.grouper }}</option>
           {% endfor %}
