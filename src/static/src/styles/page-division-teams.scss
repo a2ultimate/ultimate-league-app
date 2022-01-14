@@ -8,14 +8,17 @@
 .page-division-teams-teams {
   margin-bottom: 2rem;
 
-  @include outer-container;
+  @include grid-container;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 75rem;
 }
 
 .page-division-teams-teams-team {
   margin-bottom: 1rem;
 
-  @include span-columns(6);
-  @include omega(2n);
+  @include grid-column(6);
+  // @include omega(2n);
 }
 
 .page-division-teams-notes {

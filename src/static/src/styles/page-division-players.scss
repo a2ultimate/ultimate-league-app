@@ -1,7 +1,10 @@
 .page-division-players-players {
   margin-bottom: 1rem;
 
-  @include outer-container;
+  @include grid-container;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 75rem;
 }
 
 .page-division-players-players-list {
@@ -16,8 +19,8 @@
 
   border-radius: $border-radius;
 
-  @include span-columns(6);
-  @include omega(2n);
+  @include grid-column(6);
+  // @include omega(2n);
 
   &:nth-child(4n-2),
   &:nth-child(4n-3) {

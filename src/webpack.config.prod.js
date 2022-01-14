@@ -1,128 +1,80 @@
-var path = require('path');
-var webpack = require('webpack');
+var path = require("path");
+var webpack = require("webpack");
 
-var BundleTracker  = require('webpack-bundle-tracker');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var ManifestPlugin = require('webpack-manifest-plugin');
+var BundleTracker = require("webpack-bundle-tracker");
+var MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-var autoprefixer = require('autoprefixer');
-
-require('es6-promise').polyfill();
+require("es6-promise").polyfill();
 
 module.exports = {
+  mode: "production",
   entry: {
-    main: path.resolve(__dirname, 'static/src/main.js'),
+    main: path.resolve(__dirname, "static/src/main.js"),
   },
   output: {
-    path: path.resolve(__dirname, 'static/build'),
-    filename: '[name].[chunkhash].js',
+    path: path.resolve(__dirname, "static/build"),
+    filename: "[name].[chunkhash].js",
   },
   plugins: [
     new BundleTracker({
-      path: path.resolve(__dirname, 'static/build'),
-      filename: 'stats.json',
-    }),
-    new ExtractTextPlugin('[name].[chunkhash].css', {
-      allChunks: true,
-    }),
-    new ManifestPlugin(),
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.optimize.UglifyJsPlugin({
-      compressor: {
-        warnings: false,
-      },
+      path: path.resolve(__dirname, "static/build"),
+      filename: "stats.json",
     }),
   ],
   module: {
-    loaders: [
-
+    rules: [
       // FONTS
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
-        loader: 'url-loader?limit=8192&mimetype=application/font-woff',
-      }, {
+        type: "asset/inline",
+      },
+      {
         test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
-        loader: 'url-loader?limit=8192&mimetype=application/font-woff',
-      }, {
+        type: "asset/inline",
+      },
+      {
         test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-        loader: 'url-loader?limit=8192&mimetype=application/octet-stream',
-      }, {
+        type: "asset/inline",
+      },
+      {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        loader: 'url-loader?limit=8192&mimetype=application/vnd.ms-fontobject',
-      }, {
+        type: "asset/inline",
+      },
+      {
         test: /\.otf(\?v=\d+\.\d+\.\d+)?$/,
-        loader: 'url-loader?limit=8192&mimetype=image/font-otf',
-      }, {
+        type: "asset/inline",
+      },
+      {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        loader: 'url-loader?limit=8192&mimetype=image/svg+xml',
+
+        type: "asset/resource",
       },
 
       // IMAGES
       {
         test: /\.(ico|jpe?g|png|gif|svg)$/i,
-        loaders: [
-            'file?hash=sha512&digest=hex&name=images/assets/[name].[ext]?[hash:5]',
-            'image-webpack',
-        ],
-        include: [
-          path.resolve(__dirname, 'static/src/images/assets/'),
-        ],
-      },
-      {
-        test: /\.(ico|jpe?g|png|gif|svg)$/i,
-        loader: 'url?limit=8192&name=images/includes/[name].[ext]',
-        include: [
-          path.resolve(__dirname, 'static/src/images/includes'),
-        ],
+        type: "asset/resource",
+        generator: {
+          filename: "images/[name][ext]",
+        },
       },
 
       // STYLES
       {
         test: /\.css$/,
-        loader: ExtractTextPlugin.extract('style', 'css!postcss'),
+        use: ["style-loader", "css-loader", "postcss-loader"],
       },
       {
         test: /\.scss$/,
-        loader: ExtractTextPlugin.extract('style', 'css!postcss!sass'),
+        use: ["style-loader", "css-loader", "postcss-loader", "sass-loader"],
       },
 
       // MISC
       {
         test: /\.xml$/,
-        loader: 'file?hash=sha512&digest=hex&name=[name].[ext]?[hash:5]',
+        type: "asset/resource",
       },
-    ]
+    ],
   },
-  imageWebpackLoader: {
-    bypassOnDebug: true,
-    gifsicle: {
-      interlaced: false,
-    },
-    mozjpeg: {
-      quality: 65
-    },
-    progressive: true,
-    optipng: {
-      optimizationLevel: 4,
-    },
-    pngquant: {
-      quality: '75-90',
-      speed: 3,
-    },
-    svgo:{
-      plugins: [
-        {
-          removeViewBox: false
-        },
-        {
-          removeEmptyAttrs: false
-        }
-      ]
-    }
-  },
-  postcss: [
-    autoprefixer({ browsers: ['last 2 versions'] }),
-  ],
-  devtool: 'source-map',
+  devtool: "source-map",
 };

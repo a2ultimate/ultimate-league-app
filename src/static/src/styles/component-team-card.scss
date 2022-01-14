@@ -25,15 +25,18 @@
   font-size: $font-size-sm;
   font-weight: 500;
 
-  @include outer-container();
+  @include grid-container;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 75rem;
 }
 
 .team-card-header-info-color {
-  @include span-columns(8);
+  @include grid-column(8);
 }
 
 .team-card-header-info-email {
-  @include span-columns(4);
+  @include grid-column(4);
   .team-card-header-info-color + & {
     text-align: right;
   }
@@ -93,16 +96,16 @@
   font-size: 14px;
 }
 
-
-
-
 .team-card-game {
   position: relative;
   z-index: $z-team-card-game;
 
   margin-bottom: 1rem;
 
-  @include outer-container();
+  @include grid-container;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 75rem;
 }
 
 .team-card-game-divider {
@@ -133,7 +136,7 @@
 
   padding: 0 1rem;
 
-  @include span-columns(6);
+  @include grid-column(6);
 
   &:first-child {
     padding-left: 0;

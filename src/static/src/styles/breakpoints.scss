@@ -1,9 +1,21 @@
-$mobile: new-breakpoint(min-width 34rem 12);
-$tablet: new-breakpoint(min-width 48rem 12);
-$desktop: new-breakpoint(min-width 62rem 12);
-$desktop-large: new-breakpoint(min-width 78rem 12);
+// $mobile: new-breakpoint(min-width 34rem 12);
+// $tablet: new-breakpoint(min-width 48rem 12);
+// $desktop: new-breakpoint(min-width 62rem 12);
+// $desktop-large: new-breakpoint(min-width 78rem 12);
+//
+// $mobile-max: new-breakpoint(max-width 34rem 12);
+// $tablet-max: new-breakpoint(max-width 48rem 12);
+// $desktop-max: new-breakpoint(max-width 62rem 12);
+// $desktop-large-max: new-breakpoint(max-width 78rem 12);
 
-$mobile-max: new-breakpoint(max-width 34rem 12);
-$tablet-max: new-breakpoint(max-width 48rem 12);
-$desktop-max: new-breakpoint(max-width 62rem 12);
-$desktop-large-max: new-breakpoint(max-width 78rem 12);
+$custom-neat-grid-desktop-min: (
+  columns: 12,
+  gutter: 1rem,
+  media: "screen and (min-width: 62rem)",
+);
+//
+// $custom-neat-grid-desktop-max: (
+//   columns: 12,
+//   gutter: 1rem,
+//   media: "screen and (max-width: 62rem)",
+// );

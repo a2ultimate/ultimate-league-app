@@ -22,7 +22,10 @@
   }
 
   &.form-field-table {
-    @include outer-container();
+    @include grid-container;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 75rem;
   }
 }
 
@@ -38,7 +41,7 @@
   }
 
   .form-field-table & {
-    @include span-columns(3);
+    @include grid-column(3);
   }
 }
 
@@ -50,12 +53,12 @@
   }
 
   .form-field-table & {
-    @include span-columns(5);
+    @include grid-column(5);
 
     > .form-field-input-wrapper {
-      > input[type=text],
-      > input[type=password],
-      > input[type=email],
+      > input[type="text"],
+      > input[type="password"],
+      > input[type="email"],
       > textarea {
         width: 100%;
       }
@@ -78,7 +81,6 @@
 }
 
 .form-field-input-wrapper {
-
 }
 
 .form-field-input-wrapper-info {
@@ -90,7 +92,8 @@
 
     vertical-align: -5px;
 
-    filter: invert(50%) sepia(52%) saturate(590%) hue-rotate(161deg) brightness(96%) contrast(101%);
+    filter: invert(50%) sepia(52%) saturate(590%) hue-rotate(161deg)
+      brightness(96%) contrast(101%);
   }
 }
 
@@ -125,10 +128,9 @@
   }
 
   .form-field-table & {
-    @include span-columns(4);
+    @include grid-column(4);
   }
 }
-
 
 .radio,
 .checkbox {
@@ -151,8 +153,8 @@
   font-weight: normal;
 }
 
-.radio input[type='radio'],
-.checkbox input[type='checkbox'] {
+.radio input[type="radio"],
+.checkbox input[type="checkbox"] {
   float: left;
 
   margin-top: 0.1875rem;
@@ -168,8 +170,8 @@ label {
   margin: 0;
 }
 
-input[type='checkbox'],
-input[type='radio'] {
+input[type="checkbox"],
+input[type="radio"] {
   font-size: 150%;
 }
 
@@ -184,20 +186,20 @@ textarea[readonly] {
   background-color: $color-light-gray;
 }
 
-[type='color'],
-[type='date'],
-[type='datetime-local'],
-[type='datetime'],
-[type='email'],
-[type='month'],
-[type='number'],
-[type='password'],
-[type='search'],
-[type='tel'],
-[type='text'],
-[type='time'],
-[type='url'],
-[type='week'],
+[type="color"],
+[type="date"],
+[type="datetime-local"],
+[type="datetime"],
+[type="email"],
+[type="month"],
+[type="number"],
+[type="password"],
+[type="search"],
+[type="tel"],
+[type="text"],
+[type="time"],
+[type="url"],
+[type="week"],
 input:not([type]),
 textarea {
   box-sizing: border-box;
@@ -224,7 +226,7 @@ textarea {
   }
 }
 
-input[type='radio'] {
+input[type="radio"] {
   border-radius: 50%;
 }
 
@@ -234,7 +236,7 @@ select {
   border-radius: $border-radius;
 }
 
-select[multiple='multiple'] {
+select[multiple="multiple"] {
   min-height: 6rem;
   padding: 0.4375rem 0.625rem;
 
