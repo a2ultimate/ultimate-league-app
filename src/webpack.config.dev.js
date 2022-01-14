@@ -26,29 +26,16 @@ module.exports = {
     rules: [
       // FONTS
       {
-        test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
-        type: "asset/inline",
-      },
-      {
-        test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
-        type: "asset/inline",
-      },
-      {
-        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-        type: "asset/inline",
-      },
-      {
-        test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        type: "asset/inline",
-      },
-      {
-        test: /\.otf(\?v=\d+\.\d+\.\d+)?$/,
-        type: "asset/inline",
-      },
-      {
-        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-
-        type: "asset/resource",
+        test: /\.(woff|woff2|eot|ttf|otf|svg)$/i,
+        type: "asset",
+        parser: {
+          dataUrlCondition: {
+            maxSize: 4 * 1024 // 4kb
+          }
+        },
+        generator: {
+          filename: "fonts/[name]-[contenthash][ext]",
+        },
       },
 
       // IMAGES
