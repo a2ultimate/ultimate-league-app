@@ -11,6 +11,6 @@ django-webpack-loader==1.4.1
 google-api-python-client==1.6.2
 markdown==2.6.8
 mysqlclient==1.4.6
-Pillow==8.3.2
+Pillow==9.0.0
 python-dateutil==2.6.0
 pytils==0.3
