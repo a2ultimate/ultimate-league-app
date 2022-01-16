@@ -1,4 +1,4 @@
-Django>=1.11,<1.11.99
+Django>=1.11,<2.2.27
 django-annoying==0.10.4
 django-anymail~=7.2
 django-hijack==2.1.10
