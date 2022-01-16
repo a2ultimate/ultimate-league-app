@@ -11,8 +11,6 @@ ADMINS = (
     ('Ann Arbor Ultimate', 'web@annarborultimate.org'),
 )
 
-DEFAULT_FROM_EMAIL = 'Ann Arbor Ultimate <web@annarborultimate.org>'
-
 MANAGERS = ADMINS
 
 DATABASES = {
@@ -69,6 +67,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.staticfiles',
 
+    'anymail',
     'captcha',
     'compat',
     'hijack',
@@ -203,6 +202,16 @@ MARKDOWN_DEUX_STYLES = {
     },
 }
 
+# Email
+DEFAULT_FROM_EMAIL = 'Ann Arbor Ultimate <noreply@mail.annarborultimate.org>'
+EMAIL_BACKEND = 'anymail.backends.postmark.EmailBackend'
+ANYMAIL = {
+    'POSTMARK_SERVER_TOKEN': '',
+    'SEND_DEFAULTS': {
+        'reply_to': ['web@annarborultimate.org']
+    }
+}
+
 
 # Paypal Info
 PAYPAL_TEST = True      # Testing mode on
@@ -210,12 +219,3 @@ PAYPAL_BUY_BUTTON_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
 PAYPAL_SUBSCRIPTION_BUTTON_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
 PAYPAL_DONATION_BUTTON_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
 PAYPAL_BUSINESS_EMAIL = 'replace@this.email'
-
-
-# SOCIAL
-SOCIAL = [
-    {'name': 'facebook', 'url': '',},
-    {'name': 'flickr', 'url': '',},
-    {'name': 'instagram', 'url': '',},
-    {'name': 'twitter', 'url': '',},
-]
