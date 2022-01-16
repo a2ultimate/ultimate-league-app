@@ -30,7 +30,10 @@ body {
 .header-inner {
   position: relative;
 
-  @include outer-container(62rem);
+  @include grid-container;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 62rem;
 }
 
 .header-inner-top {
@@ -83,7 +86,7 @@ body {
   &:after {
     display: inline-block;
 
-    content: '\00b7';
+    content: "\00b7";
 
     color: $color-light-gray-dark;
   }
@@ -113,7 +116,10 @@ body {
 .nav-inner {
   position: relative;
 
-  @include outer-container(62rem);
+  @include grid-container;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 62rem;
 }
 
 .nav-inner-left {
@@ -245,7 +251,10 @@ body {
 
   padding: 0 0.5rem;
 
-  @include outer-container(62rem);
+  @include grid-container;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 62rem;
 }
 
 .content-inner-left {
@@ -254,7 +263,7 @@ body {
 
   border-right: 0.125rem solid $color-secondary;
 
-  @include span-columns(3, 'block-collapse');
+  @include grid-column(3);
 }
 
 .content-inner-left-logo {
@@ -363,7 +372,7 @@ body {
   margin-bottom: 1rem;
   padding: 0 0 0.5rem 1rem;
 
-  @include span-columns(9, 'block-collapse');
+  @include grid-column(9);
 }
 
 .footer {
@@ -386,5 +395,8 @@ body {
 
   font-size: 0.9375rem;
 
-  @include outer-container(62rem);
+  @include grid-container;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 62rem;
 }

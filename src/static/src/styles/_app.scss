@@ -1,66 +1,66 @@
 // normalize
-@import '~normalize.css';
+@import "~normalize.css";
 
 // reboot
-@import '~bootstrap/scss/bootstrap-reboot';
+@import "~bootstrap/scss/bootstrap-reboot";
 
 // bourbon
-@import '~bourbon/app/assets/stylesheets/_bourbon';
-@import '~bourbon-neat/app/assets/stylesheets/_neat';
+@import "~bourbon/core/_bourbon";
+@import "~bourbon-neat/core/_neat";
 
 // font awesome
-$fa-font-path: '~font-awesome/fonts';
-@import '~font-awesome/scss/font-awesome.scss';
+$fa-font-path: "~font-awesome/fonts";
+@import "~font-awesome/scss/font-awesome.scss";
 
 // globals
-@import '_colors';
-@import '_fonts';
-@import '_mixins';
-@import '_variables';
-@import '_z-index';
+@import "_colors";
+@import "_fonts";
+@import "_mixins";
+@import "_variables";
+@import "_z-index";
 
 // base
-@import '_base';
+@import "_base";
 
 // breakpoints
-@import 'breakpoints';
+@import "breakpoints";
 
 // components
-@import 'component-alert';
-@import 'component-breadcrumbs';
-@import 'component-button';
-@import 'component-card';
-@import 'component-form';
-@import 'component-icon';
-@import 'component-list';
-@import 'component-message';
-@import 'component-progress-bar';
-@import 'component-schedule-table';
-@import 'component-slider';
-@import 'component-social';
-@import 'component-sortable';
-@import 'component-status-dot';
-@import 'component-table';
-@import 'component-tabs';
-@import 'component-team-card';
+@import "component-alert";
+@import "component-breadcrumbs";
+@import "component-button";
+@import "component-card";
+@import "component-form";
+@import "component-icon";
+@import "component-list";
+@import "component-message";
+@import "component-progress-bar";
+@import "component-schedule-table";
+@import "component-slider";
+@import "component-social";
+@import "component-sortable";
+@import "component-status-dot";
+@import "component-table";
+@import "component-tabs";
+@import "component-team-card";
 
 // layout
-@import 'layout';
+@import "layout";
 
 // pages
-@import 'page-division-players';
-@import 'page-division-registration-attendance';
-@import 'page-division-teams';
-@import 'page-game-report';
-@import 'page-home';
-@import 'page-player-survey';
-@import 'page-registration-export';
-@import 'page-schedule-generation';
-@import 'page-static';
-@import 'page-user-index';
+@import "page-division-players";
+@import "page-division-registration-attendance";
+@import "page-division-teams";
+@import "page-game-report";
+@import "page-home";
+@import "page-player-survey";
+@import "page-registration-export";
+@import "page-schedule-generation";
+@import "page-static";
+@import "page-user-index";
 
 // print
-@import '_print';
+@import "_print";
 
 // legacy
-@import 'legacy/jquery-ui-1.10.0.custom.min';
+@import "legacy/jquery-ui-1.10.0.custom.min";
