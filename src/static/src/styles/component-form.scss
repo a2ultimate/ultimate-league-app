@@ -41,7 +41,7 @@
   }
 
   .form-field-table & {
-    @include grid-column(3);
+    @include grid-column(3, $grid-no-gutter);
   }
 }
 
@@ -53,7 +53,7 @@
   }
 
   .form-field-table & {
-    @include grid-column(5);
+    @include grid-column(5, $grid-no-gutter);
 
     > .form-field-input-wrapper {
       > input[type="text"],
@@ -128,7 +128,7 @@
   }
 
   .form-field-table & {
-    @include grid-column(4);
+    @include grid-column(4, $grid-no-gutter);
   }
 }
 

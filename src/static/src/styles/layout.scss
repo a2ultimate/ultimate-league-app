@@ -251,10 +251,11 @@ body {
 
   padding: 0 0.5rem;
 
-  @include grid-container;
   margin-left: auto;
   margin-right: auto;
   max-width: 62rem;
+
+  @include grid-container;
 }
 
 .content-inner-left {
@@ -263,7 +264,7 @@ body {
 
   border-right: 0.125rem solid $color-secondary;
 
-  @include grid-column(3);
+  @include grid-column(3, $grid-no-gutter);
 }
 
 .content-inner-left-logo {
@@ -372,7 +373,7 @@ body {
   margin-bottom: 1rem;
   padding: 0 0 0.5rem 1rem;
 
-  @include grid-column(9);
+  @include grid-column(9, $grid-no-gutter);
 }
 
 .footer {
