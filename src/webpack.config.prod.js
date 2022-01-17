@@ -20,7 +20,9 @@ module.exports = {
       path: __dirname,
       filename: path.resolve(__dirname, "static/build/stats.json"),
     }),
-    new MiniCssExtractPlugin()
+    new MiniCssExtractPlugin({
+      filename: "[name].[chunkhash].css",
+    })
   ],
   module: {
     rules: [
