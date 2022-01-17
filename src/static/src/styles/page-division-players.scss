@@ -20,7 +20,6 @@
   border-radius: $border-radius;
 
   @include grid-column(6);
-  // @include omega(2n);
 
   &:nth-child(4n-2),
   &:nth-child(4n-3) {

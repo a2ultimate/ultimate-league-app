@@ -36,8 +36,7 @@
   list-style: none;
 
   @include grid-container;
-  margin-left: auto;
-  margin-right: auto;
+  @include grid-collapse;
   max-width: 75rem;
 }
 
@@ -57,7 +56,6 @@
   background-color: $color-light-gray;
 
   @include grid-column(4);
-  // @include omega(3n);
 }
 
 .page-home-leagues-content-list-element-list-element-background {
@@ -284,10 +282,12 @@
 }
 
 .page-home-follow-content {
-  @include grid-container;
   margin-left: auto;
   margin-right: auto;
   max-width: 75rem;
+
+  @include grid-container;
+  @include grid-collapse;
 }
 
 .page-home-follow-content-announcements {
@@ -306,8 +306,7 @@
   margin-bottom: 2rem;
 
   @include grid-container;
-  margin-left: auto;
-  margin-right: auto;
+  @include grid-collapse;
   max-width: 75rem;
 }
 
