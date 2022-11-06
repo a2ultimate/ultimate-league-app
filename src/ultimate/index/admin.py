@@ -24,6 +24,10 @@ class StaticMenuItemsAdmin(admin.ModelAdmin):
     save_as = True
     save_on_top = True
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'parent':
+            kwargs['queryset'] = StaticMenuItems.objects.filter(type=StaticMenuItems.STATIC_MENU_ITEM_TYPES_HEADER)
+        return super(StaticMenuItemsAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 admin.site.register(NewsArticle, NewsArticleAdmin)
 admin.site.register(StaticContent, StaticContentAdmin)

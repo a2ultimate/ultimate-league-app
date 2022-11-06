@@ -16,7 +16,7 @@ class PlayerInline(admin.StackedInline):
 
     fieldsets = (
         (_('Profile'), {'fields': ('nickname', 'date_of_birth', 'gender', 'phone', 'zip_code',
-                                   'height_inches', 'highest_level', 'jersey_size', 'guardian_name', 'guardian_phone',)}),
+                                   'height_inches', 'highest_level', 'jersey_size', 'guardian_name', 'guardian_email', 'guardian_phone',)}),
     )
 
     can_delete = False

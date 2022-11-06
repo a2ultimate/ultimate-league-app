@@ -54,22 +54,18 @@
                   {% for season_year in season_years %}
                     <li class="content-inner-left-leagues-list-element">
                       <div class="content-inner-left-leagues-list-element-header">
-                        <h2>
                           {{ season_year.grouper|smart_title }}
-                        </h2>
                       </div>
                       <div class="content-inner-left-leagues-list-element-divisions">
                         <ul class="content-inner-left-leagues-list-element-divisions-list">
                           {% for league in season_year.list|sort_by_league_start_date_weekday %}
                             <li class="content-inner-left-leagues-list-element-divisions-list-element">
                               <div class="content-inner-left-leagues-list-element-divisions-list-element-header">
-                                <h3>
                                   {{ league.night|smart_title }}
 
                                   {% if league.state == 'preview' %}
                                     <em>({{ league.state|capfirst }})</em>
                                   {% endif %}
-                                </h3>
                               </div>
                               <div class="content-inner-left-leagues-list-element-divisions-list-element-links">
                                 <ul class="content-inner-left-leagues-list-element-divisions-list-element-links-list">
@@ -116,7 +112,12 @@
           {% if request.user and request.user.is_authenticated %}
             {% if not request.user.profile.is_complete_for_user %}
               <div class="message message-warning">
-                <p>{% trans 'You are missing profile information required to register for a league.' %}</p>
+                <p>
+                  {% trans 'You are missing profile information required to register for play.' %}
+                  {% if request.user.profile.is_minor %}
+                    Please be sure to provide your Parent/Guardian information at the bottom of the page.
+                  {% endif %}
+                </p>
                 <a class="button button-small button-primary" href="{% url 'editprofile' %}">{% trans 'Complete Your Profile' %}</a>
               </div>
             {% endif %}
@@ -124,7 +125,7 @@
             {% if not request.user.has_completed_player_rating %}
               <div class="message message-warning">
                 <p>
-                  {% trans 'You are required to self-assess your ability before registering for a division.' %}
+                  {% trans 'You are required to self-assess your ability before registering for play.' %}
                   {% trans 'This gives us a better picture of you as a player and helps us generate balanced teams.' %}
                 </p>
                 <a class="button button-small button-primary" href="{% url 'editratings' %}">{% trans 'Complete Your Player Ratings' %} &rarr;</a>

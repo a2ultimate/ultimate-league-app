@@ -30,10 +30,11 @@ body {
 .header-inner {
   position: relative;
 
-  @include grid-container;
-  margin-left: auto;
-  margin-right: auto;
   max-width: 62rem;
+  margin-right: auto;
+  margin-left: auto;
+
+  @include grid-container;
 }
 
 .header-inner-top {
@@ -86,7 +87,7 @@ body {
   &:after {
     display: inline-block;
 
-    content: "\00b7";
+    content: '\00b7';
 
     color: $color-light-gray-dark;
   }
@@ -116,10 +117,11 @@ body {
 .nav-inner {
   position: relative;
 
-  @include grid-container;
-  margin-left: auto;
-  margin-right: auto;
   max-width: 62rem;
+  margin-right: auto;
+  margin-left: auto;
+
+  @include grid-container;
 }
 
 .nav-inner-left {
@@ -249,11 +251,10 @@ body {
 .content-inner {
   position: relative;
 
-  padding: 0 0.5rem;
-
-  margin-left: auto;
-  margin-right: auto;
   max-width: 62rem;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 0 0.5rem;
 
   @include grid-container;
 }
@@ -304,6 +305,20 @@ body {
   list-style: none;
 
   > li {
+    margin-bottom: 1rem;
+    padding-top: 1rem;
+
+    border-top: 0.125rem solid $color-light-gray;
+
+    > h2 {
+      margin-bottom: 0.5rem;
+
+      font-family: $font-family-oswald;
+      font-size: 1.375rem;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+
     > ul {
       margin: 0 0 0.75rem;
       padding: 0;
@@ -329,10 +344,18 @@ body {
 }
 
 .content-inner-left-leagues-list-element {
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+  padding-top: 1rem;
+
+  border-top: 0.125rem solid $color-light-gray;
 }
 
 .content-inner-left-leagues-list-element-header {
+  margin-bottom: 0.5rem;
+
+  font-family: $font-family-oswald;
+  font-size: 1.375rem;
+  line-height: 1.2;
 }
 
 .content-inner-left-leagues-list-element-divisions {
@@ -350,6 +373,11 @@ body {
 }
 
 .content-inner-left-leagues-list-element-divisions-list-element-header {
+  margin-bottom: 0.25rem;
+
+  font-family: $font-family-oswald;
+  font-size: 1.125rem;
+  font-weight: 400;
 }
 
 .content-inner-left-leagues-list-element-divisions-list-element-links {
@@ -390,6 +418,9 @@ body {
 .footer-inner {
   position: relative;
 
+  max-width: 62rem;
+  margin-right: auto;
+  margin-left: auto;
   padding: 0.1875rem;
 
   text-align: center;
@@ -397,7 +428,4 @@ body {
   font-size: 0.9375rem;
 
   @include grid-container;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 62rem;
 }

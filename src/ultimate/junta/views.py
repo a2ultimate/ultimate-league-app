@@ -368,11 +368,13 @@ def registrationexport(request, year=None, season=None, division=None):
                         profile = reduce(getattr, 'user.profile'.split('.'), registration)
                         height_inches = profile.height_inches
                         guardian_name = profile.guardian_name
+                        guardian_email = profile.guardian_email
                         guardian_phone = profile.guardian_phone
                         prompt_response = getattr(registration, 'prompt_response', '').encode('ascii', 'ignore')
                     except AttributeError:
                         height_inches = 0
                         guardian_name = None
+                        guardian_email = None
                         guardian_phone = None
                         prompt_response = None
 
@@ -390,6 +392,7 @@ def registrationexport(request, year=None, season=None, division=None):
                     registration_data['num_teams'] = registration.num_teams
                     registration_data['height'] = height_inches
                     registration_data['guardian_name'] = guardian_name
+                    registration_data['guardian_email'] = guardian_email
                     registration_data['guardian_phone'] = guardian_phone
                     registration_data['prompt_response'] = prompt_response
 

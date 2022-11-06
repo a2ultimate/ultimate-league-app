@@ -4,7 +4,7 @@ django-anymail~=7.2
 django-hijack==2.1.10
 django-hijack-admin==2.1.10
 django-markdown-deux==1.0.5
-django-paypal==1.0.0
+django-paypal==1.1.2
 django-pure-pagination==0.2.1
 django-simple-captcha==0.5.12
 django-webpack-loader==1.4.1

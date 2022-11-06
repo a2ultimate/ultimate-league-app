@@ -263,6 +263,7 @@ class Player(models.Model):
     jersey_size = models.CharField(max_length=45, choices=JERSEY_SIZE_CHOICES, blank=True)
 
     guardian_name = models.TextField(blank=True)
+    guardian_email = models.EmailField(blank=True)
     guardian_phone = models.TextField(blank=True)
 
     @property
@@ -274,7 +275,7 @@ class Player(models.Model):
         is_complete = bool(self.gender and self.date_of_birth)
 
         if is_complete and self.age < 18:
-            is_complete = bool(is_complete and self.guardian_name and self.guardian_phone)
+            is_complete = bool(is_complete and self.guardian_name and self.guardian_email and self.guardian_phone)
 
         return is_complete
 

@@ -28,8 +28,9 @@ header_strings = [
     'Number of Teams', # 26
     'Height Inches', # 27
     'Guardian Name', # 28
-    'Guardian Phone', # 29
-    'Prompt Response', # 30
+    'Guardian Email', # 29
+    'Guardian Phone', # 30
+    'Prompt Response', # 31
 ]
 
 value_keys = [
@@ -62,8 +63,9 @@ value_keys = [
     'num_teams', # 26
     'height', # 27
     'guardian_name', # 28
-    'guardian_phone', # 29
-    'prompt_response', # 30
+    'guardian_email', # 29
+    'guardian_phone', # 30
+    'prompt_response', # 31
 ]
 
 admin_export_columns = [1, 2, 17, 18, 3, 4, 5, 6, 7, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 8, 9, 13, 14, 15, 10, 16, 11, 12]
