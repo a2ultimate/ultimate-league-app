@@ -37,7 +37,32 @@
     {{ hidden }}
   {% endfor %}
 
-    {% for field in form.visible_fields %}
+  {% for field in form.visible_fields %}
+    <div class="form-field form-field-table{% if field.errors %} form-field-error{% endif %}">
+      <label class="form-field-label" for="{{ field.id_for_label }}">
+        {{ field.label }}
+      </label>
+
+      <div class="form-field-input">
+        {{ field }}
+
+        {% if field.errors %}
+        <div class="form-field-input-errors">
+          <ul class="form-field-input-errors-list">
+            {% for error in field.errors %}
+              <li>{{ error|escape }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+      <div class="form-field-help">
+        {{ field.help_text }}
+      </div>
+    </div>
+  {% endfor %}
+  {% for field in player_form.visible_fields %}
+    {% if field.name != 'guardian_name' and field.name != 'guardian_email' and field.name != 'guardian_phone' %}
       <div class="form-field form-field-table{% if field.errors %} form-field-error{% endif %}">
         <label class="form-field-label" for="{{ field.id_for_label }}">
           {{ field.label }}
@@ -60,38 +85,14 @@
           {{ field.help_text }}
         </div>
       </div>
-    {% endfor %}
-    {% for field in player_form.visible_fields %}
-      {% if field.name != 'guardian_name' and field.name != 'guardian_email' and field.name != 'guardian_phone' %}
-        <div class="form-field form-field-table{% if field.errors %} form-field-error{% endif %}">
-          <label class="form-field-label" for="{{ field.id_for_label }}">
-            {{ field.label }}
-          </label>
+    {% endif %}
+  {% endfor %}
 
-          <div class="form-field-input">
-            {{ field }}
+  <hr>
 
-            {% if field.errors %}
-            <div class="form-field-input-errors">
-              <ul class="form-field-input-errors-list">
-                {% for error in field.errors %}
-                  <li>{{ error|escape }}</li>
-                {% endfor %}
-              </ul>
-            </div>
-            {% endif %}
-          </div>
-          <div class="form-field-help">
-            {{ field.help_text }}
-          </div>
-        </div>
-      {% endif %}
-    {% endfor %}
-
-    <hr>
-
+  {% if request.user.profile.is_minor %}
     <p class="form-field form-field-highlighted" colspan="3">
-      <strong>If you are under the age of 18, you must provide a parent or guardian's contact information:</strong>
+      <strong>Players under the age of 18 must provide a parent or guardian's contact information:</strong>
     </p>
 
     {% for field in player_form.visible_fields %}
@@ -121,7 +122,7 @@
         </div>
       {% endif %}
     {% endfor %}
-
+  {% endif %}
   <p>
     <small>
       An asterisk (*) denotes a required field.

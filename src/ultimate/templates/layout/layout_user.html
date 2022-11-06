@@ -112,7 +112,12 @@
           {% if request.user and request.user.is_authenticated %}
             {% if not request.user.profile.is_complete_for_user %}
               <div class="message message-warning">
-                <p>{% trans 'You are missing profile information required to register for a league.' %}</p>
+                <p>
+                  {% trans 'You are missing profile information required to register for play.' %}
+                  {% if request.user.profile.is_minor %}
+                    Please be sure to provide your Parent/Guardian information at the bottom of the page.
+                  {% endif %}
+                </p>
                 <a class="button button-small button-primary" href="{% url 'editprofile' %}">{% trans 'Complete Your Profile' %}</a>
               </div>
             {% endif %}
@@ -120,7 +125,7 @@
             {% if not request.user.has_completed_player_rating %}
               <div class="message message-warning">
                 <p>
-                  {% trans 'You are required to self-assess your ability before registering for a division.' %}
+                  {% trans 'You are required to self-assess your ability before registering for play.' %}
                   {% trans 'This gives us a better picture of you as a player and helps us generate balanced teams.' %}
                 </p>
                 <a class="button button-small button-primary" href="{% url 'editratings' %}">{% trans 'Complete Your Player Ratings' %} &rarr;</a>
