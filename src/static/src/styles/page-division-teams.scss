@@ -6,17 +6,19 @@
 }
 
 .page-division-teams-teams {
+  display: flex;
+  flex-direction: row;
+
+  max-width: 75rem;
   margin-bottom: 2rem;
 
-  @include grid-container;
-  @include grid-collapse;
-  max-width: 75rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .page-division-teams-teams-team {
+  width: calc(50% - 0.5rem);
   margin-bottom: 1rem;
-
-  @include grid-column(6);
 }
 
 .page-division-teams-notes {
