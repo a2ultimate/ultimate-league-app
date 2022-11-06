@@ -116,6 +116,8 @@ class EditPlayerForm(forms.ModelForm):
 
     guardian_name = forms.CharField(label='Parent/Guardian Name',
         required=False)
+    guardian_email = forms.EmailField(label='Parent/Guardian Email',
+        required=False)
     guardian_phone = forms.CharField(label='Parent/Guardian Phone',
         required=False)
 

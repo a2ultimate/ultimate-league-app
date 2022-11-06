@@ -62,7 +62,7 @@
       </div>
     {% endfor %}
     {% for field in player_form.visible_fields %}
-      {% if field.name != 'guardian_name' and field.name != 'guardian_phone' %}
+      {% if field.name != 'guardian_name' and field.name != 'guardian_email' and field.name != 'guardian_phone' %}
         <div class="form-field form-field-table{% if field.errors %} form-field-error{% endif %}">
           <label class="form-field-label" for="{{ field.id_for_label }}">
             {{ field.label }}
@@ -88,12 +88,14 @@
       {% endif %}
     {% endfor %}
 
+    <hr>
+
     <p class="form-field form-field-highlighted" colspan="3">
-      If you are under the age of 18, you must provide a parent or guardian's contact information
+      <strong>If you are under the age of 18, you must provide a parent or guardian's contact information:</strong>
     </p>
 
     {% for field in player_form.visible_fields %}
-      {% if field.name == 'guardian_name' or field.name == 'guardian_phone' %}
+      {% if field.name == 'guardian_name' or field.name == 'guardian_email' or field.name == 'guardian_phone' %}
         <div class="form-field form-field-table form-field-highlighted{% if field.errors %} form-field-error{% endif %}">
 
           <label class="form-field-label" for="{{ field.id_for_label }}">
