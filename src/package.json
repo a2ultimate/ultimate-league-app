@@ -18,7 +18,7 @@
     "jquery-ui": "^1.10.4",
     "lodash": "^4.16.4",
     "mini-css-extract-plugin": "^2.4.2",
-    "node-sass": "^6.0.0",
+    "node-sass": "^7.0.3",
     "normalize.css": "^5.0.0",
     "postcss-loader": "^6.1.1",
     "sass-loader": "^12.1.0",
