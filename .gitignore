@@ -12,4 +12,4 @@ src/static/node_modules/
 src/requirements/*.full.txt
 src/static/build/*
 src/static/dist/*
-src/ultimate/settings/*.py
+src/ultimate/.env

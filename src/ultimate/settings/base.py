@@ -1,3 +1,4 @@
+import environ
 import os
 import sys
 
@@ -5,7 +6,20 @@ PROJECT_ROOT = os.path.dirname(__file__)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+
+env = environ.Env(
+    DEBUG=(bool, False),
+    ALLOWED_HOSTS=(list, []),
+    INTERNAL_IPS=(list, []),
+)
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
 # Django settings for ultimate-league-app project.
+
+DEBUG = env('DEBUG')
+
+ALLOWED_HOSTS = env('ALLOWED_HOSTS')
+INTERNAL_IPS = env('INTERNAL_IPS')
 
 ADMINS = (
     ('Ann Arbor Ultimate', 'web@annarborultimate.org'),
@@ -15,12 +29,12 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-      'ENGINE': 'django.db.backends.mysql',
-      'NAME': '',
-      'USER': '',
-      'PASSWORD': '',
-      'HOST': '', # empty = localhost
-      'PORT': '', # empty = default
+      'ENGINE': env('DB_ENGINE'),
+      'NAME': env('DB_NAME'),
+      'USER': env('DB_USER'),
+      'PASSWORD': env('DB_PASSWORD'),
+      'HOST': env('DB_HOST'),
+      'PORT': env('DB_PORT'),
     }
 }
 
@@ -40,9 +54,15 @@ STATICFILES_DIRS = (
       os.path.join(BASE_DIR, '../static/build'),
 )
 
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': '',
+        'STATS_FILE': os.path.join(STATIC_ROOT, '../build/stats.json'),
+    }
+}
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '6049&3+&tx+%%*#4$6@#!wch=+xeibo+mz4_*ru7u3!wh-p2_g'
+SECRET_KEY = env('SECRET_KEY')
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -149,8 +169,8 @@ LOGGING = {
 
 
 # A2U
-A2U_RATING_EXPIRATION_MONTHS = 0
-A2U_RATING_LIMIT_MONTHS = 0
+A2U_RATING_EXPIRATION_MONTHS = env('A2U_RATING_EXPIRATION_MONTHS')
+A2U_RATING_LIMIT_MONTHS = env('A2U_RATING_LIMIT_MONTHS')
 
 
 # USER
@@ -167,11 +187,6 @@ CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_dots',)
 CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
 
 
-# GOOGLE ANALYTICS
-GOOGLE_ANALYTICS_PROPERTY_ID = ''
-GOOGLE_ANALYTICS_DOMAIN = ''
-
-
 # GOOGLE APPS API
 GOOGLE_APPS_API_ACCOUNT = ''
 GOOGLE_APPS_API_CREDENTIALS_FILE = os.path.join(PROJECT_ROOT, '../../../config/', 'CREDENTIAL_FILE')
@@ -179,11 +194,11 @@ GOOGLE_APPS_API_SCOPES = (
     'https://www.googleapis.com/auth/calendar',
     'https://www.googleapis.com/auth/admin.directory.group',
 )
-GOOGLE_APPS_CALENDAR_ID = ''
+GOOGLE_APPS_CALENDAR_ID = env('GOOGLE_APPS_CALENDAR_ID')
 
 
 # Annoucements Email Group/List Address
-ANNOUNCEMENTS_GROUP_ADDRESS = ''
+ANNOUNCEMENTS_GROUP_ADDRESS = env('ANNOUNCEMENTS_GROUP_ADDRESS')
 
 
 # Hijack
@@ -203,19 +218,18 @@ MARKDOWN_DEUX_STYLES = {
 }
 
 # Email
-DEFAULT_FROM_EMAIL = 'Ann Arbor Ultimate <noreply@mail.annarborultimate.org>'
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 EMAIL_BACKEND = 'anymail.backends.postmark.EmailBackend'
 ANYMAIL = {
-    'POSTMARK_SERVER_TOKEN': '',
+    'POSTMARK_SERVER_TOKEN': env('POSTMARK_SERVER_TOKEN'),
     'SEND_DEFAULTS': {
-        'reply_to': ['web@annarborultimate.org']
+        'reply_to': [env('SEND_DEFAULTS_REPLY_TO')]
     }
 }
 
-
 # Paypal Info
-PAYPAL_TEST = True      # Testing mode on
-PAYPAL_BUY_BUTTON_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
-PAYPAL_SUBSCRIPTION_BUTTON_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
-PAYPAL_DONATION_BUTTON_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
-PAYPAL_BUSINESS_EMAIL = 'replace@this.email'
+PAYPAL_TEST = env('PAYPAL_TEST')
+PAYPAL_BUY_BUTTON_IMAGE = STATIC_URL + 'static/images/paypal_checkout.png'
+PAYPAL_SUBSCRIPTION_BUTTON_IMAGE = STATIC_URL + 'static/images/paypal_checkout.png'
+PAYPAL_DONATION_BUTTON_IMAGE = STATIC_URL + 'static/images/paypal_checkout.png'
+PAYPAL_BUSINESS_EMAIL = env('PAYPAL_BUSINESS_EMAIL')

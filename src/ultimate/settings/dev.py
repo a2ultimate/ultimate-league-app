@@ -1,12 +1,11 @@
+import environ
+
 from .base import *
 
-DEBUG = True
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 ENVIRONMENT = 'dev'
-
-ALLOWED_HOSTS = [
-    'localhost',
-]
 
 CACHES = {
     'default': {
@@ -25,19 +24,8 @@ MIDDLEWARE_CLASSES += (
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-INTERNAL_IPS = (
-    '127.0.0.1',
-)
-
 CAPTCHA_TEST_MODE = True
 
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_COLLAPSED': True,
-}
-
-WEBPACK_LOADER = {
-    'DEFAULT': {
-        'BUNDLE_DIR_NAME': '',
-        'STATS_FILE': os.path.join(STATIC_ROOT, '../build/stats.json'),
-    }
 }
