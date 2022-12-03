@@ -1,15 +1,15 @@
+.DS_Store
 *.log
 *.pot
 *.pyc
 *.swp
-.DS_Store
 
 config/*.json
-env/
 src/env/
 src/media/*
-src/static/node_modules/
 src/requirements/*.full.txt
 src/static/build/*
 src/static/dist/*
+src/static/node_modules/
 src/ultimate/.env
+venv/
