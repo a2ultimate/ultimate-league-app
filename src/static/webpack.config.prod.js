@@ -7,19 +7,21 @@ var MiniCssExtractPlugin = require("mini-css-extract-plugin");
 require("es6-promise").polyfill();
 
 module.exports = {
-  mode: "development",
+  mode: "production",
   entry: {
-    main: path.resolve(__dirname, "static/src/main.js"),
+    main: path.resolve(__dirname, "src/main.js"),
   },
   output: {
-    path: path.resolve("./static/build/"),
-    filename: "[name]-[fullhash].js",
-    publicPath: "http://localhost:8080/static/",
+    path: path.resolve(__dirname, "build"),
+    filename: "[name].[chunkhash].js",
   },
   plugins: [
     new BundleTracker({
       path: __dirname,
-      filename: path.resolve(__dirname, "static/build/stats.json"),
+      filename: path.resolve(__dirname, "build/stats.json"),
+    }),
+    new MiniCssExtractPlugin({
+      filename: "[name].[chunkhash].css",
     }),
   ],
   module: {
@@ -30,8 +32,8 @@ module.exports = {
         type: "asset",
         parser: {
           dataUrlCondition: {
-            maxSize: 4 * 1024 // 4kb
-          }
+            maxSize: 4 * 1024, // 4kb
+          },
         },
         generator: {
           filename: "fonts/[name]-[contenthash][ext]",
@@ -50,11 +52,16 @@ module.exports = {
       // STYLES
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader", "postcss-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"],
       },
       {
         test: /\.scss$/,
-        use: ["style-loader", "css-loader", "postcss-loader", "sass-loader"],
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          "postcss-loader",
+          "sass-loader",
+        ],
       },
 
       // MISC
@@ -64,12 +71,5 @@ module.exports = {
       },
     ],
   },
-  devServer: {
-    headers: { "Access-Control-Allow-Origin": "*" },
-    allowedHosts: [
-      'localhost',
-      'annarborultimate.org',
-    ],
-  },
-  devtool: "eval-source-map",
+  devtool: "source-map",
 };
