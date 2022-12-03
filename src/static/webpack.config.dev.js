@@ -12,7 +12,7 @@ module.exports = {
     main: path.resolve(__dirname, "src/main.js"),
   },
   output: {
-    path: path.resolve("./build/"),
+    path: path.resolve(__dirname, "build"),
     filename: "[name]-[fullhash].js",
     publicPath: "http://localhost:8080/static/",
   },
