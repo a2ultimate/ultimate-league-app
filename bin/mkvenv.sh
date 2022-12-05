@@ -8,7 +8,7 @@ BIN_ROOT="$here"
 SRC_ROOT="$root/src"
 VENV_ROOT="$root/venv"
 
-valid_modes="prod dev"
+valid_modes="prod,dev"
 if [[ "$valid_modes" =~ "$1" ]]; then
   mode="$1"
 else
