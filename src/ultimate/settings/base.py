@@ -12,7 +12,7 @@ env = environ.Env(
     ALLOWED_HOSTS=(list, []),
     INTERNAL_IPS=(list, []),
 )
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+environ.Env.read_env(os.path.join(os.path.dirname(BASE_DIR), '.env'))
 
 # Django settings for ultimate-league-app project.
 

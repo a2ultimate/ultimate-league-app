@@ -3,7 +3,7 @@ import environ
 from .base import *
 
 env = environ.Env()
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+environ.Env.read_env(os.path.join(os.path.dirname(BASE_DIR), '.env'))
 
 ENVIRONMENT = 'dev'
 

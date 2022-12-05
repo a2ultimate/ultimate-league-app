@@ -5,11 +5,10 @@
 *.swp
 
 config/*.json
-src/env/
-src/media/*
+src/.env
+src/media/
 src/requirements/*.full.txt
-src/static/build/*
-src/static/dist/*
+src/static/build/
+src/static/dist/
 src/static/node_modules/
-src/ultimate/.env
 venv/
