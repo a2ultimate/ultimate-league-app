@@ -189,7 +189,7 @@ CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
 
 # GOOGLE APPS API
 GOOGLE_APPS_API_ACCOUNT = ''
-GOOGLE_APPS_API_CREDENTIALS_FILE = os.path.join(PROJECT_ROOT, '../../../config/', 'CREDENTIAL_FILE')
+GOOGLE_APPS_API_CREDENTIALS_FILE = os.path.join(PROJECT_ROOT, '../../../config/', env('GOOGLE_APPS_API_CREDENTIALS_FILE_NAME'))
 GOOGLE_APPS_API_SCOPES = (
     'https://www.googleapis.com/auth/calendar',
     'https://www.googleapis.com/auth/admin.directory.group',
