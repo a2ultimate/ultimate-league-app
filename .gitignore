@@ -6,6 +6,9 @@
 
 config/*.json
 src/.env
+src/gunicorn_config.py
+src/nginx.conf
+src/supervisord.conf
 src/media/
 src/requirements/*.full.txt
 src/static/build/

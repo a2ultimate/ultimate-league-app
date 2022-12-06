@@ -1,0 +1,8 @@
+import multiprocessing
+
+bind = '127.0.0.1:8001'
+command = '/path/to/project/src/env/prod/bin/gunicorn'
+loglevel = 'error'
+pythonpath = '/path/to/project/src/'
+worker_class = 'gevent'
+workers = multiprocessing.cpu_count() * 2 + 1

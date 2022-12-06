@@ -1,0 +1,19 @@
+server {
+    listen 80;
+    server_name 45.33.102.77;
+
+    location = /favicon.ico {
+        root /path/to/project/src/static/build/images;
+        access_log off;
+        log_not_found off;
+    }
+
+    location /static/ {
+        alias /path/to/project/src/static/build/;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/path/to/project/gunicorn.sock;
+    }
+}
