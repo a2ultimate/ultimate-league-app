@@ -27,13 +27,13 @@ def menu_items_home_sidebar(request):
 
 
 def google_analytics(request):
-    trackers = []
+    measurement_id = None
 
     if not settings.DEBUG:
-        trackers = getattr(settings, 'GOOGLE_ANALYTICS_MEASUREMENT_ID', [])
+        measurement_id = getattr(settings, 'GOOGLE_ANALYTICS_MEASUREMENT_ID', None)
 
     return {
-        'GOOGLE_ANALYTICS_MEASUREMENT_ID': trackers,
+        'GOOGLE_ANALYTICS_MEASUREMENT_ID': measurement_id,
     }
 
 
