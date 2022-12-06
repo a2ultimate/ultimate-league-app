@@ -30,10 +30,10 @@ def google_analytics(request):
     trackers = []
 
     if not settings.DEBUG:
-        trackers = getattr(settings, 'GOOGLE_ANALYTICS_TRACKERS', [])
+        trackers = getattr(settings, 'GOOGLE_ANALYTICS_MEASUREMENT_ID', [])
 
     return {
-        'GOOGLE_ANALYTICS_TRACKERS': trackers,
+        'GOOGLE_ANALYTICS_MEASUREMENT_ID': trackers,
     }
 
 
