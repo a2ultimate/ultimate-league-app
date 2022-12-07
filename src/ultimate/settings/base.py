@@ -8,9 +8,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 env = environ.Env(
-    DEBUG=(bool, False),
+    A2U_RATING_EXPIRATION_MONTHS=(int, 0),
+    A2U_RATING_LIMIT_MONTHS=(int, 0),
+    PAYPAL_TEST=(bool, True),
     ALLOWED_HOSTS=(list, []),
     INTERNAL_IPS=(list, []),
+    DEBUG=(bool, False),
 )
 environ.Env.read_env(os.path.join(os.path.dirname(BASE_DIR), '.env'))
 
