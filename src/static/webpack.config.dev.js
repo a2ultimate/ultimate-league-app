@@ -9,17 +9,17 @@ require("es6-promise").polyfill();
 module.exports = {
   mode: "development",
   entry: {
-    main: path.resolve(__dirname, "static/src/main.js"),
+    main: path.resolve(__dirname, "src/main.js"),
   },
   output: {
-    path: path.resolve("./static/build/"),
+    path: path.resolve(__dirname, "build"),
     filename: "[name]-[fullhash].js",
     publicPath: "http://localhost:8080/static/",
   },
   plugins: [
     new BundleTracker({
       path: __dirname,
-      filename: path.resolve(__dirname, "static/build/stats.json"),
+      filename: path.resolve(__dirname, "build/stats.json"),
     }),
   ],
   module: {
@@ -30,8 +30,8 @@ module.exports = {
         type: "asset",
         parser: {
           dataUrlCondition: {
-            maxSize: 4 * 1024 // 4kb
-          }
+            maxSize: 4 * 1024, // 4kb
+          },
         },
         generator: {
           filename: "fonts/[name]-[contenthash][ext]",
@@ -66,10 +66,7 @@ module.exports = {
   },
   devServer: {
     headers: { "Access-Control-Allow-Origin": "*" },
-    allowedHosts: [
-      'localhost',
-      'annarborultimate.org',
-    ],
+    allowedHosts: ["localhost", "annarborultimate.org"],
   },
   devtool: "eval-source-map",
 };

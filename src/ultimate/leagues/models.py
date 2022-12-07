@@ -1,5 +1,6 @@
 from datetime import datetime, time
 import random
+from math import floor
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -411,7 +412,7 @@ class League(models.Model):
             if self.num_skip_weeks > 0:
                 num_games = num_games - self.num_skip_weeks
 
-        return num_games
+        return floor(num_games)
 
     def get_captains(self):
         return get_user_model().objects.filter(teammember__team__league=self, teammember__captain=1)

@@ -14,7 +14,6 @@ logger = logging.getLogger('a2u.email_groups')
 
 class GoogleAppsApi:
     http = None
-    service = None
 
     def __init__(self):
         credentials_file = getattr(settings, 'GOOGLE_APPS_API_CREDENTIALS_FILE', False)

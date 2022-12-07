@@ -23,8 +23,6 @@
 }
 
 .page-home-leagues-content-list-element-header {
-  letter-spacing: 0.0625rem;
-
   font-family: $font-family-oswald;
   font-weight: 400;
 }
@@ -79,8 +77,8 @@
   left: 0;
 
   background: linear-gradient(
-    rgba($color-dark-gray, 0.5),
-    rgba($color-dark-gray, 0.5)
+  rgba($color-dark-gray, 0.5),
+  rgba($color-dark-gray, 0.5)
   );
 }
 
@@ -118,8 +116,6 @@
 
   padding: 0.25rem 0.75rem;
 
-  letter-spacing: 0.0125rem;
-
   color: white;
   border-top-right-radius: $border-radius;
   border-bottom-right-radius: $border-radius;
@@ -134,8 +130,6 @@
   position: relative;
 
   padding-right: 1.25rem;
-
-  letter-spacing: 0.03125rem;
 
   font-family: $font-family-oswald;
   font-weight: 200;
@@ -157,7 +151,7 @@
     font-size: $font-size-sm !important;
     line-height: $font-size-sm !important;
 
-    @include icon("chevron-right");
+    @include icon('chevron-right');
 
     .page-home-leagues-content-list-element-list-element-content:active &,
     .page-home-leagues-content-list-element-list-element-content:focus &,
@@ -166,9 +160,7 @@
     }
   }
 
-  .page-home-leagues-content-list-element-list-element-background
-    + .page-home-leagues-content-list-element-list-element-content
-    > & {
+  .page-home-leagues-content-list-element-list-element-background + .page-home-leagues-content-list-element-list-element-content > & {
     color: $color-white !important;
     text-shadow: 0 0.0625rem 0 $color-dark-gray-dark;
 
@@ -188,15 +180,13 @@
   span {
     display: inline-block;
 
-    letter-spacing: 0.0125rem;
-
     font-size: $font-size-sm;
     font-weight: 400;
 
     &:after {
       padding: 0 0.25rem;
 
-      content: "\00b7";
+      content: '\00b7';
     }
 
     &:last-child {
@@ -206,9 +196,7 @@
     }
   }
 
-  .page-home-leagues-content-list-element-list-element-background
-    + .page-home-leagues-content-list-element-list-element-content
-    > & {
+  .page-home-leagues-content-list-element-list-element-background + .page-home-leagues-content-list-element-list-element-content > & {
     color: $color-white !important;
     text-shadow: 0 0.0625rem 0 $color-dark-gray-dark;
   }
@@ -265,7 +253,7 @@
     font-size: $font-size-sm !important;
     line-height: $font-size-sm !important;
 
-    @include icon("chevron-right");
+    @include icon('chevron-right');
   }
 }
 
@@ -282,9 +270,9 @@
 }
 
 .page-home-follow-content {
-  margin-left: auto;
-  margin-right: auto;
   max-width: 75rem;
+  margin-right: auto;
+  margin-left: auto;
 
   @include grid-container;
   @include grid-collapse;
@@ -322,8 +310,6 @@
 }
 
 .page-home-info-section-header {
-  letter-spacing: 0.0625rem;
-
   font-family: $font-family-oswald;
   font-weight: 400;
 }
@@ -378,7 +364,7 @@
 
     line-height: 1rem;
 
-    @include icon("chevron-right");
+    @include icon('chevron-right');
   }
 
   &:focus,

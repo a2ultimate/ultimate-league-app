@@ -9,20 +9,20 @@ require("es6-promise").polyfill();
 module.exports = {
   mode: "production",
   entry: {
-    main: path.resolve(__dirname, "static/src/main.js"),
+    main: path.resolve(__dirname, "src/main.js"),
   },
   output: {
-    path: path.resolve(__dirname, "static/build"),
+    path: path.resolve(__dirname, "build"),
     filename: "[name].[chunkhash].js",
   },
   plugins: [
     new BundleTracker({
       path: __dirname,
-      filename: path.resolve(__dirname, "static/build/stats.json"),
+      filename: path.resolve(__dirname, "build/stats.json"),
     }),
     new MiniCssExtractPlugin({
       filename: "[name].[chunkhash].css",
-    })
+    }),
   ],
   module: {
     rules: [
@@ -32,8 +32,8 @@ module.exports = {
         type: "asset",
         parser: {
           dataUrlCondition: {
-            maxSize: 4 * 1024 // 4kb
-          }
+            maxSize: 4 * 1024, // 4kb
+          },
         },
         generator: {
           filename: "fonts/[name]-[contenthash][ext]",
@@ -56,7 +56,12 @@ module.exports = {
       },
       {
         test: /\.scss$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader", "sass-loader"],
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          "postcss-loader",
+          "sass-loader",
+        ],
       },
 
       // MISC

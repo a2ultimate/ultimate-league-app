@@ -1,0 +1,12 @@
+[supervisord]
+environment=GOOGLE_APPLICATION_CREDENTIALS="/path/to/creditials/file"
+
+[program:a2u_gunicorn]
+command=/path/to/project/venv/prod/bin/gunicorn ultimate.wsgi:application -c gunicorn_config.py --env APP_RUNMODE=prod --pid /tmp/gunicorn.pid ;
+user=a2u
+directory=/path/to/project/src/
+stdout_logfile=/var/log/a2u.log
+redirect_stderr = true
+autostart=true
+autorestart=true
+startsecs=10

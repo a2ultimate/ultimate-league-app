@@ -2,3 +2,9 @@
 
 # include common requirements
 -r common.txt
+
+
+gevent==22.10.2
+greenlet==2.0.1
+zope.event==4.5.0
+zope.interface==5.5.2

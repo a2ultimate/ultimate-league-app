@@ -1,15 +1,17 @@
+.DS_Store
 *.log
 *.pot
 *.pyc
 *.swp
-.DS_Store
 
 config/*.json
-env/
-src/env/
-src/media/*
-src/node_modules/
+src/.env
+src/gunicorn_config.py
+src/nginx.conf
+src/supervisord.conf
+src/media/
 src/requirements/*.full.txt
-src/static/build/*
-src/static/dist/*
-src/ultimate/settings/*.py
+src/static/build/
+src/static/dist/
+src/static/node_modules/
+venv/
