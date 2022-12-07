@@ -1,19 +1,27 @@
 server {
-    listen 80;
-    server_name 45.33.102.77;
+    server_name www.annarborultimate.org;
 
     location = /favicon.ico {
-        root /path/to/project/src/static/build/images;
+        root /path/to/project/src/static/dist/images;
         access_log off;
         log_not_found off;
     }
 
     location /static/ {
-        alias /path/to/project/src/static/build/;
+        alias /path/to/project/src/static/dist/;
+    }
+
+    location /media/ {
+        alias /path/to/project/src/media/;
     }
 
     location / {
         include proxy_params;
         proxy_pass http://unix:/path/to/project/gunicorn.sock;
     }
+}
+
+server {
+    server_name annarborultimate.org;
+    return 301 $scheme://www.annarborultimate.org$request_uri;
 }
