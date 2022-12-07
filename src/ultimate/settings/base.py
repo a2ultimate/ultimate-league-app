@@ -232,7 +232,7 @@ ANYMAIL = {
 
 # Paypal Info
 PAYPAL_TEST = env('PAYPAL_TEST')
-PAYPAL_BUY_BUTTON_IMAGE = STATIC_URL + 'static/images/paypal_checkout.png'
-PAYPAL_SUBSCRIPTION_BUTTON_IMAGE = STATIC_URL + 'static/images/paypal_checkout.png'
-PAYPAL_DONATION_BUTTON_IMAGE = STATIC_URL + 'static/images/paypal_checkout.png'
+PAYPAL_BUY_BUTTON_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
+PAYPAL_SUBSCRIPTION_BUTTON_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
+PAYPAL_DONATION_BUTTON_IMAGE = STATIC_URL + 'images/paypal_checkout.png'
 PAYPAL_BUSINESS_EMAIL = env('PAYPAL_BUSINESS_EMAIL')
