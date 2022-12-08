@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib import messages
+from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -10,15 +11,18 @@ from ultimate.forms import AnnoucementsForm
 from ultimate.utils.calendar import get_events
 from ultimate.utils.email_groups import add_to_group
 
+CACHE_KEY_CALENDAR_EVENTS = 'CALENDAR_EVENTS'
 
 def index(request):
     news_articles = NewsArticle.objects.all()[:5]
 
-    events = get_events()
-    display_events = None
+    display_events = cache.get(CACHE_KEY_CALENDAR_EVENTS, None)
 
-    if events:
-        display_events = events[:7]
+    if not display_events:
+        events = get_events()
+        if events:
+            display_events = events[:7]
+            cache.set(CACHE_KEY_CALENDAR_EVENTS, display_events, 86400)
 
     return render(request, 'index/index.html',
                               {
