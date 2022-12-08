@@ -24,8 +24,10 @@ DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env('ALLOWED_HOSTS')
 INTERNAL_IPS = env('INTERNAL_IPS')
 
+SERVER_EMAIL = env('SERVER_EMAIL')
+
 ADMINS = (
-    ('Ann Arbor Ultimate', 'web@annarborultimate.org'),
+    ('Ann Arbor Ultimate', env('SERVER_EMAIL')),
 )
 
 MANAGERS = ADMINS
