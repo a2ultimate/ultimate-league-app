@@ -152,6 +152,7 @@ LOGGING = {
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
+            'email_backend': env('EMAIL_BACKEND'),
         },
     },
     'loggers': {
@@ -224,7 +225,7 @@ MARKDOWN_DEUX_STYLES = {
 
 # Email
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
-EMAIL_BACKEND = 'anymail.backends.postmark.EmailBackend'
+EMAIL_BACKEND = env('EMAIL_BACKEND')
 ANYMAIL = {
     'POSTMARK_SERVER_TOKEN': env('POSTMARK_SERVER_TOKEN'),
     'SEND_DEFAULTS': {
