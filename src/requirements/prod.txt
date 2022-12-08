@@ -4,7 +4,9 @@
 -r common.txt
 
 
+bugsnag==4.3.0
 gevent==22.10.2
 greenlet==2.0.1
+WebOb==1.8.7
 zope.event==4.5.0
 zope.interface==5.5.2
