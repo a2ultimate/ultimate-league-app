@@ -13,6 +13,8 @@ CACHES = {
     }
 }
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 INSTALLED_APPS += (
     'debug_toolbar',
     'django_extensions',
@@ -21,8 +23,6 @@ INSTALLED_APPS += (
 MIDDLEWARE_CLASSES += (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
-
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 CAPTCHA_TEST_MODE = True
 
