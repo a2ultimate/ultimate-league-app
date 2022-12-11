@@ -283,6 +283,13 @@ class Player(models.Model):
     def matching_preference(self):
         return dict(self.GENDER_CHOICES)[self.gender]
 
+    @property
+    def matching_preference_abbreviation(self):
+        if (self.gender == self.GENDER_MALE):
+            return 'MMP'
+        elif (self.gender == self.GENDER_FEMALE):
+            return 'WMP'
+
     def is_male(self):
         return self.gender == self.GENDER_MALE
 

@@ -7,7 +7,6 @@
     "autoprefixer": "^10.3.7",
     "bootstrap": "^5.0.0",
     "bourbon": "^7.0.0",
-    "bourbon-neat": "4.0.0",
     "css-loader": "^6.4.0",
     "es6-promise": "^4.1.0",
     "file-loader": "^6.2.0",

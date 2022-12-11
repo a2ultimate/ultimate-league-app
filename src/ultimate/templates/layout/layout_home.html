@@ -6,13 +6,13 @@
 <!DOCTYPE html>
 <html>
   <head>
+    {% include 'layout/head.html' %}
+
     <title>{% spaceless %}{% block title %}Ann Arbor Ultimate (A2U){% endblock %}{% endspaceless %}</title>
     <meta name="description" content="{% block description %}Ann Arbor Ultimate (A2U) is a nonprofit, volunteer organization dedicated to providing ultimate to players of all skill levels in the greater Ann Arbor area.{% endblock %}">
 
     <meta property="og:title" content="{% block og_title %}Ann Arbor Ultimate (A2U){% endblock %}">
     <meta property="og:description" content="{% block og_description %}Ann Arbor Ultimate (A2U) is a nonprofit, volunteer organization dedicated to providing ultimate to players of all skill levels in the greater Ann Arbor area.{% endblock %}">
-
-    {% include 'layout/head.html' %}
   </head>
 
   <body>
@@ -24,23 +24,6 @@
           <div class="content-inner-left">
             <div class="content-inner-left-logo">
               <img class="content-inner-left-logo-image" src="{% webpack_static 'images/logo.svg' %}">
-            </div>
-
-            <div class="content-inner-left-social">
-              <ul class="content-inner-left-social-list">
-                {% if SOCIAL_LINKS %}
-                  {% for link in SOCIAL_LINKS %}
-                    {% if link.url %}
-                      <li class="content-inner-left-social-list-element">
-                        <a class="social-icon social-icon-{{ link.name }}" href="{{ link.url }}" aria-label="{{ link.name|title }}" target="_blank">
-                          <i class="fa fa-{{ link.name }}" aria-hidden="true"></i>
-                          <span class="social-icon-text">{{ link.name|title }}</span>
-                        </a>
-                      </li>
-                    {% endif %}
-                  {% endfor %}
-                {% endif %}
-              </ul>
             </div>
 
             <div class="content-inner-left-links">

@@ -10,21 +10,17 @@
 
   background-color: $color-light-gray;
 
-  @include grid-container;
-  @include grid-collapse;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 75rem;
+  display: flex;
 }
 
 .header-list-header-left {
-  @include grid-column(6);
+  flex: 1;
 }
 
 .header-list-header-right {
   text-align: right;
 
-  @include grid-column(6);
+  flex: 1;
 }
 
 .header-list-inner {

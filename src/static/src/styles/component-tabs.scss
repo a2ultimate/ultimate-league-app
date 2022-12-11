@@ -7,7 +7,7 @@
 
   font-size: 0;
 
-  @include grid-media($custom-neat-grid-desktop-min) {
+  @media screen and (min-width: 62rem) {
     border-bottom: 0.25rem solid $color-dark-gray;
     border-radius: 0;
   }
@@ -27,7 +27,7 @@
 
   font-size: 1rem;
 
-  @include grid-media($custom-neat-grid-desktop-min) {
+  @media screen and (min-width: 62rem) {
     display: inline-block;
     overflow: hidden;
 

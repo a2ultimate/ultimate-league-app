@@ -127,6 +127,13 @@
         </h1>
         <div class="page-home-info-section-content">
           <ul class="page-home-info-section-content-list">
+            <li class="page-home-info-section-content-list-element">
+              <a class="page-home-info-section-content-list-element-link" href="https://calendar.google.com/calendar/embed?src={% settings_value 'GOOGLE_APPS_CALENDAR_ID' %}">
+                <div class="page-home-info-section-content-list-element-link-content">
+                  View Full Calendar
+                </div>
+              </a>
+            </li>
             {% for event in events %}
               <li class="page-home-info-section-content-list-element">
                 <a class="page-home-info-section-content-list-element-link" href="{{ event.description }}">
@@ -141,13 +148,6 @@
             {% empty %}
               <p>No Upcoming Events</p>
             {% endfor %}
-            <li class="page-home-info-section-content-list-element">
-              <a class="page-home-info-section-content-list-element-link" href="https://calendar.google.com/calendar/embed?src={% settings_value 'GOOGLE_APPS_CALENDAR_ID' %}">
-                <div class="page-home-info-section-content-list-element-link-content">
-                  View Full Calendar
-                </div>
-              </a>
-            </li>
           </ul>
         </div>
       </div>
@@ -155,21 +155,18 @@
   </div>
 
   <div class="page-home-follow">
-    <div class="page-home-follow-header">
-      <!-- <h1><i class="fa fa-comments-o" aria-hidden="true"></i>&nbsp;Stay Up to Date</h1> -->
-    </div>
     <div class="page-home-follow-content">
       <div class="page-home-follow-content-announcements">
         <a class="button button-block button-info" href="{% url 'announcements' %}">
           <i class="fa fa-envelope" aria-hidden="true"></i>&nbsp;Join Our Announcements List</a>
       </div>
-      <div class="page-home-follow-content-twitter">
-        <a class="button button-block button-social-twitter" href="https://twitter.com/a2ultimate">
-          <i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;Follow Us</a>
-      </div>
       <div class="page-home-follow-content-facebook">
         <a class="button button-block button-social-facebook" href="https://www.facebook.com/annarborultimate">
           <i class="fa fa-facebook" aria-hidden="true"></i>&nbsp;Like Us</a>
+      </div>
+      <div class="page-home-follow-content-twitter">
+        <a class="button button-block button-social-twitter" href="https://twitter.com/a2ultimate">
+          <i class="fa fa-twitter" aria-hidden="true"></i>&nbsp;Follow Us</a>
       </div>
     </div>
   </div>

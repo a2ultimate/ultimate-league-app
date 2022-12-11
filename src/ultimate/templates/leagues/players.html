@@ -97,7 +97,7 @@
             <tbody>
               {% for registration in unassigned_registrations|dictsort:'progress' %}
                 <tr>
-                  <td>{{ registration.user.get_full_name }}&nbsp;<em>({{ registration.user.profile.gender }})</em></td>
+                  <td>{{ registration.user.get_full_name }}&nbsp;<em>({{ registration.user.profile.matching_preference_abbreviation }})</em></td>
                   <td>{{ registration.status }}</td>
                   <td>{{ registration.registered|date:'Y/m/d h:iA' }}</td>
                 </tr>
@@ -119,7 +119,7 @@
             <tbody>
               {% for registration in incomplete_registrations|dictsort:'progress'|dictsort:'updated' %}
                 <tr>
-                  <td>{{ registration.user.get_full_name }}&nbsp;<em>({{ registration.user.profile.gender }})</em></td>
+                  <td>{{ registration.user.get_full_name }}&nbsp;<em>({{ registration.user.profile.matching_preference_abbreviation }})</em></td>
                   <td>{{ registration.status }}</td>
                   <td>{{ registration.updated|date:'Y/m/d h:iA' }}</td>
                 </tr>
@@ -134,7 +134,7 @@
             <tbody>
               {% for registration in refunded_registrations|dictsort:'updated' %}
                 <tr>
-                  <td>{{ registration.user.get_full_name }}&nbsp;<em>({{ registration.user.profile.gender }})</em></td>
+                  <td>{{ registration.user.get_full_name }}&nbsp;<em>({{ registration.user.profile.matching_preference_abbreviation }})</em></td>
                 </tr>
               {% endfor %}
             </tbody>

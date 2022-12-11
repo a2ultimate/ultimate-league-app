@@ -23,27 +23,29 @@
 }
 
 .page-home-leagues-content-list-element-header {
-  font-family: $font-family-oswald;
-  font-weight: 400;
 }
 
 .page-home-leagues-content-list-element-list {
+  display: flex;
+
   margin: 0;
   padding: 0;
 
   list-style: none;
 
-  @include grid-container;
-  @include grid-collapse;
-  max-width: 75rem;
+  flex-wrap: wrap;
+  align-items: stretch;
 }
 
 .page-home-leagues-content-list-element-list-element {
   position: relative;
 
+  display: flex;
   overflow: hidden;
+  flex-direction: column;
 
-  margin: 0 0 0.75rem;
+  width: 14rem;
+  margin: 0 1rem 1rem 0;
   padding: 0;
 
   list-style: none;
@@ -53,7 +55,7 @@
   border-bottom-right-radius: $border-radius;
   background-color: $color-light-gray;
 
-  @include grid-column(4);
+  justify-content: space-between;
 }
 
 .page-home-leagues-content-list-element-list-element-background {
@@ -64,7 +66,7 @@
   left: 0;
 
   background: transparent;
-  background-repeat: none;
+  background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
 }
@@ -76,10 +78,7 @@
   bottom: 0;
   left: 0;
 
-  background: linear-gradient(
-  rgba($color-dark-gray, 0.5),
-  rgba($color-dark-gray, 0.5)
-  );
+  background: linear-gradient(rgba($color-dark-gray, 0.9), rgba($color-dark-gray, 0.5));
 }
 
 .page-home-leagues-content-list-element-list-element-content {
@@ -87,8 +86,7 @@
 
   display: block;
 
-  min-height: 10rem;
-  padding: 2.5rem 0.75rem 0.25rem 0.75rem;
+  padding: 0.25rem 0;
 
   color: $color-primary;
 
@@ -101,19 +99,20 @@
   }
 
   .page-home-leagues-content-list-element-list-element-background + & {
+    opacity: 0.9;
+
     &:hover {
-      opacity: 0.8;
+      opacity: 1;
     }
   }
 }
 
 .page-home-leagues-content-list-element-list-element-content-tag {
-  position: absolute;
-  top: 0.5rem;
-  left: 0;
+  position: relative;
 
   display: inline-block;
 
+  margin-bottom: 1rem;
   padding: 0.25rem 0.75rem;
 
   color: white;
@@ -129,11 +128,12 @@
 .page-home-leagues-content-list-element-list-element-content-heading {
   position: relative;
 
-  padding-right: 1.25rem;
+  margin-right: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0 1.25rem 0 0.5rem;
 
   font-family: $font-family-oswald;
   font-weight: 200;
-  line-height: 1.2;
 
   &:after {
     position: absolute;
@@ -171,7 +171,10 @@
 }
 
 .page-home-leagues-content-list-element-list-element-content-info {
-  margin: 0.25rem 0;
+  position: relative;
+
+  margin-bottom: 1rem;
+  padding: 0 0.5rem;
 
   color: $color-gray-dark;
 
@@ -204,17 +207,12 @@
 
 .page-home-leagues-content-list-element-list-element-footer {
   position: relative;
-
-  min-height: 3.25rem;
 }
 
 .page-home-leagues-content-list-element-list-element-footer-message {
-  position: absolute;
-  right: 0.75rem;
-  bottom: 0.75rem;
-  left: 0.75rem;
-
   display: block;
+
+  padding: 0.5rem;
 
   color: rgba($color-gray, 0.6);
 
@@ -222,15 +220,9 @@
 }
 
 .page-home-leagues-content-list-element-list-element-footer-action {
-  position: relative;
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-
   display: block;
 
-  padding: 0.75rem;
+  padding: 1rem 0.5rem;
 
   text-align: left;
 
@@ -241,7 +233,7 @@
   &:after {
     position: absolute;
     top: 50%;
-    right: 0.75rem;
+    right: 0.5rem;
 
     height: $font-size-sm;
     margin-top: -$font-size-sm / 2;
@@ -257,61 +249,33 @@
   }
 }
 
-.page-home-follow {
-  margin-bottom: 2rem;
-}
+.page-home-info {
+  display: flex;
 
-.page-home-follow-header {
-  .fa {
-    vertical-align: 0.1875rem;
+  margin-bottom: 1rem;
 
-    font-size: 1.75rem;
+  > div {
+    margin-right: 1rem;
+
+    &:last-child {
+      margin-right: 0;
+    }
   }
 }
 
-.page-home-follow-content {
-  max-width: 75rem;
-  margin-right: auto;
-  margin-left: auto;
-
-  @include grid-container;
-  @include grid-collapse;
-}
-
-.page-home-follow-content-announcements {
-  @include grid-column(6);
-}
-
-.page-home-follow-content-twitter {
-  @include grid-column(3);
-}
-
-.page-home-follow-content-facebook {
-  @include grid-column(3);
-}
-
-.page-home-info {
-  margin-bottom: 2rem;
-
-  @include grid-container;
-  @include grid-collapse;
-  max-width: 75rem;
-}
-
 .page-home-info-news {
-  @include grid-column(7);
+  flex: 3;
 }
 
 .page-home-info-events {
-  @include grid-column(5);
+  flex: 2;
 }
 
 .page-home-info-section {
+  margin-bottom: 1rem;
 }
 
 .page-home-info-section-header {
-  font-family: $font-family-oswald;
-  font-weight: 400;
 }
 
 .page-home-info-section-content {
@@ -327,7 +291,7 @@
 .page-home-info-section-content-list-element {
   overflow: hidden;
 
-  margin: 0 0 0.5rem;
+  margin-bottom: 0.5rem;
   padding: 0;
 }
 
@@ -336,11 +300,11 @@
 
   display: block;
 
-  padding: 0.75rem 1.5rem 0.75rem 0.5rem;
+  padding: 1rem 1.5rem 1rem 1rem;
 
   text-decoration: none !important;
 
-  border-left: 0.25rem solid $color-gray;
+  border-left: 0.25rem solid $color-blue;
   border-top-right-radius: $border-radius;
   border-bottom-right-radius: $border-radius;
   background-color: $color-light-gray;
@@ -355,24 +319,30 @@
   &:after {
     position: absolute;
     top: 50%;
-    right: 0.5rem;
 
     height: 1rem;
     margin-top: -0.5rem;
 
     color: $color-light-gray-dark;
 
-    line-height: 1rem;
-
     @include icon('chevron-right');
+
+    .page-home-info-news & {
+      right: 1rem;
+    }
+
+    .page-home-info-events & {
+      right: 0.5rem;
+    }
   }
 
   &:focus,
   &:hover,
   &:active {
-    border-color: $color-gray-dark;
+    border-color: $color-blue-dark;
+
     &:after {
-      color: $color-gray-dark;
+      color: $color-gray;
     }
   }
 }
@@ -395,6 +365,7 @@
   color: $color-gray;
 
   .page-home-info-news & {
+    font-size: $font-size-sm;
   }
 
   .page-home-info-events & {
@@ -404,4 +375,39 @@
 
 .page-home-info-section-footer {
   font-size: $font-size-sm;
+}
+
+.page-home-follow {
+  margin-bottom: 2rem;
+}
+
+.page-home-follow-content {
+  display: flex;
+
+  margin-right: auto;
+  margin-left: auto;
+
+  > div {
+    margin-right: 1rem;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  .fa {
+    margin-right: 0.5rem;
+  }
+}
+
+.page-home-follow-content-announcements {
+  flex: 2;
+}
+
+.page-home-follow-content-twitter {
+  flex: 1;
+}
+
+.page-home-follow-content-facebook {
+  flex: 1;
 }
