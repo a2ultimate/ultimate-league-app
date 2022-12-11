@@ -3,13 +3,13 @@
 
 <div class="team-card">
   <div class="team-card-header" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }};">
-    <div class="team-card-header-name" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }};">
+    <h3 class="team-card-header-name" style="background-color: {{ team.css_background_color }}; color: {{ team.css_text_color }};">
       {% if team.name %}
         {{ team.name }}
       {% else %}
         Team {{ team.id }}
       {% endif %}
-    </div>
+    </h3>
 
     {% if not hide_info %}
       <div class="team-card-header-info" style="background-color: {{ team.css_background_color_dark }}; color: {{ team.css_text_color }};">
@@ -78,14 +78,14 @@
   <div class="team-card-footer">
     {% block team_card_footer %}
       {% if user.is_superuser or user|in_group:'junta' %}
-        <div class="team-card-footer-heading">
+        <h5 class="team-card-footer-heading">
           Admin Only
-        </div>
+        </h5>
 
         <div class="team-card-footer-content">
           {{ team.teammember_set.all|length }} Total{{ team.teammember_set.all|length|pluralize }},
-          {{ team.get_male_members|length }} Man Matcher{{ team.get_male_members|length|pluralize }},
-          {{ team.get_female_members|length }} Woman Matcher{{ team.get_female_members|length|pluralize }}
+          {{ team.get_male_members|length }} MMP{{ team.get_male_members|length|pluralize }},
+          {{ team.get_female_members|length }} WMP{{ team.get_female_members|length|pluralize }}
         </div>
       {% endif %}
     {% endblock %}

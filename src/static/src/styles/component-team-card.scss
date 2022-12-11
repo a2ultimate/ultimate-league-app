@@ -9,6 +9,7 @@
 }
 
 .team-card-header-name {
+  margin-bottom: 0;
   padding: 1rem;
 
   background-color: $color-gray;
@@ -18,24 +19,23 @@
 }
 
 .team-card-header-info {
+  display: flex;
+
   padding: 0.5rem 1rem;
 
   background-color: $color-gray-dark;
 
   font-size: $font-size-sm;
   font-weight: 500;
-
-  @include grid-container;
-  @include grid-collapse;
-  max-width: 75rem;
 }
 
 .team-card-header-info-color {
-  @include grid-column(8);
+  flex: 2;
 }
 
 .team-card-header-info-email {
-  @include grid-column(4);
+  flex: 1;
+
   .team-card-header-info-color + & {
     text-align: right;
   }
@@ -62,8 +62,6 @@
 
 .team-card-content-members-member-email {
   float: right;
-
-  margin-right: -0.5rem;
 
   font-size: $font-size-sm;
 }
@@ -92,20 +90,13 @@
 
   color: $color-gray;
 
-  font-size: 14px;
+  font-size: $font-size-sm;
 }
 
 .team-card-game {
   position: relative;
   z-index: $z-team-card-game;
-
-  margin-bottom: 1rem;
-
-  @include grid-container;
-  @include grid-collapse;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 75rem;
+  display: flex;
 }
 
 .team-card-game-divider {
@@ -135,8 +126,7 @@
   z-index: $z-team-card-game-team;
 
   padding: 0 1rem;
-
-  @include grid-column(6);
+  flex: 1;
 
   &:first-child {
     padding-left: 0;

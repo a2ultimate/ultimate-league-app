@@ -21,38 +21,36 @@
 
 <div class="header">
   <div class="header-inner">
-    <div class="header-inner-top">
-      <a class="header-inner-top-banner" href="{% url 'home'  %}">
-        <img class="header-inner-top-banner-image" src="{% webpack_static 'images/header.svg' %}" alt="Ann Arbor Ultimate">
-      </a>
+    <a class="header-inner-top-banner" href="{% url 'home'  %}">
+      <img class="header-inner-top-banner-image" src="{% webpack_static 'images/header.svg' %}" alt="Ann Arbor Ultimate">
+    </a>
 
-      <div class="header-inner-top-links">
-        <ul class="header-inner-top-links-list">
-          {% if user.is_authenticated %}
-            <li class="header-inner-top-links-list-element">
-              <a class="header-inner-top-links-list-element-link" href="{% url 'user'  %}">
-                {{ user.email }}
-              </a>
-            </li>
-            <li class="header-inner-top-links-list-element">
-              <a class="header-inner-top-links-list-element-link" href="{% url 'auth_log_out' %}">
-                {% trans 'Log Out' %}
-              </a>
-            </li>
-          {% else %}
-            <li class="header-inner-top-links-list-element">
-              <a class="header-inner-top-links-list-element-link" href="{% url 'registration_register' %}">
-                {% trans 'Create an Account' %}
-              </a>
-            </li>
-            <li class="header-inner-top-links-list-element">
-              <a class="header-inner-top-links-list-element-link" href="{% url 'auth_log_in' %}">
-                {% trans 'Log In' %}
-              </a>
-            </li>
-          {% endif %}
-        </ul>
-      </div>
+    <div class="header-inner-top-links">
+      <ul class="header-inner-top-links-list">
+        {% if user.is_authenticated %}
+          <li class="header-inner-top-links-list-element">
+            <a class="header-inner-top-links-list-element-link" href="{% url 'user'  %}">
+              {{ user.email }}
+            </a>
+          </li>
+          <li class="header-inner-top-links-list-element">
+            <a class="header-inner-top-links-list-element-link" href="{% url 'auth_log_out' %}">
+              {% trans 'Log Out' %}
+            </a>
+          </li>
+        {% else %}
+          <li class="header-inner-top-links-list-element">
+            <a class="header-inner-top-links-list-element-link" href="{% url 'registration_register' %}">
+              {% trans 'Create an Account' %}
+            </a>
+          </li>
+          <li class="header-inner-top-links-list-element">
+            <a class="header-inner-top-links-list-element-link" href="{% url 'auth_log_in' %}">
+              {% trans 'Log In' %}
+            </a>
+          </li>
+        {% endif %}
+      </ul>
     </div>
   </div>
 </div>
@@ -75,7 +73,6 @@
       {% cache 500 nav_inner_right user.is_junta %}
         <ul class="nav-inner-list">
           {% if menu_leagues %}
-            <li>Leagues</li>
             {% regroup menu_leagues by season_year as season_years %}
 
             {% for season_year in season_years %}

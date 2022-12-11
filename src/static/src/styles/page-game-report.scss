@@ -19,17 +19,17 @@
 }
 
 .page-game-report-attendance-table {
-  @include grid-container;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 75rem;
 }
 
 .page-game-report-attendance-row {
+  display: flex;
+
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .page-game-report-attendance-row-element {
-  @include grid-column(4);
+  width: calc(33% - 1rem);
 }
 
 .page-game-report-attendance-row-element-label {

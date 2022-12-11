@@ -133,7 +133,6 @@ class User(AbstractUser):
         ratings = self.playerratings_set.all()
 
         rating_limit = getattr(settings, 'A2U_RATING_LIMIT_MONTHS', 0)
-        print(type(rating_limit))
         if rating_limit:
             ratings = ratings.filter(Q(ratings_type=PlayerRatings.RATING_TYPE_USER) |
                 Q(ratings_type=PlayerRatings.RATING_TYPE_JUNTA) |
@@ -283,6 +282,13 @@ class Player(models.Model):
     @property
     def matching_preference(self):
         return dict(self.GENDER_CHOICES)[self.gender]
+
+    @property
+    def matching_preference_abbreviation(self):
+        if (self.gender == self.GENDER_MALE):
+            return 'MMP'
+        elif (self.gender == self.GENDER_FEMALE):
+            return 'WMP'
 
     def is_male(self):
         return self.gender == self.GENDER_MALE

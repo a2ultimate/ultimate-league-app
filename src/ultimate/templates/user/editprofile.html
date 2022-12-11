@@ -88,9 +88,9 @@
     {% endif %}
   {% endfor %}
 
-  <hr>
-
   {% if request.user.profile.is_minor %}
+    <hr>
+
     <p class="form-field form-field-highlighted" colspan="3">
       <strong>Players under the age of 18 must provide a parent or guardian's contact information:</strong>
     </p>

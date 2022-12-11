@@ -8,7 +8,7 @@ body {
 
   color: $color-primary;
   border-top: 0.25rem solid $color-secondary;
-  background-color: $color-light-gray;
+  background-color: #f9f9f9;
 
   font-family: $font-family-lato;
   font-size: $font-size-root;
@@ -30,17 +30,14 @@ body {
 .header-inner {
   position: relative;
 
+  display: flex;
+
   max-width: 62rem;
   margin-right: auto;
   margin-left: auto;
 
-  @include grid-container;
-}
-
-.header-inner-top {
-  position: relative;
-
-  padding: 0.5rem;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .header-inner-top-banner {
@@ -48,7 +45,7 @@ body {
 
   display: inline-block;
 
-  padding-left: 0.1875rem;
+  padding: 0.5rem 1rem;
 
   &:active {
     top: 0.0625rem;
@@ -60,18 +57,11 @@ body {
 }
 
 .header-inner-top-links {
-  position: absolute;
-  top: 50%;
-  right: 0;
-
-  margin: -1rem 0 0;
   padding: 0;
 
   list-style: none;
 
   vertical-align: middle;
-
-  line-height: 2;
 }
 
 .header-inner-top-links-list {
@@ -102,7 +92,7 @@ body {
 .header-inner-top-links-list-element-link {
   display: inline-block;
 
-  padding: 0 0.75rem;
+  padding: 0 1rem;
 
   font-weight: 600;
 }
@@ -111,17 +101,22 @@ body {
   position: relative;
   z-index: $z-body-nav;
 
+  margin-bottom: 1rem;
+
   background-color: $color-light-gray;
 }
 
 .nav-inner {
   position: relative;
 
+  display: flex;
+
   max-width: 62rem;
   margin-right: auto;
   margin-left: auto;
 
-  @include grid-container;
+  align-items: stretch;
+  justify-content: space-between;
 }
 
 .nav-inner-left {
@@ -151,7 +146,7 @@ body {
     > a {
       display: block;
 
-      padding: 0.75rem;
+      padding: 0.75rem 1rem;
 
       color: $color-dark-gray;
 
@@ -235,7 +230,7 @@ body {
 
     transition: opacity 0.15s ease-in-out;
 
-    opacity: 100;
+    opacity: 1;
   }
 }
 
@@ -243,29 +238,28 @@ body {
   position: relative;
   z-index: $z-body-content-wrapper;
 
-  padding-top: 1rem;
-
-  background-color: #f9f9f9;
+  margin-bottom: 1rem;
 }
 
 .content-inner {
   position: relative;
 
+  display: flex;
+
   max-width: 62rem;
   margin-right: auto;
   margin-left: auto;
-  padding: 0 0.5rem;
 
-  @include grid-container;
+  flex-wrap: wrap;
 }
 
 .content-inner-left {
-  margin-bottom: 1rem;
-  padding: 0 1rem 0.5rem;
+  padding: 0 1rem;
 
   border-right: 0.125rem solid $color-secondary;
 
-  @include grid-column(3, $grid-no-gutter);
+  flex-basis: 15rem;
+  flex-grow: 0;
 }
 
 .content-inner-left-logo {
@@ -276,23 +270,6 @@ body {
 
 .content-inner-left-logo-image {
   width: 12rem;
-}
-
-.content-inner-left-social {
-  margin-bottom: 1rem;
-
-  text-align: center;
-}
-
-.content-inner-left-social-list {
-  margin: 0;
-  padding: 0;
-
-  list-style: none;
-}
-
-.content-inner-left-social-list-element {
-  display: inline-block;
 }
 
 .content-inner-left-links {
@@ -398,21 +375,19 @@ body {
 }
 
 .content-inner-right {
-  margin-bottom: 1rem;
-  padding: 0 0 0.5rem 1rem;
+  padding: 0 1rem;
 
-  @include grid-column(9, $grid-no-gutter);
+  flex-basis: 0;
+  flex-grow: 1;
 }
 
 .footer {
   position: relative;
   z-index: $z-body-footer;
 
-  padding: 1rem 0;
+  padding: 0 1rem;
 
   color: $color-gray;
-  border-top-left-radius: 0.125rem;
-  border-top-right-radius: 0.125rem;
 }
 
 .footer-inner {
@@ -421,11 +396,11 @@ body {
   max-width: 62rem;
   margin-right: auto;
   margin-left: auto;
-  padding: 0.1875rem;
+  padding: 1rem;
 
   text-align: center;
 
-  font-size: 0.9375rem;
-
-  @include grid-container;
+  border-top-left-radius: $border-radius;
+  border-top-right-radius: $border-radius;
+  background-color: $color-light-gray;
 }

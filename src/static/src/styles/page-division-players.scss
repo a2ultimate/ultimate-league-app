@@ -1,25 +1,24 @@
 .page-division-players-players {
   margin-bottom: 1rem;
-
-  @include grid-container;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 75rem;
 }
 
 .page-division-players-players-list {
+  display: flex;
+
   margin: 0;
   padding: 0;
 
   list-style: none;
+
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .page-division-players-players-list-item {
-  padding: 0.75rem;
+  width: calc(50% - 0.5rem);
+  padding: 1rem;
 
   border-radius: $border-radius;
-
-  @include grid-column(6);
 
   &:nth-child(4n-2),
   &:nth-child(4n-3) {
