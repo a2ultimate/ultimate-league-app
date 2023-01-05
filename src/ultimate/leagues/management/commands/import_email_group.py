@@ -218,7 +218,7 @@ class Command(BaseCommand):
                         group_email_address=pickup_group_address,
                         force=force)
 
-                    pickup_target_count = pickup_team_members.count()
+                    pickup_target_count = len(pickup_email_addresses)
                     pickup_success_count = 0
                     for pickup_email_address in pickup_email_addresses:
                         pickup_success_count += add_to_group(
@@ -226,7 +226,7 @@ class Command(BaseCommand):
                             group_id=pickup_group_id,
                             email_address=pickup_email_address)
 
-                    if pickup_success_count == pickup_team_members.count():
+                    if pickup_success_count == pickup_target_count:
                         self.stdout.write(self.style.SUCCESS('SUCCESS'))
                         self.stdout.write(self.style.SUCCESS('Added {} of {} email addresses to {}'.format(pickup_success_count, pickup_target_count, pickup_group_address)))
                     else:
