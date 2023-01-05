@@ -2,6 +2,8 @@ import httplib2
 import sys
 
 from django.core.management.base import BaseCommand, CommandError
+from django.db.models import Q
+from django.db.models.functions import Lower
 
 from googleapiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
@@ -39,21 +41,29 @@ class Command(BaseCommand):
             '-l',
             default='',
             dest='league',
-            help='Sync a league (league id)',
+            help='Sync a division (league id)',
         )
 
         parser.add_argument(
             '-s',
             default='',
             dest='season',
-            help='Sync a season + year ("winter", "spring", "summer", "fall", "late-fall")',
+            help='Sync a league (season + year), "winter", "spring", "summer", "fall", "late-fall"',
         )
 
         parser.add_argument(
             '-y',
             default='',
             dest='year',
-            help='Sync a season + year (e.g. 2019)',
+            help='Sync a league (season + year), e.g. 2019',
+        )
+
+        parser.add_argument(
+            '-p',
+            action='store_true',
+            default=False,
+            dest='pickup',
+            help='Sync a league pickup list',
         )
 
         parser.add_argument(
@@ -78,6 +88,7 @@ class Command(BaseCommand):
         league_id = options.get('league', None)
         season_slug = options.get('season', None)
         year = options.get('year', None)
+        pickup = options.get('pickup', None)
         group_address = options.get('group_address', None)
         force = options.get('force', None)
 
@@ -163,7 +174,6 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.ERROR('No league division found with that id'))
 
         elif season_slug and year:
-            self.stdout.write(self.style.MIGRATE_HEADING('Syncing season email addresses for {} {}:'.format(season_slug, year[-2:])))
 
             from ultimate.leagues.models import Season, TeamMember
             try:
@@ -172,82 +182,137 @@ class Command(BaseCommand):
                 from ultimate.utils.google_api import GoogleAppsApi
                 api = GoogleAppsApi()
 
-                # ALL
+                if pickup:
+                    self.stdout.write(self.style.MIGRATE_HEADING('Syncing pickup list for {} {}:'.format(season_slug, year[-2:])))
 
-                all_group_address = '{}{}@lists.annarborultimate.org'.format(season.slug, year[-2:])
-                all_group_name = '{} {}'.format(season.name, year)
-                all_group_id = api.prepare_group_for_sync(
-                    group_name=all_group_name,
-                    group_email_address=all_group_address,
-                    force=force)
+                    pickup_team_members = []
+                    previous_year = str(int(year) - 1)
 
-                all_team_members = TeamMember.objects.filter(team__league__season__slug=season.slug, team__league__year=year)
-                all_target_count = all_team_members.count()
-                all_success_count = 0
-                for team_member in all_team_members:
-                    all_success_count += add_to_group(
+                    if season_slug == 'winter':
+                        pickup_team_members = TeamMember.objects.filter(Q(Q(Q(team__league__season__slug='fall') & Q(team__league__year=previous_year)) |
+                            Q(Q(team__league__season__slug='late-fall') & Q(team__league__year=previous_year)) |
+                            Q(Q(team__league__season__slug='winter') & Q(team__league__year=year)))).values().annotate(email=Lower('user__email')).order_by('user__email')
+                    elif season_slug == 'spring':
+                        pickup_team_members = TeamMember.objects.filter(Q(Q(Q(team__league__season__slug='late-fall') & Q(team__league__year=previous_year)) |
+                            Q(Q(team__league__season__slug='winter') & Q(team__league__year=year)) |
+                            Q(Q(team__league__season__slug='spring') & Q(team__league__year=year)))).values().annotate(email=Lower('user__email')).order_by('user__email')
+                    elif season_slug == 'summer':
+                        pickup_team_members = TeamMember.objects.filter(Q(Q(Q(team__league__season__slug='winter') & Q(team__league__year=year)) |
+                            Q(Q(team__league__season__slug='spring') & Q(team__league__year=year)) |
+                            Q(Q(team__league__season__slug='summer') & Q(team__league__year=year)))).values().annotate(email=Lower('user__email')).order_by('user__email')
+                    elif season_slug == 'fall':
+                        pickup_team_members = TeamMember.objects.filter(Q(Q(Q(team__league__season__slug='spring') & Q(team__league__year=year)) |
+                            Q(Q(team__league__season__slug='summer') & Q(team__league__year=year)) |
+                            Q(Q(team__league__season__slug='fall') & Q(team__league__year=year)))).values().annotate(email=Lower('user__email')).order_by('user__email')
+                    elif season_slug == 'late-fall':
+                        pickup_team_members = TeamMember.objects.filter(Q(Q(Q(team__league__season__slug='summer') & Q(team__league__year=year)) |
+                            Q(Q(team__league__season__slug='fall') & Q(team__league__year=year)) |
+                            Q(Q(team__league__season__slug='late-fall') & Q(team__league__year=year)))).values().annotate(email=Lower('user__email')).order_by('user__email')
+
+                    pickup_email_addresses = list(set([ptm['email'] for ptm in pickup_team_members]))
+
+                    pickup_group_address = '{}{}-pickups@lists.annarborultimate.org'.format(season.slug, year[-2:])
+                    pickup_group_name = '{} {}'.format(season.name, year)
+                    pickup_group_id = api.prepare_group_for_sync(
+                        group_name=pickup_group_name,
+                        group_email_address=pickup_group_address,
+                        force=force)
+
+                    pickup_target_count = pickup_team_members.count()
+                    pickup_success_count = 0
+                    for pickup_email_address in pickup_email_addresses:
+                        pickup_success_count += add_to_group(
+                            group_email_address=pickup_group_address,
+                            group_id=pickup_group_id,
+                            email_address=pickup_email_address)
+
+                    if pickup_success_count == pickup_team_members.count():
+                        self.stdout.write(self.style.SUCCESS('SUCCESS'))
+                        self.stdout.write(self.style.SUCCESS('Added {} of {} email addresses to {}'.format(pickup_success_count, pickup_target_count, pickup_group_address)))
+                    else:
+                        self.stdout.write(self.style.ERROR('HMMM...'))
+                        self.stdout.write(self.style.ERROR('Added {} of {} email addresses to {}'.format(pickup_success_count, pickup_target_count, pickup_group_address)))
+
+                else:
+                    self.stdout.write(self.style.MIGRATE_HEADING('Syncing season list for {} {}:'.format(season_slug, year[-2:])))
+
+                    return
+                    # ALL
+
+                    all_group_address = '{}{}@lists.annarborultimate.org'.format(season.slug, year[-2:])
+                    all_group_name = '{} {}'.format(season.name, year)
+                    all_group_id = api.prepare_group_for_sync(
+                        group_name=all_group_name,
                         group_email_address=all_group_address,
-                        group_id=all_group_id,
-                        email_address=team_member.user.email)
+                        force=force)
 
-                # MEN
+                    all_team_members = TeamMember.objects.filter(team__league__season__slug=season.slug, team__league__year=year)
+                    all_target_count = all_team_members.count()
+                    all_success_count = 0
+                    for team_member in all_team_members:
+                        all_success_count += add_to_group(
+                            group_email_address=all_group_address,
+                            group_id=all_group_id,
+                            email_address=team_member.user.email)
 
-                men_group_address = '{}{}-men@lists.annarborultimate.org'.format(season.slug, year[-2:])
-                men_group_name = '{} {} Men'.format(season.name, year)
-                men_group_id = api.prepare_group_for_sync(
-                    group_name=men_group_name,
-                    group_email_address=men_group_address,
-                    force=force)
+                    # MEN
 
-                men_team_members = TeamMember.objects.filter(team__league__season__slug=season.slug, team__league__year=year, user__profile__gender__iexact='M')
-                men_target_count = men_team_members.count()
-                men_success_count = 0
-                for team_member in men_team_members:
-                    men_success_count += add_to_group(
+                    men_group_address = '{}{}-men@lists.annarborultimate.org'.format(season.slug, year[-2:])
+                    men_group_name = '{} {} Men'.format(season.name, year)
+                    men_group_id = api.prepare_group_for_sync(
+                        group_name=men_group_name,
                         group_email_address=men_group_address,
-                        group_id=men_group_id,
-                        email_address=team_member.user.email)
+                        force=force)
 
-                # WOMEN
+                    men_team_members = TeamMember.objects.filter(team__league__season__slug=season.slug, team__league__year=year, user__profile__gender__iexact='M')
+                    men_target_count = men_team_members.count()
+                    men_success_count = 0
+                    for team_member in men_team_members:
+                        men_success_count += add_to_group(
+                            group_email_address=men_group_address,
+                            group_id=men_group_id,
+                            email_address=team_member.user.email)
 
-                women_group_address = '{}{}-women@lists.annarborultimate.org'.format(season.slug, year[-2:])
-                women_group_name = '{} {} Women'.format(season.name, year)
-                women_group_id = api.prepare_group_for_sync(
-                    group_name=women_group_name,
-                    group_email_address=women_group_address,
-                    force=force)
+                    # WOMEN
 
-                women_team_members = TeamMember.objects.filter(team__league__season__slug=season.slug, team__league__year=year, user__profile__gender__iexact='F')
-                women_target_count = women_team_members.count()
-                women_success_count = 0
-                for team_member in women_team_members:
-                    women_success_count += add_to_group(
+                    women_group_address = '{}{}-women@lists.annarborultimate.org'.format(season.slug, year[-2:])
+                    women_group_name = '{} {} Women'.format(season.name, year)
+                    women_group_id = api.prepare_group_for_sync(
+                        group_name=women_group_name,
                         group_email_address=women_group_address,
-                        group_id=women_group_id,
-                        email_address=team_member.user.email)
+                        force=force)
+
+                    women_team_members = TeamMember.objects.filter(team__league__season__slug=season.slug, team__league__year=year, user__profile__gender__iexact='F')
+                    women_target_count = women_team_members.count()
+                    women_success_count = 0
+                    for team_member in women_team_members:
+                        women_success_count += add_to_group(
+                            group_email_address=women_group_address,
+                            group_id=women_group_id,
+                            email_address=team_member.user.email)
 
 
-                if all_success_count == all_team_members.count():
-                    self.stdout.write(self.style.SUCCESS('SUCCESS'))
-                    self.stdout.write(self.style.SUCCESS('Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, all_group_address)))
-                else:
-                    self.stdout.write(self.style.ERROR('HMMM...'))
-                    self.stdout.write(self.style.ERROR('Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, all_group_address)))
+                    if all_success_count == all_team_members.count():
+                        self.stdout.write(self.style.SUCCESS('SUCCESS'))
+                        self.stdout.write(self.style.SUCCESS('Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, all_group_address)))
+                    else:
+                        self.stdout.write(self.style.ERROR('HMMM...'))
+                        self.stdout.write(self.style.ERROR('Added {} of {} email addresses to {}'.format(all_success_count, all_target_count, all_group_address)))
 
-                if men_success_count == men_team_members.count():
-                    self.stdout.write(self.style.SUCCESS('SUCCESS'))
-                    self.stdout.write(self.style.SUCCESS('Added {} of {} email addresses to {}'.format(men_success_count, men_target_count, men_group_address)))
-                else:
-                    self.stdout.write(self.style.ERROR('HMMM...'))
-                    self.stdout.write(self.style.ERROR('Added {} of {} email addresses to {}'.format(men_success_count, men_target_count, men_group_address)))
+                    if men_success_count == men_team_members.count():
+                        self.stdout.write(self.style.SUCCESS('SUCCESS'))
+                        self.stdout.write(self.style.SUCCESS('Added {} of {} email addresses to {}'.format(men_success_count, men_target_count, men_group_address)))
+                    else:
+                        self.stdout.write(self.style.ERROR('HMMM...'))
+                        self.stdout.write(self.style.ERROR('Added {} of {} email addresses to {}'.format(men_success_count, men_target_count, men_group_address)))
 
-                if women_success_count == women_team_members.count():
-                    self.stdout.write(self.style.SUCCESS('SUCCESS'))
-                    self.stdout.write(self.style.SUCCESS('Added {} of {} email addresses to {}'.format(women_success_count, women_target_count, women_group_address)))
-                else:
-                    self.stdout.write(self.style.ERROR('HMMM...'))
-                    self.stdout.write(self.style.ERROR('Added {} of {} email addresses to {}'.format(women_success_count, women_target_count, women_group_address)))
-
+                    if women_success_count == women_team_members.count():
+                        self.stdout.write(self.style.SUCCESS('SUCCESS'))
+                        self.stdout.write(self.style.SUCCESS('Added {} of {} email addresses to {}'.format(women_success_count, women_target_count, women_group_address)))
+                    else:
+                        self.stdout.write(self.style.ERROR('HMMM...'))
+                        self.stdout.write(self.style.ERROR('Added {} of {} email addresses to {}'.format(women_success_count, women_target_count, women_group_address)))
 
             except Season.DoesNotExist:
                 self.stdout.write(self.style.ERROR('No season found with that slug'))
+
