@@ -205,14 +205,14 @@ class Command(BaseCommand):
                             Q(Q(team__league__season__slug='summer') & Q(team__league__year=year)) |
                             Q(Q(team__league__season__slug='fall') & Q(team__league__year=year)))).values().annotate(email=Lower('user__email')).order_by('user__email')
                     elif season_slug == 'late-fall':
+                        # do not include late fall since there is only one division
                         pickup_team_members = TeamMember.objects.filter(Q(Q(Q(team__league__season__slug='summer') & Q(team__league__year=year)) |
-                            Q(Q(team__league__season__slug='fall') & Q(team__league__year=year)) |
-                            Q(Q(team__league__season__slug='late-fall') & Q(team__league__year=year)))).values().annotate(email=Lower('user__email')).order_by('user__email')
+                            Q(Q(team__league__season__slug='fall') & Q(team__league__year=year)))).values().annotate(email=Lower('user__email')).order_by('user__email')
 
                     pickup_email_addresses = list(set([ptm['email'] for ptm in pickup_team_members]))
 
                     pickup_group_address = '{}{}-pickups@lists.annarborultimate.org'.format(season.slug, year[-2:])
-                    pickup_group_name = '{} {}'.format(season.name, year)
+                    pickup_group_name = '{} {} Pickups'.format(season.name, year)
                     pickup_group_id = api.prepare_group_for_sync(
                         group_name=pickup_group_name,
                         group_email_address=pickup_group_address,
