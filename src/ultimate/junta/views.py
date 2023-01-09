@@ -783,7 +783,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
                                 game = Game()
                                 game.date = event_date
                                 game.start = event_datetime
-                                game.field_name = field_names[(i / 2) % num_field_names]
+                                game.field_name = field_names[int(i / 2) % num_field_names]
                                 game.league = league
                                 game.save()
 
