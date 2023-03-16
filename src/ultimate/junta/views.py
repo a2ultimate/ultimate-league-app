@@ -795,7 +795,7 @@ def schedulegeneration(request, year=None, season=None, division=None):
                             # if no new game/will create new game on next loop
                             if not i % 2 == 0:
                                 # if out of fields for timeslot
-                                if ((i / 2) + 1) % num_field_names == 0:
+                                if int((i / 2) + 1) % num_field_names == 0:
                                     event_datetime += time_slot_delta
 
                         event_date = event_date + timedelta(days=7)
