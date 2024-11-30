@@ -3,6 +3,6 @@
 # include common requirements
 -r common.txt
 
-django-debug-toolbar==1.11.0
+django-debug-toolbar==1.11.1
 django-extensions==2.2.6
 Werkzeug==0.16.0
