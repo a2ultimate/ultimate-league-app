@@ -68,6 +68,6 @@ def get_captains_teammember(league):
 
 
 @register.filter
-# returns whether a user has filled out a player survey for a league
-def get_player_survey_status(league, user):
-    return league.player_survey_complete_for_user(user)
+# returns whether a user has filled out a player survey for a team
+def get_player_survey_status(team, user):
+    return team.player_survey_complete(user)

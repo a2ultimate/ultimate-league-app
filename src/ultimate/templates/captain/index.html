@@ -31,7 +31,7 @@
           </li>
           <li>
             <a href="{% url 'playersurvey' team_id=team.id %}">
-              {% if team.league|get_player_survey_status:user %}
+              {% if team|get_player_survey_status:user %}
                 <span class="status-dot status-dot-success"></span>
               {% else %}
                 <span class="status-dot status-dot-danger"></span>
