@@ -33,13 +33,14 @@ Once you are deployed in production, you can pull new code and update with the f
 
 ```bash
 git pull
-source env/prod/bin/activate
+source venv/prod/bin/activate
 cd src/
 pip install -r requirements/prod.txt
 ./manage.py migrate
 cd static/
 npm run build
-./manage.py collectstatic
+cd ..
+APP_RUNMODE=prod ./manage.py collectstatic
 ```
 
 _Do not forget to check for settings changes!_
