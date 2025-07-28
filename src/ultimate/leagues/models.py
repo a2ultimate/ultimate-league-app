@@ -518,8 +518,9 @@ class League(models.Model):
         return TeamMember.objects.filter(team__league=self, captain=1).order_by("team")
 
     def player_survey_complete_for_user(self, user):
-        return bool(
-            user.teammember_set.get(team__league=self).team.player_survey_complete(user)
+        return all(
+            team.player_survey_complete(user)
+            for team in Team.objects.filter(league=self, teammember__user=user)
         )
 
     def get_user_registration(self, user):

@@ -63,7 +63,7 @@
             {% endfor %}
             <td>{{ league|get_num_reports_for_user:captain.user }}</td>
             <td>
-              {% if league|get_player_survey_status:captain.user %}
+              {% if league|get_league_player_survey_status:captain.user %}
                 <span class="status-dot status-dot-success" title="Player survey submitted"></span>
               {% else %}
                 <span class="status-dot status-dot-danger" title="No player survey submitted"></span>

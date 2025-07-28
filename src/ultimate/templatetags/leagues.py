@@ -10,9 +10,13 @@ register = template.Library()
 def sort_by_league_start_date_weekday(league_divisions):
 
     divisions = [d for d in league_divisions if d.type == League.LEAGUE_TYPE_LEAGUE]
-    divisions.sort(key=lambda d: (d.league_start_date.strftime('%w'), d.league_start_date))
+    divisions.sort(
+        key=lambda d: (d.league_start_date.strftime("%w"), d.league_start_date)
+    )
 
-    other_divisions = [d for d in league_divisions if d.type != League.LEAGUE_TYPE_LEAGUE]
+    other_divisions = [
+        d for d in league_divisions if d.type != League.LEAGUE_TYPE_LEAGUE
+    ]
     other_divisions.sort(key=lambda d: d.league_start_date)
 
     return divisions + other_divisions
@@ -51,8 +55,7 @@ def has_user_registration(league, user):
 @register.filter
 def has_complete_user_registration(league, user):
     user_registration = league.get_user_registration(user)
-    return user_registration and \
-        user_registration.is_complete
+    return user_registration and user_registration.is_complete
 
 
 @register.filter
@@ -71,3 +74,9 @@ def get_captains_teammember(league):
 # returns whether a user has filled out a player survey for a team
 def get_player_survey_status(team, user):
     return team.player_survey_complete(user)
+
+
+@register.filter
+# returns whether a user has filled out a player survey for a league
+def get_league_player_survey_status(league, user):
+    return league.player_survey_complete_for_user(user)
