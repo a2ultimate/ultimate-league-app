@@ -1086,9 +1086,11 @@ class Registrations(models.Model):
 
         return rating_total - ((self.attendance / 2) * absence_weight)
 
-    def get_team_id(self):
+    def get_team_ids(self):
         try:
-            return self.user.teammember_set.get(team__league=self.league).team.id
+            return self.user.teammember_set.filter(
+                team__league=self.league
+            ).values_list("team__id", flat=True)
         except ObjectDoesNotExist:
             return None
 

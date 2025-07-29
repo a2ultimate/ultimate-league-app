@@ -443,11 +443,13 @@ def registrationexport(request, year=None, season=None, division=None):
                     invoice=registration.paypal_invoice_id
                 ).first()
 
-                team_member_captain = TeamMember.objects.filter(
-                    user=registration.user,
-                    team__league=registration.league,
-                    captain=True,
-                ).exists()
+                team_member_captain = all(
+                    team_member.captain
+                    for team_member in TeamMember.objects.filter(
+                        user=registration.user,
+                        team__league=registration.league,
+                    )
+                )
 
                 try:
                     profile = reduce(getattr, "user.profile".split("."), registration)
@@ -460,7 +462,7 @@ def registrationexport(request, year=None, season=None, division=None):
                     age_on_start_date = 0
 
                 registration_data = {
-                    "team_id": registration.get_team_id(),
+                    "team_id": ",".join(str(id) for id in registration.get_team_ids()),
                     "is_captain": int(team_member_captain),
                     "first_name": registration.user.first_name,
                     "last_name": registration.user.last_name,
@@ -537,7 +539,7 @@ def registrationexport(request, year=None, season=None, division=None):
         registration_list.sort(key=lambda k: k["last_name"].lower())
         registration_list.sort(key=lambda k: k["is_captain"], reverse=True)
         registration_list.sort(
-            key=lambda k: int(0 if k["team_id"] is None else k["team_id"])
+            key=lambda k: "9999" if not k["team_id"] else k["team_id"]
         )
 
         for registration in registration_list:
@@ -570,7 +572,7 @@ def teamgeneration(request, year=None, season=None, division=None):
                     "baggage_id": registration.baggage.id,
                     "rating_totals": rating_totals,
                     "rating_total": rating_totals["total"],
-                    "team_id": registration.get_team_id(),
+                    "team_id": registration.get_team_ids().first(),
                     "user": registration.user,
                 }
             )
