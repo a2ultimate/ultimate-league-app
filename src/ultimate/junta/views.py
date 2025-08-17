@@ -307,13 +307,13 @@ def gamereports(
                 )
 
                 team_data = {}
-                for team in league.team_set.all():
+                for t in league.team_set.all():
                     team_data.update(
                         {
-                            team.id: {
-                                "female_count": team.get_female_members_count(),
-                                "male_count": team.get_male_members_count(),
-                                "player_count": team.get_members_count(),
+                            t.id: {
+                                "female_count": t.get_female_members_count(),
+                                "male_count": t.get_male_members_count(),
+                                "player_count": t.get_members_count(),
                                 "attendance_values_female": [],
                                 "attendance_values_male": [],
                                 "attendance_values_player": [],
@@ -334,9 +334,12 @@ def gamereports(
                     )
 
                     for game_report_comment in game_report.gamereportcomment_set.all():
-                        team_data[
-                            game_report.game.get_opposing_team(game_report.team).id
-                        ]["spirit_values"].append(game_report_comment.spirit)
+                        try:
+                            team_data[
+                                game_report.game.get_opposing_team(game_report.team).id
+                            ]["spirit_values"].append(game_report_comment.spirit)
+                        except Team.DoesNotExist:
+                            pass
 
     else:
         leagues = League.objects.all().order_by("-league_start_date")
