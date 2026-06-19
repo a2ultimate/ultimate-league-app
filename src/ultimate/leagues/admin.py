@@ -170,11 +170,10 @@ class LeagueAdmin(admin.ModelAdmin):
         "year",
         "season",
         "night",
-        "display_format",
+        "gender",
         "type",
-        "max_players",
-        "display_fields",
-        "display_state",
+        "state_short",
+        "field_names",
     )
     list_display_links = ("id",)
     list_filter = (
@@ -197,32 +196,11 @@ class LeagueAdmin(admin.ModelAdmin):
         "gender",
     ]
 
-    def display_format(self, obj):
-        if obj.level != League.LEAGUE_LEVEL_RECREATIONAL:
-            return "{} - {}".format(
-                dict(League.LEAGUE_GENDER_CHOICES).get(obj.gender, "Unknown"),
-                dict(League.LEAGUE_LEVEL_CHOICES).get(obj.level, "Unknown"),
-            )
-        return "{}".format(
-            dict(League.LEAGUE_GENDER_CHOICES).get(obj.gender, "Unknown")
-        )
+    def state_short(self, obj):
+        return "{}".format(obj.display_state.split(" ").pop(0))
 
-    display_format.admin_order_field = "state"
-    display_format.short_description = "Format"
-
-    def display_state(self, obj):
-        return "{}".format(obj.state.title())
-
-    display_state.admin_order_field = "state"
-    display_state.short_description = "State"
-
-    def display_fields(self, obj):
-        return "{}".format(
-            "\n".join(obj.fields.all().order_by("name").values_list("name", flat=True))
-        )
-
-    display_fields.admin_order_field = "fields"
-    display_fields.short_description = "Fields"
+    def field_names(self, obj):
+        return "<br>".join([field.name for field in obj.fields.all()])
 
 
 def mark_flagged(modeladmin, request, queryset):
