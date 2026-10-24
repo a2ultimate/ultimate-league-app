@@ -2,29 +2,23 @@
 
 Ultimate Frisbee League Web Application
 
-## Install Development Environment
-
-Start in the root of `ultimate-league-app`
-
-```bash
-./bin/mkvenv.sh dev
-cd src/static
-npm install
-```
-
 ## Run the Development Environment
 
-Again from the the root of `ultimate-league-app`, you will use two different terminal tabs/windows for this:
+Install Docker Desktop with Docker Compose v2, then run from the repository root:
 
 ```bash
-source venv/dev/bin/activate
-cd src/
-./manage.py runserver_plus
+docker compose up --build
 ```
 
+The application is available at <http://localhost:8000>. Backend and frontend
+source changes reload automatically. See
+[the development guide](docs/agent-guides/development.md) for database imports,
+tests, logs, production-like mode, and the native setup alternative.
+
 ```bash
-cd src/static
-npm run dev
+make up
+make test
+make logs
 ```
 
 ## Update a Production Environment

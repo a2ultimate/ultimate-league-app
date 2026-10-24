@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  backend:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.9.15
+          cache: pip
+          cache-dependency-path: src/requirements/*.txt
+      - run: pip install -r src/requirements/dev.txt
+      - working-directory: src
+        env:
+          APP_RUNMODE: dev
+          DJANGO_SETTINGS_MODULE: ultimate.settings.test
+        run: |
+          python manage.py check
+          python manage.py makemigrations --check --dry-run
+          python manage.py test
+
+  frontend:
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: src/static
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16.18.1
+          cache: npm
+          cache-dependency-path: src/static/package-lock.json
+      - run: npm install --global npm@8.19.2
+      - run: npm ci
+      - run: npm run build
+
+  containers:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash bin/tests/test-import-db.sh
+      - run: docker compose --profile prodlike config
+      - run: docker compose build backend backend-prod

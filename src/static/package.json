@@ -1,6 +1,7 @@
 {
   "name": "ultimate-league-app",
   "version": "1.0.0",
+  "packageManager": "npm@8.19.2",
   "description": "",
   "main": "index.js",
   "dependencies": {

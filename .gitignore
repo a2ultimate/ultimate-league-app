@@ -2,6 +2,8 @@
 *.log
 *.pot
 *.pyc
+*.sql
+*.sql.gz
 *.swp
 
 config/*.json

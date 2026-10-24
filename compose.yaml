@@ -1,0 +1,156 @@
+x-backend-environment: &backend-environment
+  APP_RUNMODE: dev
+  SECRET_KEY: local-development-only
+  DEBUG: "True"
+  ALLOWED_HOSTS: .localhost,127.0.0.1,[::1]
+  INTERNAL_IPS: .localhost,127.0.0.1,[::1]
+  DB_ENGINE: django.db.backends.mysql
+  DB_NAME: ultimate
+  DB_USER: ultimate
+  DB_PASSWORD: ultimate
+  DB_HOST: db
+  DB_PORT: "3306"
+  A2U_RATING_EXPIRATION_MONTHS: "0"
+  A2U_RATING_LIMIT_MONTHS: "0"
+  ANNOUNCEMENTS_GROUP_ADDRESS: ""
+  GOOGLE_APPS_API_ACCOUNT: ""
+  GOOGLE_APPS_API_CREDENTIALS_FILE_NAME: ""
+  GOOGLE_APPS_CALENDAR_ID: ""
+  SERVER_EMAIL: dev@localhost
+  DEFAULT_FROM_EMAIL: dev@localhost
+  EMAIL_BACKEND: django.core.mail.backends.console.EmailBackend
+  POSTMARK_SERVER_TOKEN: ""
+  SEND_DEFAULTS_REPLY_TO: dev@localhost
+  PAYPAL_TEST: "True"
+  PAYPAL_BUSINESS_EMAIL: dev@localhost
+
+services:
+  db:
+    image: mysql:8.0.31
+    environment:
+      MYSQL_DATABASE: ultimate
+      MYSQL_USER: ultimate
+      MYSQL_PASSWORD: ultimate
+      MYSQL_ROOT_PASSWORD: ultimate-root
+      TZ: America/Detroit
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h 127.0.0.1 -p$$MYSQL_ROOT_PASSWORD --silent",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    volumes:
+      - db-data:/var/lib/mysql
+
+  backend:
+    build:
+      context: .
+      target: development
+    environment: *backend-environment
+    command: >-
+      sh -c "python manage.py migrate &&
+      python manage.py runserver_plus 0.0.0.0:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/', timeout=2)",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 15s
+    volumes:
+      - .:/app
+      - media-data:/app/src/media
+
+  frontend:
+    image: node:16.18.1-bullseye
+    working_dir: /app/src/static
+    environment:
+      WATCHPACK_POLLING: "true"
+    command: sh -c "npm ci && npm run dev"
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://localhost:8080/', response => process.exit(response.statusCode < 500 ? 0 : 1)).on('error', () => process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 30s
+    volumes:
+      - .:/app
+      - frontend-node-modules:/app/src/static/node_modules
+
+  backend-prod:
+    profiles: ["prodlike"]
+    build:
+      context: .
+      target: production
+    environment:
+      <<: *backend-environment
+      APP_RUNMODE: prod
+      DEBUG: "False"
+      BUGSNAG_API_KEY: ""
+      GOOGLE_ANALYTICS_MEASUREMENT_ID: ""
+    command: >-
+      sh -c "python manage.py migrate &&
+      python manage.py collectstatic --noinput &&
+      gunicorn --bind=0.0.0.0:8001 --worker-class=gevent ultimate.wsgi:application"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8001/', timeout=2)",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 15s
+    volumes:
+      - static-data:/app/src/static/dist
+      - media-data:/app/src/media
+
+  nginx:
+    profiles: ["prodlike"]
+    image: nginx:1.26-alpine
+    depends_on:
+      backend-prod:
+        condition: service_healthy
+    ports:
+      - "8081:80"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - static-data:/app/static:ro
+      - media-data:/app/media:ro
+
+volumes:
+  db-data:
+  frontend-node-modules:
+  media-data:
+  static-data:
