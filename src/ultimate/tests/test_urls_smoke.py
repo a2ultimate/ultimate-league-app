@@ -11,6 +11,8 @@ The named patterns are enumerated explicitly (rather than walked from the
 resolver) so that a name silently disappearing is itself a test failure.
 """
 
+from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
 from django.test import TestCase
 from django.urls import NoReverseMatch, reverse
 
@@ -83,8 +85,12 @@ class URLReverseSmokeTest(TestCase):
         self.assertEqual(failures, [], "named routes failed to reverse:\n" + "\n".join(failures))
 
     def test_password_reset_confirm_reverses(self):
-        # Has a strict regex on uidb64/token; exercise it with a valid-shaped value.
+        user = get_user_model().objects.create_user(
+            email="password-reset@example.com", password="test-password"
+        )
+        token = default_token_generator.make_token(user)
+
         reverse(
             "password_reset_confirm",
-            kwargs={"uidb64": "MQ", "token": "abc-1234567890"},
+            kwargs={"uidb64": "MQ", "token": token},
         )

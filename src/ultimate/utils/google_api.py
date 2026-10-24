@@ -241,7 +241,8 @@ class GoogleAppsApi:
 
         Pages through the full membership (the Directory API returns at most
         200 members per response) so callers get every member, not just the
-        first page. Returns an empty set if the group can't be resolved.
+        first page. Returns an empty set if the group can't be resolved and
+        propagates listing errors so callers never act on partial membership.
         """
         service = build("admin", "directory_v1", http=self.http, cache_discovery=False)
 
@@ -262,8 +263,8 @@ class GoogleAppsApi:
                     .execute(http=self.http, num_retries=API_NUM_RETRIES)
                 )
             except Exception:
-                logger.debug("    Members could not be listed")
-                break
+                logger.debug("    Members could not be listed", exc_info=True)
+                raise
 
             for member in members_response.get("members", []):
                 email = member.get("email")
