@@ -31,11 +31,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='couponredemtion',
             name='coupon',
-            field=models.ForeignKey(to='leagues.Coupon'),
+            field=models.ForeignKey(to='leagues.Coupon', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='couponredemtion',
             name='redeemed_by',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
         ),
     ]

@@ -9,9 +9,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 EMAIL_BACKEND = env('EMAIL_BACKEND')
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'bugsnag.django.middleware.BugsnagMiddleware',
-) + MIDDLEWARE_CLASSES
+) + MIDDLEWARE
 
 # BUGSNAG
 BUGSNAG = {

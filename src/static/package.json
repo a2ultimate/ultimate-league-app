@@ -1,6 +1,7 @@
 {
   "name": "ultimate-league-app",
   "version": "1.0.0",
+  "packageManager": "npm@8.19.2",
   "description": "",
   "main": "index.js",
   "dependencies": {
@@ -16,10 +17,10 @@
     "jquery-ui": "^1.10.4",
     "lodash": "^4.16.4",
     "mini-css-extract-plugin": "^2.4.2",
-    "node-sass": "^8.0.0",
+    "node-sass": "^9.0.0",
     "normalize.css": "^5.0.0",
     "postcss-loader": "^7.0.0",
-    "sass-loader": "^13.2.0",
+    "sass-loader": "^13.3.3",
     "style-loader": "^3.3.0",
     "url-loader": "^4.1.1",
     "webpack": "^5.0.0",

@@ -5,7 +5,7 @@ from math import floor
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from django.db.models import Count, F
 from django.db.transaction import atomic
@@ -62,7 +62,7 @@ class FieldNames(models.Model):
 
     id = models.AutoField(primary_key=True)
     name = models.TextField()
-    field = models.ForeignKey("leagues.Field")
+    field = models.ForeignKey("leagues.Field", on_delete=models.CASCADE)
     hidden = models.BooleanField(default=False)
     type = models.CharField(max_length=32, choices=FIELD_TYPE_CHOICES)
 
@@ -151,7 +151,7 @@ class League(models.Model):
     )
 
     year = models.IntegerField(help_text="four digit year, e.g. 2013")
-    season = models.ForeignKey("leagues.Season")
+    season = models.ForeignKey("leagues.Season", on_delete=models.CASCADE)
     night = models.CharField(
         max_length=32,
         help_text='lower case, no special characters, e.g. "sunday", "tuesday and thursday", "end of season tournament"',
@@ -380,7 +380,7 @@ class League(models.Model):
         return timezone.now() >= self.waitlist_start_date
 
     def is_visible(self, user=None):
-        if user and user.is_authenticated() and user.is_junta:
+        if user and user.is_authenticated and user.is_junta:
             return self.state in ["cancelled", "closed", "open", "preview"]
 
         return self.state in ["cancelled", "closed", "open"]
@@ -437,7 +437,7 @@ class League(models.Model):
         # admins and junta can register in preview mode
         if (
             user
-            and user.is_authenticated()
+            and user.is_authenticated
             and user.is_junta
             and self.state in [self.LEAGUE_STATE_OPEN, self.LEAGUE_STATE_PREVIEW]
         ):
@@ -470,7 +470,7 @@ class League(models.Model):
     def is_open(self, user=None):
         if (
             user
-            and user.is_authenticated()
+            and user.is_authenticated
             and user.is_junta
             and self.state in ["open", "preview"]
         ):
@@ -525,7 +525,7 @@ class League(models.Model):
     def get_user_registration(self, user):
         user_registration = None
 
-        if user and user.is_authenticated():
+        if user and user.is_authenticated:
             try:
                 return self.registrations_set.get(user=user)
             except ObjectDoesNotExist:
@@ -841,8 +841,8 @@ class League(models.Model):
 
 class LeagueFields(models.Model):
     id = models.AutoField(primary_key=True)
-    league = models.ForeignKey("leagues.League")
-    field = models.ForeignKey("leagues.Field")
+    league = models.ForeignKey("leagues.League", on_delete=models.CASCADE)
+    field = models.ForeignKey("leagues.Field", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "field_league"
@@ -892,9 +892,9 @@ class Registrations(models.Model):
     # 2 - I really want to captain in this league! (you will be among the top considerations for captaining).
 
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    league = models.ForeignKey("leagues.League")
-    baggage = models.ForeignKey("leagues.Baggage", null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    league = models.ForeignKey("leagues.League", on_delete=models.CASCADE)
+    baggage = models.ForeignKey("leagues.Baggage", null=True, blank=True, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated = models.DateTimeField(auto_now=True, null=True, blank=True)
     registered = models.DateTimeField(null=True, blank=True, default=None)
@@ -914,7 +914,7 @@ class Registrations(models.Model):
     captain = models.IntegerField(
         null=True, blank=True, choices=REGISTRATION_CAPTAIN_CHOICES
     )
-    coupon = models.ForeignKey("leagues.Coupon", null=True, blank=True)
+    coupon = models.ForeignKey("leagues.Coupon", null=True, blank=True, on_delete=models.CASCADE)
     prompt_response = models.CharField(
         max_length=255,
         null=True,
@@ -1177,7 +1177,7 @@ class Team(models.Model):
     name = models.CharField(max_length=128, blank=True)
     color = models.CharField(max_length=96, blank=True)
     email = models.CharField(max_length=128, blank=True)
-    league = models.ForeignKey("leagues.League")
+    league = models.ForeignKey("leagues.League", on_delete=models.CASCADE)
     hidden = models.BooleanField(default=False)
     group_id = models.CharField(max_length=128, blank=True, null=True)
 
@@ -1471,8 +1471,8 @@ class Team(models.Model):
 
 class TeamMember(models.Model):
     id = models.AutoField(primary_key=True)
-    team = models.ForeignKey("leagues.Team")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    team = models.ForeignKey("leagues.Team", on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     captain = models.BooleanField(default=False)
 
     class Meta:
@@ -1499,8 +1499,8 @@ class Game(models.Model):
     id = models.AutoField(primary_key=True)
     date = models.DateField()
     start = models.DateTimeField(null=True)
-    field_name = models.ForeignKey("leagues.FieldNames")
-    league = models.ForeignKey("leagues.league")
+    field_name = models.ForeignKey("leagues.FieldNames", on_delete=models.CASCADE)
+    league = models.ForeignKey("leagues.League", on_delete=models.CASCADE)
     teams = models.ManyToManyField("leagues.Team", through="leagues.GameTeams")
 
     class Meta:
@@ -1549,8 +1549,8 @@ class Game(models.Model):
 
 class GameTeams(models.Model):
     id = models.AutoField(primary_key=True)
-    game = models.ForeignKey("leagues.Game")
-    team = models.ForeignKey("leagues.Team")
+    game = models.ForeignKey("leagues.Game", on_delete=models.CASCADE)
+    team = models.ForeignKey("leagues.Team", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "game_teams"
@@ -1591,7 +1591,7 @@ class Coupon(models.Model):
 
     note = models.TextField(blank=True, help_text="What is the coupon for?")
 
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     valid_until = models.DateTimeField(
@@ -1672,8 +1672,8 @@ class Coupon(models.Model):
 
 
 class CouponRedemtion(models.Model):
-    coupon = models.ForeignKey("leagues.Coupon")
-    redeemed_by = models.ForeignKey(settings.AUTH_USER_MODEL)
+    coupon = models.ForeignKey("leagues.Coupon", on_delete=models.CASCADE)
+    redeemed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     redeemed_at = models.DateTimeField(auto_now_add=True)
 

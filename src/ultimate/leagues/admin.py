@@ -2,6 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.db.models import Max, Q
+from django.utils.html import format_html
 
 from paypal.standard.ipn.models import PayPalIPN
 from ultimate.leagues.models import (
@@ -365,9 +366,7 @@ class RegistrationsAdmin(admin.ModelAdmin):
     night.admin_order_field = "league__night"
 
     def user_details(self, obj):
-        return "{} <br /> {}".format(obj.user.get_full_name(), obj.user.email)
-
-    user_details.allow_tags = True
+        return format_html("{} <br /> {}", obj.user.get_full_name(), obj.user.email)
 
     def captain_value(self, obj):
         return obj.captain
@@ -382,7 +381,8 @@ class RegistrationsAdmin(admin.ModelAdmin):
         )
         if not paypal_row:
             return None
-        return "Name: {} {}<br />Email: {}<br />Date: {}<br />Status: {}<br />Amount: {}".format(
+        return format_html(
+            "Name: {} {}<br />Email: {}<br />Date: {}<br />Status: {}<br />Amount: {}",
             paypal_row.first_name,
             paypal_row.last_name,
             paypal_row.payer_email,
@@ -390,8 +390,6 @@ class RegistrationsAdmin(admin.ModelAdmin):
             paypal_row.payment_status,
             paypal_row.mc_gross,
         )
-
-    paypal_details.allow_tags = True
 
 
 class SeasonAdmin(admin.ModelAdmin):

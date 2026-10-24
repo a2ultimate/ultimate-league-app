@@ -2,9 +2,10 @@ from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.utils.translation import ugettext_lazy as _
+from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 
-from hijack_admin.admin import HijackUserAdminMixin
+from hijack.contrib.admin import HijackUserAdminMixin
 from paypal.standard.ipn.admin import PayPalIPNAdmin
 from paypal.standard.ipn.models import PayPalIPN
 
@@ -25,7 +26,7 @@ class PlayerInline(admin.StackedInline):
     verbose_name_plural = 'player'
 
 
-class UserAdmin(BaseUserAdmin, HijackUserAdminMixin):
+class UserAdmin(HijackUserAdminMixin, BaseUserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name')}),
@@ -41,9 +42,10 @@ class UserAdmin(BaseUserAdmin, HijackUserAdminMixin):
     )
 
     inlines = (PlayerInline,)
+    # django-hijack 3.x's HijackUserAdminMixin appends its own hijack column to
+    # the changelist automatically; no explicit 'hijack_field' entry needed.
     list_display = ('email', 'first_name', 'last_name',
-                    'is_staff', 'is_superuser', 'date_joined',
-                    'hijack_field',)
+                    'is_staff', 'is_superuser', 'date_joined',)
     list_filter = BaseUserAdmin.list_filter + ('groups__name',)
     ordering = ('email',)
     search_fields = ('email', 'first_name', 'last_name',)
@@ -61,12 +63,10 @@ class PlayerRatingsAdmin(admin.ModelAdmin):
                      'submitted_by__first_name', 'submitted_by__last_name', 'submitted_by__email',]
 
     def user_details(self, obj):
-        return '{} <br /> {}'.format(obj.user.get_full_name(), obj.user.email)
-    user_details.allow_tags = True
+        return format_html('{} <br /> {}', obj.user.get_full_name(), obj.user.email)
 
     def submitted_by_details(self, obj):
-        return '{} <br /> {}'.format(obj.submitted_by.get_full_name(), obj.submitted_by.email)
-    submitted_by_details.allow_tags = True
+        return format_html('{} <br /> {}', obj.submitted_by.get_full_name(), obj.submitted_by.email)
 
 
 class PlayerConcussionWaiverAdmin(admin.ModelAdmin):
@@ -78,12 +78,10 @@ class PlayerConcussionWaiverAdmin(admin.ModelAdmin):
     search_fields = ['submitted_by__first_name', 'submitted_by__last_name', 'submitted_by__email',]
 
     def reviewed_by_details(self, obj):
-        return '{} <br /> {}'.format(obj.reviewed_by.get_full_name(), obj.reviewed_by.email)
-    reviewed_by_details.allow_tags = True
+        return format_html('{} <br /> {}', obj.reviewed_by.get_full_name(), obj.reviewed_by.email)
 
     def submitted_by_details(self, obj):
-        return '{} <br /> {}'.format(obj.submitted_by.get_full_name(), obj.submitted_by.email)
-    submitted_by_details.allow_tags = True
+        return format_html('{} <br /> {}', obj.submitted_by.get_full_name(), obj.submitted_by.email)
 
 
 class CustomPayPalIPNAdmin(PayPalIPNAdmin):

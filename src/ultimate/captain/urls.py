@@ -1,11 +1,11 @@
-from django.conf.urls import url, include
+from django.urls import include, re_path
 
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.index, {}, 'captain'),
-    url(r'^team/(?P<team_id>[^/]+)/edit/$', views.editteam, {}, 'captaineditteam'),
-    url(r'^team/(?P<team_id>[^/]+)/export/$', views.exportteam, {}, 'captain_team_export'),
-    url(r'^team/(?P<team_id>[^/]+)/playersurvey/$', views.playersurvey, {}, 'playersurvey'),
-    url(r'^team/(?P<team_id>[^/]+)/game/(?P<game_id>[^/]+)/gamereport/$', views.gamereport, {}, 'gamereport'),
+    re_path(r'^$', views.index, {}, 'captain'),
+    re_path(r'^team/(?P<team_id>[^/]+)/edit/$', views.editteam, {}, 'captaineditteam'),
+    re_path(r'^team/(?P<team_id>[^/]+)/export/$', views.exportteam, {}, 'captain_team_export'),
+    re_path(r'^team/(?P<team_id>[^/]+)/playersurvey/$', views.playersurvey, {}, 'playersurvey'),
+    re_path(r'^team/(?P<team_id>[^/]+)/game/(?P<game_id>[^/]+)/gamereport/$', views.gamereport, {}, 'gamereport'),
     ]

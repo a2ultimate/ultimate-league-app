@@ -229,6 +229,16 @@ class SyncGroupMembersTest(TestCase):
         self.assertEqual(result.added, [])
         self.assertEqual(sorted(result.failed_add), ["a@x.com", "b@x.com"])
 
+    def test_member_listing_failure_aborts_without_writes(self):
+        service = FakeService(pages=[members_page([])])
+        service.list_error = RuntimeError("network down")
+        self._patch_service(service)
+
+        with self.assertRaises(RuntimeError):
+            self.api.sync_group_members(["a@x.com"], group_id="gid")
+
+        self.assertEqual(service.batches, [])
+
 
 class ListGroupMembersTest(TestCase):
     def setUp(self):

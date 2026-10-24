@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
                 ('jersey_size', models.CharField(blank=True, max_length=45, choices=[(b'XS', b'XS - Extra Small'), (b'S', b'S - Small'), (b'M', b'M - Medium'), (b'L', b'L - Large'), (b'XL', b'XL -Extra Large'), (b'XXL', b'XXL - Extra Extra Large')])),
                 ('guardian_name', models.TextField(blank=True)),
                 ('guardian_phone', models.TextField(blank=True)),
-                ('user', models.OneToOneField(related_name='profile', to=settings.AUTH_USER_MODEL)),
+                ('user', models.OneToOneField(related_name='profile', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -83,23 +83,23 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(serialize=False, primary_key=True)),
                 ('updated', models.DateTimeField()),
-                ('submitted_by', models.ForeignKey(related_name='ratings_report_submitted_by_set', to=settings.AUTH_USER_MODEL)),
-                ('team', models.ForeignKey(to='leagues.Team')),
+                ('submitted_by', models.ForeignKey(related_name='ratings_report_submitted_by_set', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
+                ('team', models.ForeignKey(to='leagues.Team', on_delete=models.CASCADE)),
             ],
         ),
         migrations.AddField(
             model_name='playerratings',
             name='ratings_report',
-            field=models.ForeignKey(blank=True, to='user.PlayerRatingsReport', null=True),
+            field=models.ForeignKey(blank=True, to='user.PlayerRatingsReport', null=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='playerratings',
             name='submitted_by',
-            field=models.ForeignKey(related_name='ratings_submitted_by_set', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='ratings_submitted_by_set', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='playerratings',
             name='user',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
         ),
     ]

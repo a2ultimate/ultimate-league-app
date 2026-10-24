@@ -43,11 +43,16 @@ DATABASES = {
     }
 }
 
+# Keep the historical 32-bit AutoField default (Django <3.2 behavior) so the
+# existing schema's integer primary keys are preserved and no BigAutoField
+# migrations are generated. Revisit if/when a deliberate migration to
+# BigAutoField is desired.
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 TIME_ZONE = 'America/Detroit'
 LANGUAGE_CODE = 'en-us'
 
 USE_I18N = True
-USE_L10N = True
 USE_TZ = False
 
 MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
@@ -69,7 +74,7 @@ WEBPACK_LOADER = {
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = env('SECRET_KEY')
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -94,12 +99,9 @@ INSTALLED_APPS = (
 
     'anymail',
     'captcha',
-    'compat',
     'hijack',
-    'hijack_admin',
-    'markdown_deux',
+    'hijack.contrib.admin',
     'paypal.standard.ipn',
-    'pytils',
     'webpack_loader',
 
     'ultimate',
@@ -207,21 +209,11 @@ GOOGLE_APPS_CALENDAR_ID = env('GOOGLE_APPS_CALENDAR_ID')
 ANNOUNCEMENTS_GROUP_ADDRESS = env('ANNOUNCEMENTS_GROUP_ADDRESS')
 
 
-# Hijack
-HIJACK_ALLOW_GET_REQUESTS = True
-HIJACK_REGISTER_ADMIN = False
+# Hijack (django-hijack 3.x). The 2.x flags HIJACK_ALLOW_GET_REQUESTS and
+# HIJACK_REGISTER_ADMIN were removed; impersonation is now POST-only via the
+# admin button and gated by a permission check. Restrict to superusers.
+HIJACK_PERMISSION_CHECK = 'hijack.permissions.superusers_only'
 
-
-# Markdown
-MARKDOWN_DEUX_STYLES = {
-    'default': {
-        'extras': {
-            'header-ids': True,
-            'target-blank-links': True,
-        },
-        'safe_mode': False,
-    },
-}
 
 # Email
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')

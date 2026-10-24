@@ -3,9 +3,9 @@ from django.db import models
 
 
 class GameReport(models.Model):
-    team = models.ForeignKey('leagues.Team')
-    game = models.ForeignKey('leagues.Game')
-    last_updated_by = models.ForeignKey(settings.AUTH_USER_MODEL)
+    team = models.ForeignKey('leagues.Team', on_delete=models.CASCADE)
+    game = models.ForeignKey('leagues.Game', on_delete=models.CASCADE)
+    last_updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'game_report'
@@ -38,8 +38,8 @@ class GameReport(models.Model):
 
 
 class GameReportAttendance(models.Model):
-    report = models.ForeignKey('captain.GameReport')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    report = models.ForeignKey('captain.GameReport', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'game_report_attendance'
@@ -61,8 +61,8 @@ class GameReportComment(models.Model):
         (0, '0'),
     )
 
-    report = models.ForeignKey('captain.GameReport')
-    submitted_by = models.ForeignKey(settings.AUTH_USER_MODEL)
+    report = models.ForeignKey('captain.GameReport', on_delete=models.CASCADE)
+    submitted_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     spirit = models.IntegerField(choices=SPIRIT_CHOICES)
     comment = models.TextField()
 
@@ -71,8 +71,8 @@ class GameReportComment(models.Model):
 
 
 class GameReportScore(models.Model):
-    report = models.ForeignKey('captain.GameReport')
-    team = models.ForeignKey('leagues.Team')
+    report = models.ForeignKey('captain.GameReport', on_delete=models.CASCADE)
+    team = models.ForeignKey('leagues.Team', on_delete=models.CASCADE)
     score = models.IntegerField(blank=False)
 
     class Meta:

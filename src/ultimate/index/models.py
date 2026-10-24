@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils import timezone
@@ -121,7 +121,7 @@ class StaticMenuItems(models.Model):
     content = models.CharField(max_length=64, help_text="Text a user will see")
     href = models.CharField(max_length=255, blank=True, help_text='Use with "External Link", "Internal Link", and "Static Link"')
     position = models.IntegerField(help_text='Order of sibling items within a parent')
-    parent = models.ForeignKey('index.StaticMenuItems', default=None, blank=True, null=True, help_text='Only "Header" type items can be parents')
+    parent = models.ForeignKey('index.StaticMenuItems', default=None, blank=True, null=True, on_delete=models.CASCADE, help_text='Only "Header" type items can be parents')
 
     class Meta:
         db_table = 'static_menu_items'

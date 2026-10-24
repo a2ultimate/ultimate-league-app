@@ -199,7 +199,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(serialize=False, primary_key=True)),
                 ('captain', models.BooleanField(default=False)),
-                ('team', models.ForeignKey(to='leagues.Team')),
+                ('team', models.ForeignKey(to='leagues.Team', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['-captain', 'user__last_name'],

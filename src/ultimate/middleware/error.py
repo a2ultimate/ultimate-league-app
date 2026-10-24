@@ -1,4 +1,7 @@
-class ErrorUserMiddleware(object):
+from django.utils.deprecation import MiddlewareMixin
+
+
+class ErrorUserMiddleware(MiddlewareMixin):
     """
     Alter HttpRequest objects on Error
     """
@@ -7,7 +10,7 @@ class ErrorUserMiddleware(object):
         Add user details.
         """
         try:
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 request.META['AUTH_USER_NAME'] = str(request.user.first_name) + ' ' + str(request.user.last_name)
                 request.META['AUTH_USER_EMAIL'] = str(request.user.email)
                 request.META['AUTH_USER_ID'] = str(request.user.id)

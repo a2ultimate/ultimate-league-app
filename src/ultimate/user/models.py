@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class UserManager(BaseUserManager):
@@ -250,7 +250,7 @@ class Player(models.Model):
         ('XXL', 'XXL - Extra Extra Large'),
     )
 
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='profile')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='profile', on_delete=models.CASCADE)
     groups = models.TextField()
     date_of_birth = models.DateField(blank=True, null=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
@@ -375,12 +375,12 @@ class PlayerRatings(models.Model):
     competitiveness = models.PositiveIntegerField(
         default=None, choices=RATING_COMPETITIVENESS_CHOICES, blank=True, null=True)
     spirit = models.PositiveIntegerField(default=None, blank=True, null=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     submitted_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name='ratings_submitted_by_set')
+        settings.AUTH_USER_MODEL, related_name='ratings_submitted_by_set', on_delete=models.CASCADE)
     ratings_type = models.PositiveIntegerField(choices=RATING_TYPE)
     ratings_report = models.ForeignKey(
-        'user.PlayerRatingsReport', blank=True, null=True)
+        'user.PlayerRatingsReport', blank=True, null=True, on_delete=models.CASCADE)
     not_sure = models.BooleanField(default=False)
     updated = models.DateTimeField(auto_now=True)
 
@@ -409,8 +409,8 @@ class PlayerRatings(models.Model):
 class PlayerRatingsReport(models.Model):
     id = models.AutoField(primary_key=True)
     submitted_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name='ratings_report_submitted_by_set')
-    team = models.ForeignKey('leagues.Team')
+        settings.AUTH_USER_MODEL, related_name='ratings_report_submitted_by_set', on_delete=models.CASCADE)
+    team = models.ForeignKey('leagues.Team', on_delete=models.CASCADE)
     updated = models.DateTimeField()
 
     def __str__(self):
@@ -436,11 +436,11 @@ class PlayerConcussionWaiver(models.Model):
     status = models.CharField(max_length=32, choices=PLAYER_CONCUSSION_WAIVER_CHOICES, default=PLAYER_CONCUSSION_WAIVER_NOT_SUBMITTED)
 
     submitted_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name='player_concussion_waiver_submitted_by_set')
+        settings.AUTH_USER_MODEL, related_name='player_concussion_waiver_submitted_by_set', on_delete=models.CASCADE)
     submitted_at = models.DateTimeField(blank=True, null=True)
 
     reviewed_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name='player_concussion_waiver_reviewed_by_set', blank=True, null=True)
+        settings.AUTH_USER_MODEL, related_name='player_concussion_waiver_reviewed_by_set', blank=True, null=True, on_delete=models.CASCADE)
     reviewed_at = models.DateTimeField(blank=True, null=True)
 
     created = models.DateTimeField(auto_now_add=True)

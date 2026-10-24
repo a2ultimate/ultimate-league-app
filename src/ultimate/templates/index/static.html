@@ -1,14 +1,14 @@
 {% extends 'layout/layout_home.html' %}
 
 {% load admin_urls %}
-{% load markdown_deux_tags %}
+{% load md %}
 
 {% block title %}{{ content.title }} &middot; {{ block.super }}{% endblock %}
 {% block og_title %}{{ content.title }} &middot; {{ block.super }}{% endblock %}
 
 {% block content %}
   {% if content.is_markdown %}
-    {{ content.content|markdown }}
+    {{ content.content|markdownify }}
   {% elif content.is_html %}
     {{ content.content|safe }}
   {% else %}

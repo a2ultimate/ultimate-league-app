@@ -16,42 +16,42 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='teammember',
             name='user',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='team',
             name='league',
-            field=models.ForeignKey(to='leagues.League'),
+            field=models.ForeignKey(to='leagues.League', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='registrations',
             name='baggage',
-            field=models.ForeignKey(blank=True, to='leagues.Baggage', null=True),
+            field=models.ForeignKey(blank=True, to='leagues.Baggage', null=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='registrations',
             name='coupon',
-            field=models.ForeignKey(blank=True, to='leagues.Coupon', null=True),
+            field=models.ForeignKey(blank=True, to='leagues.Coupon', null=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='registrations',
             name='league',
-            field=models.ForeignKey(to='leagues.League'),
+            field=models.ForeignKey(to='leagues.League', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='registrations',
             name='user',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='leaguefields',
             name='field',
-            field=models.ForeignKey(to='leagues.Field'),
+            field=models.ForeignKey(to='leagues.Field', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='leaguefields',
             name='league',
-            field=models.ForeignKey(to='leagues.League'),
+            field=models.ForeignKey(to='leagues.League', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='league',
@@ -61,27 +61,27 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='league',
             name='season',
-            field=models.ForeignKey(to='leagues.Season'),
+            field=models.ForeignKey(to='leagues.Season', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='gameteams',
             name='game',
-            field=models.ForeignKey(to='leagues.Game'),
+            field=models.ForeignKey(to='leagues.Game', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='gameteams',
             name='team',
-            field=models.ForeignKey(to='leagues.Team'),
+            field=models.ForeignKey(to='leagues.Team', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='game',
             name='field_name',
-            field=models.ForeignKey(to='leagues.FieldNames'),
+            field=models.ForeignKey(to='leagues.FieldNames', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='game',
             name='league',
-            field=models.ForeignKey(to='leagues.League'),
+            field=models.ForeignKey(to='leagues.League', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='game',
@@ -91,12 +91,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='fieldnames',
             name='field',
-            field=models.ForeignKey(to='leagues.Field'),
+            field=models.ForeignKey(to='leagues.Field', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='coupon',
             name='created_by',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='registrations',

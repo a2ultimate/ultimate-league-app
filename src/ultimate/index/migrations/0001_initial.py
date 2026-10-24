@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
                 ('content', models.CharField(max_length=64)),
                 ('href', models.CharField(max_length=255, blank=True)),
                 ('position', models.IntegerField()),
-                ('parent', models.ForeignKey(default=None, blank=True, to='index.StaticMenuItems', null=True)),
+                ('parent', models.ForeignKey(default=None, blank=True, to='index.StaticMenuItems', null=True, on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['location', 'parent__id', 'position'],

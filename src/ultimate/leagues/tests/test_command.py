@@ -7,10 +7,11 @@ GroupSyncResults, so these exercise the command + model wiring without
 network or credentials.
 """
 
+from io import StringIO
+
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
-from django.utils.six import StringIO
 
 from ultimate.utils import google_api
 from ultimate.utils.google_api import GroupSyncResult

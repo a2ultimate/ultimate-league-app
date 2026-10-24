@@ -1,25 +1,25 @@
-var path = require("path");
-var webpack = require("webpack");
+var path = require('path');
+var webpack = require('webpack');
 
-var BundleTracker = require("webpack-bundle-tracker");
-var MiniCssExtractPlugin = require("mini-css-extract-plugin");
+var BundleTracker = require('webpack-bundle-tracker');
+var MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-require("es6-promise").polyfill();
+require('es6-promise').polyfill();
 
 module.exports = {
-  mode: "development",
+  mode: 'development',
   entry: {
-    main: path.resolve(__dirname, "src/main.js"),
+    main: path.resolve(__dirname, 'src/main.js'),
   },
   output: {
-    path: path.resolve(__dirname, "build"),
-    filename: "[name]-[fullhash].js",
-    publicPath: "http://localhost:8080/static/",
+    path: path.resolve(__dirname, 'build'),
+    filename: '[name]-[fullhash].js',
+    publicPath: 'http://localhost:8080/static/',
   },
   plugins: [
     new BundleTracker({
       path: __dirname,
-      filename: path.resolve(__dirname, "build/stats.json"),
+      filename: path.resolve(__dirname, 'build/stats.json'),
     }),
   ],
   module: {
@@ -27,46 +27,64 @@ module.exports = {
       // FONTS
       {
         test: /\.(woff|woff2|eot|ttf|otf|svg)$/i,
-        type: "asset",
+        type: 'asset',
         parser: {
           dataUrlCondition: {
             maxSize: 4 * 1024, // 4kb
           },
         },
         generator: {
-          filename: "fonts/[name]-[contenthash][ext]",
+          filename: 'fonts/[name]-[contenthash][ext]',
         },
       },
 
       // IMAGES
       {
         test: /\.(ico|jpe?g|png|gif|svg)$/i,
-        type: "asset/resource",
+        type: 'asset/resource',
         generator: {
-          filename: "images/[name][ext]",
+          filename: 'images/[name][ext]',
         },
       },
 
       // STYLES
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader", "postcss-loader"],
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
       },
       {
         test: /\.scss$/,
-        use: ["style-loader", "css-loader", "postcss-loader", "sass-loader"],
+        use: [
+          'style-loader',
+          'css-loader',
+          'postcss-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              implementation: require('node-sass'),
+            },
+          },
+        ],
       },
 
       // MISC
       {
         test: /\.xml$/,
-        type: "asset/resource",
+        type: 'asset/resource',
       },
     ],
   },
   devServer: {
-    headers: { "Access-Control-Allow-Origin": "*" },
-    allowedHosts: ["localhost", "annarborultimate.org"],
+    host: '0.0.0.0',
+    port: 8080,
+    headers: { 'Access-Control-Allow-Origin': '*' },
+    allowedHosts: ['localhost', 'annarborultimate.org'],
+    watchFiles: {
+      paths: [path.resolve(__dirname, 'src/**/*')],
+      options: {
+        usePolling: true,
+      },
+    },
   },
-  devtool: "eval-source-map",
+  devtool: 'eval-source-map',
 };
