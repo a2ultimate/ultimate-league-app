@@ -79,7 +79,9 @@ services:
       - media-data:/app/src/media
 
   frontend:
-    image: node:16.18.1-bullseye
+    build:
+      context: .
+      target: frontend-base
     working_dir: /app/src/static
     environment:
       WATCHPACK_POLLING: "true"

@@ -1,4 +1,4 @@
-FROM python:3.9.15-slim-bullseye AS python-base
+FROM python:3.9-slim-trixie AS python-base
 
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -24,9 +24,20 @@ RUN pip install --no-cache-dir -r requirements/dev.txt
 CMD ["python", "manage.py", "runserver_plus", "0.0.0.0:8000"]
 
 
-FROM node:16.18.1-bullseye AS frontend-build
+FROM node:20.19.5-trixie-slim AS frontend-base
+
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends \
+    g++ \
+    make \
+    python3 \
+    python3-setuptools \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app/src/static
+
+
+FROM frontend-base AS frontend-build
 
 COPY src/static/package.json src/static/package-lock.json ./
 RUN npm install --global npm@8.19.2 && npm ci
